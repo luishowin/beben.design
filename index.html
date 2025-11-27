@@ -30,164 +30,88 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
 
   <!-- Main stylesheet -->
-  <link rel="stylesheet" href="/assets/css/#">
-  <link rel="stylesheet" href="/assets/css/#">
-  <link rel="stylesheet" href="/assets/css/#">
-  <link rel="stylesheet" href="/assets/css/#">
+  <link rel="stylesheet" href="./assets/css/index.css">
 
-  <!-- Inline styles for simplicity, to be updated -->
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Roboto Mono', monospace;
-      color: #000;
-    }
-    body {
-      background: #fff;
-      overflow-x: hidden;
-    }
-    header {
-      width: 100%;
-      padding: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    nav a {
-      margin-left: 1rem;
-      text-decoration: none;
-      font-weight: 400;
-    }
-
-    /* Text Reveal */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.8s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .hero {
-      padding: 4rem 2rem;
-      max-width: 900px;
-    }
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    .hero p {
-      max-width: 600px;
-      line-height: 1.5;
-    }
-
-    .section {
-      padding: 4rem 2rem;
-      max-width: 900px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    .card {
-      border: 1px solid #000;
-      padding: 2rem;
-      height: 180px;
-      text-decoration: none;
-      display: flex;
-      align-items: flex-end;
-      transition: transform 0.2s ease;
-      overflow: hidden;
-    }
-    .card:hover {
-      transform: scale(1.05);
-    }
-
-    .footer {
-      padding: 4rem 2rem;
-      border-top: 1px solid #000;
-      text-align: center;
-      margin-top: 4rem;
-      font-size: 0.9rem;
-    }
-
-    /* Modal */
-.modal-bg {
-position: fixed;
-top: 0; left: 0;
-width: 100%; height: 100%;
-backdrop-filter: blur(8px);
-background: rgba(255,255,255,0.4);
-display: none;
-justify-content: center;
-align-items: center;
-padding: 2rem;
-z-index: 999;
-}
-.modal {
-background: #fff;
-border: 2px solid #000;
-padding: 2rem;
-max-width: 700px;
-max-height: 80vh;
-overflow-y: auto;
-position: relative;
-}
-.close-modal {
-position: absolute;
-top: 1rem;
-right: 1rem;
-border: 1px solid #000;
-background: #fff;
-padding: 0.3rem 1rem;
-cursor: pointer;
-transition: transform 0.2s ease;
-}
-.close-modal:hover {
-transform: scale(1.05);
-}
-
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 2rem; }
-      .card { height: 150px; }
-    }
-    .manifesto-btn {
-border: 1px solid #000;
-padding: 1rem 2rem;
-background: #fff;
-cursor: pointer;
-transition: transform 0.2s ease;
-font-size: 1rem;
-}
-.manifesto-btn:hover {
-transform: scale(1.05);
-}
-  </style>
 </head>
 
 
 
 <body>
+  <header class="nav">
+  <div class="nav-inner">
 
-  <header>
-    <div class="logo">BEBEN DESIGN LABS</div>
-    <nav>
-      <a href="#services">Services</a>
-      <a href="#work">Work</a>
-      <a href="#contact">Contact</a>
+    <div class="nav-logo">beben.design</div>
+
+    <!-- Desktop Navigation -->
+    <nav class="nav-desktop">
+      <ul>
+        <li class="nav-item">
+          <button class="nav-link">Work <span>▼</span></button>
+          <div class="dropdown">
+            <a href="#">Project 1</a>
+            <a href="#">Project 2</a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link">Studio <span>▼</span></button>
+          <div class="dropdown">
+            <a href="#">About</a>
+            <a href="#">Team</a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link">Notes <span>▼</span></button>
+          <div class="dropdown">
+            <a href="#">Articles</a>
+            <a href="#">Sketches</a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link">Contact <span>▼</span></button>
+          <div class="dropdown">
+            <a href="#">Email</a>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link">More <span>▼</span></button>
+          <div class="dropdown">
+            <a href="#">Links</a>
+          </div>
+        </li>
+      </ul>
     </nav>
-  </header>
+
+    <!-- Hamburger -->
+    <button class="hamburger">☰</button>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu">
+  <button class="close-btn">×</button>
+  <ul>
+    <li><a href="#">Work</a></li>
+    <li><a href="#">Studio</a></li>
+    <li><a href="#">Notes</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">More</a></li>
+  </ul>
+</div>
+
+<script>
+  const burger = document.querySelector('.hamburger');
+  const mobile = document.querySelector('.mobile-menu');
+  const closeX = document.querySelector('.close-btn');
+
+  burger.onclick = () => mobile.classList.add('open');
+  closeX.onclick = () => mobile.classList.remove('open');
+</script>
+
+
 
   <section class="hero reveal">
     <h1>We Make Weird Things That Work Well.</h1>
