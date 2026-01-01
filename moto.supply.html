@@ -18,12 +18,29 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /* global custom text highlight  */
+        ::selection{
+            color: rgb(255, 204, 0);
+            background: rgb(58, 58, 58);
+        }
         body {
             font-family: 'Roboto Mono', monospace;
             background-color: rgb(0, 0, 0);
             color: var(--black);
             -webkit-font-smoothing: antialiased;
         }
+
+        /* Reveal animation  */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 3s ease-out, transform 3s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .grain-overlay {
             pointer-events: none;
             position: fixed;
@@ -87,6 +104,10 @@
             text-align: center;
             color: var(--white);
             padding: 0 10%;
+        }
+        .hero-content p {
+            font-size: 0.8rem;
+            color: #999999;
         }
 
         h1 {
@@ -180,7 +201,6 @@
             display: inline-block;
             margin-top: 2rem;
             padding: 1rem 2rem;
-            border: 1px solid var(--black);
             color: #d0d0d0;
             text-decoration: none;
             font-size: 0.8rem;
@@ -188,7 +208,7 @@
             transition: 0.3s;
             border: 1px solid #515253;
         }
-        .btn:hover { background: #0d0d0d; color: #ad58fd; }
+        .btn:hover { background: #0d0d0d; color: #ad58fd; border: 1px solid #ad58fd; }
 
         @media (max-width: 900px) {
             .dual-philosophy { grid-template-columns: 1fr; }
@@ -218,50 +238,50 @@
         </div>
     </section>
 
-    <section class="grid-container">
+    <section class="grid-container" >
         <span class="section-label">Select Supplies</span>
         <div class="slider-wrap">
             <div class="card">
                 <img src="./assets/media/images/moto23.jpg" class="card-img" alt="Machined Part">
-                <h3>Machined Spares</h3>
-                <p>Stainless steel components for those who know the difference between 'tight' and 'stripped'. Built to outlast the rider.</p>
+                <h3 >Machined Spares</h3>
+                <p >Stainless steel components for those who know the difference between 'tight' and 'stripped'. Built to outlast the rider.</p>
             </div>
             <div class="card">
                 <img src="./assets/media/images/moto24.jpg" class="card-img" alt="Custom Helmet">
-                <h3>Bespoke Helmets</h3>
-                <p>Hand-painted, one-of-one artworks. Rated for actual impacts, not just for looking cool on a shelf in a Soho loft.</p>
+                <h3 >Bespoke Helmets</h3>
+                <p >Hand-painted, one-of-one artworks. Rated for actual impacts, not just for looking cool on a shelf in a Soho loft.</p>
             </div>
             <div class="card">
                 <img src="./assets/media/images/moto25.jpg" class="card-img" alt="Leather Gear">
-                <h3>Fitted Leather</h3>
-                <p>Heavy-grain hides tailored to your frame. It'll be stiff for a week, then it'll be your second skin for a decade.</p>
+                <h3 >Fitted Leather</h3>
+                <p >Heavy-grain hides tailored to your frame. It'll be stiff for a week, then it'll be your second skin for a decade.</p>
             </div>
         </div>
     </section>
 
     <section class="dual-philosophy">
         <div class="phi-box" style="background-color: var(--black);">
-            <span class="section-label">The Pragmatist</span>
-            <h2>Overspecified is just right.</h2>
-            <p>Our hard parts are designed by people who hate walking home. We use cold-rolled steel, aviation-grade aluminum, and fasteners that don't round off the second you look at them. No fluff. No plastic. No excuses.</p>
-            <a href="#" class="btn">View Parts Catalog</a>
+            <span  class="section-label">The Pragmatist</span>
+            <h2 >Overspecified is just right.</h2>
+            <p >Our hard parts are designed by people who hate walking home. We use cold-rolled steel, aviation-grade aluminum, and fasteners that don't round off the second you look at them. No fluff. No plastic. No excuses.</p>
+            <a  href="#" class="btn">View Parts Catalog</a>
         </div>
         <div class="phi-box" style="background: var(--black);">
             <span class="section-label">The Purist</span>
-            <h2>Patina over Polish.</h2>
-            <p>We don't do "mass-produced." Our custom gear is hand-worked in the shop. Every brushstroke on a helmet and every stitch in our leather is intentional. It's for the rider who wants a bike that looks as fast as it actually is.</p>
-            <a href="#" class="btn">Start a Commission</a>
+            <h2 >Patina over Polish.</h2>
+            <p >We don't do "mass-produced." Our custom gear is hand-worked in the shop. Every brushstroke on a helmet and every stitch in our leather is intentional. It's for the rider who wants a bike that looks as fast as it actually is.</p>
+            <a  href="#" class="btn">Start a Commission</a>
         </div>
     </section>
 
     <footer>
         <div>
             <p>BEBEN MOTO SUPPLY / 2026</p>
-            <p>Designed for the ambitious tinkerer.</p>
+            <p>Designed for the adventurous tinkerer.</p>
         </div>
-        <div style="text-align: right;">
-            <p>Insta: @bebenmoto (Rarely)</p>
-            <p>Email: help@bebenmoto.io</p>
+        <div style="text-align: left;">
+            <p>Insta: @beben.moto.supply</p>
+            <p>Email: beben.moto.supply@gmail.com</p>
         </div>
     </footer>
 
