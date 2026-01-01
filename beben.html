@@ -11,8 +11,8 @@
         :root {
             --black: #000000;
             --white: #ffffff;
-            --gray-100: #f2f2f2;
-            --gray-400: #999999;
+            --gray-100: #252525;
+            --gray-400: #515253;
             --gray-800: #222222;
         }
 
@@ -20,10 +20,24 @@
 
         body {
             font-family: 'Roboto Mono', monospace;
-            background-color: var(--white);
+            background-color: rgb(0, 0, 0);
             color: var(--black);
             -webkit-font-smoothing: antialiased;
         }
+        .grain-overlay {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+
+            background-image: url("./assets/media/images/blurnoise.png");
+            background-repeat: repeat;
+            background-size: 1920px 1080px;
+
+            opacity: 0.5;
+            
+}
+
 
         /* --- Navigation --- */
         nav {
@@ -106,6 +120,7 @@
 
         /* --- Horizontal Slider --- */
         .slider-wrap {
+            color: whitesmoke;
             display: flex;
             gap: 2rem;
             overflow-x: auto;
@@ -116,11 +131,12 @@
 
         .card {
             flex: 0 0 400px;
-            border: 1px solid var(--gray-100);
+            border: 0.5px solid #303030;
             padding: 2rem;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .card:hover { border-color: var(--black); background: var(--gray-100); }
+        .card:hover {background: #0b0b0b; }
 
         .card-img {
             width: 100%;
@@ -132,13 +148,15 @@
         }
 
         .card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; }
-        .card p { font-size: 0.85rem; color: var(--gray-800); }
+        .card p { font-size: 0.85rem; color: #515253; }
+        .card p:hover { color: #ad58fd;}
 
         /* --- The Split Logic Section --- */
         .dual-philosophy {
             display: grid;
             grid-template-columns: 1fr 1fr;
             border-top: 1px solid var(--gray-100);
+            color: #ffffff;
         }
 
         .phi-box {
@@ -163,13 +181,14 @@
             margin-top: 2rem;
             padding: 1rem 2rem;
             border: 1px solid var(--black);
-            color: var(--black);
+            color: #d0d0d0;
             text-decoration: none;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             transition: 0.3s;
+            border: 1px solid #515253;
         }
-        .btn:hover { background: var(--black); color: var(--white); }
+        .btn:hover { background: #0d0d0d; color: #ad58fd; }
 
         @media (max-width: 900px) {
             .dual-philosophy { grid-template-columns: 1fr; }
@@ -179,6 +198,7 @@
     </style>
 </head>
 <body>
+    <div class="grain-overlay"></div>
 
     <nav>
         <div class="logo">BEBEN MOTO SUPPLY</div>
@@ -202,31 +222,31 @@
         <span class="section-label">Select Supplies</span>
         <div class="slider-wrap">
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1622185135505-2d795003994a?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Machined Part">
+                <img src="./assets/media/images/moto23.jpg" class="card-img" alt="Machined Part">
                 <h3>Machined Spares</h3>
                 <p>Stainless steel components for those who know the difference between 'tight' and 'stripped'. Built to outlast the rider.</p>
             </div>
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1591438644503-45f068571932?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Custom Helmet">
+                <img src="./assets/media/images/moto24.jpg" class="card-img" alt="Custom Helmet">
                 <h3>Bespoke Helmets</h3>
                 <p>Hand-painted, one-of-one artworks. Rated for actual impacts, not just for looking cool on a shelf in a Soho loft.</p>
             </div>
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1614165933026-0750fbd7cda2?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Leather Gear">
-                <h3>Aged Leather</h3>
-                <p>Heavy-grain hides tailored to your frame. It’ll be stiff for a week, then it’ll be your second skin for a decade.</p>
+                <img src="./assets/media/images/moto25.jpg" class="card-img" alt="Leather Gear">
+                <h3>Fitted Leather</h3>
+                <p>Heavy-grain hides tailored to your frame. It'll be stiff for a week, then it'll be your second skin for a decade.</p>
             </div>
         </div>
     </section>
 
     <section class="dual-philosophy">
-        <div class="phi-box">
+        <div class="phi-box" style="background-color: var(--black);">
             <span class="section-label">The Pragmatist</span>
             <h2>Overspecified is just right.</h2>
             <p>Our hard parts are designed by people who hate walking home. We use cold-rolled steel, aviation-grade aluminum, and fasteners that don't round off the second you look at them. No fluff. No plastic. No excuses.</p>
             <a href="#" class="btn">View Parts Catalog</a>
         </div>
-        <div class="phi-box" style="background: var(--gray-100);">
+        <div class="phi-box" style="background: var(--black);">
             <span class="section-label">The Purist</span>
             <h2>Patina over Polish.</h2>
             <p>We don't do "mass-produced." Our custom gear is hand-worked in the shop. Every brushstroke on a helmet and every stitch in our leather is intentional. It's for the rider who wants a bike that looks as fast as it actually is.</p>
