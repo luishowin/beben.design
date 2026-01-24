@@ -1,193 +1,889 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <!-- Required meta -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beben Design - Product + Brand Design Studio</title>
+  <meta name="description" content="Beben Design is a design studio building clear, modern brands and digital experiences. Branding, UI/UX, websites, and design systems." />
+  <meta name="theme-color" content="#ffffff" />
 
-  <!-- SEO basics -->
-  <title>Beben Design</title>
-  <meta name="description" content="Beben Design is a small design studio focused on practical, timeless product design, UI/UX, and engineered simplicity.">
+  <!-- Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Open Graph (social preview) -->
-  <meta property="og:title" content="Beben Design">
-  <meta property="og:description" content="Practical, minimal product design and UI/UX with engineered simplicity.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://beben.design">
-  <meta property="og:image" content="https://beben.design/assets/media/og/beben-og.png">
+  <style>
+    :root{
+      --bg: #ffffff;
+      --fg: #0a0a0a;
+      --muted: rgba(10,10,10,.65);
+      --card: rgba(10,10,10,.04);
+      --border: rgba(10,10,10,.14);
+      --shadow: 0 12px 30px rgba(0,0,0,.08);
+      --yellow: rgb(225, 215, 30);
+      --max: 1120px;
+      --radius: 18px;
+      --pad: 24px;
+    }
 
-  <!-- Google Site verification -->
-  <meta name="google-site-verification" content="WyEz9Uk7rwkP_6SbdxvbAPNLrdU80TlI2Ntv5AnWRgA" />
+    [data-theme="dark"]{
+      --bg: #0a0a0a;
+      --fg: #ffffff;
+      --muted: rgba(255,255,255,.70);
+      --card: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.16);
+      --shadow: 0 14px 38px rgba(0,0,0,.45);
+    }
 
-  <!-- Page icon / favicon -->
-  <link rel="icon" type="image/png" href="/assets/media/icons/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/assets/media/icons/favicon.svg" />
-  <link rel="shortcut icon" href="/favicon.ico" />
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin: 0;
+      font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.55;
+      letter-spacing: -0.2px;
+    }
 
+    a{ color: inherit; text-decoration: none; }
+    a:focus-visible, button:focus-visible{
+      outline: 3px solid var(--yellow);
+      outline-offset: 3px;
+      border-radius: 12px;
+    }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Doto:wght@100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    /* Layout */
+    .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .section{ padding: 72px 0; }
+    .grid{ display: grid; gap: 18px; }
 
-  <!-- Main stylesheet -->
-  <link rel="stylesheet" href="./assets/css/index.css">
+    /* Nav */
+    .nav{
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: color-mix(in oklab, var(--bg) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 180px;
+    }
+    .logo{
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--card), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 30% 30%, var(--yellow), transparent 55%);
+      opacity: .7;
+      transform: rotate(10deg);
+    }
+    .brand span{
+      font-weight: 600;
+      letter-spacing: -0.6px;
+    }
 
+    .nav-links{
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .nav-links a{
+      position: relative;
+      padding: 10px 10px 12px;
+      border-radius: 12px;
+      color: var(--muted);
+      transition: color .18s ease;
+      white-space: nowrap;
+    }
+    .nav-links a:hover{ color: var(--fg); }
+    .nav-links a.active{
+      color: var(--fg);
+    }
+    .nav-links a.active::after{
+      content:"";
+      position:absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 4px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--yellow);
+    }
+
+    .nav-cta{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 180px;
+      justify-content: flex-end;
+    }
+
+    .btn{
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--fg);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform .06s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover{
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      border-color: color-mix(in oklab, var(--border) 70%, var(--yellow) 30%);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .btn-primary{
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+    .btn-primary:hover{
+      background: color-mix(in oklab, var(--fg) 86%, var(--yellow) 14%);
+      border-color: color-mix(in oklab, var(--fg) 80%, var(--yellow) 20%);
+    }
+
+    .theme-toggle{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toggle{
+      width: 44px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      position: relative;
+      cursor: pointer;
+      padding: 0;
+    }
+    .knob{
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--fg);
+      transition: left .18s ease, background .18s ease;
+    }
+    [data-theme="dark"] .knob{ left: 20px; background: var(--yellow); }
+
+    /* Hero */
+    .hero{
+      padding: 82px 0 40px;
+    }
+    .hero-grid{
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+    .tag{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      color: var(--muted);
+      width: fit-content;
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 999px;
+      background: var(--yellow);
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--yellow) 20%, transparent);
+    }
+
+    h1{
+      margin: 18px 0 12px;
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -1.2px;
+    }
+    .lead{
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 62ch;
+    }
+
+    .hero-actions{
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .hero-card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg,
+        color-mix(in oklab, var(--card) 85%, transparent),
+        transparent
+      );
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 320px;
+    }
+    .hero-card-header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .placeholder{
+      margin: 14px 16px 16px;
+      border-radius: 14px;
+      border: 1px dashed var(--border);
+      background:
+        linear-gradient(90deg,
+          transparent,
+          color-mix(in oklab, var(--yellow) 12%, transparent),
+          transparent
+        );
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      min-height: 240px;
+      padding: 18px;
+      text-align: center;
+    }
+    .placeholder strong{ color: var(--fg); font-weight: 600; }
+
+    /* Blocks */
+    .cards-3{
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: var(--pad);
+    }
+    .card h3{
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: -0.2px;
+    }
+    .card p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill{
+      display:inline-block;
+      margin-top: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--bg) 60%, var(--card));
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill b{ color: var(--fg); }
+
+    /* Services section */
+    .split{
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .kicker{
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      margin: 0 0 10px;
+    }
+    h2{
+      margin: 0 0 12px;
+      font-size: clamp(22px, 2.4vw, 30px);
+      line-height: 1.2;
+      letter-spacing: -0.8px;
+    }
+    .list{
+      display: grid;
+      gap: 12px;
+    }
+    .service{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 16px;
+      background: transparent;
+    }
+    .service-top{
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .service-title{
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    .service-badge{
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--yellow) 16%, transparent);
+      border: 1px solid color-mix(in oklab, var(--yellow) 35%, var(--border));
+      color: var(--fg);
+      white-space: nowrap;
+    }
+    .service p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 70ch;
+    }
+
+    /* Contact */
+    .contact{
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--yellow) 12%, transparent),
+        transparent 55%
+      );
+      padding: 26px;
+      display: grid;
+      gap: 14px;
+    }
+    .contact-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .contact-item{
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--card) 75%, transparent);
+      border-radius: var(--radius);
+      padding: 14px;
+      overflow: hidden;
+    }
+    .contact-item small{ color: var(--muted); display:block; margin-bottom: 6px; }
+    .contact-item a{
+      color: var(--fg);
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .mono{
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Footer */
+    footer{
+      border-top: 1px solid var(--border);
+      padding: 24px 0 40px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .foot{
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .foot a{
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 12px;
+    }
+    .foot a:hover{ color: var(--fg); background: var(--card); }
+
+    /* Scroll reveal */
+    .reveal{
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .7s ease, transform .7s ease;
+      will-change: opacity, transform;
+    }
+    .reveal.show{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile nav */
+    .menu-btn{
+      display:none;
+    }
+    .mobile-panel{
+      display:none;
+      border-top: 1px solid var(--border);
+      padding: 10px 0 16px;
+    }
+    .mobile-links{
+      display:grid;
+      gap: 6px;
+    }
+    .mobile-links a{
+      padding: 12px 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--card) 65%, transparent);
+      color: var(--muted);
+      position: relative;
+    }
+    .mobile-links a.active{ color: var(--fg); }
+    .mobile-links a.active::after{
+      content:"";
+      position:absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 6px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--yellow);
+    }
+
+    /* Breakpoints */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .split{ grid-template-columns: 1fr; }
+      .cards-3{ grid-template-columns: 1fr; }
+      .contact-grid{ grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px){
+      .nav-links{ display:none; }
+      .menu-btn{ display:inline-flex; }
+      .brand{ min-width: auto; }
+      .nav-cta{ min-width: auto; }
+      .hero{ padding-top: 62px; }
+      .section{ padding: 56px 0; }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .reveal{ opacity: 1; transform: none; transition: none; }
+      .knob{ transition: none; }
+      .btn{ transition: none; }
+      .nav-links a{ transition: none; }
+    }
+  </style>
 </head>
 
-
-
 <body>
+  <!-- NAV -->
   <header class="nav">
-  <div class="nav-inner">
+    <div class="wrap">
+      <div class="nav-inner">
+        <a class="brand" href="#home" aria-label="Beben Design Home">
+          <div class="logo" aria-hidden="true"></div>
+          <span>Beben Design</span>
+        </a>
 
-    <div class="nav-logo">BEBEN</div>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#home" class="active">Home</a>
+          <a href="#services">Services</a>
+          <a href="#work">Work</a>
+          <a href="#team">Team</a>
+          <a href="#contact">Contact</a>
+        </nav>
 
-    <!-- Desktop Navigation -->
-    <nav class="nav-desktop">
-      <ul>
-        <li class="nav-item">
-          <button class="nav-link">Work</button>
-          
-        </li>
+        <div class="nav-cta">
+          <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobilePanel">
+            Menu
+          </button>
 
-        <li class="nav-item">
-          <button class="nav-link">Studio</button>
-          
-        </li>
+          <div class="theme-toggle" title="Toggle theme">
+            <button class="toggle" id="themeToggle" aria-label="Toggle dark mode">
+              <span class="knob" aria-hidden="true"></span>
+            </button>
+          </div>
 
-        <li class="nav-item">
-          <button class="nav-link">Notes</button>
-          
-        </li>
+          <a class="btn btn-primary" href="#contact">Reach us</a>
+        </div>
+      </div>
 
-        <li class="nav-item">
-          <button class="nav-link">Contact</button>
-          
-        </li>
-
-        <li class="nav-item">
-          <button class="nav-link">More</button>
-          
-        </li>
-      </ul>
-    </nav>
-
-    <!-- Hamburger -->
-    <button class="hamburger">☰</button>
+      <!-- Mobile nav panel -->
+      <div class="mobile-panel" id="mobilePanel">
+        <div class="mobile-links" aria-label="Mobile Primary">
+          <a href="#home" class="active">Home</a>
+          <a href="#services">Services</a>
+          <a href="#work">Work</a>
+          <a href="#team">Team</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
     </div>
   </header>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-    <button class="close-btn">x</button>
-    <ul>
-    <li><a href="#">Work</a></li>
-    <li><a href="#">Studio</a></li>
-    <li><a href="#">Notes</a></li>
-    <li><a href="#">Contact</a></li>
-    <li><a href="#">More</a></li>
-    </ul>
-    </div>
+  <!-- HERO -->
+  <main id="home" class="wrap">
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="reveal">
+          <div class="tag">
+            <span class="dot" aria-hidden="true"></span>
+            <span>Design studio for modern brands + digital products</span>
+          </div>
 
-<!-- navbar jS -->
-<script>
-  const burger = document.querySelector('.hamburger');
-  const mobile = document.querySelector('.mobile-menu');
-  const closeX = document.querySelector('.close-btn');
+          <h1>
+            We make things look clean, work better,
+            and ship without drama.
+          </h1>
 
-  burger.onclick = () => mobile.classList.add('open');
-  closeX.onclick = () => mobile.classList.remove('open');
-</script>
+          <p class="lead">
+            <b>Beben Design</b> is a small, detail-obsessed design studio.
+            We build brand identities, websites, and product UI/UX that are simple,
+            usable, and actually finished.
+          </p>
 
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#services">See services</a>
+            <a class="btn" href="#work">View portfolio (soon)</a>
+            <a class="btn" href="#contact">Contact</a>
+          </div>
 
-  <!-- Hero section -->
-  <section class="hero_reveal">
-    <div class="hero_content">
-      <h1>Beben Design Labs</h1>
-      <p>*BUILDING IDEAS WORTH RALLYING AROUND</p>
-      <p>Site still under construction 🚧</p>
-    </div>
-  </section>
+          <div class="grid cards-3 section" style="padding: 28px 0 0;">
+            <div class="card reveal">
+              <h3>Who we are</h3>
+              <p>
+                A studio built around clarity: strong typography, strong systems,
+                and design decisions that don’t collapse in real use.
+              </p>
+              <span class="pill"><b>Focus:</b> quality + simplicity</span>
+            </div>
 
-    
-  
-<!--
-  <div class="reveal" style="padding:2rem;">
-  <button id="manifestoBtn" class="manifesto-btn">Read Manifesto</button>
-  </div>
+            <div class="card reveal">
+              <h3>What we do</h3>
+              <p>
+                Branding, websites, UI/UX, and design systems — from messy ideas
+                to clean deliverables your business can use immediately.
+              </p>
+              <span class="pill"><b>Output:</b> usable assets</span>
+            </div>
 
-  <section id="services" class="section reveal">
-    <h2>What We Do</h2>
-    <p>
-      Product design, UI/UX, prototyping, embedded interfaces, handmade digital tools, and experimental concept builds. If it clicks, beeps, glows, or needs a brain—we can make it.
-    </p>
-  </section>
+            <div class="card reveal">
+              <h3>How to reach us</h3>
+              <p>
+                Email or WhatsApp for a quick scope. If it’s urgent, say so —
+                we’ll tell you if it’s realistic.
+              </p>
+              <span class="pill"><b>Reply time:</b> same day (usually)</span>
+            </div>
+          </div>
+        </div>
 
-  <section id="work" class="section reveal">
-    <h2>Selected Work</h2>
-    <div class="cards">
-      <a class="card" href="#">Project One</a>
-      <a class="card" href="#">Project Two</a>
-      <a class="card" href="#">Project Three</a>
-      <a class="card" href="#">Project Four</a>
-      <a class="card" href="#">Project Five</a>
-      <a class="card" href="#">Project Six</a>
-    </div>
-    <br>
-    <p>More content coming soon! (Site still under construction)</p>
-  </section>
+        <aside class="hero-card reveal" aria-label="Hero image placeholder">
+          <div class="hero-card-header">
+            <span>Featured work / studio shot</span>
+            <span class="mono">IMG_PLACEHOLDER</span>
+          </div>
+          <div class="placeholder">
+            <div>
+              <strong>Image placeholder</strong><br />
+              Replace this block with a real photo later:
+              a product shot, mood board, or a clean mockup.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
 
-  <section id="contact" class="section reveal">
-    <h2>Contact</h2>
-    <p>Email: hello@bebenlabs.space</p>
-    <p>Phone: +254 700 000 000</p>
-  </section>
+    <!-- SERVICES -->
+    <section id="services" class="section">
+      <div class="split">
+        <div class="reveal">
+          <p class="kicker">Services</p>
+          <h2>
+            Practical design services that move a business forward.
+          </h2>
+          <p class="lead">
+            No “brand strategy” decks that never touch reality.
+            We design things you can launch: identity, UI screens, and websites
+            that look sharp and behave properly on mobile.
+          </p>
+        </div>
 
-  <div class="footer">
-    © 2025 Beben Design Labs — Built on coffee and questionable prototypes.
-  </div>
+        <div class="list">
+          <div class="service reveal">
+            <div class="service-top">
+              <div class="service-title">Brand identity</div>
+              <div class="service-badge">logos • type • color</div>
+            </div>
+            <p>
+              Visual identity systems that scale: logo set, typography rules,
+              color tokens, and simple usage guidelines.
+            </p>
+          </div>
+
+          <div class="service reveal">
+            <div class="service-top">
+              <div class="service-title">Websites</div>
+              <div class="service-badge">fast • responsive • clean</div>
+            </div>
+            <p>
+              Landing pages and full sites with proper hierarchy, whitespace,
+              mobile-first layouts, and solid SEO basics.
+            </p>
+          </div>
+
+          <div class="service reveal">
+            <div class="service-top">
+              <div class="service-title">UI/UX for products</div>
+              <div class="service-badge">flows • wireframes • UI</div>
+            </div>
+            <p>
+              User flows, wireframes, and polished UI screens. Designed for real constraints:
+              time, budget, and dev reality.
+            </p>
+          </div>
+
+          <div class="service reveal">
+            <div class="service-top">
+              <div class="service-title">Design systems</div>
+              <div class="service-badge">tokens • components</div>
+            </div>
+            <p>
+              Button styles, spacing scale, typographic rules, and reusable components —
+              so your product doesn’t drift into chaos.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK (placeholder section) -->
+    <section id="work" class="section">
+      <div class="reveal">
+        <p class="kicker">Work</p>
+        <h2>Portfolio (coming soon)</h2>
+        <p class="lead">
+          This will link to your case studies. For now, here are placeholder slots.
+        </p>
+      </div>
+
+      <div class="grid cards-3" style="margin-top: 18px;">
+        <div class="card reveal">
+          <h3>Project placeholder #1</h3>
+          <p>Short one-liner about the project outcome.</p>
+          <div class="placeholder" style="min-height: 160px; margin: 16px 0 0; border-radius: 16px;">
+            Image placeholder
+          </div>
+        </div>
+        <div class="card reveal">
+          <h3>Project placeholder #2</h3>
+          <p>Short one-liner about the project outcome.</p>
+          <div class="placeholder" style="min-height: 160px; margin: 16px 0 0; border-radius: 16px;">
+            Image placeholder
+          </div>
+        </div>
+        <div class="card reveal">
+          <h3>Project placeholder #3</h3>
+          <p>Short one-liner about the project outcome.</p>
+          <div class="placeholder" style="min-height: 160px; margin: 16px 0 0; border-radius: 16px;">
+            Image placeholder
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM (placeholder section) -->
+    <section id="team" class="section">
+      <div class="split">
+        <div class="reveal">
+          <p class="kicker">Team</p>
+          <h2>Small team, high standards.</h2>
+          <p class="lead">
+            This section will become your team page later. For now, it signals that the link exists.
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Team preview placeholder</h3>
+          <p>
+            Add member cards here later: role, short bio, and a clean portrait.
+          </p>
+          <div class="placeholder" style="min-height: 180px; margin-top: 14px;">
+            Team photo / portraits placeholder
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="contact reveal">
+        <div>
+          <p class="kicker">Contact</p>
+          <h2>Reach us. We’ll tell you what’s possible.</h2>
+          <p class="lead">
+            Send a quick message with: what you’re building, deadline, and budget range.
+            If it’s vague, we’ll ask the annoying questions (for your own good).
+          </p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-item">
+            <small>Email</small>
+            <a class="mono" href="mailto:hello@bebendesign.com">hello@bebendesign.com</a>
+          </div>
+
+          <div class="contact-item">
+            <small>WhatsApp</small>
+            <a class="mono" href="#" onclick="alert('Replace this with your WhatsApp link. Example: https://wa.me/2547XXXXXXXX'); return false;">
+              +254 7XX XXX XXX
+            </a>
+          </div>
+
+          <div class="contact-item">
+            <small>Location</small>
+            <span class="mono">Nairobi, KE (remote-friendly)</span>
+          </div>
+        </div>
+
+        <div class="hero-actions" style="margin-top: 4px;">
+          <a class="btn btn-primary" href="mailto:hello@bebendesign.com">Email us</a>
+          <a class="btn" href="#" onclick="alert('Replace with Calendly / booking link later'); return false;">Book a call (later)</a>
+          <a class="btn" href="#home">Back to top</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap foot">
+        <div>© <span id="year"></span> Beben Design. Built with whitespace and stubbornness.</div>
+        <div>
+          <a href="#home" class="active">Home</a>
+          <a href="#work">Portfolio</a>
+          <a href="#team">Team</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </main>
 
   <script>
-    const observer = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){ entry.target.classList.add('visible'); }
-      });
-    }, {threshold: 0.2});
+    // ---------------------------
+    // Theme toggle (default: light)
+    // ---------------------------
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
 
-    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-  </script>
+    function setTheme(theme){
+      root.setAttribute('data-theme', theme);
+      localStorage.setItem('beben_theme', theme);
 
-  <div class="modal-bg" id="modalBg">
-    <div class="modal">
-    <button class="close-modal" id="closeModal">Close</button>
-    <h2>Manifesto</h2>
-    <p>
-      We build things that behave, misbehave, surprise, and improve your day. Beben Design Labs believes in useful oddities, honest engineering, and design that feels alive. We prototype fast, break things joyfully, and deliver products that punch above their weight.
-    </p>
-    </div>
-  </div>
+      // update theme-color for nicer mobile browser UI
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if(meta) meta.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#ffffff');
+    }
 
-  <script>
-    const manifestoBtn = document.getElementById('manifestoBtn');
-    const modalBg = document.getElementById('modalBg');
-    const closeModal = document.getElementById('closeModal');
+    const savedTheme = localStorage.getItem('beben_theme');
+    if(savedTheme === 'dark') setTheme('dark');
+    else setTheme('light');
 
-
-    manifestoBtn.addEventListener('click', ()=>{
-    modalBg.style.display = 'flex';
+    themeToggle.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      setTheme(current === 'dark' ? 'light' : 'dark');
     });
 
+    // ---------------------------
+    // Mobile menu
+    // ---------------------------
+    const menuBtn = document.getElementById('menuBtn');
+    const mobilePanel = document.getElementById('mobilePanel');
 
-    closeModal.addEventListener('click', ()=>{
-    modalBg.style.display = 'none';
-  });
-</script>
--->
+    menuBtn?.addEventListener('click', () => {
+      const isOpen = mobilePanel.style.display === 'block';
+      mobilePanel.style.display = isOpen ? 'none' : 'block';
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
 
+    // Close mobile menu on link click
+    mobilePanel?.addEventListener('click', (e) => {
+      const target = e.target;
+      if(target && target.tagName === 'A'){
+        mobilePanel.style.display = 'none';
+        menuBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // ---------------------------
+    // Active nav highlight by section
+    // ---------------------------
+    const navLinks = Array.from(document.querySelectorAll('.nav-links a'));
+    const mobileLinks = Array.from(document.querySelectorAll('.mobile-links a'));
+    const allLinks = [...navLinks, ...mobileLinks];
+
+    function setActive(hash){
+      allLinks.forEach(a => {
+        const isActive = a.getAttribute('href') === hash;
+        a.classList.toggle('active', isActive);
+      });
+    }
+
+    const sections = ['#home','#services','#work','#team','#contact']
+      .map(id => document.querySelector(id))
+      .filter(Boolean);
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      // Pick the most visible intersecting section
+      const visible = entries
+        .filter(en => en.isIntersecting)
+        .sort((a,b) => (b.intersectionRatio - a.intersectionRatio))[0];
+
+      if(visible?.target?.id){
+        setActive('#' + visible.target.id);
+      }
+    }, { root: null, threshold: [0.3, 0.6] });
+
+    sections.forEach(sec => sectionObserver.observe(sec));
+
+    // ---------------------------
+    // Scroll reveal
+    // ---------------------------
+    const reveals = document.querySelectorAll('.reveal');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('show');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    reveals.forEach(el => revealObserver.observe(el));
+
+    // ---------------------------
+    // Misc
+    // ---------------------------
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
-
-
-
