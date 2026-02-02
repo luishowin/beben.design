@@ -1,413 +1,164 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Beben Design | Product + Visual Design Studio</title>
-  <meta name="description" content="Beben Design is a design studio building clear, modern brands and digital experiences. Branding, UI/UX, websites, and design systems." />
-  <meta name="theme-color" content="#ffffff" />
-  <link rel="icon" href="./favicon.ico" sizes="any">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Beben Design | UX Research, UI Design & Digital Product Studio</title>
+    <meta name="title" content="Beben Design | UX Research, UI Design & Digital Product Studio">
+    <meta name="description" content="Beben Design is a multidisciplinary studio providing UX research, UI design, branding, and digital prototyping for startups and technology-driven products.">
+    <meta name="keywords" content="UX Research, UI Design, Branding, Digital Prototyping, Product Design Studio, Startup Design Consulting">
+    <meta name="author" content="Beben Design">
+    <link rel="canonical" href="https://beben.design/">
+    <link rel="icon" href="../icons/favicon.ico" sizes="any">
 
-  <link rel="stylesheet" href="./css/index.css" />
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/">
+    <meta property="og:title" content="Beben Design | Digital Product & UX Studio">
+    <meta property="og:description" content="Building high-performance digital products through technical UX research and brutalist-inspired design.">
+    <meta property="og:image" content="https://beben.design/og-image.jpg"> <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://beben.design/">
+    <meta property="twitter:title" content="Beben Design | Digital Product & UX Studio">
+    <meta property="twitter:description" content="Technical UX research and digital prototyping for the next generation of tech products.">
+    <meta property="twitter:image" content="https://beben.design/og-image.jpg">
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Beben Design",
+      "url": "https://beben.design",
+      "logo": "https://beben.design/logo.png",
+      "description": "Multidisciplinary design and digital services studio specializing in UX/UI, branding, and prototyping.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "KENYA"
+      },
+      "serviceType": [
+        "UX Research",
+        "UI Design",
+        "Product Design",
+        "Digital Prototyping"
+      ],
+      "priceRange": "$$"
+    }
+    </script>
 
-  <!-- Roboto Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-  
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="./favicon.ico" sizes="any">
+    <link rel="stylesheet" href="./css/index.css">
 </head>
-
 <body>
-  <!-- NAV -->
-  <header class="nav">
-    <div class="wrap">
-      <div class="nav-inner">
-        <a class="brand" href="#home" aria-label="Beben Design Home">
-          <div class="logo" aria-hidden="true"></div>
-          <span>Beben Design</span>
-        </a>
 
-        <nav class="nav-links" aria-label="Primary">
-          <a href="#home" class="active">Home</a>
-          <a href="#services">Services</a>
-          <a href="#work">Work</a>
-          <a href="#team">Team</a>
-          <a href="#contact">Contact</a>
-        </nav>
+    <nav>
+    <div class="logo">Beben Design</div>
+    <div class="nav-right">
+        <button id="theme-toggle">TOGGLE MODE</button>
+        
+        <ul class="menu desktop-only">
+            <li><a href="#" class="active">HOME</a></li>
+            <li><a href="#">WORK</a></li>
+            <li><a href="#">TEAM</a></li>
+            <li><a href="#">CONTACT</a></li>
+        </ul>
 
-        <div class="nav-cta">
-          <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobilePanel">
-            Menu
-          </button>
-
-          <div class="theme-toggle" title="Toggle theme">
-            <button class="toggle" id="themeToggle" aria-label="Toggle dark mode">
-              <span class="knob" aria-hidden="true"></span>
-            </button>
-          </div>
-
-          <a class="btn btn-primary" href="#contact">Reach us</a>
-        </div>
-      </div>
-
-      <!-- Mobile nav panel -->
-      <div class="mobile-panel" id="mobilePanel">
-        <div class="mobile-links" aria-label="Mobile Primary">
-          <a href="#home" class="active">Home</a>
-          <a href="#services">Services</a>
-          <a href="#work">Work</a>
-          <a href="#team">Team</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </div>
+        <button id="hamburger" aria-label="Toggle Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </div>
-  </header>
+</nav>
+<div id="mobile-menu-overlay">
+    <ul class="mobile-menu">
+        <li><a href="#">HOME</a></li>
+        <li><a href="#">WORK</a></li>
+        <li><a href="#">TEAM</a></li>
+        <li><a href="#">CONTACT</a></li>
+    </ul>
+</div>
 
-  <!-- HERO -->
-  <main id="home" class="wrap">
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="reveal">
-          <div class="tag">
-            <span class="dot" aria-hidden="true"></span>
-            <span>Design studio for modern brands + digital products</span>
-          </div>
+    <main>
+        <section class="hero reveal">
+            <h1>We build <span class="highlight-box">digital products</span> that scale.</h1>
+            <p style="max-width: 600px;">Beben Design is a multidisciplinary studio focused on UX research, UI design, and technical prototyping for startups and tech-driven brands.</p>
+        </section>
 
-          <h1>
-            We make things look clean, work better,
-            and ship without drama.
-          </h1>
-
-          <p class="lead">
-            <b>Beben Design</b> is a small, detail-obsessed design studio.
-            We build brand identities, websites, and product UI/UX that are simple,
-            usable, and actually finished.
-          </p>
-
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#services">See services</a>
-            <a class="btn" href="#work">View portfolio (soon)</a>
-            <a class="btn" href="#contact">Contact</a>
-          </div>
-
-          <div class="grid cards-3 section" style="padding: 28px 0 0;">
-            <div class="card reveal">
-              <h3>Who we are</h3>
-              <p>
-                A studio built around clarity: strong typography, strong systems,
-                and design decisions that don't collapse in real use.
-              </p>
-              <span class="pill"><b>Focus:</b> quality + simplicity</span>
+        <section class="reveal">
+            <h2 style="margin-bottom: 2rem;">OUR SERVICES</h2>
+            <div class="grid">
+                <div class="service-card">
+                    <h3>UX Research</h3>
+                    <p>Understanding user behavior to drive informed design decisions.</p>
+                </div>
+                <div class="service-card">
+                    <h3>UI Design</h3>
+                    <p>Clean, functional interfaces with zero friction.</p>
+                </div>
+                <div class="service-card">
+                    <h3>Prototyping</h3>
+                    <p>Rapid digital prototyping to test ideas before they cost you.</p>
+                </div>
             </div>
+        </section>
 
-            <div class="card reveal">
-              <h3>What we do</h3>
-              <p>
-                Branding, websites, UI/UX, and design systems — from messy ideas
-                to clean deliverables your business can use immediately.
-              </p>
-              <span class="pill"><b>Output:</b> usable assets</span>
-            </div>
+        <section class="reveal">
+            <h2>LATEST WORK</h2>
+            <div class="placeholder"></div>
+        </section>
 
-            <div class="card reveal">
-              <h3>How to reach us</h3>
-              <p>
-                Email or WhatsApp for a quick scope. If it's urgent, say so —
-                we'll tell you if it's realistic.
-              </p>
-              <span class="pill"><b>Reply time:</b> same day (usually)</span>
-            </div>
-          </div>
-        </div>
+        <section id="contact" class="reveal">
+            <h2>START A CONVERSATION</h2>
+            <p>Ready to build? <a href="mailto:hello@beben.design" style="color: var(--text);">hello@beben.design</a></p>
+        </section>
+    </main>
 
-        <aside class="hero-card reveal" aria-label="Hero image placeholder">
-          <div class="hero-card-header">
-            <span>Featured work / studio shot</span>
-            <span class="mono">IMG_PLACEHOLDER</span>
-          </div>
-          <div class="placeholder">
-            <div>
-              <strong>Image placeholder</strong><br />
-              Replace this block with a real photo later:
-              a product shot, mood board, or a clean mockup.
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
+    <script>
+        // Mobile Menu Toggle Logic
+        const hamburger = document.getElementById('hamburger');
+        const overlay = document.getElementById('mobile-menu-overlay');
+        const body = document.body;
 
-    <!-- SERVICES -->
-    <section id="services" class="section">
-      <div class="split">
-        <div class="reveal">
-          <p class="kicker">Services</p>
-          <h2>
-            Practical design services that move a business forward.
-          </h2>
-          <p class="lead">
-            No “brand strategy” decks that never touch reality.
-            We design things you can launch: identity, UI screens, and websites
-            that look sharp and behave properly on mobile.
-          </p>
-        </div>
+        hamburger.addEventListener('click', () => {
+        const isOpen = overlay.classList.toggle('is-active');
+        body.classList.toggle('menu-open');
+    
+        // Technical UX: Locking the scroll prevents the "bouncing" background
+        body.style.overflow = isOpen ? 'hidden' : 'auto';
+        });
 
-        <div class="list">
-          <div class="service reveal">
-            <div class="service-top">
-              <div class="service-title">Brand identity</div>
-              <div class="service-badge">logos • type • color</div>
-            </div>
-            <p>
-              Visual identity systems that scale: logo set, typography rules,
-              color tokens, and simple usage guidelines.
-            </p>
-          </div>
+        // Close menu when a link is clicked
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+            overlay.classList.remove('is-active');
+            body.classList.remove('menu-open');
+            body.style.overflow = 'auto';
+            });
+        });
 
-          <div class="service reveal">
-            <div class="service-top">
-              <div class="service-title">Websites</div>
-              <div class="service-badge">fast • responsive • clean</div>
-            </div>
-            <p>
-              Landing pages and full sites with proper hierarchy, whitespace,
-              mobile-first layouts, and solid SEO basics.
-            </p>
-          </div>
+        // Theme Toggle Logic
+        const toggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
 
-          <div class="service reveal">
-            <div class="service-top">
-              <div class="service-title">UI/UX for products</div>
-              <div class="service-badge">flows • wireframes • UI</div>
-            </div>
-            <p>
-              User flows, wireframes, and polished UI screens. Designed for real constraints:
-              time, budget, and dev reality.
-            </p>
-          </div>
+        toggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const target = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', target);
+        });
 
-          <div class="service reveal">
-            <div class="service-top">
-              <div class="service-title">Design systems</div>
-              <div class="service-badge">tokens • components</div>
-            </div>
-            <p>
-              Button styles, spacing scale, typographic rules, and reusable components —
-              so your product doesn't drift into chaos.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+        // Scroll Reveal Logic
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
 
-    <!-- WORK (placeholder section) -->
-    <section id="work" class="section">
-      <div class="reveal">
-        <p class="kicker">Work</p>
-        <h2>Portfolio (coming soon)</h2>
-        <p class="lead">
-          This will link to your case studies. For now, here are placeholder slots.
-        </p>
-      </div>
-
-      <div class="grid cards-3" style="margin-top: 18px;">
-        <div class="card reveal">
-          <h3>Project placeholder #1</h3>
-          <p>Short one-liner about the project outcome.</p>
-          <div class="placeholder" style="min-height: 160px; margin: 16px 0 0; border-radius: 16px;">
-            Image placeholder
-          </div>
-        </div>
-        <div class="card reveal">
-          <h3>Project placeholder #2</h3>
-          <p>Short one-liner about the project outcome.</p>
-          <div class="placeholder" style="min-height: 160px; margin: 16px 0 0; border-radius: 16px;">
-            Image placeholder
-          </div>
-        </div>
-        <div class="card reveal">
-          <h3>Project placeholder #3</h3>
-          <p>Short one-liner about the project outcome.</p>
-          <div class="placeholder" style="min-height: 160px; margin: 16px 0 0; border-radius: 16px;">
-            Image placeholder
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TEAM (placeholder section) -->
-    <section id="team" class="section">
-      <div class="split">
-        <div class="reveal">
-          <p class="kicker">Team</p>
-          <h2>Small team, high standards.</h2>
-          <p class="lead">
-            This section will become your team page later. For now, it signals that the link exists.
-          </p>
-        </div>
-
-        <div class="card reveal">
-          <h3>Team preview placeholder</h3>
-          <p>
-            Add member cards here later: role, short bio, and a clean portrait.
-          </p>
-          <div class="placeholder" style="min-height: 180px; margin-top: 14px;">
-            Team photo / portraits placeholder
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contact" class="section">
-      <div class="contact reveal">
-        <div>
-          <p class="kicker">Contact</p>
-          <h2>Reach us. We'll tell you what's possible.</h2>
-          <p class="lead">
-            Send a quick message with: what you're building, deadline, and budget range.
-            If it's vague, we'll ask the annoying questions (for your own good).
-          </p>
-        </div>
-
-        <div class="contact-grid">
-          <div class="contact-item">
-            <small>Email</small>
-            <a class="mono" href="mailto:hello@bebendesign.com">beben.design@gmail.com</a>
-          </div>
-
-          <div class="contact-item">
-            <small>WhatsApp</small>
-            <a class="mono" href="#" onclick="alert('Replace this with your WhatsApp link. Example: https://wa.me/2547XXXXXXXX'); return false;">
-              +254 114 728 233
-            </a>
-          </div>
-
-          <div class="contact-item">
-            <small>Location</small>
-            <span class="mono">Nairobi, KE</span>
-          </div>
-        </div>
-
-        <div class="hero-actions" style="margin-top: 4px;">
-          <a class="btn btn-primary" href="mailto:hello@bebendesign.com">Email us</a>
-          <a class="btn" href="#" onclick="alert('Replace with Calendly / booking link later'); return false;">Book a call (later)</a>
-          <a class="btn" href="#home">Back to top</a>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <div class="wrap foot">
-        <div>© <span id="year"></span> Beben Design. Built with whitespace and stubbornness.</div>
-        <div>
-          <a href="#home" class="active">Home</a>
-          <a href="#work">Portfolio</a>
-          <a href="#team">Team</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </div>
-    </footer>
-  </main>
-
-  <script>
-    // ---------------------------
-    // Theme toggle (default: light)
-    // ---------------------------
-    const root = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
-
-    function setTheme(theme){
-      root.setAttribute('data-theme', theme);
-      localStorage.setItem('beben_theme', theme);
-
-      // update theme-color for nicer mobile browser UI
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if(meta) meta.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#ffffff');
-    }
-
-    const savedTheme = localStorage.getItem('beben_theme');
-    if(savedTheme === 'dark') setTheme('dark');
-    else setTheme('light');
-
-    themeToggle.addEventListener('click', () => {
-      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-      setTheme(current === 'dark' ? 'light' : 'dark');
-    });
-
-    // ---------------------------
-    // Mobile menu
-    // ---------------------------
-    const menuBtn = document.getElementById('menuBtn');
-    const mobilePanel = document.getElementById('mobilePanel');
-
-    menuBtn?.addEventListener('click', () => {
-      const isOpen = mobilePanel.style.display === 'block';
-      mobilePanel.style.display = isOpen ? 'none' : 'block';
-      menuBtn.setAttribute('aria-expanded', String(!isOpen));
-    });
-
-    // Close mobile menu on link click
-    mobilePanel?.addEventListener('click', (e) => {
-      const target = e.target;
-      if(target && target.tagName === 'A'){
-        mobilePanel.style.display = 'none';
-        menuBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    // ---------------------------
-    // Active nav highlight by section
-    // ---------------------------
-    const navLinks = Array.from(document.querySelectorAll('.nav-links a'));
-    const mobileLinks = Array.from(document.querySelectorAll('.mobile-links a'));
-    const allLinks = [...navLinks, ...mobileLinks];
-
-    function setActive(hash){
-      allLinks.forEach(a => {
-        const isActive = a.getAttribute('href') === hash;
-        a.classList.toggle('active', isActive);
-      });
-    }
-
-    const sections = ['#home','#services','#work','#team','#contact']
-      .map(id => document.querySelector(id))
-      .filter(Boolean);
-
-    const sectionObserver = new IntersectionObserver((entries) => {
-      // Pick the most visible intersecting section
-      const visible = entries
-        .filter(en => en.isIntersecting)
-        .sort((a,b) => (b.intersectionRatio - a.intersectionRatio))[0];
-
-      if(visible?.target?.id){
-        setActive('#' + visible.target.id);
-      }
-    }, { root: null, threshold: [0.3, 0.6] });
-
-    sections.forEach(sec => sectionObserver.observe(sec));
-
-    // ---------------------------
-    // Scroll reveal
-    // ---------------------------
-    const reveals = document.querySelectorAll('.reveal');
-
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          entry.target.classList.add('show');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-
-    reveals.forEach(el => revealObserver.observe(el));
-
-    // ---------------------------
-    // Misc
-    // ---------------------------
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
