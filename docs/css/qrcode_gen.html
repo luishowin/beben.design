@@ -1,112 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QR → SVG (Offline)</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f5f5f7;
-      margin: 0;
-      padding: 32px;
-    }
-    h1 { margin-top: 0; }
-    .box {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 420px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    #out { margin-top: 20px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Studio</title>
+    <!-- Use qrcode-generator for high reliability and SVG support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <!-- Lucide for iOS-style icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7; /* iOS System Gray 6 */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ios-card {
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .ios-input {
+            background-color: #F2F2F7;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .ios-input:focus {
+            outline: none;
+            background-color: #E5E5EA;
+            box-shadow: 0 0 0 2px #007AFF;
+        }
+
+        .ios-button {
+            background-color: #007AFF;
+            color: white;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            transition: transform 0.1s active;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .ios-button:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .ios-button-secondary {
+            background-color: #E5E5EA;
+            color: #007AFF;
+        }
+
+        .qr-preview-container {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            border: 1px solid #E5E5EA;
+        }
+
+        #qr-code svg {
+            width: 100%;
+            height: auto;
+            max-width: 250px;
+        }
+        
+        .segmented-control {
+            background: #E3E3E8;
+            border-radius: 9px;
+            padding: 2px;
+            display: flex;
+        }
+
+        .segmented-control button {
+            flex: 1;
+            padding: 6px 0;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 7px;
+            transition: all 0.2s;
+        }
+
+        .segmented-control button.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
 </head>
-<body>
+<body class="p-4 md:p-8 flex flex-col items-center">
 
-<h1>QR → SVG</h1>
-<div class="box">
-  <input id="text" value="https://beben.design" />
-  <button onclick="generate()">Generate</button>
-  <button onclick="download()">Download SVG</button>
-  <div id="out"></div>
-</div>
+    <div class="w-full max-w-md">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-black">QR Studio</h1>
+                <p class="text-gray-500">Professional SVG Exports</p>
+            </div>
+            <div class="text-blue-600">
+                <i data-lucide="qr-code" size="32"></i>
+            </div>
+        </header>
 
-<script>
-/*
-  This is a deliberately tiny QR encoder.
-  Version 1 QR, byte mode, fixed mask.
-  Enough for URLs.
-*/
+        <main class="ios-card p-6 space-y-6">
+            <!-- URL Input -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase ml-1">Web Link</label>
+                <input type="url" id="urlInput" class="ios-input" placeholder="https://example.com" value="https://google.com">
+            </div>
 
-function generate() {
-  const value = document.getElementById('text').value.trim();
-  if (!value) return;
+            <!-- Error Correction Control -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-gray-500 uppercase ml-1">Error Correction Level</label>
+                <div class="segmented-control" id="eccControl">
+                    <button data-level="L" class="active">L (7%)</button>
+                    <button data-level="M">M (15%)</button>
+                    <button data-level="Q">Q (25%)</button>
+                    <button data-level="H">H (30%)</button>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-1 italic">Higher levels allow for logo overlays or damage resistance.</p>
+            </div>
 
-  const size = 21;
-  const m = Array.from({ length: size }, () => Array(size).fill(0));
+            <!-- Preview -->
+            <div class="qr-preview-container" id="qr-code">
+                <!-- SVG injected here -->
+            </div>
 
-  function finder(x, y) {
-    for (let i = -1; i <= 7; i++) for (let j = -1; j <= 7; j++) {
-      if (x+i<0||y+j<0||x+i>=size||y+j>=size) continue;
-      const on = (i>=0&&i<=6&&j>=0&&j<=6&&(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4)));
-      m[y+j][x+i] = on ? 1 : 0;
-    }
-  }
+            <!-- Actions -->
+            <div class="grid grid-cols-1 gap-3">
+                <button id="downloadBtn" class="ios-button">
+                    <i data-lucide="download" size="20"></i>
+                    Export SVG (1000x1000)
+                </button>
+                <button id="copyBtn" class="ios-button ios-button-secondary">
+                    <i data-lucide="copy" size="20"></i>
+                    Copy SVG Code
+                </button>
+            </div>
+        </main>
 
-  finder(0,0);
-  finder(size-7,0);
-  finder(0,size-7);
+        <footer class="mt-8 text-center text-gray-400 text-xs">
+            <p>Designed for high-fidelity scanning.</p>
+        </footer>
+    </div>
 
-  let x = size - 1;
-  let y = size - 1;
-  let dir = -1;
+    <div id="toast" class="toast">Action completed</div>
 
-  for (const c of value) {
-    let b = c.charCodeAt(0);
-    for (let i = 7; i >= 0; i--) {
-      while (m[y][x]) {
-        x -= 2;
-        if (x < 0) { x = size - 1; y += dir; dir *= -1; }
-      }
-      m[y][x] = (b >> i) & 1;
-      x--;
-    }
-  }
+    <script>
+        // State
+        let currentLevel = 'L';
+        const urlInput = document.getElementById('urlInput');
+        const qrContainer = document.getElementById('qr-code');
+        const eccButtons = document.querySelectorAll('#eccControl button');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
 
-  let svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 210">';
-  svg += '<rect width="100%" height="100%" fill="white"/>';
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2000);
+        }
 
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (m[y][x]) {
-        svg += `<rect x="${x*10}" y="${y*10}" width="10" height="10" fill="black"/>`;
-      }
-    }
-  }
+        // Generate QR Logic
+        function generateQR() {
+            const text = urlInput.value || ' ';
+            
+            try {
+                // Type 0 = Auto detect size
+                const qr = qrcode(0, currentLevel);
+                qr.addData(text);
+                qr.make();
+                
+                // Get SVG as string
+                // We generate it with a high cell size for the 1000x1000 requirement
+                const cellSize = 10; 
+                const margin = 4;
+                const rawSvg = qr.createSvgTag(cellSize, margin);
+                
+                qrContainer.innerHTML = rawSvg;
+                
+                // Add responsive sizing but keep viewbox for scaling
+                const svgElement = qrContainer.querySelector('svg');
+                svgElement.setAttribute('width', '100%');
+                svgElement.setAttribute('height', '100%');
+                
+            } catch (err) {
+                console.error(err);
+                qrContainer.innerHTML = '<p class="text-red-500 text-sm">Input too long for level</p>';
+            }
+        }
 
-  svg += '</svg>';
-  window._svg = svg;
-  document.getElementById('out').innerHTML = svg;
-}
+        function getLargeSvg() {
+            const text = urlInput.value || ' ';
+            const qr = qrcode(0, currentLevel);
+            qr.addData(text);
+            qr.make();
+            
+            // Calculate scale to hit exactly 1000px
+            const moduleCount = qr.getModuleCount();
+            const margin = 4;
+            const totalModules = moduleCount + (margin * 2);
+            const targetSize = 1000;
+            const exactCellSize = targetSize / totalModules;
+            
+            return qr.createSvgTag(exactCellSize, margin);
+        }
 
-function download() {
-  if (!window._svg) return;
-  const blob = new Blob([window._svg], { type: 'image/svg+xml' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'qr.svg';
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+        // Event Listeners
+        urlInput.addEventListener('input', generateQR);
 
-generate();
-</script>
+        eccButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                eccButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLevel = btn.getAttribute('data-level');
+                generateQR();
+            });
+        });
 
+        downloadBtn.addEventListener('click', () => {
+            const svgData = getLargeSvg();
+            const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `qr-code-1000x1000.svg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('SVG Downloaded');
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const svgData = getLargeSvg();
+            const textArea = document.createElement('textarea');
+            textArea.value = svgData;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('SVG Code Copied');
+            } catch (err) {
+                showToast('Failed to copy');
+            }
+            document.body.removeChild(textArea);
+        });
+
+        // Init
+        window.onload = () => {
+            lucide.createIcons();
+            generateQR();
+        };
+    </script>
 </body>
 </html>
