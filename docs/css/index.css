@@ -216,7 +216,7 @@ body.menu-open #hamburger span:nth-child(3) {
         .placeholder {
             width: 100%;
             height: 300px;
-            background: var(--text);
+            background: );
             opacity: 0.1;
             margin-top: 1rem;
         }
@@ -241,7 +241,7 @@ body.menu-open #hamburger span:nth-child(3) {
         }
 
         /* --- Responsive Breakpoints --- */
-    @media (max-width: 1024px) { /* Tablet and Mobile */
+        @media (max-width: 1024px) { /* Tablet and Mobile */
         .desktop-only {
             display: none;
         }
