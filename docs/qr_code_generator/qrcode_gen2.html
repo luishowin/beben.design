@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QR Studio</title>
+    <!-- Use qrcode-generator for high reliability and SVG support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <!-- Lucide for iOS-style icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --ios-blue: #007AFF;
+            --ios-bg: #F2F2F7;
+            --ios-card: #FFFFFF;
+            --ios-text: #000000;
+            --ios-gray: #8E8E93;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .ios-card {
+            background-color: var(--ios-card);
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .ios-input {
+            background-color: #F2F2F7;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 14px 16px;
+            width: 100%;
+            font-size: 16px; /* Prevents iOS auto-zoom */
+            transition: all 0.2s ease;
+            appearance: none;
+        }
+
+        .ios-input:focus {
+            outline: none;
+            background-color: #FFFFFF;
+            border-color: var(--ios-blue);
+        }
+
+        .ios-button {
+            background-color: var(--ios-blue);
+            color: white;
+            border-radius: 14px;
+            padding: 14px 20px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        .ios-button:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+
+        .ios-button-secondary {
+            background-color: #E5E5EA;
+            color: var(--ios-blue);
+        }
+
+        .qr-preview-container {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            border: 1px solid #E5E5EA;
+        }
+
+        #qr-code svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .segmented-control {
+            background: #E3E3E8;
+            border-radius: 10px;
+            padding: 2px;
+            display: flex;
+            width: 100%;
+        }
+
+        .segmented-control button {
+            flex: 1;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            background: transparent;
+            color: #3A3A3C;
+        }
+
+        .segmented-control button.active {
+            background: white;
+            color: black;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.3s;
+            opacity: 0;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive spacing for smaller phones */
+        @media (max-height: 700px) {
+            .header-spacing { margin-bottom: 1rem; }
+            .main-padding { padding: 1rem; }
+            .qr-preview-container { max-width: 240px; }
+        }
+    </style>
+</head>
+<body class="safe-area-inset-bottom p-4 md:p-8 flex flex-col items-center">
+
+    <div class="w-full max-w-md">
+        <header class="header-spacing mb-8 flex justify-between items-end px-1">
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-black">QR Studio</h1>
+                <p class="text-gray-500 font-medium">Precision Vector Codes</p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-2xl text-blue-600 mb-1">
+                <i data-lucide="qr-code" size="28"></i>
+            </div>
+        </header>
+
+        <main class="ios-card main-padding p-6 space-y-6">
+            <!-- URL Input -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Destination URL</label>
+                <input type="url" id="urlInput" class="ios-input" placeholder="https://example.com" value="https://google.com" spellcheck="false" autocomplete="off">
+            </div>
+
+            <!-- Error Correction Control -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Reliability (ECC)</label>
+                <div class="segmented-control" id="eccControl">
+                    <button data-level="L" class="active">L</button>
+                    <button data-level="M">M</button>
+                    <button data-level="Q">Q</button>
+                    <button data-level="H">H</button>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="qr-preview-container" id="qr-code">
+                <!-- SVG injected here -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3 pt-2">
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="downloadPngBtn" class="ios-button">
+                        <i data-lucide="image" size="18"></i>
+                        PNG
+                    </button>
+                    <button id="downloadSvgBtn" class="ios-button">
+                        <i data-lucide="file-type" size="18"></i>
+                        SVG
+                    </button>
+                </div>
+                
+                <button id="copyBtn" class="ios-button ios-button-secondary">
+                    <i data-lucide="copy" size="18"></i>
+                    Copy Code
+                </button>
+            </div>
+        </main>
+
+        <footer class="mt-8 text-center text-gray-400 text-[11px] px-6 leading-relaxed">
+            <p>1000x1000px exports included. Optimized for print and digital displays.</p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast">Action completed</div>
+
+    <script>
+        // State
+        let currentLevel = 'L';
+        const urlInput = document.getElementById('urlInput');
+        const qrContainer = document.getElementById('qr-code');
+        const eccButtons = document.querySelectorAll('#eccControl button');
+        const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+        const downloadPngBtn = document.getElementById('downloadPngBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 2500);
+        }
+
+        // Generate QR Logic
+        function generateQR() {
+            const text = urlInput.value.trim() || ' ';
+            
+            try {
+                // Type 0 = Auto detect size
+                const qr = qrcode(0, currentLevel);
+                qr.addData(text);
+                qr.make();
+                
+                // SVG for preview (responsive)
+                const cellSize = 10; 
+                const margin = 4;
+                const rawSvg = qr.createSvgTag(cellSize, margin);
+                
+                qrContainer.innerHTML = rawSvg;
+                
+                const svgElement = qrContainer.querySelector('svg');
+                svgElement.setAttribute('width', '100%');
+                svgElement.setAttribute('height', '100%');
+                svgElement.style.maxWidth = '100%';
+                
+            } catch (err) {
+                qrContainer.innerHTML = '<div class="text-red-500 text-xs text-center p-4">Character limit exceeded for this level</div>';
+            }
+        }
+
+        /**
+         * Generates a high-res SVG string at exactly 1000x1000
+         */
+        function getLargeSvg() {
+            const text = urlInput.value.trim() || ' ';
+            const qr = qrcode(0, currentLevel);
+            qr.addData(text);
+            qr.make();
+            
+            const moduleCount = qr.getModuleCount();
+            const margin = 4;
+            const totalModules = moduleCount + (margin * 2);
+            const targetSize = 1000;
+            const exactCellSize = targetSize / totalModules;
+            
+            return qr.createSvgTag(exactCellSize, margin);
+        }
+
+        /**
+         * Converts SVG to PNG using a Canvas
+         */
+        async function exportPng() {
+            const svgString = getLargeSvg();
+            const canvas = document.createElement('canvas');
+            canvas.width = 1000;
+            canvas.height = 1000;
+            const ctx = canvas.getContext('2d');
+
+            const svgBlob = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            const img = new Image();
+            img.onload = () => {
+                // Draw white background (QR codes need contrast)
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, 1000, 1000);
+                ctx.drawImage(img, 0, 0);
+                
+                const pngUrl = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.href = pngUrl;
+                link.download = `qr-code-studio.png`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+                showToast('PNG Exported (1000x1000)');
+            };
+            img.src = url;
+        }
+
+        // Event Listeners
+        urlInput.addEventListener('input', generateQR);
+
+        eccButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                eccButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLevel = btn.getAttribute('data-level');
+                generateQR();
+            });
+        });
+
+        downloadSvgBtn.addEventListener('click', () => {
+            const svgData = getLargeSvg();
+            const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `qr-code-studio.svg`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('SVG Exported');
+        });
+
+        downloadPngBtn.addEventListener('click', exportPng);
+
+        copyBtn.addEventListener('click', () => {
+            const svgData = getLargeSvg();
+            const textArea = document.createElement('textarea');
+            textArea.value = svgData;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Vector code copied to clipboard');
+            } catch (err) {
+                showToast('Clipboard error');
+            }
+            document.body.removeChild(textArea);
+        });
+
+        // Init
+        window.onload = () => {
+            lucide.createIcons();
+            generateQR();
+        };
+    </script>
+</body>
+</html>
