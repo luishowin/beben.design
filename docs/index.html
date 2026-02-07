@@ -54,7 +54,11 @@
     <section class="hero reveal">
         <h1>Design <span class="highlight-box">logic</span> before the first line of code.</h1>
         <p style="max-width: 600px;">Beben Design is a digital product studio that prioritizes cognitive ergonomics and structured problem-solving. We build interfaces that work as well as they look, ensuring your product is usable before it's even built.</p>
-        <a href="mailto:hello.beben.design@gmail.com" class="cta-link">START A CONVERSATION</a>
+        <a href="mailto:hello.beben.design@gmail.com" 
+           class="cta-link copy-email"
+           data-email="hello.beben.design@gmail.com"
+           style="text-decoration: none; color: #ff1f17; padding-top: 1rem;">START A CONVERSATION <strong>↗</strong>
+        </a>
     </section>
 
     <section id="services" class="reveal">
@@ -232,6 +236,21 @@
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    
+        document.querySelector(".copy-email").addEventListener("click", function(e) {
+  e.preventDefault();
+
+         const email = this.dataset.email;
+
+        navigator.clipboard.writeText(email).then(() => {
+            const toast = document.getElementById("copy-toast");
+            toast.classList.add("show");
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2500);
+  });
+});
 </script>
 
 </body>

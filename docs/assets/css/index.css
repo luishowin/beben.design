@@ -105,44 +105,43 @@
             transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
         }
 
-/* --- Mobile Overlay Fix --- */
-#mobile-menu-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 0;
-    background-color: var(--bg);
+        /* --- Mobile Overlay Fix --- */
+        #mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        background-color: var(--bg);
 
-    /* Sits below the hamburger, but above everything else */
-    z-index: 1000; 
-    overflow: hidden;
-    transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none; /* Prevents ghost clicks when closed */
+        /* Sits below the hamburger, but above everything else */
+        z-index: 1000; 
+        overflow: hidden;
+        transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none; /* Prevents ghost clicks when closed */
 }
 
-#mobile-menu-overlay.is-active {
-    height: 100vh;
-    pointer-events: auto; /* Re-enable clicks when open */
-}
+        #mobile-menu-overlay.is-active {
+            height: 100vh;
+            pointer-events: auto; /* Re-enable clicks when open */
+        }
 
-/* --- The 'X' Transformation --- */
-body.menu-open #hamburger span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-}
+    /* --- The 'X' Transformation --- */
+    body.menu-open #hamburger span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
 
-body.menu-open #hamburger span:nth-child(2) {
-    opacity: 0;
-    transform: translateX(10px); /* Technical slide-out effect */
-}
+    body.menu-open #hamburger span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(10px); /* Technical slide-out effect */
+    }
 
-body.menu-open #hamburger span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-}
-
+    body.menu-open #hamburger span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
 
     .mobile-menu {
         list-style: none;
@@ -197,6 +196,58 @@ body.menu-open #hamburger span:nth-child(3) {
             line-height: 1.1;
             margin-bottom: 2rem;
     }
+    .cta-link {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .cta-link:hover {
+        text-decoration: underline;
+    }
+
+/* Tooltip */
+.cta-link::after {
+  content: "click to copy email";
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  cursor: pointer;
+
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.cta-link:hover::after {
+  opacity: 1;
+}
+
+/* Toast notification */
+#copy-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #111;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 1000;
+}
+
+#copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 
     .highlight-box {
             background-color: var(--highlight);
