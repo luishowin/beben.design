@@ -27,8 +27,8 @@
         }
         /* global custom text highlight  */
             ::selection{
-            color: rgb(255, 255, 255);
-            background: rgb(255, 48, 48);
+            color: var(--bg);
+            background: var(--highlight);
         }
 
         /* --- Navigation --- */
@@ -113,6 +113,7 @@
     width: 100%;
     height: 0;
     background-color: var(--bg);
+    
     /* Sits below the hamburger, but above everything else */
     z-index: 1000; 
     overflow: hidden;
@@ -165,6 +166,7 @@ body.menu-open #hamburger span:nth-child(3) {
         font-weight: 700;
         text-transform: uppercase;
     }
+
     /* --- Animation States for Hamburger --- */
     body.menu-open #hamburger span:nth-child(1) {
         transform: translateY(9px) rotate(45deg);
@@ -176,44 +178,44 @@ body.menu-open #hamburger span:nth-child(3) {
         transform: translateY(-9px) rotate(-45deg);
     }
 
-        /* --- Sections --- */
-        section {
+    /* --- Sections --- */
+    section {
             padding: 100px 5%;
             border-bottom: var(--border);
-        }
+    }
 
-        .hero {
+    .hero {
             min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-        }
+    }
 
-        h1 {
+    h1 {
             font-size: clamp(2rem, 8vw, 5rem);
             line-height: 1.1;
             margin-bottom: 2rem;
-        }
+    }
 
-        .highlight-box {
+    .highlight-box {
             background-color: var(--highlight);
             color: #000;
             display: inline-block;
             padding: 0 10px;
-        }
+    }
 
-        .grid {
+    .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-        }
+    }
 
-        .service-card {
+    .service-card {
             border: var(--border);
             padding: 2rem;
-        }
+    }
 
-        .placeholder {
+    .placeholder {
             width: 100%;
             height: 300px;
             background-image: url('../images/moto25.jpg');
@@ -221,7 +223,87 @@ body.menu-open #hamburger span:nth-child(3) {
             background-attachment: fixed;
 
             margin-top: 1rem;
-        }
+    }
+
+    footer {
+    padding: 100px var(--side-padding, 5%); /* Aligns with body padding */
+    border-top: 2px solid var(--text);
+    margin-top: 5rem;
+    }
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+}
+
+.footer-brand p {
+    margin: 0.2rem 0;
+}
+
+.copyright {
+    margin-top: 2rem !important;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+.footer-links {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1.5rem;
+}
+
+.footer-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9rem;
+}
+
+.footer-nav a:hover {
+    text-decoration: underline;
+}
+
+.back-to-top {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.back-to-top:hover {
+    opacity: 0.8;
+}
+
+/* Responsive Reset */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .footer-links {
+        text-align: left;
+        align-items: flex-start;
+        margin-top: 2rem;
+    }
+}
 
         /* --- Animation --- */
         .reveal {
