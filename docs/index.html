@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Beben Design | Design-Led Digital Product Studio</title>
+    <meta name="title" content="Beben Design | Design-Led Digital Product Studio">
+    <meta name="description" content="Beben Design is a multidisciplinary studio focused on design logic, UX research, and high-performance front-end development.">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/oldindex.css">
+    <link rel="stylesheet" href="./assets/css/index.css">
 </head>
 <body>
 
+<nav>
+    <div class="logo">Beben Design</div>
+    <div class="nav-right">
+        <button id="theme-toggle">TOGGLE LIGHT/ DARK</button>
+        
+        <ul class="menu desktop-only">
+            <li><a href="#" class="active">HOME</a></li>
+            <li><a href="#services">SERVICES</a></li>
+            <li><a href="#work">WORK</a></li>
+            <li><a href="#process">PROCESS</a></li>
+            <li><a href="#industries">INDUSTRIES</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="./qr_code_generator/qrcode_gen.html">CONTACT</a></li>
+        </ul>
+
+        <button id="hamburger" aria-label="Toggle Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</nav>
 
 <div id="mobile-menu-overlay">
     <ul class="mobile-menu">
@@ -25,6 +51,53 @@
 </div>
 
 <main>
+    <section class="hero reveal">
+        <h1>Design <span class="highlight-box">logic</span> before the first line of code.</h1>
+        <p style="max-width: 600px;">Beben Design is a digital product studio that prioritizes cognitive ergonomics and structured problem-solving. We build interfaces that work as well as they look, ensuring your product is usable before it's even built.</p>
+        <a href="mailto:hello.beben.design@gmail.com" class="cta-link">START A CONVERSATION</a>
+    </section>
+
+    <section id="services" class="reveal">
+        <h2>OUR DESIGN & FRONT-END SERVICES</h2>
+        <div class="grid">
+            <div class="service-card">
+                <h3>Websites</h3>
+                <p>High-performance brand anchors optimized for conversion and clarity.</p>
+            </div>
+            <div class="service-card">
+                <h3>Web Portals</h3>
+                <p>Secure, structured gateways designed for complex user workflows.</p>
+            </div>
+            <div class="service-card">
+                <h3>UX Research</h3>
+                <p>Understanding user behavior to drive informed design decisions.</p>
+            </div>
+            <div class="service-card">
+                <h3>Mobile UI</h3>
+                <p>iOS & Android interfaces that respect platform-specific patterns.</p>
+            </div>
+            <div class="service-card">
+                <h3>Desktop App UI</h3>
+                <p>Robust layouts for software that requires heavy lifting and deep focus.</p>
+            </div>
+            <div class="service-card">
+                <h3>HMI</h3>
+                <p>Bridging the physical and digital for hardware-driven products.</p>
+            </div>
+            <div class="service-card">
+                <h3>Rapid Prototyping</h3>
+                <p>Rapid digital prototyping to test ideas before diving deep into your pockets.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="work" class="reveal">
+        <h2>THINKING IN PIXELS</h2>
+        <p style="margin-bottom: 1.5rem;">Every project is a case study in validation. We don't just showcase final renders; we showcase the decisions, iterations, and user-centric logic that led to the result.</p>
+        <a href="#">
+            <div class="placeholder" style="background: #f0f0f0; border: 1px solid var(--text); height: 300px;"></div>
+        </a>
+    </section>
 
     <section id="process" class="reveal">
         <h2>FRONT-END DEVELOPMENT PROCESS</h2>
@@ -38,16 +111,78 @@
         </div>
     </section>
 
-  
+    <section class="reveal">
+        <h2>OUR FRAMEWORKS</h2>
+        <div class="grid">
+            <div class="service-card"><h3>HTML/CSS | Core</h3><p>Clean, semantic code that ensures longevity.</p></div>
+            <div class="service-card"><h3>React JS</h3><p>Modular interfaces at scale.</p></div>
+            <div class="service-card"><h3>Webflow</h3><p>Rapid deployment without quality compromise.</p></div>
+            <div class="service-card"><h3>Node JS</h3><p>Reliable server-side logic.</p></div>
+        </div>
+        <p><em>Technology serves design decisions.</em></p>
+    </section>
+
+    <section id="industries" class="reveal">
+        <h2>INDUSTRIES WE SERVE</h2>
+        <div class="five-column-grid" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <span>// Ecommerce</span>
+            <span>// Automotive</span>
+            <span>// Healthcare</span>
+            <span>// Recreation</span>
+            <span>// Real Estate</span>
+        </div>
+    </section>
+
+    <section class="reveal">
+        <h2>COOPERATION MODELS</h2>
+        <div class="grid">
+            <div class="service-card">
+                <h3>Full Studio Lead</h3>
+                <p>We take ownership from discovery to handoff.</p>
+            </div>
+            <div class="service-card">
+                <h3>Team Augmentation</h3>
+                <p>Integrating as an extension of your internal team.</p>
+            </div>
+            <div class="service-card">
+                <h3>Long-term Partnership</h3>
+                <p>Ongoing support for evolving products.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="reveal">
+        <h2>FAQ</h2>
+        <div class="faq-item">
+            <p><strong>How much does it cost to build a website?</strong></p>
+            <p>Standard projects typically start at $2,000 USD. We provide transparent, line-item quotes based on complexity.</p>
+        </div>
+        <div class="faq-item">
+            <p><strong>Do you work with startups?</strong></p>
+            <p>Frequently. We help find your "Minimum Viable Design" to launch quickly and professionally.</p>
+        </div>
+        <div class="faq-item">
+            <p><strong>Can you redesign an existing product?</strong></p>
+            <p>Yes. We start with a UX audit to identify what's broken so we don't just paint over functional issues.</p>
+        </div>
+    </section>
+
+    <section id="contact" class="reveal">
+        <h2>LET'S TALK ABOUT YOUR PROJECT</h2>
+        <p>No aggressive sales pitch. Just a technical discussion about your goals.</p>
+        <p><a href="mailto:hello.beben.design@gmail.com" style="color: var(--text); font-weight: bold;">hello.beben.design@gmail.com</a></p>
+    </section>
+</main>
 
 <footer class="reveal">
     <div class="footer-container">
         <div class="footer-brand">
             <p><strong>Beben Design</strong></p>
             <p>Design & Interface Studio</p>
-            <p>hello.beben.design@gmail.com</p>
-            <p class="copyright">© Beben Design — All rights reserved</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">© Beben Design | All rights reserved</p>
         </div>
+
         <div class="footer-links">
             <ul class="footer-nav">
                 <li><a href="#contact">CONTACT</a></li>
@@ -55,28 +190,49 @@
                 <li><a href="#">PRIVACY POLICY</a></li>
                 <li><a href="#">CREDITS</a></li>
             </ul>
-            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">BACK TO TOP ↑</button>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
         </div>
     </div>
 </footer>
 
 <script>
-    // Logic for Reveal and Theme
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-        const html = document.documentElement;
-        html.setAttribute('data-theme', html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
-    });
-
+    // Theme, Hamburger, and Intersection Observer Logic (Kept from original)
     const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const body = document.body;
+
     hamburger.addEventListener('click', () => {
-        document.getElementById('mobile-menu-overlay').classList.toggle('is-active');
-        document.body.style.overflow = document.body.style.overflow === 'hidden' ? 'auto' : 'hidden';
+        const isOpen = overlay.classList.toggle('is-active');
+        body.classList.toggle('menu-open');
+        body.style.overflow = isOpen ? 'hidden' : 'auto';
     });
+
+    document.querySelectorAll('.mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            overlay.classList.remove('is-active');
+            body.classList.remove('menu-open');
+            body.style.overflow = 'auto';
+        });
+    });
+
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    toggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const target = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', target);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+
 </body>
 </html>

@@ -82,28 +82,28 @@
             font-family: inherit;
         }
 
-/* --- Updated Navigation & Hamburger --- */
-#hamburger {
-    display: none; /* Hidden on desktop */
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 18px; /* Adjusted for better proportion */
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    /* This is the critical fix: stay above the overlay */
-    position: relative; 
-    z-index: 1100; 
-}
+        /* --- Updated Navigation & Hamburger --- */
+        #hamburger {
+            display: none; /* Hidden on desktop */
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 18px; /* Adjusted for better proportion */
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            /* This is the critical fix: stay above the overlay */
+            position: relative; 
+            z-index: 1100; 
+        }
 
-#hamburger span {
-    width: 100%;
-    height: 2px;
-    background-color: var(--text);
-    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
-}
+        #hamburger span {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text);
+            transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+        }
 
 /* --- Mobile Overlay Fix --- */
 #mobile-menu-overlay {
@@ -113,7 +113,7 @@
     width: 100%;
     height: 0;
     background-color: var(--bg);
-    
+
     /* Sits below the hamburger, but above everything else */
     z-index: 1000; 
     overflow: hidden;
@@ -178,6 +178,7 @@ body.menu-open #hamburger span:nth-child(3) {
         transform: translateY(-9px) rotate(-45deg);
     }
 
+
     /* --- Sections --- */
     section {
             padding: 100px 5%;
@@ -224,6 +225,11 @@ body.menu-open #hamburger span:nth-child(3) {
 
             margin-top: 1rem;
     }
+
+    /* PROCESS */
+            .process-list { margin-top: 3rem; }
+            .process-step { display: flex; align-items: flex-start; gap: 2rem; padding: 1.5rem 0; border-bottom: 1px solid var(--text); }
+            .process-step span { opacity: 0.4; font-weight: bold; }
 
     footer {
     padding: 100px var(--side-padding, 5%); /* Aligns with body padding */
