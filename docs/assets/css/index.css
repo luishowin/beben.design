@@ -222,14 +222,13 @@ body.menu-open #hamburger span:nth-child(3) {
             background-image: url('../images/moto25.jpg');
             background-size: cover;
             background-attachment: fixed;
-
             margin-top: 1rem;
     }
 
     /* PROCESS */
-            .process-list { margin-top: 3rem; }
-            .process-step { display: flex; align-items: flex-start; gap: 2rem; padding: 1.5rem 0; border-bottom: 1px solid var(--text); }
-            .process-step span { opacity: 0.4; font-weight: bold; }
+        .process-list { margin-top: 3rem; }
+        .process-step { display: flex; align-items: flex-start; gap: 2rem; padding: 1.5rem 0; border-bottom: 1px solid var(--text); }
+        .process-step span { opacity: 0.4; font-weight: bold; }
 
     footer {
     padding: 100px var(--side-padding, 5%); /* Aligns with body padding */
