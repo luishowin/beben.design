@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Beben Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --bg: #ffffff;
+            --accent: #FFC917;
+            --border: #000000;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 60px 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 60px;
+        }
+
+        /* Sidebar Navigation */
+        aside { position: sticky; top: 60px; height: fit-content; }
+        aside h2 { font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 20px; color: #888; }
+        .nav-link { display: block; text-decoration: none; color: var(--primary); font-size: 0.75rem; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; }
+        .nav-link:hover { color: var(--accent); }
+
+        /* Content Area */
+        header { margin-bottom: 60px; border-left: 8px solid var(--accent); padding-left: 20px; }
+        h1 { font-size: 3rem; text-transform: uppercase; line-height: 0.9; margin-bottom: 10px; }
+        .meta { font-size: 0.8rem; font-weight: 700; }
+
+        section { margin-bottom: 80px; scroll-margin-top: 60px; }
+        h2.section-title { font-size: 1.4rem; background: var(--primary); color: #fff; padding: 5px 15px; display: inline-block; margin-bottom: 25px; }
+        h3 { font-size: 1rem; margin: 20px 0 10px 0; border-bottom: 1px solid #ddd; }
+        
+        p, li { font-size: 0.9rem; color: #333; margin-bottom: 15px; }
+        ul { list-style: none; }
+        li::before { content: "> "; color: var(--accent); font-weight: bold; }
+
+        .highlight-box { border: 2px solid var(--primary); padding: 20px; position: relative; }
+        .highlight-box::after { content: ""; position: absolute; top: 5px; left: 5px; width: 100%; height: 100%; background: var(--accent); z-index: -1; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; padding: 40px 20px; }
+            aside { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <aside>
+        <h2>INDEX // 2026</h2>
+        <a href="#intro" class="nav-link">01 Introduction</a>
+        <a href="#collection" class="nav-link">02 Collection</a>
+        <a href="#usage" class="nav-link">03 Usage</a>
+        <a href="#cookies" class="nav-link">04 Cookies</a>
+        <a href="#rights" class="nav-link">05 User Rights</a>
+        <a href="#contact" class="nav-link">06 Contact</a>
+    </aside>
+
+    <main>
+        <header>
+            <h1>PRIVACY <br>POLICY</h1>
+            <p class="meta">EFFECTIVE DATE: FEBRUARY 09, 2026</p>
+            <p class="meta">LOCATION: NAIROBI, KENYA</p>
+        </header>
+
+        <section id="intro">
+            <h2 class="section-title">01. Introduction</h2>
+            <p>This Privacy Policy explains how <strong>Beben Design</strong> collects, uses, and protects personal information obtained through our website and related communications. By using this website, you agree to the practices described in this policy in accordance with <strong>Kenya’s Data Protection Act</strong>.</p>
+        </section>
+
+        <section id="collection">
+            <h2 class="section-title">02. Information Collected</h2>
+            <h3>Direct Collection</h3>
+            <ul>
+                <li>Contact form submissions (Name, Email, Phone)</li>
+                <li>Project briefings and voluntary business data</li>
+                <li>Direct email communications</li>
+            </ul>
+            <h3>Automated Collection</h3>
+            <p>To optimize UX, we automatically log technical data: IP address, browser type, device type, and interaction patterns.</p>
+        </section>
+
+        <section id="usage">
+            <h2 class="section-title">03. How Information Is Used</h2>
+            <p>Personal information is strictly used for operational excellence:</p>
+            <ul>
+                <li>Project inquiry response and quotation</li>
+                <li>Ongoing service communication</li>
+                <li>Analytics to improve technical performance</li>
+            </ul>
+            <p><strong>Beben Design does not sell, rent, or trade your data to third parties.</strong></p>
+        </section>
+
+        <section id="cookies">
+            <h2 class="section-title">04. Cookies & Analytics</h2>
+            <p>We use cookies to understand site performance. You may disable these via your browser settings, though it may impact certain site functionalities.</p>
+            <div class="highlight-box">
+                <p><strong>Note:</strong> We utilize Google Analytics and secure hosting providers who process limited data necessary for infrastructure performance.</p>
+            </div>
+        </section>
+
+        <section id="rights">
+            <h2 class="section-title">05. User Rights</h2>
+            <p>Under the Data Protection Act, you have the right to:</p>
+            <ul>
+                <li>Access your personal data held by us</li>
+                <li>Correct inaccurate information</li>
+                <li>Request total deletion of your data records</li>
+            </ul>
+        </section>
+
+        <section id="contact">
+            <h2 class="section-title">06. Contact Information</h2>
+            <p>For data-related inquiries or to exercise your rights:</p>
+            <p><strong>BEBEN DESIGN</strong><br>
+            Email: hello.beben.design@gmail.com<br>
+            Phone: +254 114 728233<br>
+            Location: Nairobi, Kenya</p>
+        </section>
+
+        <footer style="margin-top: 100px; font-size: 0.7rem; opacity: 0.6;">
+            [ END OF DOCUMENT ]
+        </footer>
+    </main>
+</div>
+
+</body>
+</html>
