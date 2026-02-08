@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal | Beben Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --bg: #ffffff;
+            --accent: #FFC917; 
+            --border: #000000;
+            --spacing: 40px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            padding: var(--spacing);
+            display: flex;
+            justify-content: center;
+        }
+
+        .wrapper { max-width: 1200px; width: 100%; }
+
+        header {
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 40px;
+            margin-bottom: 60px;
+        }
+
+        h1 { font-size: clamp(2rem, 8vw, 4.5rem); text-transform: uppercase; font-weight: 700; letter-spacing: -3px; line-height: 0.9; }
+        h2 { font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px; background: var(--primary); color: #fff; display: inline-block; padding: 5px 15px; }
+        h3 { font-size: 1.1rem; margin-top: 20px; text-decoration: underline; }
+
+        .highlight { background-color: var(--accent); padding: 0 5px; font-weight: 700; }
+
+        /* Bento Grid */
+        .legal-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+        .card { border: 2px solid var(--primary); padding: 30px; grid-column: span 6; }
+        .card-full { grid-column: span 12; }
+        .card-third { grid-column: span 4; }
+
+        .card p, .card li { font-size: 0.9rem; margin-bottom: 12px; list-style: none; }
+        .card li::before { content: "// "; font-weight: bold; }
+
+        /* Tablet/Mobile Responsive */
+        @media (max-width: 1024px) { .card { grid-column: span 12; } .card-third { grid-column: span 6; } }
+        @media (max-width: 600px) { .card-third { grid-column: span 12; } body { padding: 20px; } }
+
+        footer {
+            margin-top: 80px;
+            padding: 40px 0;
+            border-top: 2px solid var(--primary);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .contact-info { font-size: 0.85rem; font-weight: 700; }
+        .btn-contact { background: var(--primary); color: #fff; padding: 15px 25px; text-decoration: none; font-weight: bold; }
+        .btn-contact:hover { background: var(--accent); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <p>[ VERSION 2026.01 ]</p>
+        <h1>LEGAL <span class="highlight">FRAMEWORK</span></h1>
+        <p>Beben Design: UX Research, UI Design & Digital Product Studio.</p>
+    </header>
+
+    <div class="legal-grid">
+        
+        <section class="card card-full">
+            <h2>0.1 Terms of Use</h2>
+            <p>By accessing beben.design, you accept these terms in full. We provide high-end digital product services; misuse of this site or its content is strictly prohibited.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div>
+                    <h3>Governing Law</h3>
+                    <p>These terms are governed by the laws of <span class="highlight">Kenya</span>. Any disputes will be settled within the jurisdiction of Kenyan courts.</p>
+                </div>
+                <div>
+                    <h3>Liability</h3>
+                    <p>Services are provided "as-is." Beben Design is not liable for indirect damages or implementation errors by third parties.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>0.2 Data & Privacy</h2>
+            <p>In alignment with <span class="highlight">Kenya’s Data Protection Act</span>, we are transparent about your footprint:</p>
+            <ul>
+                <li><strong>Collection:</strong> Name, email, and project details via contact forms.</li>
+                <li><strong>Analytics:</strong> We use cookies to understand UX patterns via Google Analytics.</li>
+                <li><strong>Storage:</strong> Data is encrypted and only stored as long as necessary for the project life-cycle.</li>
+                <li><strong>Rights:</strong> You may request data deletion or correction at any time.</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>0.3 Intellectual Property</h2>
+            <p>Ownership is the core of our value exchange:</p>
+            <ul>
+                <li><strong>Site Content:</strong> All code, logos, and copy on this site are owned by Beben Design.</li>
+                <li><strong>Client Work:</strong> Full IP rights transfer to the client only after final <span class="highlight">USD</span> payment is confirmed.</li>
+                <li><strong>Portfolio:</strong> We reserve the right to display project case studies unless a specific NDA is signed.</li>
+            </ul>
+        </section>
+
+        <section class="card card-full">
+            <h2>0.4 Disclaimer</h2>
+            <p>While we strive for 100% uptime and technical precision, we do not guarantee that the website will be uninterrupted or error-free. External links are provided for convenience; we hold no responsibility for third-party content. Design outcomes are collaborative and depend on client implementation and technical constraints.</p>
+        </section>
+
+        <footer class="card-full">
+            <div class="contact-info">
+                <p>BEBEN DESIGN STUDIO</p>
+                <p>REF: [AVAILABLE UPON REQUEST]</p>
+                <p>LOCATION: NAIROBI, KENYA / GLOBAL</p>
+                <p>EMAIL: hello.beben.design@gmail.com</p>
+            </div>
+            <a href="mailto:hello.beben.design@gmail.com" class="btn-contact">INITIATE INQUIRY</a>
+        </footer>
+    </div>
+</div>
+
+</body>
+</html>
