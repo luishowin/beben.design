@@ -252,6 +252,7 @@
         body.style.overflow = isOpen ? 'hidden' : 'auto';
     });
 
+    // Close mobile menu on link click 
     document.querySelectorAll('.mobile-menu a').forEach(link => {
         link.addEventListener('click', () => {
             overlay.classList.remove('is-active');
@@ -260,6 +261,7 @@
         });
     });
 
+    // Theme Toggle Logic 
     const toggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
     toggle.addEventListener('click', () => {
@@ -268,6 +270,7 @@
         html.setAttribute('data-theme', target);
     });
 
+    // Intersection Observer for Reveal Animations
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('active');
@@ -276,8 +279,9 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     
-        document.querySelector(".copy-email").addEventListener("click", function(e) {
-  e.preventDefault();
+    // Copy Email Logic 
+    document.querySelector(".copy-email").addEventListener("click", function(e) {
+    e.preventDefault();
 
          const email = this.dataset.email;
 

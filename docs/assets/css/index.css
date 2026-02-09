@@ -25,6 +25,9 @@
             transition: background 0.3s ease;
             line-height: 1.6;
         }
+
+
+
         /* global custom text highlight  */
             ::selection{
             color: var(--bg);
