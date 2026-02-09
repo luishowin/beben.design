@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team | Beben Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --primary: #000000; --bg: #ffffff; --accent: #FFC917; --dot: #e0e0e0; --card-bg: #fff;
+        }
+        :root[data-theme="dark"] {
+            --primary: #ffffff; --bg: #000000; --accent: #FFC917; --dot: #222222; --card-bg: #0a0a0a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--primary);
+            line-height: 1.5;
+        }
+
+        .wrapper { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* 1. Hero Section */
+        header { padding: 100px 0 60px 0; border-bottom: 2px solid var(--primary); margin-bottom: 60px; }
+        h1 { font-size: clamp(2rem, 8vw, 4rem); text-transform: uppercase; letter-spacing: -3px; line-height: 0.9; }
+        .subtitle { font-size: 1rem; margin-top: 20px; max-width: 500px; opacity: 0.8; }
+
+        /* 4. Team Grid */
+        .team-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+            margin-bottom: 80px;
+        }
+
+        .profile-card {
+            border: 2px solid var(--primary);
+            background: var(--card-bg);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Founder Card - Horizontal dominance, not vertical */
+        .lead-card { grid-column: span 2; display: grid; grid-template-columns: 200px 1fr; gap: 30px; }
+
+        /* 5. Profile Elements */
+        .photo-placeholder {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: var(--dot);
+            border: 1px solid var(--primary);
+            margin-bottom: 20px;
+            filter: grayscale(100%);
+        }
+        .lead-card .photo-placeholder { margin-bottom: 0; }
+
+        h2 { font-size: 1.4rem; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+        .role { font-size: 0.75rem; background: var(--accent); color: #000; padding: 2px 8px; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+        
+        .description { font-size: 0.85rem; margin-bottom: 20px; }
+        
+        .focus-areas { list-style: none; border-top: 1px dashed var(--dot); padding-top: 15px; }
+        .focus-areas li { font-size: 0.75rem; margin-bottom: 5px; }
+        .focus-areas li::before { content: "• "; color: var(--accent); font-weight: bold; }
+
+        /* 7. Studio Philosophy */
+        .philosophy-block {
+            background: var(--primary);
+            color: var(--bg);
+            padding: 60px 40px;
+            margin-bottom: 80px;
+            text-align: center;
+        }
+        .philosophy-block h3 { text-transform: uppercase; margin-bottom: 20px; }
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 800px) {
+            .team-grid { grid-template-columns: 1fr; }
+            .lead-card { grid-column: span 1; grid-template-columns: 1fr; }
+            .philosophy-block { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <p>[ 03. STRUCTURE ]</p>
+        <h1>CORE TEAM & <br>RESPONSIBILITY.</h1>
+        <p class="subtitle">Competence-driven architecture. We prioritize clear communication and direct access to the builders.</p>
+    </header>
+
+    <div class="team-grid">
+        
+        <article class="profile-card lead-card">
+            <div class="photo-placeholder"></div>
+            <div>
+                <h2>Luis Howin Maina</h2>
+                <span class="role">Founder & Lead UI Designer</span>
+                <p class="description">Leading the technical and visual direction of Beben Design. Luis ensures that every interface aligns with core UX research and business objectives.</p>
+                <ul class="focus-areas">
+                    <li>UI Systems</li>
+                    <li>UX Structure</li>
+                    <li>Interaction Design</li>
+                    <li>Product Direction</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="profile-card">
+            <div class="photo-placeholder"></div>
+            <h2>John Doe</h2>
+            <span class="role">Lead Developer</span>
+            <p class="description">Bridging the gap between high-fidelity design and production-ready code with a focus on performance.</p>
+            <ul class="focus-areas">
+                <li>Front-end Architecture</li>
+                <li>API Integration</li>
+                <li>Performance Optimization</li>
+            </ul>
+        </article>
+
+        <article class="profile-card">
+            <div class="photo-placeholder"></div>
+            <h2>Mary Poppins</h2>
+            <span class="role">UX Researcher</span>
+            <p class="description">Specializing in behavioral analysis and journey mapping to validate concepts before implementation.</p>
+            <ul class="focus-areas">
+                <li>User Interviews</li>
+                <li>Behavioral Analysis</li>
+                <li>Usability Testing</li>
+            </ul>
+        </article>
+
+    </div>
+
+    <section class="philosophy-block">
+        <h3>Studio Philosophy</h3>
+        <p style="opacity: 0.8;">Small teams, high responsibility.</p>
+        
+        <div class="philosophy-grid">
+            <div>
+                <strong style="color: var(--accent);">[ 01 ] ZERO INTERMEDIARIES</strong>
+                <p style="font-size: 0.8rem; margin-top: 10px;">Clients work directly with the design leads. No account managers, no lost translations.</p>
+            </div>
+            <div>
+                <strong style="color: var(--accent);">[ 02 ] OUTPUT > SCALE</strong>
+                <p style="font-size: 0.8rem; margin-top: 10px;">We keep the team lean to maintain overhead efficiency and design consistency.</p>
+            </div>
+            <div>
+                <strong style="color: var(--accent);">[ 03 ] TECHNICAL DEPTH</strong>
+                <p style="font-size: 0.8rem; margin-top: 10px;">Every team member understands the technical constraints of the hardware or software we build for.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="padding: 40px 0; font-size: 0.8rem; border-top: 1px solid var(--dot); display: flex; justify-content: space-between;">
+        <p>© 2026 BEBEN DESIGN</p>
+        <div>
+            <a href="/legal" style="color: inherit; text-decoration: none; margin-right: 15px;">Legal</a>
+            <a href="/privacy" style="color: inherit; text-decoration: none;">Privacy Policy</a>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>
