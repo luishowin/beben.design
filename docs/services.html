@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | Beben Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --primary: #000000; --bg: #ffffff; --accent: #FFC917; --dot: #e0e0e0; --card-border: #000;
+        }
+        :root[data-theme="dark"] {
+            --primary: #ffffff; --bg: #000000; --accent: #FFC917; --dot: #222222; --card-border: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 32px 32px;
+            color: var(--primary);
+            line-height: 1.5;
+            transition: background 0.3s ease;
+        }
+
+        .wrapper { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* 1. Hero Section */
+        .hero { height: 90vh; display: flex; flex-direction: column; justify-content: center; border-bottom: 4px solid var(--primary); margin-bottom: 60px; }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); text-transform: uppercase; line-height: 0.85; letter-spacing: -4px; margin-bottom: 30px; }
+        .hero-subtitle { max-width: 600px; font-size: 1.1rem; margin-bottom: 20px; }
+        .hero-tag { font-weight: 700; color: var(--accent); background: #000; display: inline-block; padding: 5px 10px; font-size: 0.8rem; }
+
+        /* 2. Intro Section */
+        .intro-section { margin-bottom: 100px; max-width: 800px; }
+        .intro-section h2 { font-size: 2rem; margin-bottom: 20px; text-decoration: underline; }
+
+        /* 3. Large Bento Grid */
+        .services-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 100px; }
+        
+        .service-card { 
+            grid-column: span 6; border: 2px solid var(--card-border); padding: 40px; 
+            background: var(--bg); display: flex; flex-direction: column; justify-content: space-between;
+            transition: transform 0.2s ease;
+        }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 10px 10px 0px var(--accent); }
+        .wide { grid-column: span 8; }
+        .slim { grid-column: span 4; }
+
+        .service-card h3 { font-size: 1.5rem; text-transform: uppercase; margin-bottom: 10px; }
+        .defining-statement { font-weight: 700; margin-bottom: 20px; display: block; }
+        .service-content { font-size: 0.9rem; margin-bottom: 30px; opacity: 0.9; }
+        .service-goal { background: var(--accent); color: #000; padding: 10px; font-size: 0.8rem; font-weight: 700; margin-top: auto; }
+
+        .btn-work { margin-top: 20px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.8rem; border: 1px solid var(--primary); padding: 10px; width: fit-content; }
+        .btn-work:hover { background: var(--primary); color: var(--bg); }
+
+        /* 11. Process Philosophy */
+        .philosophy { border-top: 4px solid var(--primary); padding: 80px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+        .step { font-size: 0.8rem; }
+        .step-num { font-size: 2rem; font-weight: 700; display: block; border-bottom: 2px solid var(--accent); margin-bottom: 10px; width: 40px; }
+
+        /* 13. Conversion CTA */
+        .conversion { background: var(--primary); color: var(--bg); padding: 80px 40px; text-align: center; margin-bottom: 80px; }
+        .conversion h2 { font-size: 2.5rem; margin-bottom: 40px; text-transform: uppercase; }
+        .cta-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .cta-btn { background: var(--accent); color: #000; padding: 20px 40px; text-decoration: none; font-weight: 700; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .service-card, .wide, .slim { grid-column: span 12; padding: 25px; }
+            .philosophy { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header class="hero">
+        <p>[ 01. CAPABILITIES ]</p>
+        <h1>DESIGN THAT WORKS <br>BEFORE IT <span style="background: var(--accent); color: #000;">LOOKS GOOD.</span></h1>
+        <p class="hero-subtitle">From early research to production-ready interfaces, Beben Design focuses on clarity, usability, and measurable outcomes.</p>
+        <p class="hero-tag">Decisions backed by reasoning, not trends.</p>
+    </header>
+
+    <section class="intro-section">
+        <h2>THE PIPELINE</h2>
+        <p>Interfaces must reduce friction. We treat design as problem-solving, connecting research to implementation in a seamless flow. Whether you need a single stage or the full pipeline, we build for scale.</p>
+    </section>
+
+    <div class="services-grid">
+        
+        <div class="service-card wide">
+            <h3>Websites</h3>
+            <span class="defining-statement">High-performance brand anchors.</span>
+            <div class="service-content">
+                <p>Information architecture, conversion-focused layouts, and performance-conscious front-end development.</p>
+                <ul style="font-size: 0.75rem; margin-top: 10px;">
+                    <li>// Landing Pages</li>
+                    <li>// Portfolios</li>
+                    <li>// Service Sites</li>
+                </ul>
+            </div>
+            <div class="service-goal">GOAL: Turn visitors into inquiries.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
+        </div>
+
+        <div class="service-card slim">
+            <h3>Posters & Print</h3>
+            <span class="defining-statement">Immediate recognition.</span>
+            <div class="service-content">
+                <p>Hierarchy-first design for event materials and brand consistency in physical spaces.</p>
+            </div>
+            <div class="service-goal">GOAL: Clarity in seconds.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
+        </div>
+
+        <div class="service-card slim">
+            <h3>UX Research</h3>
+            <span class="defining-statement">Pre-design intelligence.</span>
+            <div class="service-content">
+                <p>User flows, journey mapping, and behavioral analysis to prevent building the wrong thing.</p>
+            </div>
+            <div class="service-goal">GOAL: Reduce redesign costs.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
+        </div>
+
+        <div class="service-card wide">
+            <h3>Mobile UI (iOS/Android)</h3>
+            <span class="defining-statement">Platform-native identity.</span>
+            <div class="service-content">
+                <p>Touch-first interaction patterns and component libraries that respect platform conventions while scaling your brand.</p>
+            </div>
+            <div class="service-goal">GOAL: Reduced learning curve.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
+        </div>
+
+        <div class="service-card wide">
+            <h3>Desktop App UI</h3>
+            <span class="defining-statement">Software for productivity.</span>
+            <div class="service-content">
+                <p>Enterprise tools and dashboards optimized for dense information management and keyboard workflows.</p>
+            </div>
+            <div class="service-goal">GOAL: Increase task efficiency.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
+        </div>
+
+        <div class="service-card slim">
+            <h3>HMI</h3>
+            <span class="defining-statement">Software meets hardware.</span>
+            <div class="service-content">
+                <p>Context-aware layouts for vehicle dashboards and industrial control panels.</p>
+            </div>
+            <div class="service-goal">GOAL: Reliable operation.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
+        </div>
+
+        <div class="service-card card-full" style="grid-column: span 12;">
+            <h3>Rapid Prototyping</h3>
+            <span class="defining-statement">Concept validation at speed.</span>
+            <div class="service-content" style="max-width: 600px;">
+                <p>Testing ideas with clickable prototypes and fast iteration cycles before committing to full development costs.</p>
+            </div>
+            <div class="service-goal" style="width: fit-content;">GOAL: Save time and money.</div>
+            <a href="/sample-work.html" class="btn-work">VIEW PROTOTYPES</a>
+        </div>
+    </div>
+
+    <section class="philosophy">
+        <div class="step"><span class="step-num">01</span><strong>RESEARCH</strong><br>Understand behavior.</div>
+        <div class="step"><span class="step-num">02</span><strong>STRUCTURE</strong><br>Map the logic.</div>
+        <div class="step"><span class="step-num">03</span><strong>VISUAL</strong><br>Apply the interface.</div>
+        <div class="step"><span class="step-num">04</span><strong>EXECUTE</strong><br>Final implementation.</div>
+    </section>
+
+    <div style="padding: 100px 0; text-align: center; border-top: 1px solid var(--dot);">
+        <p>[ CASE STUDIES ]</p>
+        <h2 style="font-size: 2.5rem; margin-bottom: 30px;">SEE HOW THIS WORKS IN PRACTICE.</h2>
+        <a href="/sample-work.html" class="btn-work" style="padding: 20px 40px; font-size: 1rem;">VIEW SAMPLE WORK</a>
+    </div>
+
+    <section class="conversion">
+        <h2>READY TO BUILD SOMETHING THAT <span style="color: var(--accent);">ACTUALLY WORKS?</span></h2>
+        <div class="cta-group">
+            <a href="https://wa.me/254114728233" class="cta-btn">MESSAGE ON WHATSAPP</a>
+            <a href="mailto:hello.beben.design@gmail.com" class="cta-btn" style="background: #fff;">EMAIL US</a>
+        </div>
+    </section>
+
+    <footer style="padding: 40px 0; font-size: 0.8rem; border-top: 1px solid var(--dot); display: flex; justify-content: space-between;">
+        <p>© 2026 BEBEN DESIGN</p>
+        <p>NAIROBI, KENYA</p>
+    </footer>
+</div>
+
+</body>
+</html>

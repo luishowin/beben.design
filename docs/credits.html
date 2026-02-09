@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits | Beben Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --primary: #000000;
+            --bg: #ffffff;
+            --accent: #FFC917;
+            --dot: #e0e0e0;
+            --card-bg: #f9f9f9;
+        }
+        :root[data-theme="dark"] {
+            --primary: #ffffff;
+            --bg: #000000;
+            --accent: #FFC917;
+            --dot: #222222;
+            --card-bg: #111111;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--primary);
+            padding: 40px 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .wrapper { max-width: 900px; margin: 0 auto; }
+
+        header { margin-bottom: 60px; border-bottom: 2px solid var(--primary); padding-bottom: 20px; }
+        h1 { font-size: 3rem; text-transform: uppercase; letter-spacing: -2px; }
+        .meta { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+
+        /* Credits Grid */
+        .credits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        
+        .credit-card {
+            border: 1px solid var(--primary);
+            background: var(--card-bg);
+            padding: 25px;
+            position: relative;
+        }
+
+        .category {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: var(--accent);
+            color: #000;
+            padding: 2px 8px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        h2 { font-size: 1.1rem; margin-bottom: 15px; text-transform: uppercase; }
+        
+        .asset-list { list-style: none; }
+        .asset-item { 
+            font-size: 0.85rem; 
+            padding: 10px 0; 
+            border-bottom: 1px dashed var(--dot);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .asset-item:last-child { border-bottom: none; }
+
+        .attribution-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .attribution-link:hover { background: var(--accent); color: #000; }
+
+        footer { margin-top: 80px; font-size: 0.75rem; text-align: center; opacity: 0.6; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .credit-card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <p class="meta">[ SYSTEM_LOG: ASSET_CREDITS ]</p>
+        <h1>CREDITS.</h1>
+        <p>Recognizing the tools and creators that power our aesthetic.</p>
+    </header>
+
+    <div class="credits-grid">
+        
+        <div class="credit-card">
+            <span class="category">VISUALS</span>
+            <h2>Stock Imagery</h2>
+            <div class="asset-list">
+                <div class="asset-item">
+                    <span>Abstract Tech Textures</span>
+                    <a href="https://unsplash.com" class="attribution-link" target="_blank">Unsplash</a>
+                </div>
+                <div class="asset-item">
+                    <span>Portrait Mockups</span>
+                    <a href="https://pexels.com" class="attribution-link" target="_blank">Pexels</a>
+                </div>
+                <div class="asset-item">
+                    <span>3D Device Renders</span>
+                    <a href="https://bentogrids.com" class="attribution-link" target="_blank">BentoGrids</a>
+                </div>
+            </div>
+        </div>
+
+    
+        <div class="credit-card">
+            <span class="category">TYPE</span>
+            <h2>Typography</h2>
+            <div class="asset-list">
+                <div class="asset-item">
+                    <span>Roboto Mono</span>
+                    <a href="https://fonts.google.com" class="attribution-link" target="_blank">Google Fonts</a>
+                </div>
+                <div class="asset-item">
+                    <span>System Serif</span>
+                    <span>Local OS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="credit-card">
+            <span class="category">STACK</span>
+            <h2>Software & Frameworks</h2>
+            <div class="asset-list">
+                <div class="asset-item">
+                    <span>Deployment</span>
+                    <a href="#" class="attribution-link">Vercel / Netlify</a>
+                </div>
+                <div class="asset-item">
+                    <span>Design Tools</span>
+                    <span>Figma</span>
+                </div>
+                <div class="asset-item">
+                    <span>Animation</span>
+                    <span>Framer Motion</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="credit-card">
+            <span class="category">EXTRAS</span>
+            <h2>Icons & Graphics</h2>
+            <div class="asset-list">
+                <div class="asset-item">
+                    <span>Lucide Icons</span>
+                    <a href="https://lucide.dev" class="attribution-link" target="_blank">Lucide</a>
+                </div>
+                <div class="asset-item">
+                    <span>SVG Noise Textures</span>
+                    <span>Custom / Beben</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="card-full" style="border: 2px solid var(--primary); padding: 40px; margin-top: 40px; background: var(--card-bg);">
+    <span class="category" style="background: var(--accent); font-weight: 700; padding: 5px 10px; text-transform: uppercase; font-size: 0.7rem;">Legal / License</span>
+    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Beben Open-Source & Asset License</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <div>
+            <h3 style="font-size: 1rem; margin-bottom: 10px; color: var(--accent);">[ 01 ] CODE SNIPPETS</h3>
+            <p style="font-size: 0.85rem;">Unless otherwise stated, all code shared on this site is licensed under the <strong>MIT License</strong>. You are free to use, modify, and distribute it in your own projects (commercial or personal).</p>
+        </div>
+        <div>
+            <h3 style="font-size: 1rem; margin-bottom: 10px; color: var(--accent);">[ 02 ] DESIGN ASSETS</h3>
+            <p style="font-size: 0.85rem;">Graphic elements, UI kits, and mockups provided for download are under <strong>CC BY-NC 4.0</strong>. Use them, but give us a shout-out and keep it non-commercial unless we’ve chatted.</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--dot);">
+        <p style="font-size: 0.75rem; opacity: 0.8;">
+            <strong>Technical Note:</strong> Attribution should ideally link back to <span class="highlight">beben.design</span>. 
+            We believe in an open web—build cool things, just don't be a stranger.
+        </p>
+    </div>
+</section>
+
+
+    </div>
+
+    <footer>
+        <p>Version 1.0.4 // Beben Design Technical Documentation</p>
+        <p>Curated in Nairobi, Kenya.</p>
+    </footer>
+</div>
+
+</body>
+</html>
