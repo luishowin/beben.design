@@ -49,6 +49,7 @@
     </script>
 </head>
 <body>
+    <div class="dot-grid-bg" aria-hidden="true"></div>
 
 <nav>
     <div class="logo">Beben Design</div>
@@ -260,14 +261,25 @@
         });
     });
 
-    const toggle = document.getElementById('theme-toggle');
-    const html = document.documentElement;
-    toggle.addEventListener('click', () => {
-        const current = html.getAttribute('data-theme');
-        const target = current === 'light' ? 'dark' : 'light';
-        html.setAttribute('data-theme', target);
-    });
+    // new theme toggle logic
+const toggle = document.getElementById('theme-toggle');
+const html = document.documentElement;
 
+// 1. Check for saved preference, otherwise default to light
+const savedTheme = localStorage.getItem('beben-theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+
+toggle.addEventListener('click', () => {
+    // 2. Always get the fresh attribute value
+    const current = html.getAttribute('data-theme');
+    const target = current === 'dark' ? 'light' : 'dark';
+    
+    // 3. Apply and Save
+    html.setAttribute('data-theme', target);
+    localStorage.setItem('beben-theme', target);
+});
+
+    // Intersection Observer for Reveal Animations
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('active');
@@ -276,8 +288,9 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     
-        document.querySelector(".copy-email").addEventListener("click", function(e) {
-  e.preventDefault();
+    // Copy Email Logic
+    document.querySelector(".copy-email").addEventListener("click", function(e) {
+    e.preventDefault();
 
          const email = this.dataset.email;
 

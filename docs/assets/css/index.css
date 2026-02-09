@@ -25,6 +25,58 @@
             transition: background 0.3s ease;
             line-height: 1.6;
         }
+
+        /* Default (Light) */
+:root[data-theme="light"] {
+    --bg: #ffffff;
+    --primary: #000000;
+    --dot: #e0e0e0;
+}
+
+/* Dark Mode */
+:root[data-theme="dark"] {
+    --bg: #000000;
+    --primary: #ffffff;
+    --dot: #222222;
+}
+
+/* Apply variables to the grid */
+.dot-grid-bg {
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--dot) 1px, transparent 0);
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+        /* Beben Design Dot Grid System */
+        .dot-grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+    
+            /* Ensure it stays behind everything */
+            z-index: -1; 
+            background-color: #ffffff;
+            
+            /* Dot Grid Math: 1px dots every 24px */
+            background-image: radial-gradient(#e0e0e0 1px, transparent 0);
+            background-size: 24px 24px;
+    
+            /* Smooth entry animation */
+            animation: fadeInGrid 1.5s ease-out;
+        }
+
+            @keyframes fadeInGrid {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+            /* Dark Mode support (if your toggle uses a .dark class) */
+            .dark .dot-grid-bg {
+            background-color: #000000;
+            background-image: radial-gradient(#222222 1px, transparent 0);
+        }
+
         /* global custom text highlight  */
             ::selection{
             color: var(--bg);
