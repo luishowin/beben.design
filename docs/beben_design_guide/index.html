@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design System | Beben Core</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- BEBEN CORE VARIABLES --- */
+        :root[data-theme="light"] {
+            --primary: #000000;
+            --bg: #ffffff;
+            --accent: #FFC917;
+            --dot: #e0e0e0;
+            --card-border: 2px;
+            --space-unit: 8px; /* Metric Base */
+        }
+        :root[data-theme="dark"] {
+            --primary: #ffffff;
+            --bg: #000000;
+            --accent: #FFC917;
+            --dot: #222222;
+            --card-border: 2px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--primary);
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .wrapper { max-width: 1000px; margin: 0 auto; }
+
+        /* --- UI COMPONENTS --- */
+        header { border-bottom: 4px solid var(--primary); padding-bottom: 40px; margin-bottom: 80px; }
+        h1 { font-size: 3rem; text-transform: uppercase; letter-spacing: -3px; }
+        
+        section { margin-bottom: 100px; }
+        h2 { font-size: 0.8rem; background: var(--primary); color: var(--bg); display: inline-block; padding: 4px 12px; margin-bottom: 30px; text-transform: uppercase; }
+
+        /* Style Guide Grid */
+        .style-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+
+        /* Color Swatches */
+        .swatch { height: 100px; border: 1px solid var(--primary); margin-bottom: 10px; display: flex; align-items: flex-end; padding: 10px; font-weight: 700; font-size: 0.7rem; }
+        .swatch.accent { background: var(--accent); color: #000; }
+        .swatch.primary { background: var(--primary); color: var(--bg); }
+
+        /* Typography */
+        .type-spec { border-left: 2px solid var(--accent); padding-left: 20px; }
+        .type-spec h3 { font-size: 1.5rem; text-transform: uppercase; }
+        .type-spec p { font-size: 0.9rem; opacity: 0.7; }
+
+        /* Components: The Button */
+        .beben-btn {
+            background: var(--bg);
+            color: var(--primary);
+            border: var(--card-border) solid var(--primary);
+            padding: 16px 32px;
+            font-family: inherit;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.1s;
+            position: relative;
+        }
+        .beben-btn:hover {
+            box-shadow: 6px 6px 0px var(--accent);
+            transform: translate(-2px, -2px);
+        }
+
+        /* Components: The Bento Card */
+        .bento-card {
+            border: var(--card-border) solid var(--primary);
+            padding: 24px;
+            background: var(--bg);
+        }
+
+        code { background: #eee; color: #d11; padding: 2px 4px; font-size: 0.8rem; }
+        [data-theme="dark"] code { background: #333; color: var(--accent); }
+
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <p>[ BEBEN_CORE_SYSTEM_V1 ]</p>
+        <h1>DESIGN SYSTEM.</h1>
+        <p>The technical logic governing Beben Design interfaces.</p>
+    </header>
+
+    <section>
+        <h2>01 // Chroma</h2>
+        <div class="style-grid">
+            <div>
+                <div class="swatch primary">PRIMARY // VAR(--PRIMARY)</div>
+                <p>Used for structure, typography, and borders.</p>
+            </div>
+            <div>
+                <div class="swatch accent">ACCENT // #FFC917</div>
+                <p>High-visibility signal color. Primary actions only.</p>
+            </div>
+            <div>
+                <div class="swatch" style="background: var(--bg);">BASE // VAR(--BG)</div>
+                <p>The workspace. High contrast white or deep black.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>02 // Typography</h2>
+        <div class="type-spec">
+            <h3>Roboto Mono</h3>
+            <p>Weight: 300, 400, 700</p>
+            <p>Purpose: Monospaced alignment mimics technical documentation and dashboard readouts.</p>
+            <div style="margin-top: 20px; font-size: 1.2rem;">
+                THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. 0123456789
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>03 // Interaction</h2>
+        <div class="style-grid">
+            <div class="bento-card">
+                <h3>Standard Button</h3>
+                <p style="margin-bottom: 20px; font-size: 0.8rem;">Brutalist hover state with hard shadow.</p>
+                <button class="beben-btn">Action_Execute</button>
+            </div>
+            <div class="bento-card">
+                <h3>Metric Spacing</h3>
+                <p style="font-size: 0.8rem;">All spacing is a multiple of 8. <code>8px</code>, <code>16px</code>, <code>24px</code>.</p>
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                    <div style="width: 24px; height: 24px; background: var(--accent);"></div>
+                    <div style="width: 16px; height: 16px; background: var(--accent); opacity: 0.6;"></div>
+                    <div style="width: 8px; height: 8px; background: var(--accent); opacity: 0.3;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="margin-top: 100px; font-size: 0.7rem; border-top: 1px solid var(--dot); padding-top: 20px;">
+        <p>CONFIDENTIAL // BEBEN CORE DOCUMENTATION</p>
+        <p>GEN: 2026.02.09 // NAIROBI_HQ</p>
+    </footer>
+</div>
+
+</body>
+</html>

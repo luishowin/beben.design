@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 // Logic Breach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --primary: #000000; --bg: #ffffff; --accent: #FFC917; --dot: #e0e0e0;
+        }
+        :root[data-theme="dark"] {
+            --primary: #ffffff; --bg: #000000; --accent: #FFC917; --dot: #222222;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 32px 32px;
+            color: var(--primary);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .error-container {
+            max-width: 600px;
+            padding: 40px;
+            border: 2px solid var(--primary);
+            background: var(--bg);
+            position: relative;
+        }
+
+        /* Brutalist Shadow */
+        .error-container::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            z-index: -1;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -10px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            background: var(--primary);
+            color: var(--bg);
+            display: inline-block;
+            padding: 5px 15px;
+        }
+
+        p {
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-recovery {
+            text-decoration: none;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .btn-recovery:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .glitch-text {
+            animation: glitch 1s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="error-container">
+    <span class="error-code glitch-text">404</span>
+    <h1>LOGIC_BREACH_DETECTED</h1>
+    <p>The requested coordinate does not exist in the Beben Core directory. The path may have been decommissioned or moved.</p>
+    
+    <div class="nav-links">
+        <a href="/" class="btn-recovery">Return to Root (Home)</a>
+        <a href="/services" class="btn-recovery">Browse Services</a>
+        <a href="mailto:hello.beben.design@gmail.com" class="btn-recovery">Report System Error</a>
+    </div>
+
+    <p style="margin-top: 40px; font-size: 0.7rem; opacity: 0.5;">
+        REF_ID: 0xFD404 // SESSION_TERMINATED
+    </p>
+</div>
+
+</body>
+</html>

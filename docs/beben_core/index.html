@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beben Core // Spec</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --primary: #000000; --bg: #ffffff; --accent: #FFC917; --dot: #e0e0e0;
+        }
+        :root[data-theme="dark"] {
+            --primary: #ffffff; --bg: #000000; --accent: #FFC917; --dot: #222222;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--primary);
+            overflow-x: hidden;
+        }
+
+        .wrapper { max-width: 800px; margin: 0 auto; padding: 100px 20px; }
+
+        /* --- REVEAL ANIMATION LOGIC --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        header { border-bottom: 2px solid var(--primary); padding-bottom: 40px; margin-bottom: 60px; }
+        h1 { font-size: 3.5rem; text-transform: uppercase; letter-spacing: -3px; }
+        
+        .spec-item {
+            border: 1px solid var(--primary);
+            padding: 30px;
+            margin-bottom: 20px;
+            background: var(--bg);
+        }
+
+        .spec-label { color: var(--accent); font-weight: 700; font-size: 0.8rem; margin-bottom: 10px; display: block; }
+        h2 { font-size: 1.2rem; text-transform: uppercase; margin-bottom: 10px; }
+
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header class="reveal">
+        <p>[ BEBEN_CORE_V1.0 ]</p>
+        <h1>CORE SPEC.</h1>
+        <p>Technical protocols for digital product architecture.</p>
+    </header>
+
+    <main>
+        <div class="spec-item reveal">
+            <span class="spec-label">01 // GRID_SYSTEM</span>
+            <h2>METRIC_PRECISION</h2>
+            <p>Layouts are anchored to a 8mm/24px base unit. This ensures alignment between digital interfaces and physical hardware components (HMI).</p>
+        </div>
+
+        <div class="spec-item reveal">
+            <span class="spec-label">02 // CHROMA_LOGIC</span>
+            <h2>HIGH_VIS_CONTRAST</h2>
+            <p>Usage of #FFC917 for primary actions. Contrast ratios are optimized for sunlight readability and low-latency comprehension.</p>
+        </div>
+
+        <div class="spec-item reveal">
+            <span class="spec-label">03 // PERFORMANCE</span>
+            <h2>ZERO_ASSET_LOAD</h2>
+            <p>Visual textures are generated via CSS math. This results in sub-100ms page loads and immediate interactivity.</p>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Intersection Observer for the Reveal Animation
+    const revealCallback = (entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(revealCallback, {
+        threshold: 0.1
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>
