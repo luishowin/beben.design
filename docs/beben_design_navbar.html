@@ -1,0 +1,280 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #E71D36;
+    --nav-bg-light: rgba(255,255,255,0.72);
+    --nav-bg-dark: rgba(18,18,18,0.72);
+    --text-light: #111;
+    --text-dark: #f0f0f0;
+    --border-light: rgba(0,0,0,0.08);
+    --border-dark: rgba(255,255,255,0.08);
+  }
+
+  body { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 400; background: transparent; }
+
+  .demo-wrap {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    min-height: 320px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .demo-wrap.light-bg {
+    background: linear-gradient(135deg, #e8e8f0 0%, #d0d8e8 40%, #c8d4e8 100%);
+  }
+
+  .demo-content {
+    padding: 80px 32px 32px;
+    color: rgba(255,255,255,0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-align: center;
+    user-select: none;
+  }
+  .demo-wrap.light-bg .demo-content { color: rgba(0,0,0,0.3); }
+
+  nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    background: var(--nav-bg-light);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid var(--border-light);
+    z-index: 100;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 400;
+    transition: background 0.25s, border-color 0.25s;
+  }
+
+  nav.dark {
+    background: var(--nav-bg-dark);
+    border-bottom-color: var(--border-dark);
+  }
+
+  .nav-logo {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  nav.dark .nav-logo { color: var(--text-dark); }
+
+  .nav-spacer { flex: 1; }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s, color 0.2s;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  nav.dark .nav-links a { color: var(--text-dark); }
+
+  .nav-links a.active {
+    border-bottom-color: var(--accent);
+  }
+  .nav-links a:hover:not(.active) {
+    border-bottom-color: rgba(231,29,54,0.35);
+  }
+
+  .theme-btn {
+    background: transparent;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    color: var(--text-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 5px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, border-color 0.15s, color 0.2s;
+  }
+  .theme-btn:hover { background: rgba(0,0,0,0.06); }
+  nav.dark .theme-btn {
+    border-color: rgba(255,255,255,0.22);
+    color: var(--text-dark);
+  }
+  nav.dark .theme-btn:hover { background: rgba(255,255,255,0.08); }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-light);
+    transition: background 0.2s, transform 0.2s, opacity 0.2s;
+    border-radius: 1px;
+  }
+  nav.dark .hamburger span { background: var(--text-dark); }
+
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: absolute;
+    top: 56px;
+    left: 0; right: 0;
+    background: var(--nav-bg-light);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid var(--border-light);
+    padding: 12px 28px 20px;
+    flex-direction: column;
+    gap: 0;
+    z-index: 99;
+  }
+  .mobile-menu.dark {
+    background: var(--nav-bg-dark);
+    border-bottom-color: var(--border-dark);
+  }
+  .mobile-menu.open { display: flex; }
+
+  .mobile-menu a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding: 13px 0;
+    border-bottom: 0.5px solid var(--border-light);
+    border-left: 2px solid transparent;
+    padding-left: 0;
+    transition: color 0.15s, border-color 0.15s;
+    cursor: pointer;
+  }
+  .mobile-menu.dark a { color: var(--text-dark); border-bottom-color: var(--border-dark); }
+  .mobile-menu a.active { border-left-color: var(--accent); padding-left: 10px; }
+  .mobile-menu a:last-of-type { border-bottom: none; }
+
+  .mobile-theme-btn {
+    margin-top: 14px;
+    align-self: flex-start;
+    background: transparent;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    color: var(--text-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  .mobile-menu.dark .mobile-theme-btn {
+    border-color: rgba(255,255,255,0.22);
+    color: var(--text-dark);
+  }
+
+  @media (max-width: 580px) {
+    .nav-links, .theme-btn { display: none; }
+    .hamburger { display: flex; }
+  }
+</style>
+
+<div class="demo-wrap" id="demoWrap">
+  <nav id="mainNav">
+    <a class="nav-logo" onclick="setActive('home')">BEBEN DESIGN</a>
+    <div class="nav-spacer"></div>
+    <ul class="nav-links" id="navLinks">
+      <li><a onclick="setActive('shop')" class="active" id="link-shop">SHOP</a></li>
+      <li><a onclick="setActive('services')" id="link-services">SERVICES</a></li>
+      <li><a onclick="setActive('contact')" id="link-contact">CONTACT</a></li>
+    </ul>
+    <div style="width:20px"></div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">LIGHT / DARK</button>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a onclick="setActive('shop'); closeMenu()" class="active" id="mob-shop">SHOP</a>
+    <a onclick="setActive('services'); closeMenu()" id="mob-services">SERVICES</a>
+    <a onclick="setActive('contact'); closeMenu()" id="mob-contact">CONTACT</a>
+    <button class="mobile-theme-btn" onclick="toggleTheme()">LIGHT / DARK</button>
+  </div>
+
+  <div class="demo-content" id="demoContent">
+    ↑ sticky navbar · click links to activate · try LIGHT / DARK
+    <br><br>
+    <span style="font-size:11px;opacity:0.6">resize window below 580px to see hamburger menu</span>
+  </div>
+</div>
+
+<script>
+  let dark = false;
+  let activeLink = 'shop';
+
+  function toggleTheme() {
+    dark = !dark;
+    const nav = document.getElementById('mainNav');
+    const menu = document.getElementById('mobileMenu');
+    const wrap = document.getElementById('demoWrap');
+    nav.classList.toggle('dark', dark);
+    menu.classList.toggle('dark', dark);
+    wrap.classList.toggle('light-bg', !dark);
+  }
+
+  function setActive(name) {
+    activeLink = name;
+    const links = ['shop','services','contact'];
+    links.forEach(l => {
+      const el = document.getElementById('link-' + l);
+      const mob = document.getElementById('mob-' + l);
+      if (el) el.classList.toggle('active', l === name);
+      if (mob) mob.classList.toggle('active', l === name);
+    });
+  }
+
+  function toggleMenu() {
+    const ham = document.getElementById('hamburger');
+    const menu = document.getElementById('mobileMenu');
+    ham.classList.toggle('open');
+    menu.classList.toggle('open');
+  }
+
+  function closeMenu() {
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+
+  document.getElementById('demoWrap').classList.add('light-bg');
+</script>

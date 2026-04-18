@@ -1,14 +1,14 @@
   :root {
-            --bg: #ffffff;
+            --bg: #F7F4F3;
             --text: #000000;
-            --highlight: #FFC917;
-            --border: 1px solid #000000;
+            --highlight: #E71D36;
+            --border: 1px solid #141414;
         }
 
         [data-theme="dark"] {
-            --bg: #000000;
-            --text: #ffffff;
-            --border: 1px solid #ffffff;
+            --bg: #141414;
+            --text: #F7F4F3;
+            --border: 1px solid #F7F4F3;
         }
 
         * {
@@ -25,7 +25,6 @@
             transition: background 0.3s ease;
             line-height: 1.6;
         }
-
 
 
         /* global custom text highlight  */
@@ -217,7 +216,7 @@
   cursor: pointer;
 
   background: #111;
-  color: #fff;
+  color: #F7F4F3;
   font-size: 12px;
   padding: 6px 10px;
   border-radius: 6px;
