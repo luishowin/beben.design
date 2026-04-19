@@ -1,188 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | Beben Design</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="../docs/assets/icons/favicon.ico" sizes="any">
-    <link rel="icon" href="../docs/assets/icons/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="../docs/assets/icons/apple-touch-icon.png">
 
-    <style>
-        :root {
-            --primary: #000000;
-            --bg: #ffffff;
-            --accent: #FFC917;
-            --dot: #e0e0e0;
-            --radius: 0px; /* Brutalist sharp edges */
+    <title>Contact | Beben Design — Start a Project</title>
+    <meta name="title" content="Contact | Beben Design — Start a Project">
+    <meta name="description" content="Start a design or development project with Beben Design. No sales pitch — just a direct technical discussion about your goals. Based in Nairobi, Kenya.">
+    <link rel="canonical" href="https://beben.design/contact/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/contact/">
+    <meta property="og:title" content="Contact | Beben Design — Start a Project">
+    <meta property="og:description" content="Direct access to the builders. No account managers, no lost translations. Let's talk about your project.">
+    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://beben.design/contact/">
+    <meta property="twitter:title" content="Contact | Beben Design — Start a Project">
+    <meta property="twitter:description" content="Direct access to the builders. Let's talk about your project.">
+    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "name": "Contact Beben Design",
+      "url": "https://beben.design/contact/",
+      "description": "Get in touch with Beben Design to start a UX, UI, or front-end development project.",
+      "mainEntity": {
+        "@type": "ProfessionalService",
+        "name": "Beben Design",
+        "email": "hello.beben.design@gmail.com",
+        "telephone": "+254114728233",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Westlands",
+          "addressRegion": "Nairobi",
+          "addressCountry": "KE"
         }
+      }
+    }
+    </script>
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: var(--bg);
-            background-image: radial-gradient(var(--dot) 1px, transparent 0);
-            background-size: 24px 24px; /* Subtle dot grid */
-            color: var(--primary);
-            line-height: 1.4;
-        }
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 
-        .wrapper { max-width: 800px; margin: 0 auto; padding: 20px; }
-
-        /* 1. Hero Section */
-        header {
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-bottom: 40px;
-        }
-
-        h1 { font-size: clamp(2.5rem, 10vw, 4rem); text-transform: uppercase; line-height: 0.9; margin-bottom: 20px; letter-spacing: -2px; }
-        .subtitle { font-size: 1rem; margin-bottom: 40px; max-width: 400px; }
-
-        .btn-main {
-            background: var(--primary);
-            color: #fff;
-            padding: 20px 30px;
-            text-decoration: none;
-            font-weight: 700;
-            display: inline-block;
-            text-align: center;
-            border: 2px solid var(--primary);
-            min-height: 56px;
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 15px;
-        }
-
-        .btn-secondary { font-size: 0.8rem; text-decoration: underline; color: var(--primary); display: block; }
-
-        /* 2. Priority Grid */
-        .contact-stack { display: flex; flex-direction: column; gap: 12px; margin: 60px 0; }
-        .contact-card {
-            border: 2px solid var(--primary);
-            background: #fff;
-            padding: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            color: var(--primary);
-            transition: background 0.2s;
-        }
-        .contact-card:active, .contact-card:hover { background: var(--accent); }
-        .card-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; opacity: 0.6; }
-        .card-title { font-size: 1.1rem; font-weight: 700; display: block; }
-
-        /* 3. FAQ Accordion */
-        .faq-section { margin: 80px 0; }
-        details { border-bottom: 1px solid var(--primary); padding: 20px 0; cursor: pointer; }
-        summary { list-style: none; font-weight: 700; display: flex; justify-content: space-between; }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: "+"; }
-        details[open] summary::after { content: "-"; }
-        .faq-content { padding-top: 15px; font-size: 0.9rem; max-width: 500px; }
-
-        /* 4. Secondary CTA */
-        .end-cta { 
-            background: var(--accent); 
-            padding: 60px 20px; 
-            text-align: center; 
-            margin: 0 -20px; /* Bleed out on mobile */
-        }
-
-        /* 5. Footer */
-        footer { padding: 60px 0; font-size: 0.8rem; border-top: 1px solid var(--dot); }
-        .footer-links { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
-
-        @media (min-width: 600px) {
-            .btn-main { width: auto; }
-        }
-    </style>
+    <link rel="stylesheet" href="contact.css">
 </head>
 <body>
 
-<div class="wrapper">
-    <header>
-        <p style="margin-bottom: 10px;">[ CONTACT.01 ]</p>
-        <h1>LET'S START SOMETHING <span style="background: var(--accent);">USEFUL</span></h1>
-        <p class="subtitle">Tell us what you need. We'll help you figure out the rest.</p>
-        
-        <a href="https://wa.me/254114728233" class="btn-main">MESSAGE ON WHATSAPP</a>
-        <a href="mailto:hello.beben.design@gmail.com" class="btn-secondary">Email instead</a>
-    </header>
-
-    <div class="contact-stack">
-        <a href="https://wa.me/254114728233" class="contact-card">
-            <div>
-                <span class="card-label">TALK TO US // MON-FRI</span>
-                <span class="card-title">+254 114 728233</span>
-            </div>
-            <span>→</span>
-        </a>
-
-        <a href="mailto:hello.beben.design@gmail.com" class="contact-card">
-            <div>
-                <span class="card-label">CHAT TO SALES</span>
-                <span class="card-title">START A PROJECT</span>
-            </div>
-            <span>→</span>
-        </a>
-
-        <a href="mailto:support@beben.design" class="contact-card">
-            <div>
-                <span class="card-label">SUPPORT</span>
-                <span class="card-title">EXISTING CLIENTS</span>
-            </div>
-            <span>→</span>
-        </a>
-
-        <div class="contact-card" style="cursor: default;">
-            <div>
-                <span class="card-label">VISIT US</span>
-                <span class="card-title">NAIROBI, WESTLANDS</span>
-            </div>
-            <a href="https://maps.google.com" target="_blank" style="background: var(--primary); color: #fff; padding: 5px 10px; font-size: 0.7rem; text-decoration: none;">MAPS</a>
-        </div>
+<!-- ═══════════════════════════════════════════
+     NAVBAR — identical structure to homepage
+════════════════════════════════════════════ -->
+<nav>
+    <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">Beben Design</a></div>
+    <div class="nav-right">
+        <button id="theme-toggle">LIGHT/ DARK</button>
+        <ul class="menu desktop-only">
+            <li><a href="/services/">SERVICES</a></li>
+            <li><a href="/work/">SHOP</a></li>
+            <li><a href="/team/">WORK</a></li>
+            <li><a href="/contact/" class="active">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </div>
+</nav>
 
-    <section class="faq-section">
-        <h2 style="text-transform: uppercase; margin-bottom: 20px;">Common Inquiries</h2>
-        
-        <details>
-            <summary>How do we start?</summary>
-            <div class="faq-content">We begin with a discovery call to audit your needs. If we're a fit, we move to a technical proposal and a 50% deposit to kick off.</div>
-        </details>
-
-        <details>
-            <summary>How much does it cost?</summary>
-            <div class="faq-content">Every project is custom. We provide fixed-price quotes in USD based on the technical complexity and scope defined in discovery.</div>
-        </details>
-
-        <details>
-            <summary>How long does it take?</summary>
-            <div class="faq-content">Typical UX/UI projects take 4-8 weeks. Rapid prototyping can be as fast as 14 days. We prioritize quality over speed, always.</div>
-        </details>
-    </section>
-
-    <div class="end-cta">
-        <h2 style="margin-bottom: 20px;">READY TO LEVEL UP?</h2>
-        <a href="https://wa.me/254114728233" class="btn-main" style="max-width: 100%;">LEAVE A MESSAGE</a>
-    </div>
-
-    <footer>
-        <p><strong>BEBEN DESIGN</strong></p>
-        <p>Technical Product Studio</p>
-        <div class="footer-links">
-            <a href="/legal" style="color: inherit;">Legal</a>
-            <a href="/privacy" style="color: inherit;">Privacy Policy</a>
-            <p>&copy; 2026 BEBEN DESIGN</p>
-        </div>
-    </footer>
+<div id="mobile-menu-overlay">
+    <ul class="mobile-menu">
+        <li><a href="/">HOME</a></li>
+        <li><a href="/services/">SERVICES</a></li>
+        <li><a href="/work/">SHOP</a></li>
+        <li><a href="/team/">WORK</a></li>
+        <li><a href="/contact/" class="active">CONTACT</a></li>
+    </ul>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<main>
+
+    <!-- Hero -->
+    <section class="hero reveal">
+        <p class="section-label">[ CONTACT.01 ]</p>
+        <h1>Design <span class="highlight-box">logic</span><br>starts with<br>a conversation.</h1>
+        <p class="hero-sub">No aggressive sales pitch. Just a direct technical discussion about your goals — with the people who will actually build it.</p>
+    </section>
+
+    <!-- Contact Cards -->
+    <section class="contact-channels reveal">
+        <div class="grid">
+
+            <a href="https://wa.me/254114728233" class="channel-card" target="_blank" rel="noopener">
+                <span class="channel-label">// 01</span>
+                <h3>WhatsApp</h3>
+                <p>Fastest route. Direct line to the studio.</p>
+                <span class="channel-cta">MESSAGE NOW ↗</span>
+            </a>
+
+            <a href="mailto:hello.beben.design@gmail.com" class="channel-card copy-email" data-email="hello.beben.design@gmail.com">
+                <span class="channel-label">// 02</span>
+                <h3>Email</h3>
+                <p>For detailed briefs, attachments, and formal project requests.</p>
+                <span class="channel-cta">hello.beben.design@gmail.com ↗</span>
+            </a>
+
+            <a href="mailto:support@beben.design" class="channel-card">
+                <span class="channel-label">// 03</span>
+                <h3>Existing Clients</h3>
+                <p>Ongoing project support, revisions, and maintenance requests.</p>
+                <span class="channel-cta">support@beben.design ↗</span>
+            </a>
+
+            <div class="channel-card no-link">
+                <span class="channel-label">// 04</span>
+                <h3>Location</h3>
+                <p>Nairobi, Westlands — Kenya.</p>
+                <span class="channel-cta">MON - FRI, 09:00 - 18:00 EAT</span>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Process: how engagement starts -->
+    <section class="process-section reveal">
+        <h2>HOW ENGAGEMENT STARTS</h2>
+        <div class="process-list">
+            <div class="process-step">
+                <span>01</span>
+                <p><strong>You reach out.</strong> Tell us the problem — not the solution. We'll figure out the rest together.</p>
+            </div>
+            <div class="process-step">
+                <span>02</span>
+                <p><strong>Discovery call.</strong> A 30-minute technical audit of your goals, constraints, and timelines.</p>
+            </div>
+            <div class="process-step">
+                <span>03</span>
+                <p><strong>Fixed-price proposal.</strong> Line-item quote in USD. No ambiguity. No hourly billing surprises.</p>
+            </div>
+            <div class="process-step">
+                <span>04</span>
+                <p><strong>50% deposit to kick off.</strong> We start with requirement analysis and get moving fast.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section reveal">
+        <h2 style="padding-bottom: 2rem;">COMMON QUESTIONS</h2>
+
+        <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+                <span><strong>+</strong> How much does a website cost?</span>
+            </button>
+            <div class="faq-answer">
+                <p>Static sites start at $99 USD. Complexity drives pricing — we provide transparent, line-item quotes after discovery. No guesswork.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+                <span><strong>+</strong> How long does a typical project take?</span>
+            </button>
+            <div class="faq-answer">
+                <p>UX/UI projects typically run 4-8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed — always.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+                <span><strong>+</strong> Do you work with startups or early-stage products?</strong></span>
+            </button>
+            <div class="faq-answer">
+                <p>Frequently. We help define your Minimum Viable Design — just enough to launch professionally without over-engineering before you have users.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+                <span><strong>+</strong> Can you redesign an existing product?</span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes. We start with a UX audit to identify what's actually broken — so we don't just paint over structural problems.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+                <span><strong>+</strong> Do you use AI in your workflow?</span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes — where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Block -->
+    <section class="cta-block reveal">
+        <h2>READY TO START?</h2>
+        <p>The best time to talk is before you've written a single line of code.</p>
+        <a href="https://wa.me/254114728233"
+           class="cta-link"
+           target="_blank" rel="noopener">
+            MESSAGE ON WHATSAPP <strong>↗</strong>
+        </a>
+    </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER — identical structure to homepage
+════════════════════════════════════════════ -->
+<footer class="reveal">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">© Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
+        </div>
+    </div>
+</footer>
+
+<!-- Toast notification -->
+<div id="copy-toast">Email copied to clipboard.</div>
+
+<script src="contact.js"></script>
 </body>
 </html>
