@@ -307,10 +307,6 @@ h2 {
     border-right: none;
 }
 
-.channel-card:not(.no-link):hover {
-    background: var(--text);
-    color: var(--bg);
-}
 
 .channel-card:not(.no-link):hover .channel-cta {
     color: var(--accent);
