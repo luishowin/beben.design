@@ -44,6 +44,7 @@
             top: 0;
             background: var(--bg);
             z-index: 100;
+            font-family: JetBrains Mono, monospace;
         }
 
         .logo {
@@ -237,7 +238,7 @@
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: #111;
-  color: #fff;
+  color: #F7F4F3;
   padding: 12px 18px;
   border-radius: 8px;
   opacity: 0;
@@ -278,7 +279,7 @@
     .placeholder {
             width: 100%;
             height: 300px;
-            background-image: url('/docs/assets/images/crystal.jpg');
+            background-image: url('/assets/images/crystal.jpg');
             background-size: cover;
             object-position: center;
             background-attachment: fixed;
@@ -294,7 +295,6 @@
     /* --- Footer --- */
     footer {
         padding: 100px var(--side-padding, 5%); /* Aligns with body padding */
-        border-top: 2px solid var(--text);
         margin-top: 5rem;
     }
     .footer-container {
