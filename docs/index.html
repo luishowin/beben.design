@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Beben Design | Design-Led Digital Visual Studio</title>
-    <meta name="title" content="Beben Design | Design Led Digital Product Studio">
+
+    <title>Beben Design | Design-Led Digital Product Studio</title>
+    <meta name="title" content="Beben Design | Design-Led Digital Product Studio">
     <meta name="description" content="Engineering high-performance digital products through rigorous UX research and design logic. Specialized in multidisciplinary front-end development.">
     <link rel="canonical" href="https://beben.design/">
 
@@ -21,16 +21,6 @@
     <meta property="twitter:description" content="High-performance front-end development meets design logic.">
     <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/index.css">
-    
-    <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
-    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -38,7 +28,7 @@
       "name": "Beben Design",
       "alternateName": "Beben",
       "url": "https://beben.design",
-      "logo": "https://beben.design/docs/assets/icons/favicon-96x96.png",
+      "logo": "https://beben.design/assets/icons/favicon-96x96.png",
       "description": "A multidisciplinary studio focused on design logic, UX research, and high-performance visual graphics.",
       "knowsAbout": ["UX Design", "UI Design", "Front-end Development", "Visual Graphics"],
       "priceRange": "$99 - $999",
@@ -48,24 +38,33 @@
       }
     }
     </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./assets/css/index.css">
+
+    <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 </head>
 <body>
-<div id="copy-toast">Email copied to clipboard.</div>
 
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
 <nav>
-    <div class="logo">Beben Design</div>
+    <a href="/" class="logo">Beben Design</a>
     <div class="nav-right">
         <button id="theme-toggle">LIGHT/ DARK</button>
-        
         <ul class="menu desktop-only">
             <li><a href="./services/">SERVICES</a></li>
             <li><a href="./work/">SHOP</a></li>
             <li><a href="./team/">WORK</a></li>
             <li><a href="./contact/">CONTACT</a></li>
-
         </ul>
-
-        <button id="hamburger" aria-label="Toggle Menu">
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
             <span></span>
             <span></span>
             <span></span>
@@ -73,9 +72,10 @@
     </div>
 </nav>
 
-<div id="mobile-menu-overlay">
+<!-- Mobile overlay -->
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
     <ul class="mobile-menu">
-        <li><a href="./index.html" class="active">HOME</a></li>
+        <li><a href="/" class="active">HOME</a></li>
         <li><a href="./services/">SERVICES</a></li>
         <li><a href="./work/">SHOP</a></li>
         <li><a href="./team/">WORK</a></li>
@@ -83,27 +83,41 @@
     </ul>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
 <main>
+
+    <!-- Hero -->
     <section class="hero reveal">
-        <h1>Design <span class="highlight-box">logic</span> before the first line of code.</h1>
-        <p style="max-width: 600px;">Beben Design is a small product design studio built on careful thinking and disciplined craft.
-            We shape ideas into clear, usable systems—designed to work long before development begins.</p>
-        <a href="mailto:hello.beben.design@gmail.com" 
-           class="cta-link copy-email"
-           data-email="hello.beben.design@gmail.com"
-           style="text-decoration: none; color: #E71D36; padding-top: 1rem; font-weight: 800;">START A CONVERSATION <strong>↗</strong>
-        </a>
+        <h1>Design <span class="highlight-box">logic</span> before<br>the first line of code.</h1>
+        <p>Beben Design is a small product design studio built on careful thinking and disciplined craft.
+            We shape ideas into clear, usable systems — designed to work long before development begins.</p>
+        <!--
+            .cta-wrapper is display:block for layout spacing.
+            .cta-link is display:inline so the hover/tooltip hit-target
+            matches exactly the text width, not the full container width.
+        -->
+        <div class="cta-wrapper">
+            <a href="mailto:hello.beben.design@gmail.com"
+               class="cta-link copy-email"
+               data-email="hello.beben.design@gmail.com">
+                START A CONVERSATION ↗
+                <span class="tooltip">CLICK TO COPY EMAIL</span>
+            </a>
+        </div>
     </section>
 
+    <!-- Services -->
     <section id="services" class="reveal">
-        <h2 style="padding-bottom: 2rem;">OUR DESIGN & FRONT-END SERVICES</h2>
+        <h2 style="padding-bottom: 2rem;">OUR DESIGN &amp; FRONT-END SERVICES</h2>
         <div class="grid">
             <div class="service-card">
                 <h3>Websites</h3>
                 <p>High-performance brand anchors optimized for conversion and clarity.</p>
             </div>
             <div class="service-card">
-                <h3>Posters & Print</h3>
+                <h3>Posters &amp; Print</h3>
                 <p>Branding and marketing materials that communicate your message with clarity and impact.</p>
             </div>
             <div class="service-card">
@@ -112,7 +126,7 @@
             </div>
             <div class="service-card">
                 <h3>Mobile UI</h3>
-                <p>iOS & Android interfaces that respect platform-specific patterns.</p>
+                <p>iOS &amp; Android interfaces that respect platform-specific patterns.</p>
             </div>
             <div class="service-card">
                 <h3>Desktop App UI</h3>
@@ -129,17 +143,22 @@
         </div>
     </section>
 
+    <!-- Work -->
     <section id="work" class="reveal">
         <h2 style="padding-bottom: 2rem;">THINKING IN PIXELS</h2>
-        <p style="margin-bottom: 1.5rem;">Every project is a case study in validation. We don't just showcase final renders; we showcase the decisions, iterations, and user-centric logic that led to the result.</p>
-      
+        <p>Every project is a case study in validation. We don't just showcase final renders; we showcase the decisions, iterations, and user-centric logic that led to the result.</p>
+        <br>
         <a href="#">
             <div class="placeholder" style="border: 1px solid var(--text); height: 300px;"></div>
         </a>
         <br>
-        Photo by <a href="https://unsplash.com/@juriia56?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" style="color: black;">Yuri Antonenko</a> on <a href="https://unsplash.com/photos/a-pile-of-ice-crystals-sitting-on-top-of-a-table-nRe3odeVQNQ?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" style="color: black;">Unsplash</a>
+        <small>
+            Photo by <a href="https://unsplash.com/@juriia56?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" style="color: var(--muted);">Yuri Antonenko</a>
+            on <a href="https://unsplash.com/photos/a-pile-of-ice-crystals-sitting-on-top-of-a-table-nRe3odeVQNQ?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" style="color: var(--muted);">Unsplash</a>
+        </small>
     </section>
 
+    <!-- Process -->
     <section id="process" class="reveal">
         <h2>FRONT-END DEVELOPMENT PROCESS</h2>
         <div class="process-list">
@@ -147,12 +166,13 @@
             <div class="process-step"><span>02</span><p><strong>Ideation:</strong> Mapping out user journeys and information architecture.</p></div>
             <div class="process-step"><span>03</span><p><strong>Prototyping:</strong> Validating interactions before committing to code.</p></div>
             <div class="process-step"><span>04</span><p><strong>Responsive Analysis:</strong> Ensuring logic holds from 320px to 4K.</p></div>
-            <div class="process-step"><span>05</span><p><strong>Testing & QA:</strong> Stress-testing against edge cases and bottlenecks.</p></div>
+            <div class="process-step"><span>05</span><p><strong>Testing &amp; QA:</strong> Stress-testing against edge cases and bottlenecks.</p></div>
             <div class="process-step"><span>06</span><p><strong>Maintenance:</strong> Monitoring real-world usage and adjusting.</p></div>
         </div>
     </section>
 
-    <section class="reveal">
+    <!-- Frameworks -->
+    <section id="frameworks" class="reveal">
         <h2 style="padding-bottom: 2rem;">OUR FRAMEWORKS</h2>
         <div class="grid">
             <div class="service-card"><h3>HTML/CSS | Core</h3><p>Clean, semantic code that ensures longevity.</p></div>
@@ -165,6 +185,7 @@
         <p><em>Technology serves design decisions.</em></p>
     </section>
 
+    <!-- Industries -->
     <section id="industries" class="reveal">
         <h2 style="padding-bottom: 2rem;">INDUSTRIES WE SERVE</h2>
         <div class="five-column-grid" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
@@ -178,6 +199,7 @@
         </div>
     </section>
 
+    <!-- Cooperation Models -->
     <section class="reveal">
         <h2 style="padding-bottom: 2rem;">COOPERATION MODELS</h2>
         <div class="grid">
@@ -196,42 +218,68 @@
         </div>
     </section>
 
+    <!-- FAQ — Accordion -->
     <section id="faq" class="reveal">
-        <h2 style="padding-bottom: 2rem;">FAQ</h2>
+        <h2>FAQ</h2>
+
         <div class="faq-item">
-            <p><strong><span>+</span> How much does it cost to build a website?</strong></p>
-            <p style="padding-left: 1.1rem;">Simple static websites typically start at $99 USD but pricing can vary based on complexity. We provide transparent, line-item quotes.</p>
+            <button class="faq-trigger" aria-expanded="false">
+                How much does it cost to build a website?
+            </button>
+            <div class="faq-answer">
+                <p>Simple static websites typically start at $99 USD but pricing can vary based on complexity. We provide transparent, line-item quotes.</p>
+            </div>
         </div>
+
         <div class="faq-item">
-            <p><strong><span>+</span> Do you work with startups?</strong></p>
-            <p style="padding-left: 1.1rem;">Frequently. We help find your "Minimum Viable Design" to launch quickly and professionally.</p>
+            <button class="faq-trigger" aria-expanded="false">
+                Do you work with startups?
+            </button>
+            <div class="faq-answer">
+                <p>Frequently. We help find your "Minimum Viable Design" to launch quickly and professionally.</p>
+            </div>
         </div>
+
         <div class="faq-item">
-            <p><strong><span>+</span> Can you redesign an existing product?</strong></p>
-            <p style="padding-left: 1.1rem;">Yes. We start with a UX audit to identify what's broken so we don't just paint over functional issues.</p>
+            <button class="faq-trigger" aria-expanded="false">
+                Can you redesign an existing product?
+            </button>
+            <div class="faq-answer">
+                <p>Yes. We start with a UX audit to identify what's broken so we don't just paint over functional issues.</p>
+            </div>
         </div>
+
         <div class="faq-item">
-            <p><strong><span>+</span> Do you use any AI?</strong></p>
-            <p style="padding-left: 1.1rem;">Yes. As part of the evolving world, AI is integrated into our workflow to enhance efficiency and creativity.</p>
+            <button class="faq-trigger" aria-expanded="false">
+                Do you use any AI?
+            </button>
+            <div class="faq-answer">
+                <p>Yes. As part of the evolving world, AI is integrated into our workflow to enhance efficiency and creativity.</p>
+            </div>
         </div>
+
     </section>
 
+    <!-- Contact -->
     <section id="contact" class="reveal">
-        <h2 style="padding-bottom: 2rem;">LET'S TALK ABOUT YOUR PROJECT</h2>
+        <h2>LET'S TALK ABOUT YOUR PROJECT</h2>
         <p>No aggressive sales pitch. Just a technical discussion about your goals.</p>
-        <p><a href="mailto:hello.beben.design@gmail.com" style="color: var(--text); font-weight: bold;">hello.beben.design@gmail.com</a></p>
+        <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
     </section>
+
 </main>
 
+<!-- ═══════════════════════════════════════════
+     FOOTER — matches contact page exactly
+════════════════════════════════════════════ -->
 <footer class="reveal">
     <div class="footer-container">
         <div class="footer-brand">
             <p><strong>Beben Design</strong></p>
-            <p>Design & Interface Studio</p>
+            <p>Design &amp; Interface Studio</p>
             <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
             <p class="copyright">© Beben Design | All rights reserved</p>
         </div>
-
         <div class="footer-links">
             <ul class="footer-nav">
                 <li><a href="./contact/">CONTACT</a></li>
@@ -246,61 +294,9 @@
     </div>
 </footer>
 
-<script>
-    // Theme, Hamburger, and Intersection Observer Logic (Kept from original)
-    const hamburger = document.getElementById('hamburger');
-    const overlay = document.getElementById('mobile-menu-overlay');
-    const body = document.body;
+<!-- Toast notification for email copy -->
+<div id="copy-toast">Email copied to clipboard.</div>
 
-    hamburger.addEventListener('click', () => {
-        const isOpen = overlay.classList.toggle('is-active');
-        body.classList.toggle('menu-open');
-        body.style.overflow = isOpen ? 'hidden' : 'auto';
-    });
-
-    // Close mobile menu on link click 
-    document.querySelectorAll('.mobile-menu a').forEach(link => {
-        link.addEventListener('click', () => {
-            overlay.classList.remove('is-active');
-            body.classList.remove('menu-open');
-            body.style.overflow = 'auto';
-        });
-    });
-
-    // Theme Toggle Logic 
-    const toggle = document.getElementById('theme-toggle');
-    const html = document.documentElement;
-    toggle.addEventListener('click', () => {
-        const current = html.getAttribute('data-theme');
-        const target = current === 'light' ? 'dark' : 'light';
-        html.setAttribute('data-theme', target);
-    });
-
-    // Intersection Observer for Reveal Animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('active');
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    
-    // Copy Email Logic 
-    document.querySelector(".copy-email").addEventListener("click", function(e) {
-    e.preventDefault();
-
-         const email = this.dataset.email;
-
-        navigator.clipboard.writeText(email).then(() => {
-            const toast = document.getElementById("copy-toast");
-            toast.classList.add("show");
-
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, 2500);
-  });
-});
-</script>
-
+<script src="./assets/JS/index.js"></script>
 </body>
 </html>
