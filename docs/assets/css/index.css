@@ -81,7 +81,7 @@ nav {
     background: var(--nav-bg-clear);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(247, 244, 243, 0.12);
+    border-bottom: 1px solid var(--border);
     transition: background 0.3s ease;
 }
 

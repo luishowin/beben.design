@@ -14,7 +14,7 @@
     --border:   #141414;
     --card-bg:  #F7F4F3;
     --dot:      #e0e0e0;
-    --nav-bg:   rgba(255, 255, 255, 0.92);
+    --nav-bg:   rgba(255, 255, 255, 0.3);
     --overlay:  #F7F4F3;
     --whatsapp: #25D366;
 }
@@ -72,8 +72,8 @@ nav {
     justify-content: space-between;
     padding: 1rem 2rem;
     background: var(--nav-bg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     transition: background 0.3s ease, border-color 0.3s ease;
 }
