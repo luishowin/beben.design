@@ -3,129 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 // Logic Breach</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <title>404 — Page Not Found | Beben Design</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+
     <style>
+        /* ── TOKENS ────────────────────────────────────────────────── */
         :root[data-theme="light"] {
-            --primary: #000000; --bg: #ffffff; --accent: #FFC917; --dot: #e0e0e0;
+            --bg:       #F7F4F3;
+            --text:     #141414;
+            --accent:   #E71D36;
+            --muted:    #5a5a5a;
+            --border:   #141414;
+            --dot:      #dedad9;
+            --nav-bg:   #141414CC;
+            --nav-text: #F7F4F3;
         }
         :root[data-theme="dark"] {
-            --primary: #ffffff; --bg: #000000; --accent: #FFC917; --dot: #222222;
+            --bg:       #141414;
+            --text:     #F7F4F3;
+            --accent:   #E71D36;
+            --muted:    #999999;
+            --border:   #F7F4F3;
+            --dot:      #252525;
+            --nav-bg:   #141414CC;
+            --nav-text: #F7F4F3;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        /* ── RESET ─────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+        }
+
         body {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             background-color: var(--bg);
             background-image: radial-gradient(var(--dot) 1px, transparent 0);
-            background-size: 32px 32px;
-            color: var(--primary);
-            height: 100vh;
+            background-size: 24px 24px;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* ── NAVBAR ────────────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(247, 244, 243, 0.12);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--nav-text);
+        }
+
+        #theme-toggle {
+            background: none;
+            border: 1px solid rgba(247, 244, 243, 0.45);
+            color: var(--nav-text);
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        #theme-toggle:hover {
+            background: var(--nav-text);
+            color: #141414;
+        }
+
+        /* ── MAIN STAGE ────────────────────────────────────────────── */
+        main {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            padding: 80px 2rem 2rem; /* nav offset */
         }
 
-        .error-container {
-            max-width: 600px;
-            padding: 40px;
-            border: 2px solid var(--primary);
-            background: var(--bg);
-            position: relative;
-        }
-
-        /* Brutalist Shadow */
-        .error-container::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
+        .stage {
+            max-width: 680px;
             width: 100%;
-            height: 100%;
-            background: var(--accent);
-            z-index: -1;
         }
 
-        .error-code {
-            font-size: 8rem;
-            font-weight: 700;
-            line-height: 1;
-            letter-spacing: -10px;
-            margin-bottom: 20px;
+        /* ── 404 DISPLAY NUMBER ────────────────────────────────────── */
+        .error-number {
+            font-size: clamp(7rem, 22vw, 13rem);
+            font-weight: 800;
+            line-height: 0.85;
+            letter-spacing: -0.06em;
+            color: var(--text);
+            /* Glitch offset layers via text-shadow */
+            animation: glitch 3.5s infinite;
             display: block;
-        }
-
-        h1 {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            background: var(--primary);
-            color: var(--bg);
-            display: inline-block;
-            padding: 5px 15px;
-        }
-
-        p {
-            font-size: 0.9rem;
-            margin-bottom: 40px;
-            opacity: 0.8;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-recovery {
-            text-decoration: none;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 12px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            transition: 0.2s;
-        }
-
-        .btn-recovery:hover {
-            background: var(--accent);
-            color: #000;
-        }
-
-        .glitch-text {
-            animation: glitch 1s infinite linear alternate-reverse;
+            margin-bottom: 2rem;
+            user-select: none;
         }
 
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+            0%,  89%  { text-shadow: none; }
+            90%        { text-shadow:  3px 0 0 var(--accent), -3px 0 0 rgba(100,200,255,0.6); }
+            91%        { text-shadow: -3px 0 0 var(--accent),  3px 0 0 rgba(100,200,255,0.6); }
+            92%        { text-shadow:  3px 0 0 var(--accent), -3px 0 0 rgba(100,200,255,0.6); }
+            93%, 100%  { text-shadow: none; }
+        }
+
+        /* ── DIVIDER LINE ──────────────────────────────────────────── */
+        .divider {
+            width: 100%;
+            height: 2px;
+            background: var(--border);
+            margin-bottom: 2rem;
+        }
+
+        /* ── LABEL ─────────────────────────────────────────────────── */
+        .error-label {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        /* ── HEADLINE ──────────────────────────────────────────────── */
+        .error-headline {
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin-bottom: 1rem;
+        }
+
+        .error-headline .highlight-box {
+            background: var(--accent);
+            color: #F7F4F3;
+            padding: 0 0.12em;
+            display: inline-block;
+        }
+
+        /* ── BODY COPY ─────────────────────────────────────────────── */
+        .error-body {
+            font-size: 0.82rem;
+            line-height: 1.75;
+            color: var(--muted);
+            font-weight: 400;
+            max-width: 480px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ── CTA LINK ──────────────────────────────────────────────── */
+        .cta-wrapper {
+            display: block;
+        }
+
+        .cta-link {
+            display: inline;
+            position: relative;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .cta-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .cta-link:hover::after {
+            width: 100%;
+        }
+
+        /* ── FOOTER ────────────────────────────────────────────────── */
+        footer {
+            border-top: 1px solid var(--dot);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .footer-brand {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+        }
+
+        .ref-id {
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+            opacity: 0.5;
+        }
+
+        /* ── RESPONSIVE ────────────────────────────────────────────── */
+        @media (max-width: 480px) {
+            nav { padding: 1rem 1.2rem; }
+            main { padding: 70px 1.2rem 1.2rem; }
+            footer { padding: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="error-container">
-    <span class="error-code glitch-text">404</span>
-    <h1>LOGIC_BREACH_DETECTED</h1>
-    <p>The requested coordinate does not exist in the Beben Core directory. The path may have been decommissioned or moved.</p>
-    
-    <div class="nav-links">
-        <a href="/" class="btn-recovery">Return to Root (Home)</a>
-        <a href="/services" class="btn-recovery">Browse Services</a>
-        <a href="mailto:hello.beben.design@gmail.com" class="btn-recovery">Report System Error</a>
-    </div>
+<!-- NAV -->
+<nav>
+    <a href="/" class="logo">Beben Design</a>
+    <button id="theme-toggle">LIGHT/ DARK</button>
+</nav>
 
-    <p style="margin-top: 40px; font-size: 0.7rem; opacity: 0.5;">
-        REF_ID: 0xFD404 // SESSION_TERMINATED
-    </p>
-</div>
+<!-- STAGE -->
+<main>
+    <div class="stage">
+
+        <span class="error-number">404</span>
+
+        <div class="divider"></div>
+
+        <p class="error-label">[ ERROR.404 ] — PATH_NOT_FOUND</p>
+
+        <h1 class="error-headline">
+            This page <span class="highlight-box">doesn't</span><br>exist in the system.
+        </h1>
+
+        <p class="error-body">
+            The coordinate you're looking for has been decommissioned, moved, or never existed.
+            Design logic dictates we stop here rather than guess.
+        </p>
+
+        <div class="cta-wrapper">
+            <a href="/" class="cta-link">← RETURN TO ROOT</a>
+        </div>
+
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <span class="footer-brand">© Beben Design</span>
+    <span class="ref-id">REF // 0xFD404 — SESSION_TERMINATED</span>
+</footer>
+
+<script>
+    // Theme — restore saved preference, toggle and persist
+    (function () {
+        const html   = document.documentElement;
+        const saved  = localStorage.getItem('beben-theme');
+        if (saved) html.setAttribute('data-theme', saved);
+
+        document.getElementById('theme-toggle').addEventListener('click', function () {
+            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('beben-theme', next);
+        });
+    })();
+</script>
 
 </body>
 </html>
