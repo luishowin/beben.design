@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Beben Core v2.0 — Design System Specification | Beben Design</title>
+    <meta name="description" content="The technical specification behind Beben Design's visual and interaction language. Typography, colour, spacing, motion, and the business logic behind every decision.">
+    <link rel="canonical" href="https://beben.design/core/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/core/">
+    <meta property="og:title" content="Beben Core v2.0 — Design System Specification">
+    <meta property="og:description" content="The technical and philosophical spec behind Beben Design's visual language.">
+    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "name": "Beben Core v2.0",
+      "headline": "Beben Design System Specification",
+      "url": "https://beben.design/core/",
+      "author": { "@type": "Organization", "name": "Beben Design", "url": "https://beben.design" },
+      "version": "2.0.0"
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
+    <style>
+        /* ═══════════════════════════════════════════════════════════
+           BEBEN CORE v2.0 — Self-contained. Tokens mirror index.css.
+        ═══════════════════════════════════════════════════════════ */
+
+        /* ── TOKENS ─────────────────────────────────────────────── */
+        :root[data-theme="light"] {
+            --bg:        #F7F4F3;
+            --text:      #141414;
+            --accent:    #E71D36;
+            --yellow:    #FFC917;
+            --muted:     #5a5a5a;
+            --border:    #141414;
+            --card-bg:   #F7F4F3;
+            --dot:       #dedad9;
+            --nav-bg:    #141414CC;
+            --nav-text:  #F7F4F3;
+            --overlay:   #F7F4F3;
+        }
+        :root[data-theme="dark"] {
+            --bg:        #141414;
+            --text:      #F7F4F3;
+            --accent:    #E71D36;
+            --yellow:    #FFC917;
+            --muted:     #999999;
+            --border:    #F7F4F3;
+            --card-bg:   #1c1c1c;
+            --dot:       #252525;
+            --nav-bg:    #141414CC;
+            --nav-text:  #F7F4F3;
+            --overlay:   #141414;
+        }
+
+        /* ── RESET ──────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* ── NAVBAR ─────────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(247,244,243,0.12);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--nav-text);
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        #theme-toggle {
+            background: none;
+            border: 1px solid rgba(247,244,243,0.45);
+            color: var(--nav-text);
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        #theme-toggle:hover { background: var(--nav-text); color: #141414; }
+
+        .menu { list-style: none; display: flex; gap: 2rem; }
+
+        .menu li a {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--nav-text);
+            transition: color 0.2s ease;
+        }
+
+        .menu li a:hover, .menu li a.active { color: var(--accent); }
+
+        #hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            width: 30px;
+            height: 30px;
+        }
+
+        #hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--nav-text);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform-origin: center;
+        }
+
+        body.menu-open #hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        body.menu-open #hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── MOBILE MENU ─────────────────────────────────────────── */
+        #mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99;
+            background: var(--overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        #mobile-menu-overlay.is-active {
+            opacity: 1; visibility: visible; pointer-events: auto;
+        }
+
+        .mobile-menu { list-style: none; text-align: center; }
+        .mobile-menu li { margin-bottom: 2rem; opacity: 0; transform: translateY(12px); transition: opacity 0.3s ease, transform 0.3s ease; }
+        #mobile-menu-overlay.is-active .mobile-menu li { opacity: 1; transform: translateY(0); }
+        #mobile-menu-overlay.is-active .mobile-menu li:nth-child(1) { transition-delay: 0.05s; }
+        #mobile-menu-overlay.is-active .mobile-menu li:nth-child(2) { transition-delay: 0.10s; }
+        #mobile-menu-overlay.is-active .mobile-menu li:nth-child(3) { transition-delay: 0.15s; }
+        #mobile-menu-overlay.is-active .mobile-menu li:nth-child(4) { transition-delay: 0.20s; }
+        #mobile-menu-overlay.is-active .mobile-menu li:nth-child(5) { transition-delay: 0.25s; }
+
+        .mobile-menu li a {
+            font-size: clamp(1.8rem, 9vw, 3rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            transition: color 0.2s ease;
+        }
+
+        .mobile-menu li a:hover, .mobile-menu li a.active { color: var(--accent); }
+
+        /* ── REVEAL ──────────────────────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* ── LAYOUT ──────────────────────────────────────────────── */
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            padding-top: 80px;
+        }
+
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--dot);
+        }
+
+        section:last-of-type { border-bottom: none; }
+
+        /* ── PAGE HERO ───────────────────────────────────────────── */
+        .hero {
+            padding-top: 120px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .version-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .version-badge .tag {
+            background: var(--yellow);
+            color: #141414;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 8vw, 5.5rem);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-box {
+            background: var(--accent);
+            color: #F7F4F3;
+            padding: 0 0.12em;
+            display: inline-block;
+        }
+
+        .hero-sub {
+            font-size: 0.88rem;
+            max-width: 620px;
+            line-height: 1.8;
+            color: var(--muted);
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .changelog {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            padding: 1.5rem 0;
+        }
+
+        .changelog-item { font-size: 0.7rem; color: var(--muted); }
+        .changelog-item strong { color: var(--text); font-weight: 700; }
+
+        /* ── SECTION HEADERS ─────────────────────────────────────── */
+        .section-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--dot);
+        }
+
+        .section-title {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .section-intro {
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.8;
+            max-width: 680px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ── SPEC GRID ───────────────────────────────────────────── */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .spec-card {
+            padding: 2rem;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+
+        /* Remove excess borders */
+        .spec-card:nth-child(2n) { border-right: none; }
+        @media (min-width: 900px) {
+            .spec-card:nth-child(2n)   { border-right: 1px solid var(--border); }
+            .spec-card:nth-child(3n)   { border-right: none; }
+        }
+
+        .spec-card-num {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .spec-card h3 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.6rem;
+        }
+
+        .spec-card p {
+            font-size: 0.78rem;
+            line-height: 1.7;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        /* ── COLOUR PALETTE ──────────────────────────────────────── */
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1px;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .swatch {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .swatch-colour {
+            height: 80px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .swatch-info {
+            padding: 0.85rem;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+        }
+
+        .swatch-name {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.25rem;
+        }
+
+        .swatch-hex {
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+        }
+
+        .swatch-role {
+            font-size: 0.6rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+            font-style: italic;
+        }
+
+        /* ── TYPOGRAPHY SPECIMEN ─────────────────────────────────── */
+        .type-specimen {
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .type-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 100px;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--dot);
+            gap: 1.5rem;
+        }
+
+        .type-row:last-child { border-bottom: none; }
+
+        .type-meta { font-size: 0.62rem; color: var(--muted); line-height: 1.6; }
+        .type-meta strong { display: block; color: var(--text); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; margin-bottom: 0.2rem; }
+        .type-usage { font-size: 0.6rem; color: var(--muted); font-style: italic; text-align: right; }
+
+        /* ── MOTION SPEC ─────────────────────────────────────────── */
+        .motion-table {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        .motion-table th, .motion-table td {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--dot);
+            font-size: 0.75rem;
+            text-align: left;
+        }
+
+        .motion-table th {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            background: var(--card-bg);
+        }
+
+        .motion-table td { font-weight: 400; color: var(--text); }
+        .motion-table td:first-child { font-weight: 700; color: var(--accent); }
+        .motion-table tr:last-child td { border-bottom: none; }
+
+        /* ── RATIONALE BLOCK ─────────────────────────────────────── */
+        .rationale-list { display: flex; flex-direction: column; }
+
+        .rationale-item {
+            display: grid;
+            grid-template-columns: 24px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--dot);
+            transition: padding-left 0.2s ease;
+        }
+
+        .rationale-item:last-child { border-bottom: none; }
+        .rationale-item:hover { padding-left: 6px; }
+
+        .rationale-num {
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            padding-top: 3px;
+        }
+
+        .rationale-body h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+        }
+
+        .rationale-body p {
+            font-size: 0.78rem;
+            line-height: 1.75;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .rationale-body .business-note {
+            margin-top: 0.6rem;
+            padding-left: 0.85rem;
+            border-left: 2px solid var(--yellow);
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        /* ── CTA ─────────────────────────────────────────────────── */
+        .cta-section { padding: 80px 0; border-bottom: none; }
+
+        .cta-section h2 {
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 0.85rem;
+            color: var(--muted);
+            max-width: 480px;
+            line-height: 1.75;
+            margin-bottom: 2rem;
+        }
+
+        .cta-link {
+            display: inline;
+            position: relative;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .cta-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .cta-link:hover::after { width: 100%; }
+
+        /* ── FOOTER ──────────────────────────────────────────────── */
+        footer {
+            border-top: 2px solid var(--border);
+            padding: 3rem 2rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand p { font-size: 0.8rem; line-height: 1.8; }
+        .footer-brand a { transition: color 0.2s ease; }
+        .footer-brand a:hover { color: var(--accent); }
+        .copyright { color: var(--muted) !important; margin-top: 0.5rem; font-size: 0.75rem !important; }
+
+        .footer-links { display: flex; flex-direction: column; align-items: flex-end; gap: 1.5rem; }
+
+        .footer-nav { list-style: none; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: flex-end; }
+
+        .footer-nav li a {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: color 0.2s ease;
+        }
+
+        .footer-nav li a:hover { color: var(--accent); }
+
+        .back-to-top {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .back-to-top:hover { background: var(--text); color: var(--bg); }
+
+        /* ── RESPONSIVE ──────────────────────────────────────────── */
+        .desktop-only { display: flex; }
+
+        @media (max-width: 768px) {
+            .desktop-only { display: none; }
+            #hamburger { display: flex; }
+            nav { padding: 1rem 1.2rem; }
+            main { padding: 0 1.2rem; padding-top: 70px; }
+            .hero { padding-top: 90px; }
+            .type-row { grid-template-columns: 1fr; gap: 0.5rem; }
+            .type-usage { text-align: left; }
+            .footer-links { align-items: flex-start; }
+            .footer-nav { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────── -->
+<nav>
+    <a href="/" class="logo">Beben Design</a>
+    <div class="nav-right">
+        <button id="theme-toggle">LIGHT/ DARK</button>
+        <ul class="menu desktop-only">
+            <li><a href="/services/">SERVICES</a></li>
+            <li><a href="/work/">SHOP</a></li>
+            <li><a href="/team/">WORK</a></li>
+            <li><a href="/tools/">TOOLS</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">HOME</a></li>
+        <li><a href="/services/">SERVICES</a></li>
+        <li><a href="/work/">SHOP</a></li>
+        <li><a href="/team/">WORK</a></li>
+        <li><a href="/tools/">TOOLS</a></li>
+        <li><a href="/contact/">CONTACT</a></li>
+    </ul>
+</div>
+
+<!-- ── MAIN ────────────────────────────────────────────────────── -->
+<main>
+
+    <!-- HERO -->
+    <section class="hero reveal">
+        <div class="version-badge">
+            [ BEBEN_CORE ] <span class="tag">V 2.0.0</span> — UPDATED APRIL 2026
+        </div>
+        <h1>Design<br><span class="highlight-box">System</span><br>Spec.</h1>
+        <p class="hero-sub">
+            The technical and philosophical foundation behind every Beben Design deliverable.
+            This document defines the decisions — not just the values — so the reasoning travels
+            with the code.
+        </p>
+        <div class="changelog">
+            <div class="changelog-item"><strong>v1.0.0</strong> Initial spec. Roboto Mono, pure black/white, FFC917 yellow.</div>
+            <div class="changelog-item"><strong>v2.0.0</strong> JetBrains Mono, Smokey White/Onyx palette, E71D36 red accent, fixed nav system, motion spec added.</div>
+        </div>
+    </section>
+
+    <!-- 01 — TYPOGRAPHY -->
+    <section class="reveal">
+        <p class="section-label">01 // TYPOGRAPHY</p>
+        <h2 class="section-title">Type Logic</h2>
+        <p class="section-intro">
+            A single typeface family — JetBrains Mono — handles all weight classes from 100 to 800.
+            Monospace type is not an aesthetic choice here. It reflects the technical discipline
+            of the studio: precise, structured, and with no ambiguity in letter spacing.
+        </p>
+
+        <div class="type-specimen">
+            <div class="type-row">
+                <div class="type-meta">
+                    <strong>Display</strong>
+                    clamp(2.5rem → 4.5rem)<br>
+                    weight 800<br>
+                    tracking −0.04em
+                </div>
+                <div style="font-size: clamp(1.8rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.04em; text-transform: uppercase; line-height: 1;">
+                    BEBEN
+                </div>
+                <div class="type-usage">Page titles<br>Hero H1</div>
+            </div>
+            <div class="type-row">
+                <div class="type-meta">
+                    <strong>Section</strong>
+                    1.0–1.2rem<br>
+                    weight 700<br>
+                    tracking +0.05em
+                </div>
+                <div style="font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                    OUR SERVICES
+                </div>
+                <div class="type-usage">H2 labels<br>Nav links</div>
+            </div>
+            <div class="type-row">
+                <div class="type-meta">
+                    <strong>Body</strong>
+                    0.82–0.9rem<br>
+                    weight 400<br>
+                    leading 1.75–1.8
+                </div>
+                <div style="font-size: 0.85rem; font-weight: 400; line-height: 1.75; color: var(--muted); max-width: 400px;">
+                    We shape ideas into clear, usable systems — designed to work long before development begins.
+                </div>
+                <div class="type-usage">Paragraphs<br>Descriptions</div>
+            </div>
+            <div class="type-row">
+                <div class="type-meta">
+                    <strong>Label / UI</strong>
+                    0.6–0.72rem<br>
+                    weight 700<br>
+                    tracking +0.12em
+                </div>
+                <div style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);">
+                    [ 01 // SECTION_LABEL ]
+                </div>
+                <div class="type-usage">Tags, labels<br>Micro copy</div>
+            </div>
+        </div>
+
+        <div class="rationale-list">
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why monospace over a humanist typeface?</h4>
+                    <p>Most design studios default to geometric sans-serifs — clean, friendly, forgettable. Monospace forces every character to occupy identical horizontal space, which produces a grid-aligned, technical cadence. It signals precision without saying it.</p>
+                    <p class="business-note">Business read: clients hiring Beben for HMI, dashboard, or technical product work see a studio that operates in the same visual register as their own engineering tools. Typeface choice is positioning.</p>
+                </div>
+            </div>
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why clamp() for display sizes?</h4>
+                    <p>Fluid type scaling eliminates the need for multiple breakpoint overrides. A single <code>clamp(2.5rem, 7vw, 4.5rem)</code> declaration handles every viewport from 320px to 4K. Less code, fewer edge cases, identical visual weight at all sizes.</p>
+                    <p class="business-note">Business read: fast, maintainable front-end code is part of the product quality promise — the type system is a direct demonstration of that practice.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 — COLOUR -->
+    <section class="reveal">
+        <p class="section-label">02 // COLOUR</p>
+        <h2 class="section-title">Palette v2.0</h2>
+        <p class="section-intro">
+            The palette moved away from pure #000000/#ffffff in v2.0. Smokey White and Onyx are
+            warmer, less harsh on extended reading sessions, and carry a material quality that
+            pure web defaults lack. The accent shifted from yellow to red — a deliberate reversal
+            of the studio's earlier identity.
+        </p>
+
+        <div class="palette-grid">
+            <div class="swatch">
+                <div class="swatch-colour" style="background:#F7F4F3; border-bottom: 1px solid var(--border);"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Smokey White</div>
+                    <div class="swatch-hex">#F7F4F3</div>
+                    <div class="swatch-role">Light bg, card surfaces</div>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-colour" style="background:#141414;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Onyx</div>
+                    <div class="swatch-hex">#141414</div>
+                    <div class="swatch-role">Light text, dark bg, nav</div>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-colour" style="background:#E71D36;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Signal Red</div>
+                    <div class="swatch-hex">#E71D36</div>
+                    <div class="swatch-role">CTAs, highlights, active states</div>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-colour" style="background:#FFC917; border-bottom: 1px solid var(--border);"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Strobe Yellow</div>
+                    <div class="swatch-hex">#FFC917</div>
+                    <div class="swatch-role">Tags, labels, secondary accent</div>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-colour" style="background:#141414CC;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Nav Onyx</div>
+                    <div class="swatch-hex">#141414 @ 80%</div>
+                    <div class="swatch-role">Fixed nav — both themes</div>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-colour" style="background:#5a5a5a;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Muted</div>
+                    <div class="swatch-hex">#5A5A5A / #999</div>
+                    <div class="swatch-role">Body copy, secondary text</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rationale-list">
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why Signal Red (#E71D36) replaced Strobe Yellow as the primary accent?</h4>
+                    <p>Yellow is high-visibility but carries connotations of caution, construction, and warning systems — useful for HMI work, less useful as a brand action colour. Red (#E71D36) is assertive without being aggressive. It creates a stronger visual hierarchy on both Smokey White and Onyx surfaces, passes WCAG AA contrast requirements, and reads at a distance on marketing materials.</p>
+                    <p class="business-note">Business read: red is associated with urgency and confidence — appropriate for a studio asking clients to commit budget to a decision. Yellow remains in the system as a secondary accent for labels and tags, where its high-visibility character is an advantage.</p>
+                </div>
+            </div>
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why Smokey White and Onyx instead of #fff and #000?</h4>
+                    <p>Pure white (#ffffff) creates maximum contrast that strains the eye over long sessions. #F7F4F3 reduces that harshness by approximately 3% luminance — imperceptible as a change but meaningful over a full page read. Onyx (#141414) does the same from the dark end: not quite black, which gives dark mode surfaces a material warmth rather than a void.</p>
+                    <p class="business-note">Business read: warmer surfaces are associated with craft and considered production. The detail signals that the studio made an intentional choice, not a default one — which is exactly the positioning Beben Design needs.</p>
+                </div>
+            </div>
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why is the nav always dark (#141414CC) regardless of theme?</h4>
+                    <p>A nav that flips with the theme introduces a cognitive context-switch on every page load: the user must re-orient to a differently coloured chrome. A fixed dark nav with consistent <code>--nav-text: #F7F4F3</code> content provides a stable anchor at the top of every page. The 80% opacity allows the body content to ghost through on scroll, maintaining spatial depth without obscuring readability.</p>
+                    <p class="business-note">Business read: consistent navigation reduces user uncertainty. In UX terms, predictable chrome is invisible chrome — which is the goal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 — SPACING -->
+    <section class="reveal">
+        <p class="section-label">03 // SPACING &amp; GRID</p>
+        <h2 class="section-title">Spatial Logic</h2>
+        <p class="section-intro">
+            All spacing derives from an 8px base unit. Section padding runs at 80px vertical.
+            The content column caps at 1100px with 2rem (32px) gutters on each side.
+        </p>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <div class="spec-card-num">// BASE UNIT</div>
+                <h3>8px / 0.5rem</h3>
+                <p>All spacing values are multiples of 8: 8, 16, 24, 32, 40, 80px. This keeps layout relationships mathematically consistent across breakpoints without requiring a framework.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// CONTENT MAX-WIDTH</div>
+                <h3>1100px</h3>
+                <p>Chosen to be wide enough for two-column layouts at desktop scale but narrow enough to prevent line lengths exceeding ~90 characters on body text — the threshold where readability degrades.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// SECTION RHYTHM</div>
+                <h3>80px vertical</h3>
+                <p>Consistent top/bottom padding on every section. Sections are separated by a 1px <code>var(--dot)</code> line, not whitespace alone — creating a document-like structure that reads as systematic rather than decorative.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// DOT GRID</div>
+                <h3>24px × 24px</h3>
+                <p>Background texture generated entirely in CSS via <code>radial-gradient</code>. Zero asset requests. The 24px pitch aligns to the 8px base unit (24 = 8 × 3), so the grid never conflicts with layout elements positioned on the spacing scale.</p>
+            </div>
+        </div>
+
+        <div class="rationale-list">
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why not use a CSS framework for the grid?</h4>
+                    <p>Frameworks add abstraction layers that obscure layout decisions. Writing spacing explicitly in CSS means every value is a deliberate choice, not a side effect of a utility class collision. The output is leaner, faster, and fully auditable.</p>
+                    <p class="business-note">Business read: clients inheriting a Beben codebase get CSS they can read and maintain. No dependency on a third-party framework that may deprecate or change its API.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 04 — MOTION -->
+    <section class="reveal">
+        <p class="section-label">04 // MOTION</p>
+        <h2 class="section-title">Interaction Timing</h2>
+        <p class="section-intro">
+            Motion is purposeful or absent. Decorative animation is a performance and maintenance liability.
+            Every transition in the system has a defined purpose, duration, and easing.
+        </p>
+
+        <table class="motion-table">
+            <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>Value</th>
+                    <th>Easing</th>
+                    <th>Usage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Reveal</td>
+                    <td>0.6s</td>
+                    <td>ease</td>
+                    <td>Sections entering viewport — opacity 0→1, translateY 24px→0</td>
+                </tr>
+                <tr>
+                    <td>Hover state</td>
+                    <td>0.2s</td>
+                    <td>ease</td>
+                    <td>Card backgrounds, link colours, button fills</td>
+                </tr>
+                <tr>
+                    <td>Theme switch</td>
+                    <td>0.3s</td>
+                    <td>ease</td>
+                    <td>background-color and color on body — no flash</td>
+                </tr>
+                <tr>
+                    <td>Underline CTA</td>
+                    <td>0.25s</td>
+                    <td>ease</td>
+                    <td>width 0→100% on ::after pseudo-element</td>
+                </tr>
+                <tr>
+                    <td>Menu overlay</td>
+                    <td>0.35s</td>
+                    <td>ease</td>
+                    <td>Mobile nav opacity + visibility — prevents layout flash</td>
+                </tr>
+                <tr>
+                    <td>Toast</td>
+                    <td>0.3s</td>
+                    <td>ease</td>
+                    <td>opacity + translateY — enters from below, auto-dismisses at 2.5s</td>
+                </tr>
+                <tr>
+                    <td>Hamburger → ×</td>
+                    <td>0.3s</td>
+                    <td>ease</td>
+                    <td>transform on three spans — rotate and scale, no JS class swap on individual spans</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="rationale-list">
+            <div class="rationale-item">
+                <span class="rationale-num">—</span>
+                <div class="rationale-body">
+                    <h4>Why visibility + opacity for the mobile overlay instead of display:none toggle?</h4>
+                    <p><code>display:none</code> removes the element from the paint tree instantly — no CSS transition can fire on it. Using <code>visibility: hidden</code> combined with <code>opacity: 0</code> keeps the element in the paint tree but makes it invisible and non-interactive. The transition fires on both properties, producing a proper fade in/out.</p>
+                    <p class="business-note">Business read: a mobile nav that flashes open without animation reads as broken to users. It signals low build quality before a single word of content is read.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05 — COMPONENT LOGIC -->
+    <section class="reveal">
+        <p class="section-label">05 // COMPONENTS</p>
+        <h2 class="section-title">Interaction Patterns</h2>
+        <p class="section-intro">
+            Every interactive component follows a single rule: the hover state must invert or
+            visibly shift — not merely change opacity. A card that goes from Smokey White to
+            Onyx on hover communicates state change unambiguously.
+        </p>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <div class="spec-card-num">// CARDS</div>
+                <h3>Border-first, Fill-on-hover</h3>
+                <p>Cards use a 1px <code>var(--border)</code> frame with transparent fill at rest. On hover, background fills to <code>var(--text)</code>. The inversion is legible in both themes without conditional logic.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// CTA LINKS</div>
+                <h3>Inline + Underline Grow</h3>
+                <p><code>display: inline</code> ensures the hover target matches only the text width — not the full container width. A <code>::after</code> pseudo-element grows from 0 to 100% width on hover, replacing the need for a traditional underline.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// FAQ ACCORDION</div>
+                <h3>max-height CSS Transition</h3>
+                <p>Answers expand via <code>max-height: 0 → 300px</code> with <code>overflow: hidden</code>. No JavaScript height calculation. The <code>+</code> rotates 45° to form <code>×</code> via <code>transform: rotate(45deg)</code>. One button per item, <code>aria-expanded</code> managed in JS.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// TOOLTIPS</div>
+                <h3>Opacity + Transform Pair</h3>
+                <p>Tooltips use <code>opacity: 0 → 1</code> combined with <code>translateY(4px → 0)</code>. Positioned relative to the parent's inline text width — never the container. Disabled on touch devices via <code>@media (max-width: 480px)</code>.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// PROCESS STEPS</div>
+                <h3>Grid + Hover Indent</h3>
+                <p>Two-column grid: fixed 60px number column, fluid content column. On hover, <code>padding-left</code> shifts by 8px — a micro-interaction that implies forward momentum without animation overhead.</p>
+            </div>
+            <div class="spec-card">
+                <div class="spec-card-num">// TOAST NOTIFICATIONS</div>
+                <h3>Fixed + Auto-dismiss</h3>
+                <p>Fixed position at <code>bottom: 2rem</code>, centred via <code>translateX(-50%)</code>. Enters with <code>translateY</code> from below. Auto-dismisses after 2.5s. Uses <code>--text</code> background and <code>--bg</code> text — the inversion of the page itself.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section reveal">
+        <h2>See the system<br>in production.</h2>
+        <p>
+            Every rule in this document is applied live across beben.design.
+            No gap between the spec and the shipped product — because the spec
+            was written from the product, not before it.
+        </p>
+        <a href="https://beben.design" class="cta-link">VISIT BEBEN.DESIGN ↗</a>
+    </section>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer class="reveal">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">© Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function () {
+    'use strict';
+
+    // Theme
+    const html  = document.documentElement;
+    const saved = localStorage.getItem('beben-theme');
+    if (saved) html.setAttribute('data-theme', saved);
+
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('beben-theme', next);
+    });
+
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const overlay   = document.getElementById('mobile-menu-overlay');
+    const body      = document.body;
+
+    function openMenu()  { overlay.classList.add('is-active');    body.classList.add('menu-open');    body.style.overflow = 'hidden'; hamburger.setAttribute('aria-expanded','true'); }
+    function closeMenu() { overlay.classList.remove('is-active'); body.classList.remove('menu-open'); body.style.overflow = '';       hamburger.setAttribute('aria-expanded','false'); }
+
+    hamburger.addEventListener('click', function () {
+        overlay.classList.contains('is-active') ? closeMenu() : openMenu();
+    });
+
+    overlay.querySelectorAll('.mobile-menu a').forEach(function (l) { l.addEventListener('click', closeMenu); });
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeMenu(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('is-active')) { closeMenu(); hamburger.focus(); } });
+
+    // Reveal
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+
+})();
+</script>
+
+</body>
+</html>
