@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>QR Code Generator — Beben Design Tools</title>
-    <meta name="description" content="Generate clean, watermark-free QR codes. Export as SVG at 1000×1000px. Free browser tool by Beben Design — no server, no sign-up.">
+    <title>QR Code Generator - Beben Design Tools</title>
+    <meta name="description" content="Generate clean, watermark-free QR codes. Export as SVG at 1000×1000px. Free browser tool by Beben Design - no server, no sign-up.">
     <link rel="canonical" href="https://beben.design/tools/qr-generator/">
 
-    <meta property="og:title" content="QR Code Generator — Beben Design Tools">
+    <meta property="og:title" content="QR Code Generator - Beben Design Tools">
     <meta property="og:description" content="Free, offline-capable QR code generator. Clean SVG exports, no watermarks.">
     <meta property="og:url" content="https://beben.design/tools/qr-generator/">
 
@@ -20,7 +20,7 @@
 
     <style>
         /* ════════════════════════════════════════════════════════════
-           BEBEN DESIGN TOKENS — mirrored from index.css
+           BEBEN DESIGN TOKENS - mirrored from index.css
         ════════════════════════════════════════════════════════════ */
         :root[data-theme="light"] {
             --bg:        #F7F4F3;
@@ -145,7 +145,7 @@
             align-items: start;
         }
 
-        /* ── LEFT COLUMN — info ────────────────────────────────────── */
+        /* ── LEFT COLUMN - info ────────────────────────────────────── */
         .info-col {
             padding: 3rem 3rem 3rem 0;
             border-right: 1px solid var(--border);
@@ -251,7 +251,7 @@
 
         .cta-link:hover::after { width: 100%; }
 
-        /* ── RIGHT COLUMN — tool ───────────────────────────────────── */
+        /* ── RIGHT COLUMN - tool ───────────────────────────────────── */
         .tool-col {
             padding: 3rem 0 3rem 3rem;
         }
@@ -289,7 +289,7 @@
 
         .tool-input::placeholder { color: var(--muted); opacity: 0.6; }
 
-        /* ECC segmented control — beben style */
+        /* ECC segmented control - beben style */
         .ecc-group {
             margin-bottom: 1.5rem;
         }
@@ -362,7 +362,7 @@
             position: relative;
         }
 
-        /* Keep QR black on white regardless of theme — scanners need contrast */
+        /* Keep QR black on white regardless of theme - scanners need contrast */
         .qr-frame svg {
             max-width: 200px;
             width: 100%;
@@ -521,12 +521,12 @@
     <!-- LEFT: Info column -->
     <div class="info-col">
 
-        <p class="page-label">[ TOOLS.01 ] — Generator</p>
+        <p class="page-label">[ TOOLS.01 ] - Generator</p>
 
         <h1>QR Code<br><span class="highlight-box">Generator</span></h1>
 
         <p class="description">
-            Paste any URL, plain text, phone number, or contact info — get a
+            Paste any URL, plain text, phone number, or contact info - get a
             clean, scannable QR code instantly. No watermarks, no limits,
             no data leaves your browser.
         </p>
@@ -547,18 +547,18 @@
             </div>
             <div class="spec-row">
                 <span class="spec-label">Server calls</span>
-                <span class="spec-value">Zero — runs locally</span>
+                <span class="spec-value">Zero - runs locally</span>
             </div>
             <div class="spec-row">
                 <span class="spec-label">Offline support</span>
-                <span class="spec-value">Yes — download the .html</span>
+                <span class="spec-value">Yes - download the .html</span>
             </div>
         </div>
 
         <div class="cta-block">
             <p>
                 Part of a growing toolkit built with the same logic we apply
-                to every client project — fast, focused, and free.
+                to every client project - fast, focused, and free.
             </p>
             <a href="https://beben.design/tools/" class="cta-link">
                 MORE TOOLS AT BEBEN.DESIGN ↗
@@ -571,7 +571,7 @@
     <div class="tool-col">
 
         <!-- Input -->
-        <label class="field-label" for="urlInput">// Input — URL or Text</label>
+        <label class="field-label" for="urlInput">// Input - URL or Text</label>
         <input
             type="text"
             id="urlInput"
@@ -586,12 +586,12 @@
         <div class="ecc-group">
             <span class="field-label">// Error Correction Level</span>
             <div class="ecc-grid" id="eccControl">
-                <button class="ecc-btn active" data-level="L">L — 7%</button>
-                <button class="ecc-btn" data-level="M">M — 15%</button>
-                <button class="ecc-btn" data-level="Q">Q — 25%</button>
-                <button class="ecc-btn" data-level="H">H — 30%</button>
+                <button class="ecc-btn active" data-level="L">L - 7%</button>
+                <button class="ecc-btn" data-level="M">M - 15%</button>
+                <button class="ecc-btn" data-level="Q">Q - 25%</button>
+                <button class="ecc-btn" data-level="H">H - 30%</button>
             </div>
-            <p class="ecc-hint">Higher levels add redundancy — use H if you plan to overlay a logo on the QR code.</p>
+            <p class="ecc-hint">Higher levels add redundancy - use H if you plan to overlay a logo on the QR code.</p>
         </div>
 
         <!-- Preview -->
@@ -624,7 +624,7 @@
     <div class="footer-container">
         <p class="footer-brand">
             A free tool by <a href="https://beben.design">Beben Design</a>
-            — Design &amp; Interface Studio, Nairobi KE.
+            - Design &amp; Interface Studio, Nairobi KE.
         </p>
         <span class="footer-right">© BEBEN DESIGN | ALL RIGHTS RESERVED</span>
     </div>
@@ -665,7 +665,7 @@
         setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
-    // ── GENERATE — preview (responsive) ──────────────────────────
+    // ── GENERATE - preview (responsive) ──────────────────────────
     function generateQR() {
         const text = urlInput.value.trim() || ' ';
 
@@ -674,7 +674,7 @@
             qr.addData(text);
             qr.make();
 
-            // Small cell size for preview — SVG scales responsively
+            // Small cell size for preview - SVG scales responsively
             const svgStr = qr.createSvgTag(6, 2);
             qrFrame.innerHTML = svgStr;
 
@@ -694,13 +694,13 @@
             previewStatus.style.color = 'var(--accent)';
 
         } catch (err) {
-            qrFrame.innerHTML = '<span style="font-size:0.75rem;color:var(--muted);">Input too long for this level — try H.</span>';
+            qrFrame.innerHTML = '<span style="font-size:0.75rem;color:var(--muted);">Input too long for this level - try H.</span>';
             previewStatus.textContent = 'ERROR';
             previewStatus.style.color = '#E71D36';
         }
     }
 
-    // ── GENERATE — export quality (1000×1000 SVG) ────────────────
+    // ── GENERATE - export quality (1000×1000 SVG) ────────────────
     function getExportSVG() {
         const text = urlInput.value.trim() || ' ';
         const qr = qrcode(0, currentLevel);
@@ -740,7 +740,7 @@
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        showToast('SVG exported — 1000 × 1000px');
+        showToast('SVG exported - 1000 × 1000px');
     });
 
     // ── COPY SVG CODE ─────────────────────────────────────────────
@@ -767,7 +767,7 @@
             document.execCommand('copy');
             showToast('SVG code copied to clipboard.');
         } catch (e) {
-            showToast('Copy failed — please copy manually.');
+            showToast('Copy failed - please copy manually.');
         }
         document.body.removeChild(ta);
     }

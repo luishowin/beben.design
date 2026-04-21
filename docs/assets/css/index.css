@@ -426,11 +426,15 @@ h2 {
 #work .placeholder {
     border: 1px solid var(--text);
     height: 300px;
-    transition: opacity 0.2s ease;
+    transition: filter 0.2s ease;
+    background-image: url(../images/coverr.jpg);
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(100%);
 }
 
 #work a:hover .placeholder {
-    opacity: 0.7;
+    filter: grayscale(0%);
 }
 
 #work p {
