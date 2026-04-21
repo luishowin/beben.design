@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shop — Coming Soon | Beben Design</title>
+    <meta name="description" content="The Beben Design shop is launching soon. Digital products, design assets, and templates built with the same logic we apply to every client project.">
+    <link rel="canonical" href="https://beben.design/work/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/work/">
+    <meta property="og:title" content="Shop — Coming Soon | Beben Design">
+    <meta property="og:description" content="Digital products and design assets. Launching soon.">
+    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://beben.design/work/">
+    <meta property="twitter:title" content="Shop — Coming Soon | Beben Design">
+    <meta property="twitter:description" content="Digital products and design assets. Launching soon.">
+    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
+    <style>
+        /* ─────────────────────────────────────────────────────────
+           SHOP PAGE — scoped additions only.
+           Tokens, nav, footer, reveal, grid from index.css.
+        ───────────────────────────────────────────────────────── */
+
+        /* ── HERO ──────────────────────────────────────────────── */
+        .page-hero {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-label {
+            font-size: 0.62rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero .intro {
+            font-size: 0.88rem;
+            max-width: 580px;
+            line-height: 1.75;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 1.75rem;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--yellow);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        /* ── NOTIFY STRIP ──────────────────────────────────────── */
+        .notify-strip {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--dot);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .notify-strip p {
+            font-size: 0.8rem;
+            color: var(--muted);
+            max-width: 420px;
+            line-height: 1.7;
+        }
+
+        .notify-link {
+            display: inline;
+            position: relative;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .notify-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .notify-link:hover::after { width: 100%; }
+
+        /* ── PRODUCT GRID SECTION ──────────────────────────────── */
+        .shop-section { padding: 80px 0; }
+
+        .shop-section h2 {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+
+        /* ── PRODUCT GRID ──────────────────────────────────────── */
+        /*
+            Auto-fill: each card min 300px, max 1fr.
+            Add a product: duplicate one <article class="product-card"> block.
+            Update data-category, title, price, description, and image src.
+            Grid reflows automatically.
+        */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            border: 1px solid var(--border);
+        }
+
+        /* ── PRODUCT CARD ──────────────────────────────────────── */
+        .product-card {
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Remove double borders cleanly */
+        .product-card:nth-child(3n) { border-right: none; }
+
+        @media (max-width: 960px) {
+            .product-card:nth-child(3n)  { border-right: 1px solid var(--border); }
+            .product-card:nth-child(2n)  { border-right: none; }
+        }
+
+        @media (max-width: 660px) {
+            .product-card:nth-child(n)   { border-right: none; }
+        }
+
+        /* Image area */
+        .card-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: var(--dot);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: filter 0.3s ease;
+        }
+
+        .product-card:hover .card-image {
+            filter: brightness(0.88);
+        }
+
+        /* Coming soon overlay on each card */
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: 0.85rem;
+            pointer-events: none;
+        }
+
+        .overlay-tag {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            background: var(--yellow);
+            color: #141414;
+            padding: 0.25rem 0.6rem;
+        }
+
+        /* Card body */
+        .card-body {
+            padding: 1.5rem 1.5rem 0.75rem;
+            flex: 1;
+        }
+
+        .card-category {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .card-body h3 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-body p {
+            font-size: 0.76rem;
+            line-height: 1.65;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        /* Card footer */
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1.5rem;
+            border-top: 1px solid var(--dot);
+            margin-top: 1rem;
+        }
+
+        .card-price {
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: var(--text);
+        }
+
+        .card-price.tbd {
+            color: var(--muted);
+            font-weight: 400;
+            font-size: 0.7rem;
+            font-style: italic;
+        }
+
+        .card-action {
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ── CATEGORIES FILTER BAR ─────────────────────────────── */
+        .filter-bar {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: none;
+            border: none;
+            border-right: 1px solid var(--border);
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.65rem 1.25rem;
+            cursor: not-allowed;      /* disabled until launch */
+            transition: background 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-btn:last-child { border-right: none; }
+        .filter-btn.active {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        /* ── TIMELINE STRIP ────────────────────────────────────── */
+        .timeline-section { padding: 80px 0; border-top: 1px solid var(--dot); }
+
+        .timeline-section h2 {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 2.5rem;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 2rem;
+            align-items: start;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--dot);
+            transition: padding-left 0.2s ease;
+        }
+
+        .timeline-row:last-child { border-bottom: none; }
+        .timeline-row:hover { padding-left: 8px; }
+
+        .timeline-period {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            padding-top: 2px;
+        }
+
+        .timeline-content h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.35rem;
+        }
+
+        .timeline-content p {
+            font-size: 0.76rem;
+            line-height: 1.65;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .timeline-status {
+            display: inline-block;
+            font-size: 0.56rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.55rem;
+            margin-top: 0.5rem;
+        }
+
+        .timeline-status.in-progress { background: var(--yellow); color: #141414; }
+        .timeline-status.planned     { border: 1px solid var(--dot); color: var(--muted); }
+        .timeline-status.done        { background: var(--text); color: var(--bg); }
+
+        /* ── RESPONSIVE ────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .page-hero    { padding-top: 90px; }
+            .notify-strip { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .product-grid { grid-template-columns: 1fr; }
+            .filter-bar   { overflow-x: auto; flex-wrap: nowrap; }
+            .timeline-row { grid-template-columns: 90px 1fr; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav>
+    <a href="/" class="logo">Beben Design</a>
+    <div class="nav-right">
+        <button id="theme-toggle">LIGHT/ DARK</button>
+        <ul class="menu desktop-only">
+            <li><a href="/services/">SERVICES</a></li>
+            <li><a href="/work/" class="active">SHOP</a></li>
+            <li><a href="/team/">WORK</a></li>
+            <li><a href="/tools/">TOOLS</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</nav>
+
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">HOME</a></li>
+        <li><a href="/services/">SERVICES</a></li>
+        <li><a href="/work/" class="active">SHOP</a></li>
+        <li><a href="/team/">WORK</a></li>
+        <li><a href="/tools/">TOOLS</a></li>
+        <li><a href="/contact/">CONTACT</a></li>
+    </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════ -->
+<main>
+
+    <!-- Hero -->
+    <section class="page-hero reveal">
+        <p class="page-label">[ SHOP.00 ] — DIGITAL PRODUCTS</p>
+        <h1>The shop is<br><span class="highlight-box">almost</span><br>ready.</h1>
+        <p class="intro">
+            We're building a focused collection of digital products — UI kits, design templates,
+            and downloadable assets built to the same standard as our client work.
+            No filler, no bloat.
+        </p>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            IN DEVELOPMENT — LAUNCHING 2026
+        </div>
+    </section>
+
+    <!-- Notify strip -->
+    <div class="notify-strip reveal">
+        <p>
+            Want to know when products drop? Send us a note and we'll reach out
+            directly when the first release is live.
+        </p>
+        <a href="mailto:hello.beben.design@gmail.com?subject=Shop%20Launch%20Notification" class="notify-link">
+            NOTIFY ME ↗
+        </a>
+    </div>
+
+    <!-- Product grid -->
+    <section class="shop-section reveal">
+
+        <h2>// UPCOMING PRODUCTS</h2>
+
+        <!-- Category filter — disabled until launch -->
+        <div class="filter-bar" aria-label="Product categories">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">UI Kits</button>
+            <button class="filter-btn">Templates</button>
+            <button class="filter-btn">Icon Sets</button>
+            <button class="filter-btn">Print</button>
+        </div>
+
+        <!--
+        ════════════════════════════════════════════════════════════
+        HOW TO ADD A PRODUCT
+        ────────────────────────────────────────────────────────────
+        1. Duplicate an <article class="product-card"> block.
+        2. Update:
+             • .card-image style="background-image: url('YOUR-IMAGE')"
+             • .card-category text
+             • <h3> product name
+             • <p> description
+             • .card-price (or leave .tbd class for TBD)
+        3. When the shop launches — remove class="product-card" overlay
+           and replace .card-action span with a real <a> button.
+        ════════════════════════════════════════════════════════════
+        -->
+
+        <div class="product-grid">
+
+            <!-- ── PRODUCT 01 ── -->
+            <article class="product-card">
+                <div class="card-image" style="background-image: url('#');">
+                    <div class="card-overlay">
+                        <span class="overlay-tag">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-category">// UI Kit</p>
+                    <h3>Brutalist Dashboard UI Kit</h3>
+                    <p>A complete set of data display components — charts, tables, stat cards — built on the Beben grid system. Figma + HTML/CSS.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-price tbd">Price TBD</span>
+                    <span class="card-action">COMING SOON</span>
+                </div>
+            </article>
+
+            <!-- ── PRODUCT 02 ── -->
+            <article class="product-card">
+                <div class="card-image" style="background-image: url('#');">
+                    <div class="card-overlay">
+                        <span class="overlay-tag">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-category">// Template</p>
+                    <h3>Monospace Portfolio Template</h3>
+                    <p>A clean, single-file HTML portfolio template. Zero dependencies. Dot-grid background, dark/light mode, mobile-first.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-price tbd">Price TBD</span>
+                    <span class="card-action">COMING SOON</span>
+                </div>
+            </article>
+
+            <!-- ── PRODUCT 03 ── -->
+            <article class="product-card">
+                <div class="card-image" style="background-image: url('#');">
+                    <div class="card-overlay">
+                        <span class="overlay-tag">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-category">// Print</p>
+                    <h3>HMI Icon Set — Industrial</h3>
+                    <p>300+ SVG icons engineered for hardware interfaces. High-contrast, scalable from 16px to 200mm. Covers automotive, industrial, and medical categories.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-price tbd">Price TBD</span>
+                    <span class="card-action">COMING SOON</span>
+                </div>
+            </article>
+
+            <!-- ── PRODUCT 04 ── -->
+            <article class="product-card">
+                <div class="card-image" style="background-image: url('#');">
+                    <div class="card-overlay">
+                        <span class="overlay-tag">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-category">// Template</p>
+                    <h3>Startup Landing Page Kit</h3>
+                    <p>A conversion-focused landing page template. Hero, features, pricing, FAQ, CTA — all sections pre-built. HTML, CSS, and Webflow versions.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-price tbd">Price TBD</span>
+                    <span class="card-action">COMING SOON</span>
+                </div>
+            </article>
+
+            <!-- ── PRODUCT 05 ── -->
+            <article class="product-card">
+                <div class="card-image" style="background-image: url('#');">
+                    <div class="card-overlay">
+                        <span class="overlay-tag">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-category">// UI Kit</p>
+                    <h3>Mobile UI Component Library</h3>
+                    <p>iOS and Android-ready components for Figma. Follows platform HIG conventions while maintaining a distinctive visual language.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-price tbd">Price TBD</span>
+                    <span class="card-action">COMING SOON</span>
+                </div>
+            </article>
+
+            <!-- ── PRODUCT 06 ── -->
+            <article class="product-card">
+                <div class="card-image" style="background-image: url('#');">
+                    <div class="card-overlay">
+                        <span class="overlay-tag">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-category">// Print</p>
+                    <h3>Brand Identity Poster Series</h3>
+                    <p>A set of print-ready poster templates. Brutalist grid layouts, customisable for events, studio branding, or editorial use. A3 + A2 formats.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-price tbd">Price TBD</span>
+                    <span class="card-action">COMING SOON</span>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Launch timeline -->
+    <section class="timeline-section reveal">
+        <h2>// LAUNCH TIMELINE</h2>
+        <div class="timeline">
+
+            <div class="timeline-row">
+                <div class="timeline-period">Q2 2026</div>
+                <div class="timeline-content">
+                    <h4>Shop Infrastructure</h4>
+                    <p>Payment processing, product delivery, and licence management system. No third-party platform dependency.</p>
+                    <span class="timeline-status in-progress">In Progress</span>
+                </div>
+            </div>
+
+            <div class="timeline-row">
+                <div class="timeline-period">Q3 2026</div>
+                <div class="timeline-content">
+                    <h4>First Product Drop</h4>
+                    <p>Initial release of 2–3 products. Notification sent to waitlist first. Public launch follows 48 hours later.</p>
+                    <span class="timeline-status planned">Planned</span>
+                </div>
+            </div>
+
+            <div class="timeline-row">
+                <div class="timeline-period">Q4 2026</div>
+                <div class="timeline-content">
+                    <h4>Full Catalogue</h4>
+                    <p>Remaining product categories live. Filter system enabled. Bundle pricing introduced.</p>
+                    <span class="timeline-status planned">Planned</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="reveal">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">© Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function () {
+    'use strict';
+
+    // Theme
+    const html  = document.documentElement;
+    const saved = localStorage.getItem('beben-theme');
+    if (saved) html.setAttribute('data-theme', saved);
+
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('beben-theme', next);
+    });
+
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const overlay   = document.getElementById('mobile-menu-overlay');
+    const body      = document.body;
+
+    function openMenu()  {
+        overlay.classList.add('is-active');
+        body.classList.add('menu-open');
+        body.style.overflow = 'hidden';
+        hamburger.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMenu() {
+        overlay.classList.remove('is-active');
+        body.classList.remove('menu-open');
+        body.style.overflow = '';
+        hamburger.setAttribute('aria-expanded', 'false');
+    }
+
+    hamburger.addEventListener('click', function () {
+        overlay.classList.contains('is-active') ? closeMenu() : openMenu();
+    });
+
+    overlay.querySelectorAll('.mobile-menu a').forEach(function (link) {
+        link.addEventListener('click', closeMenu);
+    });
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeMenu();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('is-active')) {
+            closeMenu();
+            hamburger.focus();
+        }
+    });
+
+    // Reveal
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+
+})();
+</script>
+
+</body>
+</html>
