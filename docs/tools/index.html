@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tools | Beben Design — Free Web Tools, No Server Required</title>
+    <meta name="title" content="Tools | Beben Design — Free Web Tools, No Server Required">
+    <meta name="description" content="A small collection of free, offline-capable web tools built by Beben Design. Run them in your browser or download the HTML file and use them locally — no server, no sign-up.">
+    <link rel="canonical" href="https://beben.design/tools/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/tools/">
+    <meta property="og:title" content="Tools | Beben Design — Free Web Tools">
+    <meta property="og:description" content="Free, offline-capable browser tools. Run online or download and use locally.">
+    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://beben.design/tools/">
+    <meta property="twitter:title" content="Tools | Beben Design — Free Web Tools">
+    <meta property="twitter:description" content="Free, offline-capable browser tools. Run online or download and use locally.">
+    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Tools — Beben Design",
+      "url": "https://beben.design/tools/",
+      "description": "A curated collection of free, offline-capable web tools built by Beben Design.",
+      "publisher": {
+        "@type": "ProfessionalService",
+        "name": "Beben Design",
+        "url": "https://beben.design"
+      }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
+    <style>
+        /* ─────────────────────────────────────────────────────────────
+           TOOLS PAGE — scoped additions only.
+           All base tokens, nav, footer, reveal, grid come from index.css
+        ───────────────────────────────────────────────────────────── */
+
+        /* Page hero */
+        .page-hero {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-label {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero .intro {
+            font-size: 0.88rem;
+            max-width: 600px;
+            line-height: 1.75;
+            color: var(--muted);
+            font-weight: 400;
+            margin-bottom: 1.75rem;
+        }
+
+        /* Inline feedback nudge */
+        .feedback-line {
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: var(--muted);
+        }
+
+        .feedback-line a {
+            font-weight: 700;
+            color: var(--accent);
+            transition: opacity 0.2s ease;
+        }
+
+        .feedback-line a:hover {
+            opacity: 0.7;
+        }
+
+        /* ── TOOLS GRID ───────────────────────────────────────────── */
+        /*
+            Auto-fill columns: each card min 260px, max 1fr.
+            To add a tool: duplicate one <article class="tool-card"> block.
+            No JS, no config — the grid reflows automatically.
+        */
+        .tools-section {
+            padding: 80px 0;
+        }
+
+        .tools-section h2 {
+            margin-bottom: 2rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            border: 1px solid var(--border);
+        }
+
+        /* ── TOOL CARD ────────────────────────────────────────────── */
+        /*
+            Each card is a self-contained <article> with two child links:
+              .card-body  → opens the tool  (fills the card)
+              .card-download → downloads the HTML file
+
+            To add a new tool, duplicate the entire <article> block,
+            update href, data-download, the tag, title, and description.
+            That's it.
+        */
+        .tool-card {
+            position: relative;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            transition: background 0.22s ease, color 0.22s ease;
+            overflow: hidden;
+        }
+
+        /* Remove double borders at grid edges */
+        .tool-card:nth-child(n):last-child       { border-bottom: none; }
+
+        .tool-card:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        /* ── Card body link — fills upper area ── */
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 1.75rem 1.75rem 1rem;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .card-tag {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            transition: color 0.22s ease;
+        }
+
+        .tool-card:hover .card-tag {
+            color: var(--yellow);
+        }
+
+        .card-body h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.65rem;
+            line-height: 1.2;
+        }
+
+        .card-body p {
+            font-size: 0.78rem;
+            line-height: 1.65;
+            font-weight: 400;
+            flex: 1;
+        }
+
+        /* ── Card footer — open + download strip ── */
+        .card-footer {
+            display: flex;
+            align-items: stretch;
+            border-top: 1px solid var(--border);
+            transition: border-color 0.22s ease;
+            margin-top: 1.25rem;
+        }
+
+        .tool-card:hover .card-footer {
+            border-top-color: rgba(247, 244, 243, 0.2);
+        }
+
+        .card-open {
+            flex: 1;
+            padding: 0.7rem 1.75rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.15s ease;
+        }
+
+        .card-open:hover {
+            color: var(--accent);
+        }
+
+        .card-download {
+            padding: 0.7rem 1.1rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: inherit;
+            text-decoration: none;
+            border-left: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.15s ease, border-color 0.22s ease;
+            white-space: nowrap;
+        }
+
+        .tool-card:hover .card-download {
+            border-left-color: rgba(247, 244, 243, 0.2);
+        }
+
+        .card-download:hover {
+            color: var(--accent);
+        }
+
+        /* ── COMING SOON CARD STATE ───────────────────────────────── */
+        .tool-card.coming-soon {
+            pointer-events: none;
+            opacity: 0.45;
+        }
+
+        .tool-card.coming-soon .card-tag::before {
+            content: "// COMING SOON — ";
+        }
+
+        /* ── CTA STRIP AT BOTTOM OF SECTION ──────────────────────── */
+        .tools-cta {
+            padding-top: 2rem;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        .tools-cta strong {
+            color: var(--text);
+        }
+
+        /* ── RESPONSIVE ───────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .page-hero { padding-top: 90px; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .tool-card { border-right: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR — identical to all pages
+════════════════════════════════════════════ -->
+<nav>
+    <a href="/" class="logo">Beben Design</a>
+    <div class="nav-right">
+        <button id="theme-toggle">LIGHT/ DARK</button>
+        <ul class="menu desktop-only">
+            <li><a href="/services/">SERVICES</a></li>
+            <li><a href="/work/">SHOP</a></li>
+            <li><a href="/team/">WORK</a></li>
+            <li><a href="/tools/" class="active">TOOLS</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</nav>
+
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">HOME</a></li>
+        <li><a href="/services/">SERVICES</a></li>
+        <li><a href="/work/">SHOP</a></li>
+        <li><a href="/team/">WORK</a></li>
+        <li><a href="/tools/" class="active">TOOLS</a></li>
+        <li><a href="/contact/">CONTACT</a></li>
+    </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════ -->
+<main>
+
+    <!-- Page Hero -->
+    <section class="page-hero reveal">
+        <p class="page-label">[ TOOLS.01 ] — BROWSER-NATIVE UTILITIES</p>
+        <h1>Small tools.<br><span class="highlight-box">Zero</span> friction.</h1>
+        <p class="intro">
+            A growing collection of single-purpose web utilities built with the same design logic
+            we apply to client work — fast, focused, and free. Every tool runs entirely in your
+            browser. No accounts, no data collection, no server calls.
+        </p>
+        <p class="intro" style="margin-bottom: 0;">
+            Download any tool as a standalone HTML file and run it locally forever.
+            Works offline, works on any device, works without us.
+        </p>
+
+        <p class="feedback-line" style="margin-top: 1.5rem;">
+            Built something you'd want to see here? Found a bug?
+            <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a>
+        </p>
+    </section>
+
+    <!-- Tools Grid -->
+    <section class="tools-section reveal">
+        <h2>// AVAILABLE TOOLS</h2>
+
+        <!--
+        ════════════════════════════════════════════════════════════
+        HOW TO ADD A NEW TOOL
+        ────────────────────────────────────────────────────────────
+        1. Duplicate the entire <article class="tool-card"> block below.
+        2. Update the four values:
+              • .card-body href         → URL of the tool page
+              • data-download on <a>    → path to the downloadable .html file
+              • .card-tag               → category label  (e.g. "// Generator")
+              • <h3>                    → tool name
+              • <p>                     → one-line description
+        3. Save. The grid reflows automatically. Done.
+
+        For a tool that isn't ready yet, add class="tool-card coming-soon"
+        to the <article> — it will render greyed out and non-interactive.
+        ════════════════════════════════════════════════════════════
+        -->
+
+        <div class="tools-grid">
+
+            <!-- ── TOOL CARD: QR Code Generator ── -->
+            <article class="tool-card">
+                <a href="../qr-code-generator/" class="card-body">
+                    <span class="card-tag">// Generator</span>
+                    <h3>QR Code Generator</h3>
+                    <p>Paste any URL, text, or contact info — get a clean, downloadable QR code instantly. No watermarks.</p>
+                </a>
+                <div class="card-footer">
+                    <a href="../qr-code-generator/" class="card-open">OPEN TOOL ↗</a>
+                    <a href="../qr-code-generator/index.html"
+                       class="card-download"
+                       download="beben-qr-generator.html"
+                       title="Download as standalone HTML file">
+                        ↓ .HTML
+                    </a>
+                </div>
+            </article>
+
+            <!-- ── TOOL CARD: [DUPLICATE FROM HERE] ── -->
+            <!--
+            <article class="tool-card">
+                <a href="/tools/TOOL-SLUG/" class="card-body">
+                    <span class="card-tag">// Category</span>
+                    <h3>Tool Name</h3>
+                    <p>One sentence. What it does, why it's useful.</p>
+                </a>
+                <div class="card-footer">
+                    <a href="/tools/TOOL-SLUG/" class="card-open">OPEN TOOL ↗</a>
+                    <a href="/tools/TOOL-SLUG/tool-name.html"
+                       class="card-download"
+                       download="beben-tool-name.html"
+                       title="Download as standalone HTML file">
+                        ↓ .HTML
+                    </a>
+                </div>
+            </article>
+            -->
+
+            <!-- ── PLACEHOLDER CARDS (coming soon — remove as tools ship) ── -->
+            <article class="tool-card coming-soon">
+                <a href="#" class="card-body">
+                    <span class="card-tag">Utility</span>
+                    <h3>Colour Contrast Checker</h3>
+                    <p>Paste two hex values, get an instant WCAG AA/AAA pass/fail with contrast ratio.</p>
+                </a>
+                <div class="card-footer">
+                    <span class="card-open">COMING SOON</span>
+                </div>
+            </article>
+
+            <article class="tool-card coming-soon">
+                <a href="#" class="card-body">
+                    <span class="card-tag">Utility</span>
+                    <h3>CSS Unit Converter</h3>
+                    <p>px ↔ rem ↔ em ↔ vw. Set your base font size, convert any value in real time.</p>
+                </a>
+                <div class="card-footer">
+                    <span class="card-open">COMING SOON</span>
+                </div>
+            </article>
+
+            <article class="tool-card coming-soon">
+                <a href="#" class="card-body">
+                    <span class="card-tag">Generator</span>
+                    <h3>Placeholder Image Generator</h3>
+                    <p>Generate sized placeholder images with custom colours and labels. No CDN dependency.</p>
+                </a>
+                <div class="card-footer">
+                    <span class="card-open">COMING SOON</span>
+                </div>
+            </article>
+
+        </div>
+
+        <p class="tools-cta">
+            <strong>More tools shipping soon.</strong> Each one is built to solve a real workflow problem — not to pad the list.
+        </p>
+    </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER — identical to all pages
+════════════════════════════════════════════ -->
+<footer class="reveal">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">© Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
+        </div>
+    </div>
+</footer>
+
+<div id="copy-toast">Email copied to clipboard.</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // Theme — restore saved preference before paint
+    const html = document.documentElement;
+    const saved = localStorage.getItem('beben-theme');
+    if (saved) html.setAttribute('data-theme', saved);
+
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('beben-theme', next);
+    });
+
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const overlay   = document.getElementById('mobile-menu-overlay');
+    const body      = document.body;
+
+    function openMenu()  {
+        overlay.classList.add('is-active');
+        body.classList.add('menu-open');
+        body.style.overflow = 'hidden';
+        hamburger.setAttribute('aria-expanded', 'true');
+    }
+    function closeMenu() {
+        overlay.classList.remove('is-active');
+        body.classList.remove('menu-open');
+        body.style.overflow = '';
+        hamburger.setAttribute('aria-expanded', 'false');
+    }
+
+    hamburger.addEventListener('click', function () {
+        overlay.classList.contains('is-active') ? closeMenu() : openMenu();
+    });
+
+    overlay.querySelectorAll('.mobile-menu a').forEach(function (link) {
+        link.addEventListener('click', closeMenu);
+    });
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeMenu();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('is-active')) {
+            closeMenu();
+            hamburger.focus();
+        }
+    });
+
+    // Reveal on scroll
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+    });
+
+})();
+</script>
+
+</body>
+</html>

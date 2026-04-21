@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QR Code Generator — Beben Design Tools</title>
+    <meta name="description" content="Generate clean, watermark-free QR codes. Export as SVG at 1000×1000px. Free browser tool by Beben Design — no server, no sign-up.">
+    <link rel="canonical" href="https://beben.design/tools/qr-generator/">
+
+    <meta property="og:title" content="QR Code Generator — Beben Design Tools">
+    <meta property="og:description" content="Free, offline-capable QR code generator. Clean SVG exports, no watermarks.">
+    <meta property="og:url" content="https://beben.design/tools/qr-generator/">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+
+    <style>
+        /* ════════════════════════════════════════════════════════════
+           BEBEN DESIGN TOKENS — mirrored from index.css
+        ════════════════════════════════════════════════════════════ */
+        :root[data-theme="light"] {
+            --bg:        #F7F4F3;
+            --text:      #141414;
+            --accent:    #E71D36;
+            --yellow:    #FFC917;
+            --muted:     #5a5a5a;
+            --border:    #141414;
+            --card-bg:   #F7F4F3;
+            --dot:       #dedad9;
+            --nav-bg:    #141414CC;
+            --nav-text:  #F7F4F3;
+            --overlay:   #F7F4F3;
+            --input-bg:  #eceae9;
+            --input-border: #c8c4c2;
+        }
+        :root[data-theme="dark"] {
+            --bg:        #141414;
+            --text:      #F7F4F3;
+            --accent:    #E71D36;
+            --yellow:    #FFC917;
+            --muted:     #999999;
+            --border:    #F7F4F3;
+            --card-bg:   #1c1c1c;
+            --dot:       #252525;
+            --nav-bg:    #141414CC;
+            --nav-text:  #F7F4F3;
+            --overlay:   #141414;
+            --input-bg:  #242424;
+            --input-border: #3a3a3a;
+        }
+
+        /* ── RESET ─────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* ── NAVBAR ────────────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(247, 244, 243, 0.12);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--nav-text);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-back {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--nav-text);
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        .nav-back:hover { opacity: 1; color: var(--accent); }
+
+        #theme-toggle {
+            background: none;
+            border: 1px solid rgba(247, 244, 243, 0.45);
+            color: var(--nav-text);
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        #theme-toggle:hover {
+            background: var(--nav-text);
+            color: #141414;
+        }
+
+        /* ── LAYOUT ────────────────────────────────────────────────── */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 100px 2rem 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            align-items: start;
+        }
+
+        /* ── LEFT COLUMN — info ────────────────────────────────────── */
+        .info-col {
+            padding: 3rem 3rem 3rem 0;
+            border-right: 1px solid var(--border);
+            position: sticky;
+            top: 80px;
+        }
+
+        .page-label {
+            font-size: 0.62rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-col h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-box {
+            background: var(--accent);
+            color: #F7F4F3;
+            padding: 0 0.12em;
+            display: inline-block;
+        }
+
+        .info-col .description {
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: var(--muted);
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        /* Output spec list */
+        .output-specs {
+            border-top: 1px solid var(--dot);
+            padding-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .output-specs h3 {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--dot);
+            font-size: 0.78rem;
+        }
+
+        .spec-row:last-child { border-bottom: none; }
+
+        .spec-label { color: var(--muted); font-weight: 400; }
+        .spec-value { font-weight: 700; color: var(--text); }
+        .spec-value.accent { color: var(--accent); }
+
+        /* CTA */
+        .cta-block {
+            border-top: 1px solid var(--dot);
+            padding-top: 1.5rem;
+        }
+
+        .cta-block p {
+            font-size: 0.75rem;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .cta-link {
+            display: inline;
+            position: relative;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .cta-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .cta-link:hover::after { width: 100%; }
+
+        /* ── RIGHT COLUMN — tool ───────────────────────────────────── */
+        .tool-col {
+            padding: 3rem 0 3rem 3rem;
+        }
+
+        /* Section label inside tool */
+        .field-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Input */
+        .tool-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 400;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-input:focus {
+            border-color: var(--accent);
+            background: var(--bg);
+        }
+
+        .tool-input::placeholder { color: var(--muted); opacity: 0.6; }
+
+        /* ECC segmented control — beben style */
+        .ecc-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .ecc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid var(--border);
+        }
+
+        .ecc-btn {
+            background: none;
+            border: none;
+            border-right: 1px solid var(--border);
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.65rem 0.25rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .ecc-btn:last-child { border-right: none; }
+
+        .ecc-btn:hover { color: var(--text); }
+
+        .ecc-btn.active {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .ecc-hint {
+            font-size: 0.62rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        /* QR Preview */
+        .preview-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-status {
+            color: var(--accent);
+        }
+
+        .qr-frame {
+            border: 1px solid var(--border);
+            background: #F7F4F3; /* QR always on white/off-white for scan reliability */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            min-height: 220px;
+            position: relative;
+        }
+
+        /* Keep QR black on white regardless of theme — scanners need contrast */
+        .qr-frame svg {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
+        }
+
+        .qr-frame svg rect { fill: #F7F4F3 !important; }
+        .qr-frame svg path { fill: #141414 !important; }
+
+        /* Action buttons */
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 1px solid var(--border);
+            margin-bottom: 0.75rem;
+        }
+
+        .btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.9rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--text);
+            color: var(--bg);
+            border-right: 1px solid var(--bg);
+        }
+
+        .btn-primary:hover { background: var(--accent); }
+
+        .btn-secondary:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .btn svg {
+            width: 14px; height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        /* ── TOAST ─────────────────────────────────────────────────── */
+        #copy-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            background: var(--text);
+            color: var(--bg);
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.6rem 1.4rem;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 999;
+            white-space: nowrap;
+        }
+
+        #copy-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ── FOOTER ────────────────────────────────────────────────── */
+        footer {
+            border-top: 1px solid var(--dot);
+            padding: 2rem;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-brand {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .footer-brand a {
+            color: var(--accent);
+            transition: opacity 0.2s ease;
+        }
+
+        .footer-brand a:hover { opacity: 0.7; }
+
+        .footer-right {
+            font-size: 0.68rem;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+        }
+
+        /* ── RESPONSIVE ────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                padding: 80px 1.2rem 3rem;
+            }
+
+            .info-col {
+                padding: 2rem 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                position: static;
+            }
+
+            .tool-col {
+                padding: 2rem 0 0;
+            }
+
+            nav { padding: 1rem 1.2rem; }
+            footer { padding: 1.5rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<nav>
+    <a href="https://beben.design" class="logo">Beben Design</a>
+    <div class="nav-right">
+        <a href="https://beben.design/tools/" class="nav-back">← Tools</a>
+        <button id="theme-toggle">LIGHT/ DARK</button>
+    </div>
+</nav>
+
+<!-- ── MAIN ─────────────────────────────────────────────────────── -->
+<main>
+
+    <!-- LEFT: Info column -->
+    <div class="info-col">
+
+        <p class="page-label">[ TOOLS.01 ] — Generator</p>
+
+        <h1>QR Code<br><span class="highlight-box">Generator</span></h1>
+
+        <p class="description">
+            Paste any URL, plain text, phone number, or contact info — get a
+            clean, scannable QR code instantly. No watermarks, no limits,
+            no data leaves your browser.
+        </p>
+
+        <div class="output-specs">
+            <h3>// Expected Output</h3>
+            <div class="spec-row">
+                <span class="spec-label">Format</span>
+                <span class="spec-value">SVG (vector, infinitely scalable)</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Export size</span>
+                <span class="spec-value accent">1000 × 1000 px</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Watermark</span>
+                <span class="spec-value">None</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Server calls</span>
+                <span class="spec-value">Zero — runs locally</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Offline support</span>
+                <span class="spec-value">Yes — download the .html</span>
+            </div>
+        </div>
+
+        <div class="cta-block">
+            <p>
+                Part of a growing toolkit built with the same logic we apply
+                to every client project — fast, focused, and free.
+            </p>
+            <a href="https://beben.design/tools/" class="cta-link">
+                MORE TOOLS AT BEBEN.DESIGN ↗
+            </a>
+        </div>
+
+    </div>
+
+    <!-- RIGHT: Tool column -->
+    <div class="tool-col">
+
+        <!-- Input -->
+        <label class="field-label" for="urlInput">// Input — URL or Text</label>
+        <input
+            type="text"
+            id="urlInput"
+            class="tool-input"
+            placeholder="https://beben.design"
+            value="https://beben.design"
+            autocomplete="off"
+            spellcheck="false"
+        >
+
+        <!-- Error Correction -->
+        <div class="ecc-group">
+            <span class="field-label">// Error Correction Level</span>
+            <div class="ecc-grid" id="eccControl">
+                <button class="ecc-btn active" data-level="L">L — 7%</button>
+                <button class="ecc-btn" data-level="M">M — 15%</button>
+                <button class="ecc-btn" data-level="Q">Q — 25%</button>
+                <button class="ecc-btn" data-level="H">H — 30%</button>
+            </div>
+            <p class="ecc-hint">Higher levels add redundancy — use H if you plan to overlay a logo on the QR code.</p>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-label">
+            <span>// Preview</span>
+            <span class="preview-status" id="previewStatus">READY</span>
+        </div>
+        <div class="qr-frame" id="qrFrame"></div>
+
+        <!-- Actions -->
+        <div class="btn-group">
+            <button class="btn btn-primary" id="downloadBtn">
+                <!-- download icon -->
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                EXPORT SVG
+            </button>
+            <button class="btn btn-secondary" id="copyBtn">
+                <!-- copy icon -->
+                <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                COPY SVG CODE
+            </button>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer>
+    <div class="footer-container">
+        <p class="footer-brand">
+            A free tool by <a href="https://beben.design">Beben Design</a>
+            — Design &amp; Interface Studio, Nairobi KE.
+        </p>
+        <span class="footer-right">© BEBEN DESIGN | ALL RIGHTS RESERVED</span>
+    </div>
+</footer>
+
+<div id="copy-toast">SVG copied to clipboard.</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ── THEME ─────────────────────────────────────────────────────
+    const html  = document.documentElement;
+    const saved = localStorage.getItem('beben-theme');
+    if (saved) html.setAttribute('data-theme', saved);
+
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('beben-theme', next);
+    });
+
+    // ── STATE ─────────────────────────────────────────────────────
+    let currentLevel = 'L';
+
+    const urlInput     = document.getElementById('urlInput');
+    const qrFrame      = document.getElementById('qrFrame');
+    const eccButtons   = document.querySelectorAll('#eccControl .ecc-btn');
+    const downloadBtn  = document.getElementById('downloadBtn');
+    const copyBtn      = document.getElementById('copyBtn');
+    const previewStatus = document.getElementById('previewStatus');
+    const toast        = document.getElementById('copy-toast');
+
+    // ── TOAST ─────────────────────────────────────────────────────
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    // ── GENERATE — preview (responsive) ──────────────────────────
+    function generateQR() {
+        const text = urlInput.value.trim() || ' ';
+
+        try {
+            const qr = qrcode(0, currentLevel);
+            qr.addData(text);
+            qr.make();
+
+            // Small cell size for preview — SVG scales responsively
+            const svgStr = qr.createSvgTag(6, 2);
+            qrFrame.innerHTML = svgStr;
+
+            // Make preview SVG responsive
+            const svg = qrFrame.querySelector('svg');
+            if (svg) {
+                const w = svg.getAttribute('width');
+                svg.setAttribute('viewBox', '0 0 ' + w + ' ' + w);
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width  = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '200px';
+            }
+
+            previewStatus.textContent = 'READY';
+            previewStatus.style.color = 'var(--accent)';
+
+        } catch (err) {
+            qrFrame.innerHTML = '<span style="font-size:0.75rem;color:var(--muted);">Input too long for this level — try H.</span>';
+            previewStatus.textContent = 'ERROR';
+            previewStatus.style.color = '#E71D36';
+        }
+    }
+
+    // ── GENERATE — export quality (1000×1000 SVG) ────────────────
+    function getExportSVG() {
+        const text = urlInput.value.trim() || ' ';
+        const qr = qrcode(0, currentLevel);
+        qr.addData(text);
+        qr.make();
+
+        const moduleCount  = qr.getModuleCount();
+        const margin       = 4; // modules
+        const totalModules = moduleCount + margin * 2;
+        const cellSize     = 1000 / totalModules;
+
+        return qr.createSvgTag(cellSize, margin);
+    }
+
+    // ── ECC TOGGLE ────────────────────────────────────────────────
+    eccButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            eccButtons.forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            currentLevel = btn.getAttribute('data-level');
+            generateQR();
+        });
+    });
+
+    // ── INPUT ─────────────────────────────────────────────────────
+    urlInput.addEventListener('input', generateQR);
+
+    // ── DOWNLOAD ──────────────────────────────────────────────────
+    downloadBtn.addEventListener('click', function () {
+        const svgData = getExportSVG();
+        const blob    = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url     = URL.createObjectURL(blob);
+        const link    = document.createElement('a');
+        link.href     = url;
+        link.download = 'beben-qr-1000x1000.svg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('SVG exported — 1000 × 1000px');
+    });
+
+    // ── COPY SVG CODE ─────────────────────────────────────────────
+    copyBtn.addEventListener('click', function () {
+        const svgData = getExportSVG();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(svgData)
+                .then(function () { showToast('SVG code copied to clipboard.'); })
+                .catch(function () { fallbackCopy(svgData); });
+        } else {
+            fallbackCopy(svgData);
+        }
+    });
+
+    function fallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity  = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+            showToast('SVG code copied to clipboard.');
+        } catch (e) {
+            showToast('Copy failed — please copy manually.');
+        }
+        document.body.removeChild(ta);
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────
+    generateQR();
+
+})();
+</script>
+
+</body>
+</html>
