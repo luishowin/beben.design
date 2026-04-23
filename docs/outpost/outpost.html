@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE OUTPOST — Beben Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0e0e0e;
+    --white: #f2f0eb;
+    --accent: #27964c;
+    --mid: #1c1c1c;
+    --border: rgba(205, 235, 193, 0.159);
+    --mono: 'Space Mono', monospace;
+    --condensed: 'Barlow Condensed', sans-serif;
+    --body: 'Barlow', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--body);
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(14,14,14,0.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--condensed);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 10px;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+    padding-top: 80px;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 60px 40px 60px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .hero-kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero-title {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: clamp(72px, 9vw, 128px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .hero-title .accent { color: var(--accent); }
+  .hero-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(242,240,235,0.65);
+    max-width: 440px;
+    line-height: 1.75;
+    margin-bottom: 48px;
+  }
+  .hero-cta-group {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--black);
+    padding: 14px 28px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { background: var(--white); transform: translateY(-1px); }
+  .btn-ghost {
+    font-family: var(--condensed);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.5);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(231, 233, 229, 0.2);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+    border-color: #27964c0f;
+  }
+  .btn-ghost:hover { color: var(--white); border-color: var(--white); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: url('../assets/images/porch.jpg') no-repeat center center / cover;
+  }
+  .hero-image-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+    position: relative;
+  }
+  .hero-image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('../assets/images/porch.jpg') no-repeat center center / cover;
+   
+  }
+  .placeholder-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(242,240,235,0.2);
+    text-transform: uppercase;
+    z-index: 1;
+  }
+  .placeholder-hash {
+    font-family: var(--condensed);
+    font-size: 80px;
+    font-weight: 900;
+    color: rgba(242,240,235,0.06);
+    z-index: 1;
+  }
+  .img-download-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(128, 200, 110, 0.4);
+    padding: 7px 14px;
+    background: rgba(14,14,14,0.8);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+    z-index: 2;
+  }
+  .img-download-btn:hover { background: var(--accent); color: var(--black); border-color: var(--accent); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-cell {
+    padding: 36px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-number {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-family: var(--condensed);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.4);
+  }
+
+  /* ── SECTION WRAPPER ── */
+  section { border-bottom: 1px solid var(--border); }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-index {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+  }
+  .section-title {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.5);
+  }
+
+  /* ── CONCEPT ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .concept-text {
+    padding: 60px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .concept-headline {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: clamp(36px, 4vw, 58px);
+    line-height: 1.0;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .concept-headline em { color: var(--accent); font-style: normal; }
+  .concept-body {
+    font-size: 15px;
+    color: rgba(242,240,235,0.6);
+    max-width: 420px;
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+  .principle-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .principle-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-family: var(--condensed);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.7);
+  }
+  .principle-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .concept-image {
+    position: relative;
+    background: var(--mid);
+    min-height: 440px;
+    background: url('../assets/images/outside.jpg') no-repeat center center / cover;
+    
+  }
+
+  /* ── SPECS GRID ── */
+  .specs-outer {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+  }
+  .specs-sidebar {
+    padding: 48px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .specs-sidebar-title {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: 48px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .specs-sidebar p {
+    font-size: 14px;
+    color: rgba(242,240,235,0.5);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .spec-table tr {
+    border-top: 1px solid var(--border);
+  }
+  .spec-table td {
+    padding: 12px 0;
+    font-size: 13px;
+  }
+  .spec-table td:first-child {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(242,240,235,0.35);
+    letter-spacing: 0.08em;
+    width: 110px;
+  }
+  .spec-table td:last-child {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+  }
+  .specs-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .spec-img-cell {
+    position: relative;
+    min-height: 220px;
+    background: var(--mid);
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .spec-img-cell:nth-child(odd) { border-left: none; }
+
+  /* ── SYSTEMS ── */
+  .systems-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .system-card {
+    padding: 48px 40px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .system-card:last-child { border-right: none; }
+  .system-index {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .system-name {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+  }
+  .system-body {
+    font-size: 14px;
+    color: rgba(242,240,235,0.5);
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+  .system-value {
+    font-family: var(--condensed);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ── PHASES ── */
+  .phases-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .phase-item {
+    padding: 40px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(242,240,235,0.3);
+    margin-bottom: 8px;
+  }
+  .phase-name {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .phase-cost {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: 26px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .phase-note {
+    font-size: 13px;
+    color: rgba(242,240,235,0.4);
+  }
+
+  /* ── COST TOTAL ── */
+  .cost-total {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .cost-left {
+    padding: 60px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .cost-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(242,240,235,0.4);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .cost-number {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: clamp(52px, 6vw, 96px);
+    line-height: 0.9;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .cost-sub {
+    font-family: var(--condensed);
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .cost-right {
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cost-right p {
+    font-size: 15px;
+    color: rgba(242,240,235,0.5);
+    line-height: 1.8;
+    max-width: 400px;
+    margin-bottom: 28px;
+  }
+  .cost-right strong { color: var(--white); font-weight: 500; }
+
+  /* ── DOWNLOADS ── */
+  .downloads-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .download-card {
+    padding: 48px 40px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .download-card:last-child { border-right: none; }
+  .dl-type {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(242,240,235,0.3);
+    text-transform: uppercase;
+  }
+  .dl-title {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .dl-desc {
+    font-size: 13px;
+    color: rgba(242,240,235,0.45);
+    line-height: 1.7;
+    flex: 1;
+  }
+  .dl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--accent);
+    padding: 12px 20px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    align-self: flex-start;
+  }
+  .dl-btn:hover { background: var(--white); }
+  .dl-btn-ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(150, 200, 110, 0.4);
+  }
+  .dl-btn-ghost:hover { background: var(--accent); color: var(--black); }
+
+  /* ── USES ── */
+  .uses-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .use-cell {
+    padding: 36px 32px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .use-cell:last-child { border-right: none; }
+  .use-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .use-title {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .use-desc {
+    font-size: 12px;
+    color: rgba(242,240,235,0.4);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER CTA ── */
+  .footer-cta {
+    padding: 80px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-cta-headline {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: clamp(36px, 5vw, 72px);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .footer-cta-headline em { color: var(--accent); font-style: normal; }
+
+  /* ── FOOTER ── */
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-brand {
+    font-family: var(--condensed);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.4);
+  }
+  .footer-brand span { color: var(--accent); }
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(242,240,235,0.2);
+    text-transform: uppercase;
+  }
+
+  /* ── IMAGE PLACEHOLDERS ── */
+  .img-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    background: linear-gradient(160deg, #191919 0%, #111 100%);
+  }
+  .img-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(242,240,235,0.03) 39px, rgba(242,240,235,0.03) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(242,240,235,0.03) 39px, rgba(242,240,235,0.03) 40px);
+  }
+  .img-ph-hash {
+    font-family: var(--condensed);
+    font-weight: 900;
+    font-size: 48px;
+    color: rgba(242,240,235,0.05);
+    z-index: 1;
+  }
+  .img-ph-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: rgba(242,240,235,0.18);
+    text-transform: uppercase;
+    z-index: 1;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-kicker { animation: fadeUp 0.6s ease forwards; }
+  .hero-title { animation: fadeUp 0.7s 0.1s ease both; }
+  .hero-desc { animation: fadeUp 0.7s 0.2s ease both; }
+  .hero-cta-group { animation: fadeUp 0.7s 0.3s ease both; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 40px 20px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .concept-grid { grid-template-columns: 1fr; }
+    .concept-image { min-height: 260px; }
+    .specs-outer { grid-template-columns: 1fr; }
+    .specs-images { display: none; }
+    .systems-grid { grid-template-columns: 1fr; }
+    .system-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .phases-list { grid-template-columns: 1fr 1fr; }
+    .phase-item:nth-child(3n) { border-right: inherit; }
+    .phase-item:nth-child(2n) { border-right: none; }
+    .cost-total { grid-template-columns: 1fr; }
+    .downloads-grid { grid-template-columns: 1fr; }
+    .download-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .uses-grid { grid-template-columns: repeat(2, 1fr); }
+    .use-cell:nth-child(2n) { border-right: none; }
+    .footer-cta { grid-template-columns: 1fr; }
+    section, footer, nav { padding-left: 20px; padding-right: 20px; }
+    .section-header { padding-left: 20px; padding-right: 20px; }
+    .stat-cell, .concept-text, .specs-sidebar, .system-card,
+    .phase-item, .cost-left, .cost-right, .download-card,
+    .use-cell, .footer-cta { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://beben.design" class="nav-logo">Beben<span>.</span>Design</a>
+  <ul class="nav-links">
+    <li><a href="#concept">Concept</a></li>
+    <li><a href="#specs">Specs</a></li>
+    <li><a href="#systems">Systems</a></li>
+    <li><a href="#cost">Cost</a></li>
+    <li><a href="#downloads">Downloads</a></li>
+  </ul>
+  <span class="nav-badge">Internal Preview</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-left">
+    <div class="hero-kicker">Project 001 — Modular Living Unit</div>
+    <h1 class="hero-title">THE<br><span class="accent">OUT</span><br>POST</h1>
+    <p class="hero-desc">A purpose-built, modular, off-grid micro-living unit engineered for portability, adaptability, and self-sufficiency. Not a container retrofit. A system.</p>
+    <div class="hero-cta-group">
+      <a href="#specs" class="btn-primary">View Full Spec ↓</a>
+      <a href="#downloads" class="btn-ghost">Download PDF ↗</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-placeholder">
+      <a href="../assets/images/porch.jpg" class="img-download-btn" download>↓ Download Image</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-number">6060</div>
+    <div class="stat-label">mm Length</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-number">2 kW</div>
+    <div class="stat-label">Solar Capacity</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-number">20 kWh</div>
+    <div class="stat-label">Battery Storage</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-number">~$14k</div>
+    <div class="stat-label">Est. Build Cost USD</div>
+  </div>
+</div>
+
+<!-- CONCEPT -->
+<section id="concept">
+  <div class="section-header">
+    <span class="section-index">01</span>
+    <span class="section-title">Design Concept & Ethos</span>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-text">
+      <h2 class="concept-headline">Built on<br><em>principles.</em><br>Not trends.</h2>
+      <p class="concept-body">The Outpost strips micro-living down to its honest skeleton — ISO-compliant dimensions, explicit load paths, and every component designed to be replaced, not discarded. Buildable by a small team. Scalable from V1 to V3.</p>
+      <ul class="principle-list">
+        <li>Function over excess</li>
+        <li>Structural honesty — load paths are explicit</li>
+        <li>Modularity first — everything replaceable</li>
+        <li>Self-sufficiency within reason</li>
+        <li>Buildability by small teams</li>
+        <li>Long-term serviceability</li>
+      </ul>
+    </div>
+    <div class="concept-image">
+      <div class="img-placeholder" style="min-height: 440px; background: url('../assets/images/outside.jpg') no-repeat center center / cover;">
+        <a href="../assets/images/outside.jpg" class="img-download-btn" download>↓ Download Image</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section id="specs">
+  <div class="section-header">
+    <span class="section-index">02</span>
+    <span class="section-title">Structure & Dimensions</span>
+  </div>
+  <div class="specs-outer">
+    <div class="specs-sidebar">
+      <h2 class="specs-sidebar-title">Steel<br>Frame</h2>
+      <p>Purpose-built structural skeleton. ISO container footprint. Engineered to prevent racking, handle transport loads, and anchor all sub-systems without modification.</p>
+      <table class="spec-table">
+        <tr>
+          <td>External L</td><td>6,060 mm</td>
+        </tr>
+        <tr>
+          <td>External W</td><td>2,440 mm</td>
+        </tr>
+        <tr>
+          <td>Height</td><td>2,700 mm</td>
+        </tr>
+        <tr>
+          <td>Internal L</td><td>~5,800 mm</td>
+        </tr>
+        <tr>
+          <td>Internal W</td><td>~2,240 mm</td>
+        </tr>
+        <tr>
+          <td>Columns</td><td>100×100×5 SHS</td>
+        </tr>
+        <tr>
+          <td>Long Beams</td><td>100×150×5 RHS</td>
+        </tr>
+        <tr>
+          <td>Cross Members</td><td>50×150×5 RHS</td>
+        </tr>
+        <tr>
+          <td>Frame Weight</td><td>~900–1,100 kg</td>
+        </tr>
+        <tr>
+          <td>Total Weight</td><td>~1.8–2.3 tons</td>
+        </tr>
+        <tr>
+          <td>Volume</td><td>~32–34 m³</td>
+        </tr>
+        <tr>
+          <td>Corner Lugs</td><td>8 × 8–12 mm plate</td>
+        </tr>
+      </table>
+    </div>
+    <div class="specs-images">
+      <div class="spec-img-cell">
+        <div class="img-placeholder" style="min-height: 220px;">
+          <div class="img-ph-hash">#</div>
+          <span class="img-ph-label">Frame isometric</span>
+          <a href="#" class="img-download-btn" download>↓ Download</a>
+        </div>
+      </div>
+      <div class="spec-img-cell">
+        <div class="img-placeholder" style="min-height: 220px;">
+          <div class="img-ph-hash">#</div>
+          <span class="img-ph-label">Floor plan / layout</span>
+          <a href="#" class="img-download-btn" download>↓ Download</a>
+        </div>
+      </div>
+      <div class="spec-img-cell" style="border-bottom: none;">
+        <div class="img-placeholder" style="min-height: 220px;">
+          <div class="img-ph-hash">#</div>
+          <span class="img-ph-label">Wall section detail</span>
+          <a href="#" class="img-download-btn" download>↓ Download</a>
+        </div>
+      </div>
+      <div class="spec-img-cell" style="border-bottom: none;">
+        <div class="img-placeholder" style="min-height: 220px;">
+          <div class="img-ph-hash">#</div>
+          <span class="img-ph-label">Roof + solar mount</span>
+          <a href="#" class="img-download-btn" download>↓ Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEMS -->
+<section id="systems">
+  <div class="section-header">
+    <span class="section-index">03</span>
+    <span class="section-title">Integrated Systems</span>
+  </div>
+  <div class="systems-grid">
+    <div class="system-card">
+      <div class="system-index">SYS — 01</div>
+      <div class="system-name">Power</div>
+      <p class="system-body">Five 400W panels feeding a 20 kWh LiFePO4 bank through a 5 kW inverter. Grid bypass ready. 240V AC distribution throughout. Sized for full-time off-grid operation.</p>
+      <div class="system-value">2 kW Solar · 20 kWh Battery</div>
+    </div>
+    <div class="system-card">
+      <div class="system-index">SYS — 02</div>
+      <div class="system-name">Water</div>
+      <p class="system-body">100L rooftop tank, gravity-fed or pump-assisted. External quick-connect inlet for top-up. Black and grey water separated at source and routed for reuse.</p>
+      <div class="system-value">100L Tank · Gravity + Pump</div>
+    </div>
+    <div class="system-card">
+      <div class="system-index">SYS — 03</div>
+      <div class="system-name">Control</div>
+      <p class="system-body">Central monitoring unit tracks door and window status, tap state, and power system metrics. Barn Door Mode deploys all security grills simultaneously and locks down the unit.</p>
+      <div class="system-value">Sensors · Power Monitor · Lockdown</div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section>
+  <div class="section-header">
+    <span class="section-index">04</span>
+    <span class="section-title">Target Use Cases</span>
+  </div>
+  <div class="uses-grid">
+    <div class="use-cell">
+      <span class="use-icon">🏕️</span>
+      <div class="use-title">Remote Living</div>
+      <p class="use-desc">Full-time off-grid residential unit for semi-arid and temperate environments.</p>
+    </div>
+    <div class="use-cell">
+      <span class="use-icon">🔬</span>
+      <div class="use-title">Field Research</div>
+      <p class="use-desc">Self-sufficient base station for scientific or environmental fieldwork.</p>
+    </div>
+    <div class="use-cell">
+      <span class="use-icon">🛡️</span>
+      <div class="use-title">Security Outpost</div>
+      <p class="use-desc">Hardened, lockdown-capable unit for remote site security operations.</p>
+    </div>
+    <div class="use-cell">
+      <span class="use-icon">🌿</span>
+      <div class="use-title">Eco-Tourism</div>
+      <p class="use-desc">Premium off-grid cabin unit for low-impact hospitality experiences.</p>
+    </div>
+    <div class="use-cell">
+      <span class="use-icon">💼</span>
+      <div class="use-title">Mobile Office</div>
+      <p class="use-desc">Deployable workspace with power, connectivity prep, and desk zone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PHASES + COST -->
+<section id="cost">
+  <div class="section-header">
+    <span class="section-index">05</span>
+    <span class="section-title">Build Phases & Cost Estimate</span>
+  </div>
+  <div class="phases-list">
+    <div class="phase-item">
+      <div class="phase-num">Phase 01</div>
+      <div class="phase-name">Frame Fabrication</div>
+      <div class="phase-cost">~$1,650</div>
+      <p class="phase-note">~1 ton steel + cutting & welding</p>
+    </div>
+    <div class="phase-item">
+      <div class="phase-num">Phase 02</div>
+      <div class="phase-name">Floor System</div>
+      <div class="phase-cost">~$550</div>
+      <p class="phase-note">Structural board + real wood flooring</p>
+    </div>
+    <div class="phase-item">
+      <div class="phase-num">Phase 03</div>
+      <div class="phase-name">Walls + Insulation</div>
+      <div class="phase-cost">~$1,320</div>
+      <p class="phase-note">Sheet metal · XPS 50–75mm · plywood</p>
+    </div>
+    <div class="phase-item">
+      <div class="phase-num">Phase 04</div>
+      <div class="phase-name">Roof + Mounts</div>
+      <div class="phase-cost">~$550</div>
+      <p class="phase-note">Steel sheet + solar rail mounts</p>
+    </div>
+    <div class="phase-item">
+      <div class="phase-num">Phase 05</div>
+      <div class="phase-name">Windows & Door</div>
+      <div class="phase-cost">~$990</div>
+      <p class="phase-note">Double glazing · hydraulic grills · custom door</p>
+    </div>
+    <div class="phase-item">
+      <div class="phase-num">Phase 06</div>
+      <div class="phase-name">Electrical System</div>
+      <div class="phase-cost">~$5,500–$6,600</div>
+      <p class="phase-note">Solar · 20 kWh LiFePO4 · inverter + wiring</p>
+    </div>
+    <div class="phase-item" style="border-bottom:none;">
+      <div class="phase-num">Phase 07</div>
+      <div class="phase-name">Plumbing</div>
+      <div class="phase-cost">~$550</div>
+      <p class="phase-note">Tank · piping · fixtures</p>
+    </div>
+    <div class="phase-item" style="border-bottom:none;">
+      <div class="phase-num">Phase 08</div>
+      <div class="phase-name">Interior Finish</div>
+      <div class="phase-cost">~$825</div>
+      <p class="phase-note">Granite counter · fittings · LED lighting</p>
+    </div>
+    <div class="phase-item" style="border-bottom:none;">
+      <div class="phase-num">Phase 09</div>
+      <div class="phase-name">Control System</div>
+      <div class="phase-cost">~$440</div>
+      <p class="phase-note">Sensors + central monitoring unit</p>
+    </div>
+  </div>
+  <div class="cost-total">
+    <div class="cost-left">
+      <div class="cost-label">Total Estimated Build Cost</div>
+      <div class="cost-number">$11.5k<br>–$14k</div>
+      <div class="cost-sub">USD · Based on KES 2.1M–2.5M</div>
+    </div>
+    <div class="cost-right">
+      <p>This is not a cheap build. It is a <strong>controlled, modular system</strong>. Executed properly, it outperforms a modified container, costs less to maintain, and scales into a repeatable product. Overbuilt, it loses its advantage.</p>
+      <a href="#downloads" class="btn-primary">Download Full Cost Breakdown ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOADS -->
+<section id="downloads">
+  <div class="section-header">
+    <span class="section-index">06</span>
+    <span class="section-title">Project Downloads</span>
+  </div>
+  <div class="downloads-grid">
+    <div class="download-card">
+      <div class="dl-type">PDF Document</div>
+      <div class="dl-title">Full Technical Specification</div>
+      <p class="dl-desc">Complete structural, systems, and finish specification. Dimensions, materials, build phases, and cost estimates. V1 Minimum Viable Unit.</p>
+      <a href="#" class="dl-btn" download="outpost-spec-v1.pdf">↓ Download Spec PDF</a>
+    </div>
+    <div class="download-card">
+      <div class="dl-type">Image Pack</div>
+      <div class="dl-title">Renders & Diagrams</div>
+      <p class="dl-desc">Exterior renders, frame isometrics, floor plan, wall section, and roof detail. High-resolution. For internal review and fabricator briefing.</p>
+      <a href="#" class="dl-btn dl-btn-ghost" download="outpost-images.zip">↓ Download Image Pack</a>
+    </div>
+    <div class="download-card">
+      <div class="dl-type">PDF Document</div>
+      <div class="dl-title">Cost Breakdown Sheet</div>
+      <p class="dl-desc">Itemised phase-by-phase cost estimate in both KES and USD. Includes material and labour line items for fabricator and supplier RFQ use.</p>
+      <a href="#" class="dl-btn dl-btn-ghost" download="outpost-cost-breakdown.pdf">↓ Download Cost PDF</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section class="footer-cta">
+  <h2 class="footer-cta-headline">Available<br><em>Soon.</em></h2>
+  <div>
+    <p style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: rgba(242,240,235,0.35); text-transform: uppercase; margin-bottom: 16px;">This page is for internal use only</p>
+    <a href="https://beben.design" class="btn-primary">beben.design ↗</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Beben<span>.</span>Design — The Outpost</div>
+  <div class="footer-note">Internal preview · Not for public distribution · © Beben Design</div>
+</footer>
+
+</body>
+</html>
