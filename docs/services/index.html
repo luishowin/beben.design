@@ -3,196 +3,884 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services | Beben Design</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <title>Services | Beben Design — UX, UI, Front-End & Brand Design</title>
+    <meta name="description" content="From early UX research to production-ready interfaces — Beben Design offers brand identity, UX research, UI design, front-end development, HMI, and digital strategy. Nairobi, Kenya.">
+    <link rel="canonical" href="https://beben.design/services/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/services/">
+    <meta property="og:title" content="Services | Beben Design">
+    <meta property="og:description" content="Design that works before it looks good. UX research, UI design, front-end development, brand identity, HMI, and digital strategy.">
+    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://beben.design/services/">
+    <meta property="twitter:title" content="Services | Beben Design">
+    <meta property="twitter:description" content="Design that works before it looks good.">
+    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": ["UX Design", "UI Design", "Brand Identity", "Front-End Development", "HMI Design", "Digital Strategy"],
+      "provider": {
+        "@type": "ProfessionalService",
+        "name": "Beben Design",
+        "url": "https://beben.design",
+        "address": { "@type": "PostalAddress", "addressLocality": "Nairobi", "addressCountry": "KE" }
+      },
+      "url": "https://beben.design/services/"
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
     <style>
-        :root[data-theme="light"] {
-            --primary: #000000; --bg: #ffffff; --accent: #FFC917; --dot: #e0e0e0; --card-border: #000;
+        /* ─────────────────────────────────────────────────────────
+           SERVICES PAGE — scoped additions.
+           Tokens, nav, footer, reveal from index.css.
+           Font sizes bumped ~1 step. Animations +0.5s throughout.
+        ───────────────────────────────────────────────────────── */
+
+        /* ── ANIMATION OVERRIDES (+0.5s) ──────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 1.1s ease, transform 1.1s ease;
         }
-        :root[data-theme="dark"] {
-            --primary: #ffffff; --bg: #000000; --accent: #FFC917; --dot: #222222; --card-border: #ffffff;
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* ── PAGE HERO ─────────────────────────────────────────── */
+        .page-hero {
+            padding-top: 120px;
+            padding-bottom: 90px;
+            border-bottom: 1px solid var(--border);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: var(--bg);
-            background-image: radial-gradient(var(--dot) 1px, transparent 0);
-            background-size: 32px 32px;
-            color: var(--primary);
-            line-height: 1.5;
-            transition: background 0.3s ease;
+        .page-label {
+            font-size: 0.72rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
         }
 
-        .wrapper { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-
-        /* 1. Hero Section */
-        .hero { height: 90vh; display: flex; flex-direction: column; justify-content: center; border-bottom: 4px solid var(--primary); margin-bottom: 60px; }
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); text-transform: uppercase; line-height: 0.85; letter-spacing: -4px; margin-bottom: 30px; }
-        .hero-subtitle { max-width: 600px; font-size: 1.1rem; margin-bottom: 20px; }
-        .hero-tag { font-weight: 700; color: var(--accent); background: #000; display: inline-block; padding: 5px 10px; font-size: 0.8rem; }
-
-        /* 2. Intro Section */
-        .intro-section { margin-bottom: 100px; max-width: 800px; }
-        .intro-section h2 { font-size: 2rem; margin-bottom: 20px; text-decoration: underline; }
-
-        /* 3. Large Bento Grid */
-        .services-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 100px; }
-        
-        .service-card { 
-            grid-column: span 6; border: 2px solid var(--card-border); padding: 40px; 
-            background: var(--bg); display: flex; flex-direction: column; justify-content: space-between;
-            transition: transform 0.2s ease;
+        .page-hero h1 {
+            font-size: clamp(2.8rem, 7.5vw, 5rem);
+            font-weight: 800;
+            line-height: 0.92;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.75rem;
         }
-        .service-card:hover { transform: translateY(-5px); box-shadow: 10px 10px 0px var(--accent); }
-        .wide { grid-column: span 8; }
-        .slim { grid-column: span 4; }
 
-        .service-card h3 { font-size: 1.5rem; text-transform: uppercase; margin-bottom: 10px; }
-        .defining-statement { font-weight: 700; margin-bottom: 20px; display: block; }
-        .service-content { font-size: 0.9rem; margin-bottom: 30px; opacity: 0.9; }
-        .service-goal { background: var(--accent); color: #000; padding: 10px; font-size: 0.8rem; font-weight: 700; margin-top: auto; }
+        .page-hero .intro {
+            font-size: 1rem;
+            max-width: 620px;
+            line-height: 1.8;
+            color: var(--muted);
+            font-weight: 400;
+        }
 
-        .btn-work { margin-top: 20px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 0.8rem; border: 1px solid var(--primary); padding: 10px; width: fit-content; }
-        .btn-work:hover { background: var(--primary); color: var(--bg); }
+        /* ── PIPELINE ──────────────────────────────────────────── */
+        .pipeline-section { padding: 90px 0; }
 
-        /* 11. Process Philosophy */
-        .philosophy { border-top: 4px solid var(--primary); padding: 80px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
-        .step { font-size: 0.8rem; }
-        .step-num { font-size: 2rem; font-weight: 700; display: block; border-bottom: 2px solid var(--accent); margin-bottom: 10px; width: 40px; }
+        .pipeline-section h2 {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
 
-        /* 13. Conversion CTA */
-        .conversion { background: var(--primary); color: var(--bg); padding: 80px 40px; text-align: center; margin-bottom: 80px; }
-        .conversion h2 { font-size: 2.5rem; margin-bottom: 40px; text-transform: uppercase; }
-        .cta-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .cta-btn { background: var(--accent); color: #000; padding: 20px 40px; text-decoration: none; font-weight: 700; }
+        .pipeline-section .section-intro {
+            font-size: 0.95rem;
+            color: var(--muted);
+            max-width: 640px;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
 
-        /* Mobile Adjustments */
+        .pipeline-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid var(--border);
+        }
+
+        .pipeline-step {
+            padding: 2rem 1.75rem;
+            border-right: 1px solid var(--border);
+            background: var(--card-bg);
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+
+        .pipeline-step:last-child { border-right: none; }
+        .pipeline-step:hover { background: var(--text); color: var(--bg); }
+
+        .pipeline-num {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .pipeline-step h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.5rem;
+        }
+
+        .pipeline-step p {
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: var(--muted);
+            font-weight: 400;
+            transition: color 0.25s ease;
+        }
+
+        .pipeline-step:hover p { color: var(--bg); opacity: 0.7; }
+
+        /* ── SECTION SHARED ────────────────────────────────────── */
+        .services-section { padding: 90px 0; }
+
+        .section-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--dot);
+        }
+
+        /* ── SERVICE BLOCK ─────────────────────────────────────── */
+        /*
+           Each service: label + two-column layout.
+           Left: heading + goal + deliverables.
+           Right: sub-services list + FAQ accordion.
+        */
+        .service-block {
+            border: 1px solid var(--border);
+            margin-bottom: 2px;
+            background: var(--card-bg);
+        }
+
+        .service-block-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .service-block-left {
+            padding: 2.5rem;
+            border-right: 1px solid var(--border);
+        }
+
+        .service-block-right { padding: 2.5rem; }
+
+        .service-num {
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .service-block h3 {
+            font-size: clamp(1.3rem, 3vw, 1.9rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 0.9rem;
+        }
+
+        .service-tagline {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-goal {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .service-goal::before {
+            content: "GOAL //";
+            color: var(--accent);
+        }
+
+        .deliverables-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.85rem;
+        }
+
+        .deliverables-list {
+            list-style: none;
+            margin-bottom: 1.75rem;
+        }
+
+        .deliverables-list li {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text);
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--dot);
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+        }
+
+        .deliverables-list li:last-child { border-bottom: none; }
+
+        .deliverables-list li::before {
+            content: "//";
+            color: var(--accent);
+            font-size: 0.65rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ── SERVICE FAQ ACCORDION ─────────────────────────────── */
+        .service-faq {
+            border-top: 1px solid var(--border);
+        }
+
+        .faq-header {
+            padding: 1.25rem 2.5rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 1px solid var(--dot);
+        }
+
+        .faq-item { border-bottom: 1px solid var(--dot); }
+        .faq-item:last-child { border-bottom: none; }
+
+        .faq-trigger {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 1.1rem 2.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+
+        .faq-trigger:hover { color: var(--accent); }
+
+        .faq-trigger::after {
+            content: "+";
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: var(--accent);
+            flex-shrink: 0;
+            transition: transform 0.35s ease;
+            line-height: 1;
+        }
+
+        .faq-trigger[aria-expanded="true"]::after { transform: rotate(45deg); }
+
+        .faq-answer {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.45s ease, padding 0.45s ease;
+            padding: 0 2.5rem;
+        }
+
+        .faq-answer.open {
+            max-height: 400px;
+            padding: 0 2.5rem 1.25rem;
+        }
+
+        .faq-answer p {
+            font-size: 0.85rem;
+            line-height: 1.85;
+            color: var(--muted);
+            font-weight: 400;
+            border-left: 2px solid var(--accent);
+            padding-left: 1rem;
+        }
+
+        /* ── EDGE CASES BLOCK ──────────────────────────────────── */
+        .edge-block {
+            border: 1px solid var(--border);
+            padding: 3rem;
+            margin-bottom: 2px;
+            background: var(--card-bg);
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .edge-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .edge-block h3 {
+            font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+        }
+
+        .edge-block .edge-body {
+            font-size: 0.9rem;
+            line-height: 1.85;
+            color: var(--muted);
+        }
+
+        .edge-block .edge-body strong { color: var(--text); font-weight: 700; }
+
+        /* ── CTA BLOCK ─────────────────────────────────────────── */
+        .cta-section { padding: 90px 0; }
+
+        .cta-section h2 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 1.25rem;
+        }
+
+        .cta-section p {
+            font-size: 0.95rem;
+            color: var(--muted);
+            max-width: 520px;
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+        }
+
+        .pro-tip {
+            font-size: 0.78rem;
+            color: var(--muted);
+            max-width: 520px;
+            line-height: 1.75;
+            border-left: 2px solid var(--yellow);
+            padding-left: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .pro-tip strong { color: var(--text); }
+
+        .cta-row {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .cta-link {
+            display: inline;
+            position: relative;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .cta-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .cta-link:hover::after { width: 100%; }
+
+        .cta-link.whatsapp { color: var(--whatsapp); }
+        .cta-link.whatsapp::after { background: var(--whatsapp); }
+
+        /* ── RESPONSIVE ────────────────────────────────────────── */
         @media (max-width: 900px) {
-            .service-card, .wide, .slim { grid-column: span 12; padding: 25px; }
-            .philosophy { grid-template-columns: 1fr; }
+            .service-block-header { grid-template-columns: 1fr; }
+            .service-block-left  { border-right: none; border-bottom: 1px solid var(--border); }
+            .pipeline-steps      { grid-template-columns: repeat(2, 1fr); }
+            .pipeline-step:nth-child(2) { border-right: none; }
+            .pipeline-step:nth-child(3) { border-top: 1px solid var(--border); }
+            .edge-block          { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+
+        @media (max-width: 600px) {
+            .pipeline-steps { grid-template-columns: 1fr; }
+            .pipeline-step  { border-right: none; border-bottom: 1px solid var(--border); }
+            .pipeline-step:last-child { border-bottom: none; }
+            .faq-trigger    { font-size: 0.82rem; padding: 1rem 1.5rem; }
+            .faq-answer     { padding: 0 1.5rem; }
+            .faq-answer.open { padding: 0 1.5rem 1rem; }
+            .service-block-left,
+            .service-block-right { padding: 1.75rem; }
+            .edge-block { padding: 1.75rem; }
+            .faq-header { padding: 1rem 1.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .page-hero { padding-top: 90px; }
         }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <header class="hero">
-        <p>[ 01. CAPABILITIES ]</p>
-        <h1>DESIGN THAT WORKS <br>BEFORE IT <span style="background: var(--accent); color: #000;">LOOKS GOOD.</span></h1>
-        <p class="hero-subtitle">From early research to production-ready interfaces, Beben Design focuses on clarity, usability, and measurable outcomes.</p>
-        <p class="hero-tag">Decisions backed by reasoning, not trends.</p>
-    </header>
-
-    <section class="intro-section">
-        <h2>THE PIPELINE</h2>
-        <p>Interfaces must reduce friction. We treat design as problem-solving, connecting research to implementation in a seamless flow. Whether you need a single stage or the full pipeline, we build for scale.</p>
-    </section>
-
-    <div class="services-grid">
-        
-        <div class="service-card wide">
-            <h3>Websites</h3>
-            <span class="defining-statement">High-performance brand anchors.</span>
-            <div class="service-content">
-                <p>Information architecture, conversion-focused layouts, and performance-conscious front-end development.</p>
-                <ul style="font-size: 0.75rem; margin-top: 10px;">
-                    <li>// Landing Pages</li>
-                    <li>// Portfolios</li>
-                    <li>// Service Sites</li>
-                </ul>
-            </div>
-            <div class="service-goal">GOAL: Turn visitors into inquiries.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
-        </div>
-
-        <div class="service-card slim">
-            <h3>Posters & Print</h3>
-            <span class="defining-statement">Immediate recognition.</span>
-            <div class="service-content">
-                <p>Hierarchy-first design for event materials and brand consistency in physical spaces.</p>
-            </div>
-            <div class="service-goal">GOAL: Clarity in seconds.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
-        </div>
-
-        <div class="service-card slim">
-            <h3>UX Research</h3>
-            <span class="defining-statement">Pre-design intelligence.</span>
-            <div class="service-content">
-                <p>User flows, journey mapping, and behavioral analysis to prevent building the wrong thing.</p>
-            </div>
-            <div class="service-goal">GOAL: Reduce redesign costs.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
-        </div>
-
-        <div class="service-card wide">
-            <h3>Mobile UI (iOS/Android)</h3>
-            <span class="defining-statement">Platform-native identity.</span>
-            <div class="service-content">
-                <p>Touch-first interaction patterns and component libraries that respect platform conventions while scaling your brand.</p>
-            </div>
-            <div class="service-goal">GOAL: Reduced learning curve.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
-        </div>
-
-        <div class="service-card wide">
-            <h3>Desktop App UI</h3>
-            <span class="defining-statement">Software for productivity.</span>
-            <div class="service-content">
-                <p>Enterprise tools and dashboards optimized for dense information management and keyboard workflows.</p>
-            </div>
-            <div class="service-goal">GOAL: Increase task efficiency.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
-        </div>
-
-        <div class="service-card slim">
-            <h3>HMI</h3>
-            <span class="defining-statement">Software meets hardware.</span>
-            <div class="service-content">
-                <p>Context-aware layouts for vehicle dashboards and industrial control panels.</p>
-            </div>
-            <div class="service-goal">GOAL: Reliable operation.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW SAMPLE WORK</a>
-        </div>
-
-        <div class="service-card card-full" style="grid-column: span 12;">
-            <h3>Rapid Prototyping</h3>
-            <span class="defining-statement">Concept validation at speed.</span>
-            <div class="service-content" style="max-width: 600px;">
-                <p>Testing ideas with clickable prototypes and fast iteration cycles before committing to full development costs.</p>
-            </div>
-            <div class="service-goal" style="width: fit-content;">GOAL: Save time and money.</div>
-            <a href="/sample-work.html" class="btn-work">VIEW PROTOTYPES</a>
-        </div>
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav>
+    <a href="/" class="logo">Beben Design</a>
+    <div class="nav-right">
+        <button id="theme-toggle">LIGHT/ DARK</button>
+        <ul class="menu desktop-only">
+            <li><a href="/services/" class="active">SERVICES</a></li>
+            <li><a href="/work/">SHOP</a></li>
+            <li><a href="/team/">WORK</a></li>
+            <li><a href="/tools/">TOOLS</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span><span></span><span></span>
+        </button>
     </div>
+</nav>
 
-    <section class="philosophy">
-        <div class="step"><span class="step-num">01</span><strong>RESEARCH</strong><br>Understand behavior.</div>
-        <div class="step"><span class="step-num">02</span><strong>STRUCTURE</strong><br>Map the logic.</div>
-        <div class="step"><span class="step-num">03</span><strong>VISUAL</strong><br>Apply the interface.</div>
-        <div class="step"><span class="step-num">04</span><strong>EXECUTE</strong><br>Final implementation.</div>
-    </section>
-
-    <div style="padding: 100px 0; text-align: center; border-top: 1px solid var(--dot);">
-        <p>[ CASE STUDIES ]</p>
-        <h2 style="font-size: 2.5rem; margin-bottom: 30px;">SEE HOW THIS WORKS IN PRACTICE.</h2>
-        <a href="/sample-work.html" class="btn-work" style="padding: 20px 40px; font-size: 1rem;">VIEW SAMPLE WORK</a>
-    </div>
-
-    <section class="conversion">
-        <h2>READY TO BUILD SOMETHING THAT <span style="color: var(--accent);">ACTUALLY WORKS?</span></h2>
-        <div class="cta-group">
-            <a href="https://wa.me/254114728233" class="cta-btn">MESSAGE ON WHATSAPP</a>
-            <a href="mailto:hello.beben.design@gmail.com" class="cta-btn" style="background: #fff;">EMAIL US</a>
-        </div>
-    </section>
-
-    <footer style="padding: 40px 0; font-size: 0.8rem; border-top: 1px solid var(--dot); display: flex; justify-content: space-between;">
-        <p>© 2026 BEBEN DESIGN</p>
-        <p>NAIROBI, KENYA</p>
-    </footer>
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">HOME</a></li>
+        <li><a href="/services/" class="active">SERVICES</a></li>
+        <li><a href="/work/">SHOP</a></li>
+        <li><a href="/team/">WORK</a></li>
+        <li><a href="/tools/">TOOLS</a></li>
+        <li><a href="/contact/">CONTACT</a></li>
+    </ul>
 </div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════ -->
+<main>
+
+    <!-- HERO -->
+    <section class="page-hero reveal">
+        <p class="page-label">[ 01. CAPABILITIES ]</p>
+        <h1>Design that<br>works before<br>it <span class="highlight-box">looks</span> good.</h1>
+        <p class="intro">
+            From early research to production-ready interfaces — clarity, usability, and
+            measurable outcomes. Decisions backed by reasoning, not trends.
+        </p>
+    </section>
+
+    <!-- PIPELINE -->
+    <section class="pipeline-section reveal">
+        <h2>THE PIPELINE</h2>
+        <p class="section-intro">
+            Interfaces must reduce friction. We treat design as problem-solving, connecting research
+            to implementation in a seamless flow. Whether you need a single stage or the full
+            pipeline, we build for scale.
+        </p>
+        <div class="pipeline-steps">
+            <div class="pipeline-step">
+                <span class="pipeline-num">01</span>
+                <h3>Research</h3>
+                <p>Understand behaviour. Map the problem before touching a pixel.</p>
+            </div>
+            <div class="pipeline-step">
+                <span class="pipeline-num">02</span>
+                <h3>Structure</h3>
+                <p>Map the logic. Information architecture and user journey definition.</p>
+            </div>
+            <div class="pipeline-step">
+                <span class="pipeline-num">03</span>
+                <h3>Visual</h3>
+                <p>Apply the interface. High-fidelity design, component systems, motion.</p>
+            </div>
+            <div class="pipeline-step">
+                <span class="pipeline-num">04</span>
+                <h3>Execute</h3>
+                <p>Final implementation. Production-ready code or developer handoff.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ SERVICES ═══ -->
+    <section class="services-section">
+        <p class="section-label reveal">// SERVICE CATALOGUE</p>
+
+        <!-- ─── 1. BRAND IDENTITY ─────────────────────────────── -->
+        <div class="service-block reveal">
+            <div class="service-block-header">
+                <div class="service-block-left">
+                    <span class="service-num">01 // BRAND_IDENTITY</span>
+                    <h3>Brand Identity<br>&amp; Visual Design</h3>
+                    <p class="service-tagline">
+                        Focusing on the intersection of storytelling and systematic design.
+                        A logo that works on a favicon and a billboard. A colour system that
+                        speaks before words do.
+                    </p>
+                    <p class="service-goal">Turn a concept into a recognisable visual language.</p>
+                </div>
+                <div class="service-block-right">
+                    <p class="deliverables-label">// DELIVERABLES</p>
+                    <ul class="deliverables-list">
+                        <li>Logo system — primary, secondary, monochrome, favicon</li>
+                        <li>Structured Brand Guide (PDF + editable source files)</li>
+                        <li>Colour palette with WCAG-compliant contrast ratios</li>
+                        <li>Typography hierarchy — print and screen</li>
+                        <li>Motion branding &amp; animated logo variants (on request)</li>
+                        <li>Visual mood board with documented rationale</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="service-faq">
+                <p class="faq-header">// FREQUENTLY ASKED — BRAND IDENTITY</p>
+
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you ensure the logo works across digital and physical scales — from favicons to billboards?</button>
+                    <div class="faq-answer"><p>Every logo system we deliver is built in vector format and tested across multiple scale contexts before handoff. We define a primary mark, a condensed variant for small screens, and a monochrome version for single-colour applications. The favicon version is a specific artefact — not just a scaled-down logo, but a pixel-optimised mark that reads clearly at 16×16px.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">What deliverables are included in the "Structured Brand Guide," and can our internal team update it?</button>
+                    <div class="faq-answer"><p>The Brand Guide covers: logo usage rules, colour tokens with HEX/RGB/CMYK values, typography scale, spacing logic, photography style, and do/don't examples. We deliver it as a PDF for reference and as an editable source file (Figma or InDesign) so your internal team can update it without needing to brief us on every change.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you translate a company's core values into a visual mood board before starting final design?</button>
+                    <div class="faq-answer"><p>We run a brief discovery session — remote or in-person — where we extract three to five key words that describe how you want to make people feel. From those words we build a reference board using existing visual references (not stock art) that map to that emotional register. You approve the direction before a single original asset is created. This prevents wasted rounds on designs that were never going in the right direction.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Do you offer motion branding or animated logo versions for social media and app loaders?</button>
+                    <div class="faq-answer"><p>Yes. Motion branding is an optional deliverable — a short animation (typically 1–3 seconds) of the logo for use as an app loader, social media intro, or video end-card. We deliver it as a Lottie JSON file (scalable, small file size, works natively in iOS, Android, and web) and as an MP4 for social platforms.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Can you refresh an existing brand identity without losing current brand equity and customer recognition?</button>
+                    <div class="faq-answer"><p>This is one of the most technically demanding briefs we take on. We start with a brand equity audit — identifying which elements (colour, shape, typeface) carry the most recognition value with your existing audience. The refresh then preserves those anchor elements while modernising everything else. You don't lose the brand; you evolve it.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── 2. UX DESIGN ──────────────────────────────────── -->
+        <div class="service-block reveal">
+            <div class="service-block-header">
+                <div class="service-block-left">
+                    <span class="service-num">02 // UX_DESIGN</span>
+                    <h3>UX Research<br>&amp; Design</h3>
+                    <p class="service-tagline">
+                        Prioritising research-driven flows and usability. Understanding why
+                        users do what they do before designing where they should go.
+                    </p>
+                    <p class="service-goal">Reduce redesign costs. Build the right thing first.</p>
+                </div>
+                <div class="service-block-right">
+                    <p class="deliverables-label">// DELIVERABLES</p>
+                    <ul class="deliverables-list">
+                        <li>User research report — interviews, surveys, behavioural analysis</li>
+                        <li>User journey maps — per role and device context</li>
+                        <li>Information architecture diagram</li>
+                        <li>Low-fidelity wireframes — key flows</li>
+                        <li>Clickable prototype for stakeholder validation</li>
+                        <li>Usability test report with prioritised findings</li>
+                        <li>Continuous iteration framework for post-launch</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="service-faq">
+                <p class="faq-header">// FREQUENTLY ASKED — UX RESEARCH &amp; DESIGN</p>
+
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">What specific metrics or KPIs do you look for when assessing an existing product's UX?</button>
+                    <div class="faq-answer"><p>We look at task completion rate, time-on-task, error rate, and drop-off points in key flows (onboarding, checkout, primary action). On the qualitative side we look at System Usability Scale (SUS) scores from user sessions and heatmap data if available. These give us a baseline before we recommend any changes — so improvements can be measured against actual data, not opinion.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you involve real users in the research phase — is there a user testing or interview process?</button>
+                    <div class="faq-answer"><p>Yes — user research is not optional on UX projects. We typically run five to eight moderated user interviews at the start of a project, which is sufficient to surface the majority of usability patterns. For products that already have users, we also conduct unmoderated task-based sessions using screen recording tools. You're involved in defining the participant profiles and reviewing the findings before any design work begins.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Can you map complex user flows for multi-role platforms — e.g., admin vs. customer views?</button>
+                    <div class="faq-answer"><p>Multi-role platforms are a speciality. We map each role as a separate journey first, then identify the touchpoints where roles intersect (e.g., an admin approving an action triggered by a customer). This intersection mapping often reveals the most critical design problems — roles that share a flow but have different goals and mental models require careful information architecture to serve both without confusion.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do wireframes and low-fidelity prototypes help validate a business idea before high-fidelity design begins?</button>
+                    <div class="faq-answer"><p>Low-fidelity prototypes test the logic of a flow without the distraction of visual polish. When users interact with a wireframe, their feedback is purely about structure and sequence — not colour or typography — which means you get clean signal on whether the product makes sense. Catching a structural problem at wireframe stage costs a fraction of what it costs to rebuild after high-fidelity design or development has started.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">What is your process for "Continuous Iteration" once a product is live and receiving real-world data?</button>
+                    <div class="faq-answer"><p>We establish a lightweight feedback loop: analytics review every four to six weeks, a short usability session with three to five users each quarter, and a prioritised backlog of UX improvements. This isn't a retainer model — it's a defined process you can run with or without us. We document it in a Continuous Iteration Framework that your team can operate independently.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── 3. UI DESIGN ──────────────────────────────────── -->
+        <div class="service-block reveal">
+            <div class="service-block-header">
+                <div class="service-block-left">
+                    <span class="service-num">03 // UI_DESIGN</span>
+                    <h3>UI Design<br>&amp; Component Systems</h3>
+                    <p class="service-tagline">
+                        Aesthetic precision and developer-ready systems. Every component
+                        documented, every state covered, every handoff clean.
+                    </p>
+                    <p class="service-goal">Increase development speed. Eliminate design debt.</p>
+                </div>
+                <div class="service-block-right">
+                    <p class="deliverables-label">// DELIVERABLES</p>
+                    <ul class="deliverables-list">
+                        <li>High-fidelity screen designs — all key flows</li>
+                        <li>UI Kit in Figma — atomic, developer-ready</li>
+                        <li>Component documentation with all states (default, hover, error, disabled)</li>
+                        <li>Responsive breakpoint specifications</li>
+                        <li>WCAG AA accessibility annotations</li>
+                        <li>Custom iconography (on request)</li>
+                        <li>Developer handoff file with spacing and token specs</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="service-faq">
+                <p class="faq-header">// FREQUENTLY ASKED — UI DESIGN</p>
+
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Do you use Atomic Design methodology to ensure UI components are modular and scalable?</button>
+                    <div class="faq-answer"><p>Yes. We build from atoms (buttons, inputs, labels) up to molecules (form fields, card headers) and then to organisms (full card components, nav bars). This means a change at the atom level — say, updating the primary button colour — propagates automatically through every component that uses it. The result is a UI Kit that scales without breaking.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Will the UI Kit be provided in Figma, and is it ready for developer handoff?</button>
+                    <div class="faq-answer"><p>Yes on both. The Figma file uses Auto Layout throughout, which means components resize predictably. Variables are set up for colour and typography tokens, so a developer can read exact CSS values directly from Figma's inspect panel. We also include a separate handoff document specifying spacing, grid, and interaction behaviour for every component that has a non-obvious state.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you handle accessibility (WCAG compliance) to ensure the interface works for everyone?</button>
+                    <div class="faq-answer"><p>Accessibility is built in from the start, not retrofitted. We check colour contrast ratios against WCAG AA (4.5:1 for normal text, 3:1 for large text) as we design. We annotate focus order and keyboard navigation paths in the handoff file. We also flag any components that require ARIA attributes — these are documented for the development team so accessibility doesn't get lost in implementation.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Can you create custom iconography and illustrations unique to our product?</button>
+                    <div class="faq-answer"><p>Yes. Custom icon sets are delivered as SVG with consistent stroke weight, optical balance adjustments for small sizes, and both outlined and filled variants. Illustrations follow the same process as brand identity — mood board first, style approval, then production. All source files are included in the deliverable.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you balance industry best practices with a unique, eye-catching visual style?</button>
+                    <div class="faq-answer"><p>Best practices govern structure and behaviour — where to place navigation, how to handle form errors, what a primary CTA should look like. Visual style governs everything else. We apply conventions where breaking them costs users time (e.g., navigation placement) and break conventions where following them makes a product forgettable (e.g., colour, typography, layout rhythm). The output is a product that users can navigate immediately but remember distinctly.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── 4. DIGITAL STRATEGY ───────────────────────────── -->
+        <div class="service-block reveal">
+            <div class="service-block-header">
+                <div class="service-block-left">
+                    <span class="service-num">04 // STRATEGY</span>
+                    <h3>Digital Strategy<br>&amp; Product Planning</h3>
+                    <p class="service-tagline">
+                        The technical roadmap for long-term success. Turning rough concepts
+                        into sequenced, fundable, buildable product plans.
+                    </p>
+                    <p class="service-goal">Build the right thing in the right order.</p>
+                </div>
+                <div class="service-block-right">
+                    <p class="deliverables-label">// DELIVERABLES</p>
+                    <ul class="deliverables-list">
+                        <li>Product Strategy Document — goals, constraints, success metrics</li>
+                        <li>MVP feature prioritisation matrix</li>
+                        <li>Technical roadmap — phased, with dependencies mapped</li>
+                        <li>Competitor analysis with UX benchmarking</li>
+                        <li>Market positioning brief</li>
+                        <li>Discovery Workshop report (first engagement)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="service-faq">
+                <p class="faq-header">// FREQUENTLY ASKED — DIGITAL STRATEGY</p>
+
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">What does the "Strategy" phase look like for a startup that only has a rough concept?</button>
+                    <div class="faq-answer"><p>We start with a Discovery Workshop — a structured two-to-three hour session where we interrogate the concept from a user and technical perspective. We document assumptions, identify the riskiest ones, and define the smallest version of the product that would prove or disprove those assumptions. You leave with a clear problem statement, a user hypothesis, and a scope for phase one. No concept is too rough — rough is actually preferable, because there's less to unlearn.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you help prioritise features for an MVP vs. later phases?</button>
+                    <div class="faq-answer"><p>We use a modified MoSCoW framework (Must Have / Should Have / Could Have / Won't Have) combined with a user value vs. build effort matrix. Every proposed feature is assessed against two questions: does this directly address the primary user problem, and can we test the core hypothesis without it? Features that fail the first question are deferred. Features that pass the second are deferred too — the MVP should be minimal, not comprehensive.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">Do you provide a technical roadmap that our development team can follow directly?</button>
+                    <div class="faq-answer"><p>Yes. The roadmap is structured in phases with defined inputs, outputs, and dependencies for each. We specify which design deliverables are required before each development phase starts, which third-party integrations need to be scoped early, and which decisions can be deferred. It's written to be read by both technical and non-technical stakeholders — no jargon without explanation.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">How do you integrate market research and competitor analysis into the product strategy?</button>
+                    <div class="faq-answer"><p>Competitor analysis goes beyond feature lists. We conduct a UX audit of the top three to five competitors — documenting their information architecture, onboarding flow, primary CTA placement, and any identified friction points. This gives us a map of what the market expects (table stakes) and where there's differentiation opportunity. Market research informs positioning; the UX audit informs design decisions.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" aria-expanded="false">What is the Discovery Session like, and what value should we expect from it?</button>
+                    <div class="faq-answer"><p>The Discovery Session is a structured conversation — not a sales call. We ask about the problem, the user, the constraints, and what you've already tried. You should expect to leave with a clearer articulation of your own problem than when you arrived. If there's alignment on scope and approach, we produce a fixed-price proposal within 48 hours. If there isn't, you've still got a clearer brief at zero cost.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── EDGE CASES ────────────────────────────────────── -->
+        <div class="edge-block reveal">
+            <div>
+                <p class="edge-label">// CUSTOM SCOPE</p>
+                <h3>What if my need isn't listed?</h3>
+            </div>
+            <div class="edge-body">
+                <p>We thrive on edge cases and custom challenges. Our approach is inherently modular — if your project falls between categories, like a niche MedTech integration or a complex AI dashboard, we start with a <strong>Discovery Workshop</strong>. We break down your specific requirements from a UX and technical perspective to determine if our studio is the right fit. If it's a yes, we build a custom scope of work tailored to your unique constraints. If it's a no, we tell you clearly and point you in the right direction.</p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section reveal">
+        <h2>Ready to build<br>something that<br><span class="highlight-box">actually</span> works?</h2>
+        <p>No aggressive pitch. Just a technical conversation about your goals — with the people who will actually build it.</p>
+        <p class="pro-tip">
+            <strong>Pro tip:</strong> When reaching out, include a brief overview of your current pain point. It lets us skip the preamble and get straight to the solution in our first conversation.
+        </p>
+        <div class="cta-row">
+            <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">MESSAGE ON WHATSAPP ↗</a>
+            <a href="mailto:hello.beben.design@gmail.com" class="cta-link">SEND AN EMAIL ↗</a>
+        </div>
+    </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="reveal">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">© Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP ↑</button>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function () {
+    'use strict';
+
+    // Theme
+    const html  = document.documentElement;
+    const saved = localStorage.getItem('beben-theme');
+    if (saved) html.setAttribute('data-theme', saved);
+
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('beben-theme', next);
+    });
+
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const overlay   = document.getElementById('mobile-menu-overlay');
+    const body      = document.body;
+
+    function openMenu()  { overlay.classList.add('is-active');    body.classList.add('menu-open');    body.style.overflow = 'hidden'; hamburger.setAttribute('aria-expanded','true'); }
+    function closeMenu() { overlay.classList.remove('is-active'); body.classList.remove('menu-open'); body.style.overflow = '';       hamburger.setAttribute('aria-expanded','false'); }
+
+    hamburger.addEventListener('click', function () {
+        overlay.classList.contains('is-active') ? closeMenu() : openMenu();
+    });
+    overlay.querySelectorAll('.mobile-menu a').forEach(function (l) { l.addEventListener('click', closeMenu); });
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeMenu(); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('is-active')) { closeMenu(); hamburger.focus(); }
+    });
+
+    // Reveal — threshold slightly lower to trigger earlier on tall service blocks
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); }
+        });
+    }, { threshold: 0.05 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+
+    // FAQ Accordion — scoped per service block so each block is independent
+    document.querySelectorAll('.service-faq').forEach(function (faqBlock) {
+        faqBlock.querySelectorAll('.faq-trigger').forEach(function (trigger) {
+            trigger.addEventListener('click', function () {
+                var answer = trigger.nextElementSibling;
+                var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+
+                // Close all others within THIS service block only
+                faqBlock.querySelectorAll('.faq-trigger').forEach(function (other) {
+                    if (other !== trigger) {
+                        other.setAttribute('aria-expanded', 'false');
+                        var otherAnswer = other.nextElementSibling;
+                        if (otherAnswer) otherAnswer.classList.remove('open');
+                    }
+                });
+
+                trigger.setAttribute('aria-expanded', String(!isOpen));
+                if (answer) answer.classList.toggle('open', !isOpen);
+            });
+        });
+    });
+
+})();
+</script>
 
 </body>
 </html>
