@@ -16,25 +16,19 @@
   </url>
 
   <url>
-    <loc>https://beben.design/team/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
     <loc>https://beben.design/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://beben.design/credits/</loc>
+    <loc>https://beben.design/tools/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://beben.design/legal/</loc>
+    <loc>https://beben.design/shop/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -46,7 +40,7 @@
   </url>
 
   <url>
-    <loc>https://beben.design/tools/</loc>
+    <loc>https://beben.design/legal/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -60,7 +54,7 @@
   <url>
     <loc>https://beben.design/beben-system-design-spec/</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
 
 </urlset>
