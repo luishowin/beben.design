@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Work | Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --transition-speed: 0.6s;
+            --ease: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Container for smooth snapping */
+        .work-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        /* --- REPLICABLE SECTION START --- */
+        .project-section {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            scroll-snap-align: start;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform var(--transition-speed) var(--ease);
+            z-index: 1;
+        }
+
+        /* Placeholder background colors just for visual differentiation */
+        .project-section:nth-child(odd) .project-bg { background-color: #1a1a1a; }
+        .project-section:nth-child(even) .project-bg { background-color: #222; }
+
+        .project-section:hover .project-bg {
+            transform: scale(1.1);
+        }
+
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            transition: background var(--transition-speed);
+        }
+
+        .project-section:hover .project-overlay {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .project-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--transition-speed) var(--ease);
+        }
+
+        /* Animation when section is in view */
+        .project-section.visible .project-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-title {
+            font-size: 4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        .project-category {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+        /* --- REPLICABLE SECTION END --- */
+
+        .footer-humor {
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            scroll-snap-align: end;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-humor p {
+            font-style: italic;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="work-container">
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+One');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Alpha</h2>
+                <p class="project-category">Branding / UX</p>
+            </div>
+        </a>
+
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+Two');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Bravo</h2>
+                <p class="project-category">Development</p>
+            </div>
+        </a>
+
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+Three');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Charlie</h2>
+                <p class="project-category">Visual Identity</p>
+            </div>
+        </a>
+
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+Four');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Delta</h2>
+                <p class="project-category">Product Design</p>
+            </div>
+        </a>
+
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+Five');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Echo</h2>
+                <p class="project-category">E-Commerce</p>
+            </div>
+        </a>
+
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+Six');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Foxtrot</h2>
+                <p class="project-category">Motion Graphics</p>
+            </div>
+        </a>
+
+        <a href="" class="project-section">
+            <div class="project-bg" style="background-image: url('https://via.placeholder.com/1920x1080?text=Project+Seven');"></div>
+            <div class="project-overlay"></div>
+            <div class="project-content">
+                <h2 class="project-title">Golf</h2>
+                <p class="project-category">Mobile App</p>
+            </div>
+        </a>
+
+        <footer class="footer-humor">
+            <p>Our lawyers say we have to tell you that these aren't even our best projects yet... we're still busy making the "greatest things ever" and haven't had time to upload the screenshots. Stay tuned.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Use Intersection Observer to trigger animations when section enters viewport
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.project-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
