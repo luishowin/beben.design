@@ -233,6 +233,11 @@
       animation: fadeUp 0.9s ease 0.8s forwards;
     }
 
+    /* ── SCROLL HINT — anchored to bottom of hero, not in flow ── */
+    #hero {
+      position: relative;
+    }
+
     /* ── CTA BUTTON ── */
     .btn-ghost {
       display: inline-flex;
@@ -278,6 +283,7 @@
       color: var(--text-dim);
       opacity: 0;
       animation: fadeUp 1s ease 1.2s forwards;
+      z-index: 3;
     }
     .scroll-hint .line {
       display: block;
@@ -467,10 +473,11 @@
       z-index: 2;
       padding: 4rem 8vw;
       border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
       gap: 2rem;
-      align-items: start;
     }
 
     .footer-brand {
@@ -584,24 +591,27 @@
 
       .nav-links {
         position: fixed;
-        top: 0; right: 0;
+        top: 0; left: 0; right: 0;
         height: 100svh;
-        width: min(320px, 85vw);
-        background: rgba(8,8,8,0.98);
+        width: 100%;
+        background: rgba(8, 8, 8, 0.98);
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
-        border-left: 1px solid var(--border);
         flex-direction: column;
         justify-content: center;
-        align-items: flex-start;
-        padding: 4rem 3rem;
-        gap: 2.5rem;
-        transform: translateX(100%);
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        align-items: center;
+        padding: 6rem 2rem 4rem;
+        gap: 3rem;
+        transform: translateY(-100%);
+        transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 99;
       }
-      .nav-links.open { transform: translateX(0); }
-      .nav-links a { font-size: 1rem; }
+      .nav-links.open { transform: translateY(0); }
+      .nav-links a {
+        font-size: 1.4rem;
+        letter-spacing: 0.12em;
+        text-align: center;
+      }
 
       #hero { padding: 0 6vw; padding-top: 80px; }
       .hero-h1 { font-size: clamp(2.5rem, 10vw, 4rem); }
@@ -637,11 +647,12 @@
       .cta-h1 { font-size: clamp(2rem, 7vw, 3rem); }
 
       footer {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
         gap: 2.5rem;
         padding: 3rem 6vw;
       }
-      .footer-back { justify-content: flex-start; }
+      .footer-back { align-self: flex-start; }
 
       .section-divider { margin: 0 5vw; width: calc(100% - 10vw); }
 
