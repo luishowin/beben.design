@@ -195,24 +195,7 @@
     .btn-dim::before { background:rgba(240,238,232,0.88) !important; }
     .btn-dim:hover { color:#000 !important; }
 
-    /* ── SCROLL HINT ── */
-    .scroll-hint {
-      position:absolute; bottom:2.5rem; left:8vw;
-      display:flex; align-items:center; gap:0.7rem;
-      font-family:var(--font-mono); font-size:0.62rem;
-      letter-spacing:0.15em; color:var(--text-dim);
-      opacity:0; animation:fadeUp 1s ease 1.2s forwards; z-index:3;
-    }
-    .scroll-hint .line {
-      display:block; width:32px; height:1px;
-      background:var(--text-dim); position:relative; overflow:hidden;
-    }
-    .scroll-hint .line::after {
-      content:''; position:absolute; inset:0;
-      background:var(--accent); transform:translateX(-100%);
-      animation:scanline 2.5s ease-in-out 1.5s infinite;
-    }
-    @keyframes scanline { 0%,100%{transform:translateX(-100%);} 50%{transform:translateX(100%);} }
+  
 
     /* ── SECTION LABEL ── */
     .section-label {
@@ -429,7 +412,7 @@
     .footer-meta a { color:var(--accent); text-decoration:none; transition:opacity 0.2s ease; }
     .footer-meta a:hover { opacity:0.7; }
 
-    .footer-legal { display:flex; flex-direction:column; gap:0.45rem; }
+    .footer-legal { display:flex; flex-direction:column; gap:0.45rem; align-items:flex-end; }
     .footer-copy {
       font-family:var(--font-mono); font-size:0.6rem;
       letter-spacing:0.1em; color:var(--text-dim); margin-bottom:0.35rem;
@@ -572,10 +555,7 @@
       </a>
     </div>
 
-    <div class="scroll-hint" aria-hidden="true">
-      <span class="line"></span>
-      Scroll to explore
-    </div>
+  
   </section>
 
   <!-- ── WHAT WE DO ── -->
@@ -732,6 +712,12 @@
     </div>
 
     <div class="footer-legal">
+      <a href="#hero" class="back-top">
+      Back to top
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+      </svg>
+    </a>
       <p class="footer-copy">© 2026 NeoPolaris AI. All rights reserved.</p>
       <div class="footer-links">
         <a href="#">Privacy Policy</a>
@@ -739,12 +725,7 @@
       </div>
     </div>
 
-    <a href="#hero" class="back-top">
-      Back to top
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <path d="M12 19V5M5 12l7-7 7 7"/>
-      </svg>
-    </a>
+    
   </footer>
 
   <script>
