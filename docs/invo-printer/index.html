@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio Invoice & Receipt Maker</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f1115;
+      color: #eaeaea;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: #181b22;
+      border: 1px solid #2a2f3a;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 2rem;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      color: #b7c0d1;
+    }
+
+    .subtext {
+      color: #8c95a6;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: #c7d0e0;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      background: #0f1115;
+      border: 1px solid #303744;
+      border-radius: 10px;
+      color: white;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #4f8cff;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .preview {
+      background: white;
+      color: black;
+      padding: 30px;
+      border-radius: 12px;
+      min-height: 600px;
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .invoice-title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section h3 {
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #444;
+    }
+
+    .amount-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f3f4f7;
+      border-radius: 10px;
+    }
+
+    .amount-box p {
+      margin-bottom: 8px;
+    }
+
+    .status-paid {
+      color: green;
+      font-weight: bold;
+    }
+
+    .status-unpaid {
+      color: crimson;
+      font-weight: bold;
+    }
+
+    .footer-note {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .card:first-child {
+        display: none;
+      }
+
+      .preview {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Studio Invoice & Receipt Maker</h1>
+  <p class="subtext">
+    Offline browser-based proof of concept for freelancers and small studios.
+  </p>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Document Details</h2>
+
+      <div class="form-group">
+        <label>Document Type</label>
+        <select id="docType">
+          <option value="Invoice">Invoice</option>
+          <option value="Receipt">Receipt</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Document Number</label>
+          <input type="text" id="docNumber" value="INV-001" />
+        </div>
+
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="date" />
+        </div>
+      </div>
+
+      <hr style="margin:20px 0;border-color:#2a2f3a;">
+
+      <h2>Business Details</h2>
+
+      <div class="form-group">
+        <label>Business Name</label>
+        <input type="text" id="businessName" value="Nomo Design Studio" />
+      </div>
+
+      <div class="form-group">
+        <label>Business Address</label>
+        <textarea id="businessAddress">Nairobi, Kenya</textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="businessPhone" value="+254 700 000000" />
+        </div>
+
+        <div class="form-group">
+          <label>Website</label>
+          <input type="text" id="businessWebsite" value="www.nomodesignstudio.com" />
+        </div>
+      </div>
+
+      <hr style="margin:20px 0;border-color:#2a2f3a;">
+
+      <h2>Client Details</h2>
+
+      <div class="form-group">
+        <label>Client Name</label>
+        <input type="text" id="clientName" placeholder="John Doe" />
+      </div>
+
+      <div class="form-group">
+        <label>Client Address</label>
+        <textarea id="clientAddress"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Description of Work</label>
+        <textarea id="description">Website Design & Development</textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Amount Due</label>
+          <input type="number" id="amountDue" value="500" />
+        </div>
+
+        <div class="form-group">
+          <label>Amount Paid</label>
+          <input type="number" id="amountPaid" value="0" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select id="paymentMethod">
+          <option>Cash</option>
+          <option>M-Pesa</option>
+          <option>Bank Transfer</option>
+          <option>Card</option>
+          <option>PayPal</option>
+          <option>Crypto</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Reference / Transaction Code</label>
+        <input type="text" id="reference" placeholder="Optional" />
+      </div>
+
+      <div class="grid-2">
+        <button onclick="saveBusinessDetails()">Save Business Info</button>
+        <button onclick="downloadPDF()">Download PDF</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="preview" id="preview">
+
+        <div class="invoice-header">
+          <div>
+            <div class="invoice-title" id="previewType">Invoice</div>
+            <p id="previewDocNumber">INV-001</p>
+            <p id="previewDate"></p>
+          </div>
+
+          <div style="text-align:right;">
+            <h2 id="previewBusinessName">Nomo Design Studio</h2>
+            <p id="previewBusinessAddress">Nairobi, Kenya</p>
+            <p id="previewBusinessPhone">+254 700 000000</p>
+            <p id="previewBusinessWebsite">www.nomodesignstudio.com</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Bill To</h3>
+          <p id="previewClientName">Client Name</p>
+          <p id="previewClientAddress">Client Address</p>
+        </div>
+
+        <div class="section">
+          <h3>Description</h3>
+          <p id="previewDescription">Website Design & Development</p>
+        </div>
+
+        <div class="amount-box">
+          <p><strong>Amount Due:</strong> $<span id="previewAmountDue">500</span></p>
+          <p><strong>Amount Paid:</strong> $<span id="previewAmountPaid">0</span></p>
+          <p><strong>Balance:</strong> $<span id="previewBalance">500</span></p>
+          <p><strong>Payment Method:</strong> <span id="previewPaymentMethod">Cash</span></p>
+          <p><strong>Reference:</strong> <span id="previewReference">-</span></p>
+          <p>
+            <strong>Status:</strong>
+            <span class="status-unpaid" id="previewStatus">UNPAID</span>
+          </p>
+        </div>
+
+        <div class="footer-note">
+          Thank you for your business.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const fields = [
+      'docType',
+      'docNumber',
+      'date',
+      'businessName',
+      'businessAddress',
+      'businessPhone',
+      'businessWebsite',
+      'clientName',
+      'clientAddress',
+      'description',
+      'amountDue',
+      'amountPaid',
+      'paymentMethod',
+      'reference'
+    ];
+
+    function updatePreview() {
+      const amountDue = parseFloat(document.getElementById('amountDue').value || 0);
+      const amountPaid = parseFloat(document.getElementById('amountPaid').value || 0);
+      const balance = amountDue - amountPaid;
+
+      document.getElementById('previewType').textContent = document.getElementById('docType').value;
+      document.getElementById('previewDocNumber').textContent = document.getElementById('docNumber').value;
+      document.getElementById('previewDate').textContent = document.getElementById('date').value;
+
+      document.getElementById('previewBusinessName').textContent = document.getElementById('businessName').value;
+      document.getElementById('previewBusinessAddress').textContent = document.getElementById('businessAddress').value;
+      document.getElementById('previewBusinessPhone').textContent = document.getElementById('businessPhone').value;
+      document.getElementById('previewBusinessWebsite').textContent = document.getElementById('businessWebsite').value;
+
+      document.getElementById('previewClientName').textContent = document.getElementById('clientName').value;
+      document.getElementById('previewClientAddress').textContent = document.getElementById('clientAddress').value;
+      document.getElementById('previewDescription').textContent = document.getElementById('description').value;
+
+      document.getElementById('previewAmountDue').textContent = amountDue.toFixed(2);
+      document.getElementById('previewAmountPaid').textContent = amountPaid.toFixed(2);
+      document.getElementById('previewBalance').textContent = balance.toFixed(2);
+
+      document.getElementById('previewPaymentMethod').textContent = document.getElementById('paymentMethod').value;
+      document.getElementById('previewReference').textContent = document.getElementById('reference').value || '-';
+
+      const statusEl = document.getElementById('previewStatus');
+
+      if (balance <= 0) {
+        statusEl.textContent = 'PAID';
+        statusEl.className = 'status-paid';
+      } else {
+        statusEl.textContent = 'UNPAID';
+        statusEl.className = 'status-unpaid';
+      }
+    }
+
+    fields.forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview);
+    });
+
+    function saveBusinessDetails() {
+      const businessData = {
+        businessName: document.getElementById('businessName').value,
+        businessAddress: document.getElementById('businessAddress').value,
+        businessPhone: document.getElementById('businessPhone').value,
+        businessWebsite: document.getElementById('businessWebsite').value,
+      };
+
+      localStorage.setItem('studioBusinessData', JSON.stringify(businessData));
+
+      alert('Business details saved locally.');
+    }
+
+    function loadBusinessDetails() {
+      const data = JSON.parse(localStorage.getItem('studioBusinessData'));
+
+      if (!data) return;
+
+      document.getElementById('businessName').value = data.businessName || '';
+      document.getElementById('businessAddress').value = data.businessAddress || '';
+      document.getElementById('businessPhone').value = data.businessPhone || '';
+      document.getElementById('businessWebsite').value = data.businessWebsite || '';
+
+      updatePreview();
+    }
+
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+
+      const doc = new jsPDF();
+
+      const type = document.getElementById('docType').value;
+      const docNumber = document.getElementById('docNumber').value;
+
+      doc.setFontSize(22);
+      doc.text(type, 20, 20);
+
+      doc.setFontSize(11);
+      doc.text(`Document #: ${docNumber}`, 20, 30);
+      doc.text(`Date: ${document.getElementById('date').value}`, 20, 37);
+
+      doc.text(document.getElementById('businessName').value, 20, 55);
+      doc.text(document.getElementById('businessAddress').value, 20, 62);
+      doc.text(document.getElementById('businessPhone').value, 20, 69);
+      doc.text(document.getElementById('businessWebsite').value, 20, 76);
+
+      doc.text('Bill To:', 20, 95);
+      doc.text(document.getElementById('clientName').value, 20, 103);
+      doc.text(document.getElementById('clientAddress').value, 20, 110);
+
+      doc.text('Description:', 20, 130);
+      doc.text(document.getElementById('description').value, 20, 138);
+
+      const amountDue = parseFloat(document.getElementById('amountDue').value || 0);
+      const amountPaid = parseFloat(document.getElementById('amountPaid').value || 0);
+      const balance = amountDue - amountPaid;
+
+      doc.text(`Amount Due: $${amountDue.toFixed(2)}`, 20, 165);
+      doc.text(`Amount Paid: $${amountPaid.toFixed(2)}`, 20, 173);
+      doc.text(`Balance: $${balance.toFixed(2)}`, 20, 181);
+
+      doc.text(`Payment Method: ${document.getElementById('paymentMethod').value}`, 20, 195);
+      doc.text(`Reference: ${document.getElementById('reference').value || '-'}`, 20, 203);
+
+      doc.text('Thank you for your business.', 20, 240);
+
+      doc.save(`${docNumber}.pdf`);
+    }
+
+    document.getElementById('date').valueAsDate = new Date();
+
+    loadBusinessDetails();
+    updatePreview();
+  </script>
+</body>
+</html>
