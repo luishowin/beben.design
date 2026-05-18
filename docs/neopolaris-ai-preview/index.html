@@ -3,30 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Neopolaris AI — Your North Star in AI Adoption</title>
-  <meta name="description" content="Neopolaris AI helps companies identify AI opportunities and build systems that actually transform how they do business." />
+  <title>NeoPolaris AI — Your North Star in AI Adoption</title>
+  <meta name="description" content="NeoPolaris AI helps African businesses adopt AI that is safe, legal, and built to last. Strategy, governance, development, and cybersecurity." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #080808;
-      --surface: #0f0f0f;
+      --bg: #000000;
+      --surface: #070707;
       --text: #f0eee8;
-      --text-dim: rgba(240, 238, 232, 0.55);
-      --accent: #87ABE6;
-      --accent-glow: rgba(135, 171, 230, 0.18);
-      --accent-glow-strong: rgba(135, 171, 230, 0.32);
-      --border: rgba(135, 171, 230, 0.12);
-      --border-hover: rgba(135, 171, 230, 0.35);
+      --text-dim: rgba(240,238,232,0.52);
+      --accent: #7BACFF;
+      --accent-sky: #38BDF8;
+      --accent-glow: rgba(123,172,255,0.13);
+      --accent-glow-strong: rgba(123,172,255,0.28);
+      --border: rgba(123,172,255,0.1);
+      --border-hover: rgba(123,172,255,0.32);
       --font-serif: 'Inria Serif', Georgia, serif;
       --font-sans: 'Inria Sans', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -38,636 +38,487 @@
       overflow-x: hidden;
     }
 
-    /* ── AMBIENT BACKGROUND ── */
+    /* ── AMBIENT ORBS ── */
     .ambient {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
     }
     .ambient-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.18;
+      position: absolute; border-radius: 50%;
+      filter: blur(130px); opacity: 0.15;
     }
     .orb-1 {
       width: 700px; height: 700px;
-      background: radial-gradient(circle, #87ABE6, transparent 70%);
-      top: -200px; left: -150px;
+      background: radial-gradient(circle, #7BACFF, transparent 70%);
+      top: -220px; left: -180px;
       animation: drift1 18s ease-in-out infinite alternate;
     }
     .orb-2 {
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, #4a72b8, transparent 70%);
-      bottom: 10%; right: -100px;
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, #38BDF8, transparent 70%);
+      bottom: 8%; right: -120px;
       animation: drift2 22s ease-in-out infinite alternate;
+      opacity: 0.09;
     }
     .orb-3 {
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, #87ABE6, transparent 70%);
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, #7BACFF, transparent 70%);
       top: 50%; left: 40%;
       animation: drift3 26s ease-in-out infinite alternate;
-      opacity: 0.1;
+      opacity: 0.07;
     }
+    @keyframes drift1 { from{transform:translate(0,0) scale(1);} to{transform:translate(60px,80px) scale(1.1);} }
+    @keyframes drift2 { from{transform:translate(0,0) scale(1);} to{transform:translate(-50px,-60px) scale(1.15);} }
+    @keyframes drift3 { from{transform:translate(0,0);} to{transform:translate(-80px,40px);} }
 
-    @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px, 80px) scale(1.1); } }
-    @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-50px, -60px) scale(1.15); } }
-    @keyframes drift3 { from { transform: translate(0,0); } to { transform: translate(-80px, 40px); } }
-
-    /* ── NOISE TEXTURE OVERLAY ── */
+    /* ── NOISE ── */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-size: 128px;
-      opacity: 0.4;
+      content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat:repeat; background-size:128px; opacity:0.35;
     }
 
     /* ── NAV ── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.4rem 5vw;
-      backdrop-filter: blur(20px) saturate(1.4);
-      -webkit-backdrop-filter: blur(20px) saturate(1.4);
-      background: rgba(8, 8, 8, 0.65);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.3s ease;
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.3rem 5vw;
+      backdrop-filter:blur(20px) saturate(1.4);
+      -webkit-backdrop-filter:blur(20px) saturate(1.4);
+      background:rgba(0,0,0,0.75);
+      border-bottom:1px solid var(--border);
     }
 
     .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      text-decoration: none;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      transition: color 0.3s ease;
+      display:flex; align-items:center; gap:0.55rem;
+      text-decoration:none; color:var(--text);
+      font-family:var(--font-mono); font-size:0.74rem;
+      font-weight:500; letter-spacing:0.13em; text-transform:uppercase;
+      transition:color 0.3s ease; flex-shrink:0;
     }
-    .nav-logo:hover { color: var(--accent); }
-    .nav-logo svg { flex-shrink: 0; }
+    .nav-logo:hover { color:var(--accent); }
 
-    .nav-links {
-      display: flex;
-      gap: 2.2rem;
-      list-style: none;
-    }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
     .nav-links a {
-      font-family: var(--font-sans);
-      font-size: 0.82rem;
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-      position: relative;
-      transition: color 0.3s ease;
+      font-family:var(--font-sans); font-size:0.78rem; font-weight:400;
+      letter-spacing:0.08em; text-transform:uppercase;
+      color:var(--text-dim); text-decoration:none; position:relative;
+      transition:color 0.3s ease;
     }
     .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -3px; left: 0;
-      width: 0; height: 1px;
-      background: var(--accent);
-      transition: width 0.3s ease;
+      content:''; position:absolute; bottom:-3px; left:0;
+      width:0; height:1px; background:var(--accent);
+      transition:width 0.3s ease;
     }
-    .nav-links a:hover { color: var(--accent); }
-    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color:var(--accent); }
+    .nav-links a:hover::after { width:100%; }
 
     /* Hamburger */
     .nav-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-      background: none;
-      border: none;
+      display:none; flex-direction:column; gap:5px;
+      cursor:pointer; padding:4px; background:none; border:none; z-index:101;
     }
     .nav-toggle span {
-      display: block;
-      width: 22px; height: 1.5px;
-      background: var(--text);
-      transition: all 0.3s ease;
+      display:block; width:22px; height:1.5px;
+      background:var(--text); transition:all 0.3s ease;
     }
-    .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-    .nav-toggle.open span:nth-child(2) { opacity: 0; }
-    .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .nav-toggle.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity:0; }
+    .nav-toggle.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
 
     /* ── HERO ── */
     #hero {
-      position: relative;
-      z-index: 2;
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 0 8vw;
-      padding-top: 80px;
+      position:relative; z-index:2;
+      min-height:100svh;
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:flex-start;
+      padding:0 8vw; padding-top:80px;
     }
 
     .hero-eyebrow {
-      font-family: var(--font-mono);
-      font-size: clamp(0.65rem, 1.2vw, 0.8rem);
-      font-weight: 400;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.6rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.8s ease 0.2s forwards;
+      font-family:var(--font-mono); font-size:clamp(0.62rem,1.1vw,0.76rem);
+      font-weight:400; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--accent); display:flex; align-items:center; gap:0.55rem;
+      margin-bottom:1.8rem;
+      opacity:0; transform:translateY(20px);
+      animation:fadeUp 0.8s ease 0.2s forwards;
     }
 
     .hero-h1 {
-      font-family: var(--font-serif);
-      font-size: clamp(2.8rem, 7vw, 7rem);
-      font-weight: 300;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-      max-width: 18ch;
-      margin-bottom: 1.8rem;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeUp 0.9s ease 0.4s forwards;
+      font-family:var(--font-serif);
+      font-size:clamp(2.6rem,6.2vw,6.2rem);
+      font-weight:300; line-height:1.07; letter-spacing:-0.02em;
+      max-width:22ch; margin-bottom:1.6rem;
+      opacity:0; transform:translateY(30px);
+      animation:fadeUp 0.9s ease 0.4s forwards;
     }
-    .hero-h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
+    .hero-h1 em { font-style:italic; color:var(--accent); }
 
     .hero-sub {
-      font-family: var(--font-sans);
-      font-size: clamp(1rem, 1.6vw, 1.2rem);
-      font-weight: 300;
-      color: var(--text-dim);
-      max-width: 52ch;
-      line-height: 1.75;
-      margin-bottom: 2.8rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.9s ease 0.6s forwards;
+      font-family:var(--font-sans); font-size:clamp(0.95rem,1.45vw,1.15rem);
+      font-weight:300; color:var(--text-dim);
+      max-width:54ch; line-height:1.8; margin-bottom:2.8rem;
+      opacity:0; transform:translateY(20px);
+      animation:fadeUp 0.9s ease 0.6s forwards;
     }
 
     .hero-cta {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.9s ease 0.8s forwards;
+      opacity:0; transform:translateY(20px);
+      animation:fadeUp 0.9s ease 0.8s forwards;
     }
 
-    /* ── SCROLL HINT — anchored to bottom of hero, not in flow ── */
-    #hero {
-      position: relative;
-    }
-
-    /* ── CTA BUTTON ── */
+    /* ── BUTTONS ── */
     .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      text-decoration: none;
-      border: 1px solid var(--border-hover);
-      padding: 0.85rem 1.8rem;
-      position: relative;
-      overflow: hidden;
-      transition: color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      display:inline-flex; align-items:center; gap:0.65rem;
+      font-family:var(--font-mono); font-size:0.74rem; font-weight:500;
+      letter-spacing:0.14em; text-transform:uppercase;
+      color:var(--accent); text-decoration:none;
+      border:1px solid var(--border-hover);
+      padding:0.85rem 1.8rem;
+      position:relative; overflow:hidden;
+      transition:color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      cursor:pointer; background:transparent;
     }
     .btn-ghost::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent);
-      transform: translateX(-101%);
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 0;
+      content:''; position:absolute; inset:0;
+      background:var(--accent); transform:translateX(-101%);
+      transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); z-index:0;
     }
-    .btn-ghost:hover::before { transform: translateX(0); }
-    .btn-ghost:hover { color: #080808; border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow-strong); }
-    .btn-ghost span { position: relative; z-index: 1; }
+    .btn-ghost:hover::before { transform:translateX(0); }
+    .btn-ghost:hover { color:#000; border-color:var(--accent); box-shadow:0 0 30px var(--accent-glow-strong); }
+    .btn-ghost span { position:relative; z-index:1; }
 
-    /* ── SCROLL INDICATOR ── */
+    .btn-dim {
+      color:var(--text-dim) !important;
+      border-color:rgba(240,238,232,0.18) !important;
+    }
+    .btn-dim::before { background:rgba(240,238,232,0.88) !important; }
+    .btn-dim:hover { color:#000 !important; }
+
+    /* ── SCROLL HINT ── */
     .scroll-hint {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 8vw;
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      color: var(--text-dim);
-      opacity: 0;
-      animation: fadeUp 1s ease 1.2s forwards;
-      z-index: 3;
+      position:absolute; bottom:2.5rem; left:8vw;
+      display:flex; align-items:center; gap:0.7rem;
+      font-family:var(--font-mono); font-size:0.62rem;
+      letter-spacing:0.15em; color:var(--text-dim);
+      opacity:0; animation:fadeUp 1s ease 1.2s forwards; z-index:3;
     }
     .scroll-hint .line {
-      display: block;
-      width: 32px; height: 1px;
-      background: var(--text-dim);
-      position: relative;
-      overflow: hidden;
+      display:block; width:32px; height:1px;
+      background:var(--text-dim); position:relative; overflow:hidden;
     }
     .scroll-hint .line::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent);
-      transform: translateX(-100%);
-      animation: scanline 2.5s ease-in-out 1.5s infinite;
+      content:''; position:absolute; inset:0;
+      background:var(--accent); transform:translateX(-100%);
+      animation:scanline 2.5s ease-in-out 1.5s infinite;
     }
-    @keyframes scanline { 0%,100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
+    @keyframes scanline { 0%,100%{transform:translateX(-100%);} 50%{transform:translateX(100%);} }
 
-    /* ── SECTIONS ── */
-    section {
-      position: relative;
-      z-index: 2;
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family:var(--font-mono); font-size:0.64rem; font-weight:400;
+      letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--accent-sky); margin-bottom:2.4rem; display:block;
     }
 
-    /* ── NARRATIVE SECTION ── */
-    #narrative {
-      padding: 10rem 8vw;
-      max-width: 1400px;
-      margin: 0 auto;
+    /* ── WHAT WE DO ── */
+    #what {
+      position:relative; z-index:2;
+      padding:10rem 8vw;
+      max-width:1400px; margin:0 auto;
     }
 
-    .narrative-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0;
-      border: 1px solid var(--border);
+    .what-grid {
+      display:grid; grid-template-columns:1fr 1.15fr;
+      gap:6rem; align-items:start;
     }
 
-    .narrative-block {
-      padding: 3.5rem 3rem;
-      border-right: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: background 0.4s ease;
+    .what-h2 {
+      font-family:var(--font-serif);
+      font-size:clamp(1.9rem,3.2vw,3rem);
+      font-weight:300; line-height:1.2; letter-spacing:-0.015em;
+      margin-bottom:1.5rem;
     }
-    .narrative-block:last-child { border-right: none; }
-    .narrative-block::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent-glow);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .narrative-block:hover::before { opacity: 1; }
+    .what-h2 em { font-style:italic; color:var(--accent); }
 
-    .narrative-label {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      font-weight: 400;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.4rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .narrative-label::before {
-      content: '';
-      display: block;
-      width: 20px; height: 1px;
-      background: var(--accent);
+    .body-text {
+      font-family:var(--font-sans); font-size:clamp(0.93rem,1.2vw,1.03rem);
+      font-weight:300; color:var(--text-dim); line-height:1.85;
     }
 
-    .narrative-text {
-      font-family: var(--font-serif);
-      font-size: clamp(1rem, 1.4vw, 1.2rem);
-      font-weight: 300;
-      line-height: 1.8;
-      color: var(--text);
-      position: relative;
-      z-index: 1;
+    /* ── SERVICES ── */
+    #services {
+      position:relative; z-index:2;
+      padding:0 8vw 10rem;
+      max-width:1400px; margin:0 auto;
     }
-    .narrative-text strong {
-      color: var(--accent);
-      font-weight: 400;
-      font-style: italic;
+
+    .services-grid {
+      display:grid; grid-template-columns:repeat(2,1fr);
+      border:1px solid var(--border);
+    }
+
+    .service-card {
+      padding:3rem 2.8rem;
+      border-right:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+      position:relative; overflow:hidden;
+    }
+    .service-card:nth-child(2n) { border-right:none; }
+    .service-card:nth-child(3),
+    .service-card:nth-child(4) { border-bottom:none; }
+    .service-card::before {
+      content:''; position:absolute; inset:0;
+      background:var(--accent-glow); opacity:0;
+      transition:opacity 0.4s ease;
+    }
+    .service-card:hover::before { opacity:1; }
+
+    .service-num {
+      font-family:var(--font-mono); font-size:0.58rem;
+      font-weight:400; letter-spacing:0.22em; color:var(--accent);
+      margin-bottom:1.3rem; display:block; position:relative; z-index:1;
+    }
+
+    .service-title {
+      font-family:var(--font-serif);
+      font-size:clamp(1.05rem,1.5vw,1.35rem);
+      font-weight:400; margin-bottom:1rem;
+      position:relative; z-index:1;
+    }
+
+    .service-body {
+      font-family:var(--font-sans); font-size:0.9rem;
+      font-weight:300; color:var(--text-dim); line-height:1.78;
+      position:relative; z-index:1;
+    }
+
+    /* ── WHY ── */
+    #why {
+      position:relative; z-index:2;
+      padding:8rem 8vw;
+      border-top:1px solid var(--border);
+      max-width:1400px; margin:0 auto;
+    }
+
+    .why-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:5rem; align-items:start;
+    }
+
+    .why-h2 {
+      font-family:var(--font-serif);
+      font-size:clamp(1.8rem,2.8vw,2.7rem);
+      font-weight:300; line-height:1.2; letter-spacing:-0.015em;
+      margin-bottom:1rem;
+    }
+
+    .why-list {
+      list-style:none;
+      display:flex; flex-direction:column;
+    }
+    .why-list li {
+      font-family:var(--font-sans); font-size:clamp(0.9rem,1.15vw,1rem);
+      font-weight:300; color:var(--text-dim); line-height:1.75;
+      display:flex; align-items:flex-start; gap:1rem;
+      padding:1.3rem 0;
+      border-bottom:1px solid var(--border);
+    }
+    .why-list li:first-child { padding-top:0; }
+    .why-list li:last-child { border-bottom:none; }
+    .why-dot {
+      flex-shrink:0; width:5px; height:5px; border-radius:50%;
+      background:var(--accent); margin-top:0.58rem;
+    }
+
+    /* ── MERIDIAN ── */
+    #meridian {
+      position:relative; z-index:2;
+      padding:11rem 8vw;
+      text-align:center;
+      border-top:1px solid var(--border);
+    }
+    #meridian::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse 55% 50% at 50% 50%, rgba(123,172,255,0.055), transparent 70%);
+    }
+
+    .meridian-inner { max-width:660px; margin:0 auto; position:relative; z-index:1; }
+
+    .meridian-badge {
+      display:inline-flex; align-items:center; gap:0.55rem;
+      font-family:var(--font-mono); font-size:0.58rem;
+      letter-spacing:0.22em; text-transform:uppercase; color:var(--accent-sky);
+      border:1px solid rgba(56,189,248,0.22);
+      padding:0.38rem 1rem; margin-bottom:2.6rem;
+    }
+    .meridian-dot {
+      width:5px; height:5px; border-radius:50%; background:var(--accent-sky);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+
+    .meridian-h2 {
+      font-family:var(--font-serif);
+      font-size:clamp(2.4rem,5vw,4.6rem);
+      font-weight:300; line-height:1.1; letter-spacing:-0.02em; margin-bottom:1.6rem;
+    }
+    .meridian-h2 em { font-style:italic; color:var(--accent); }
+
+    .meridian-sub {
+      font-family:var(--font-sans); font-size:clamp(0.92rem,1.25vw,1.05rem);
+      font-weight:300; color:var(--text-dim); line-height:1.8; margin-bottom:2.8rem;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      position:relative; z-index:2;
+      padding:10rem 8vw;
+      text-align:center;
+      border-top:1px solid var(--border);
+      max-width:860px; margin:0 auto;
+    }
+
+    .cta-eyebrow {
+      font-family:var(--font-mono); font-size:0.66rem;
+      letter-spacing:0.22em; text-transform:uppercase; color:var(--accent);
+      display:flex; align-items:center; justify-content:center; gap:0.5rem;
+      margin-bottom:2rem;
+    }
+
+    .cta-h2 {
+      font-family:var(--font-serif);
+      font-size:clamp(2rem,4.4vw,4.3rem);
+      font-weight:300; line-height:1.1; letter-spacing:-0.02em; margin-bottom:1.5rem;
+    }
+    .cta-h2 em { font-style:italic; color:var(--accent); }
+
+    .cta-sub {
+      font-family:var(--font-sans); font-size:clamp(0.93rem,1.25vw,1.08rem);
+      font-weight:300; color:var(--text-dim); line-height:1.78; margin-bottom:3rem;
     }
 
     /* ── DIVIDER ── */
     .section-divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      margin: 0 8vw;
-      width: calc(100% - 16vw);
-    }
-
-    /* ── CTA SECTION ── */
-    #cta {
-      padding: 12rem 8vw;
-      text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .cta-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .cta-h1 {
-      font-family: var(--font-serif);
-      font-size: clamp(2.2rem, 5vw, 4.8rem);
-      font-weight: 300;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      margin-bottom: 1.5rem;
-    }
-    .cta-h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
-
-    .cta-sub {
-      font-family: var(--font-sans);
-      font-size: clamp(1rem, 1.4vw, 1.15rem);
-      color: var(--text-dim);
-      font-weight: 300;
-      margin-bottom: 3rem;
-      line-height: 1.7;
-    }
-
-    /* ── STATS BAR ── */
-    .stats-bar {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      padding: 4rem 8vw;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: rgba(135, 171, 230, 0.03);
-    }
-
-    .stat-item {
-      flex: 1;
-      text-align: center;
-      padding: 1rem 2rem;
-      border-right: 1px solid var(--border);
-      max-width: 300px;
-    }
-    .stat-item:last-child { border-right: none; }
-
-    .stat-number {
-      font-family: var(--font-mono);
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      font-weight: 300;
-      color: var(--accent);
-      display: block;
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      font-family: var(--font-sans);
-      font-size: 0.78rem;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      color: var(--text-dim);
-      text-transform: uppercase;
+      position:relative; z-index:2; height:1px;
+      margin:0 8vw;
+      background:linear-gradient(90deg,transparent,var(--border),transparent);
     }
 
     /* ── FOOTER ── */
     footer {
-      position: relative;
-      z-index: 2;
-      padding: 4rem 8vw;
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 2rem;
+      position:relative; z-index:2;
+      padding:4rem 8vw;
+      border-top:1px solid var(--border);
+      display:flex; flex-direction:row;
+      justify-content:space-between; align-items:flex-start;
+      gap:2rem;
     }
 
-    .footer-brand {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
+    .footer-brand { display:flex; flex-direction:column; gap:0.45rem; }
 
     .footer-wordmark {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
+      font-family:var(--font-mono); font-size:0.7rem; font-weight:500;
+      letter-spacing:0.15em; text-transform:uppercase; color:var(--text);
+      display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;
     }
 
-    .footer-location, .footer-email {
-      font-family: var(--font-sans);
-      font-size: 0.8rem;
-      font-weight: 300;
-      color: var(--text-dim);
+    .footer-meta {
+      font-family:var(--font-sans); font-size:0.78rem; font-weight:300; color:var(--text-dim);
     }
+    .footer-meta a { color:var(--accent); text-decoration:none; transition:opacity 0.2s ease; }
+    .footer-meta a:hover { opacity:0.7; }
 
-    .footer-email a {
-      color: var(--accent);
-      text-decoration: none;
-      transition: opacity 0.2s ease;
-    }
-    .footer-email a:hover { opacity: 0.7; }
-
-    .footer-legal {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
+    .footer-legal { display:flex; flex-direction:column; gap:0.45rem; }
     .footer-copy {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      margin-bottom: 0.6rem;
+      font-family:var(--font-mono); font-size:0.6rem;
+      letter-spacing:0.1em; color:var(--text-dim); margin-bottom:0.35rem;
     }
-
-    .footer-links {
-      display: flex;
-      gap: 1.4rem;
-    }
-
+    .footer-links { display:flex; gap:1.4rem; }
     .footer-links a {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 300;
-      color: var(--text-dim);
-      text-decoration: none;
-      letter-spacing: 0.05em;
-      transition: color 0.2s ease;
+      font-family:var(--font-sans); font-size:0.74rem; font-weight:300;
+      color:var(--text-dim); text-decoration:none; letter-spacing:0.04em;
+      transition:color 0.2s ease;
     }
-    .footer-links a:hover { color: var(--accent); }
-
-    .footer-back {
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-    }
+    .footer-links a:hover { color:var(--accent); }
 
     .back-top {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: color 0.2s ease;
-      padding: 0.5rem 0;
+      font-family:var(--font-mono); font-size:0.6rem;
+      letter-spacing:0.14em; text-transform:uppercase;
+      color:var(--text-dim); text-decoration:none;
+      display:flex; align-items:center; gap:0.5rem;
+      transition:color 0.2s ease;
     }
-    .back-top:hover { color: var(--accent); }
+    .back-top:hover { color:var(--accent); }
 
-    /* ── REVEAL ANIMATIONS ── */
+    /* ── REVEAL ── */
     .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity:0; transform:translateY(38px);
+      transition:opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1 { transition-delay: 0.15s; }
-    .reveal-delay-2 { transition-delay: 0.3s; }
-    .reveal-delay-3 { transition-delay: 0.45s; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-d1 { transition-delay:0.15s; }
+    .reveal-d2 { transition-delay:0.3s; }
+    .reveal-d3 { transition-delay:0.45s; }
 
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
 
-    /* ── STAR ICON SHARED ── */
-    .star-icon { display: inline-block; vertical-align: middle; }
+    /* ── INLINE STAR ── */
+    .star-inline { display:inline-block; vertical-align:middle; }
 
-    /* ── MOBILE NAV ── */
-    @media (max-width: 768px) {
-      .nav-toggle { display: flex; }
+    /* ── MOBILE ── */
+    @media (max-width:768px) {
+      .nav-toggle { display:flex; }
 
       .nav-links {
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        height: 100dvh;
-        width: 100%;
-        background: rgba(8, 8, 8, 0.98);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 6rem 2rem 4rem;
-        gap: 3rem;
-        transform: translateY(-100%);
-        transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 99;
+        position:fixed; top:0; left:0; right:0;
+        height:100svh; width:100%;
+        background:rgba(0,0,0,0.97);
+        backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+        flex-direction:column; justify-content:center; align-items:center;
+        padding:6rem 2rem 4rem; gap:3rem;
+        transform:translateY(-100%);
+        transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);
+        z-index:99; list-style:none;
       }
-      .nav-links.open { transform: translateY(0); }
-      .nav-links a {
-        font-size: 1.4rem;
-        letter-spacing: 0.12em;
-        text-align: center;
-      }
+      .nav-links.open { transform:translateY(0); }
+      .nav-links a { font-size:1.25rem; letter-spacing:0.1em; text-align:center; }
+      .nav-links a::after { bottom:-4px; }
 
-      #hero { padding: 0 6vw; padding-top: 80px; }
-      .hero-h1 { font-size: clamp(2.5rem, 10vw, 4rem); }
+      #hero { padding:0 6vw; padding-top:78px; }
+      .hero-h1 { font-size:clamp(2.3rem,9vw,3.5rem); }
+      .scroll-hint { display:none; }
 
-      #narrative { padding: 6rem 5vw; }
-      .narrative-grid {
-        grid-template-columns: 1fr;
-        border: 1px solid var(--border);
-      }
-      .narrative-block {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 2.5rem 2rem;
-      }
-      .narrative-block:last-child { border-bottom: none; }
+      #what { padding:6rem 6vw; }
+      .what-grid { grid-template-columns:1fr; gap:2.5rem; }
 
-      .stats-bar {
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-        padding: 3rem 5vw;
-      }
-      .stat-item {
-        width: 100%;
-        max-width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 1.5rem;
-      }
-      .stat-item:last-child { border-bottom: none; }
+      #services { padding:0 6vw 6rem; }
+      .services-grid { grid-template-columns:1fr; }
+      .service-card { border-right:none !important; }
+      .service-card:nth-child(3),
+      .service-card:nth-child(4) { border-bottom:1px solid var(--border); }
+      .service-card:last-child { border-bottom:none !important; }
 
-      #cta { padding: 8rem 6vw; }
-      .cta-h1 { font-size: clamp(2rem, 7vw, 3rem); }
+      #why { padding:6rem 6vw; }
+      .why-grid { grid-template-columns:1fr; gap:2.5rem; }
 
-      footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2.5rem;
-        padding: 3rem 6vw;
-      }
-      .footer-back { align-self: flex-start; }
+      #meridian { padding:7rem 6vw; }
+      #cta { padding:7rem 6vw; }
+      .cta-h2 { font-size:clamp(1.8rem,7vw,2.8rem); }
 
-      .section-divider { margin: 0 5vw; width: calc(100% - 10vw); }
-
-      .scroll-hint { display: none; }
+      footer { flex-direction:column; align-items:flex-start; gap:2.5rem; padding:3rem 6vw; }
+      .section-divider { margin:0 6vw; }
     }
 
-    @media (max-width: 480px) {
-      #hero { padding: 0 5vw; padding-top: 75px; }
-      nav { padding: 1.2rem 5vw; }
+    @media (max-width:480px) {
+      nav { padding:1.1rem 5vw; }
+      #hero, #what, #services, #why, #meridian, #cta { padding-left:5vw; padding-right:5vw; }
+      #hero { padding-top:72px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient background -->
   <div class="ambient" aria-hidden="true">
     <div class="ambient-orb orb-1"></div>
     <div class="ambient-orb orb-2"></div>
@@ -677,11 +528,11 @@
   <!-- ── NAV ── -->
   <nav>
     <a href="#hero" class="nav-logo">
-      <svg class="star-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#87ABE6"/>
-        <circle cx="12" cy="10" r="1.5" fill="#87ABE6" opacity="0.4"/>
+      <svg width="26" height="22" viewBox="0 0 683 576" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M522.402 276.915L557.937 292.954L522.402 308.993L506.353 344.505L490.304 308.993L454.77 292.954L490.304 276.915L506.353 241.404L522.402 276.915Z" fill="white"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M353.717 0.000612966C353.887 0.000987533 354.057 0.000480171 354.226 0.0018389C446.573 0.222474 528.715 43.8498 581.303 111.55C580.82 110.895 580.331 110.241 579.834 109.589C578.522 107.868 577.186 106.193 575.833 104.568C585.337 101.8 594.359 99.4489 602.844 97.5389C657.688 85.1931 686.107 92.1376 682.51 117.005C680.211 132.893 655.874 157.2 622.911 185.475C635.055 217.326 641.707 251.886 641.707 287.998C641.706 446.855 513.006 575.67 354.122 575.993C354.008 575.994 353.895 575.994 353.781 575.995C353.695 575.995 353.609 575.996 353.523 575.996C353.488 575.996 353.452 575.995 353.417 575.995C353.267 575.995 353.117 575.995 352.967 575.994C269.124 575.836 193.682 539.897 141.119 482.642C102.237 496.268 69.3999 504.417 45.1378 506.254C2.76053 509.464 -10.3868 493.193 8.28274 460.643C20.4537 439.423 45.5721 412.288 80.9588 381.768C70.8351 352.374 65.3383 320.827 65.3383 287.998C65.3383 129.097 194.11 0.254288 353.053 0.00122593C353.121 0.000864648 353.188 0.000205663 353.256 0H353.523C353.588 7.68821e-08 353.652 0.000570127 353.717 0.000612966ZM354.992 430.436C318.928 430.953 283.48 437.321 250.39 447.141C244.812 448.796 239.324 450.643 233.934 452.655C235.169 455.597 236.438 458.497 237.743 461.355C260.654 511.547 292.746 550.841 328.188 561.823C329.368 562.189 330.549 562.528 331.731 562.842C338.921 563.403 346.189 563.69 353.523 563.69C354.013 563.69 354.502 563.688 354.992 563.685V430.436ZM365.988 563.413C369.111 563.274 372.221 563.082 375.317 562.84C394.824 557.659 413.731 545.536 430.895 526.856C448.587 507.601 463.753 480.253 475.598 448.752C471.952 447.557 468.267 446.438 464.544 445.405C433.237 436.711 399.754 431.083 365.988 430.46V563.413ZM224.516 456.376C202.766 465.44 182.76 477.048 165.067 489.333C201.63 523.528 247.514 547.891 298.498 558.205C272.316 540.715 248.965 510.933 230.966 471.502C228.718 466.577 226.568 461.532 224.516 456.376ZM478.572 449.746C468.26 484.098 454.723 513.854 435.424 534.857C426.834 544.205 417.831 552.001 408.545 558.204C462.206 547.35 510.218 520.932 547.659 483.868C527.121 470.592 503.824 458.358 478.572 449.746ZM84.4991 391.473C61.9185 412.573 45.5888 431.418 36.7409 446.844C19.6662 476.613 31.6903 491.494 70.4476 488.559C87.452 487.271 109.062 482.594 134.236 474.87C113.247 450.296 96.3217 422.151 84.4991 391.473ZM563.327 108.979C542.153 123.283 517.876 135.245 491.378 144.456C497.733 164.478 502.781 185.95 506.353 208.464C502.749 185.746 496.441 164.73 488.43 145.466C482.382 147.509 476.222 149.411 469.96 151.164C436.9 160.42 401.641 165.391 365.988 165.855V298.022C396.042 298.38 425.867 298.218 453.035 297.165C424.901 298.294 395.528 298.931 365.988 299.076V376.199C396.825 361.06 427.462 344.325 458.595 323.621C425.364 345.785 395.695 363.707 365.988 380.008V425.662C401.375 426.123 436.362 431.025 469.188 440.14C472.091 440.946 474.973 441.784 477.832 442.653C485.573 420.945 491.764 397.444 496.156 373.377C491.705 397.765 486.668 421.469 480.413 443.449C507.498 451.9 532.497 463.163 554.517 476.834C600.946 427.499 629.393 361.069 629.393 287.998C629.393 284.21 629.315 280.439 629.164 276.688C619.689 280.215 604.436 283.561 583.855 286.557C609.57 282.814 623.759 276.472 628.852 270.608C627.841 254.382 624.864 225.902 613.443 193.511C597.187 207.181 579.292 221.641 561.163 236.423C581.255 220.04 598.529 204.803 612.526 190.954C602.918 164.572 587.665 135.771 563.327 108.979ZM77.8705 276.966C77.7264 280.625 77.6528 284.303 77.6528 287.998C77.6528 358.126 103.854 422.137 147.007 470.791C168.993 463.506 193.346 454.135 219.458 442.876C203.812 398.451 195.147 346.948 194.542 293.966C156.241 291.233 124.258 287.532 101.628 283.135C91.4115 281.15 83.5461 279.087 77.8705 276.966ZM354.992 385.968C318.651 405.427 281.593 422.951 237.269 443.301C235.254 444.226 233.246 445.14 231.247 446.047C231.298 446.179 231.35 446.31 231.402 446.442C236.028 444.862 240.72 443.365 245.475 441.954C280.071 431.687 317.281 426.153 354.992 425.663V385.968ZM201.46 294.571C202.148 346.137 212.799 396.183 228.531 438.92C234.33 436.363 240.21 433.717 246.165 430.983C283.528 413.83 319.448 398.548 354.992 381.529V299.108C321.098 299.134 287.159 298.513 254.788 297.243C236.746 296.534 217.643 295.636 201.46 294.571ZM226.31 143.293C209.814 190.863 201.03 241.702 201.432 291.946C219.486 293.266 240.978 294.351 261.761 295.167C290.783 296.306 322.849 297.357 354.992 297.868V239.134C354.96 239.134 354.992 171.655 354.992 165.855C314.834 165.333 274.609 159.174 236.39 146.74C232.994 145.636 229.634 144.485 226.31 143.293ZM149.057 102.918C101.628 151.904 81.5821 221.927 78.3299 268.54C81.5432 273.236 97.6291 277.817 119.478 282.061C138.24 285.706 163.921 288.838 194.518 291.274C194.499 288.295 194.506 285.311 194.539 282.324C195.089 231.764 202.971 182.695 217.155 139.864C191.861 129.976 168.895 117.523 149.057 102.918ZM353.523 12.3059C351.77 12.3059 350.02 12.323 348.275 12.3556C347.267 12.5513 346.25 12.7698 345.225 13.0127C309.571 21.4581 265.588 57.9959 241.603 106.515C236.606 116.624 232.061 127.34 227.989 138.56C232.485 140.374 237.055 142.048 241.693 143.557C278.204 155.434 316.629 162.586 354.992 163.107V12.3102C354.502 12.3077 354.013 12.3059 353.523 12.3059ZM365.988 163.107C400.038 162.645 433.708 156.632 465.282 147.792C472.466 145.78 479.509 143.386 486.395 140.693C472.539 108.974 454.153 82.1632 435.907 60.49C415.439 36.1778 397.339 19.0516 376.62 13.2578C373.094 12.9658 369.55 12.74 365.988 12.5817V163.107ZM408.544 17.7907C419.776 25.2927 430.58 35.1177 440.729 47.1733C460.819 71.0363 477.504 102.638 489.723 139.363C514.437 129.278 537.055 115.428 556.774 101.588C518.16 59.5624 466.666 29.5473 408.544 17.7907ZM304.611 16.6267C246.793 26.965 195.219 55.3043 155.903 95.6362C174.253 109.847 195.497 124.034 218.917 134.668C223.656 121.021 229.046 108.043 235.052 95.8924C260.245 55.0296 272.868 35.2111 304.611 16.6267Z" fill="white"/>
       </svg>
-      Neopolaris AI
+      NeoPolaris AI
     </a>
 
     <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
@@ -689,8 +540,9 @@
     </button>
 
     <ul class="nav-links" id="navLinks">
-      <li><a href="#narrative" onclick="closeNav()">Services</a></li>
-      <li><a href="#stats" onclick="closeNav()">About Us</a></li>
+      <li><a href="#services" onclick="closeNav()">Services</a></li>
+      <li><a href="#why" onclick="closeNav()">About</a></li>
+      <li><a href="#meridian" onclick="closeNav()">Meridian OS</a></li>
       <li><a href="#cta" onclick="closeNav()">Contact</a></li>
     </ul>
   </nav>
@@ -698,23 +550,24 @@
   <!-- ── HERO ── -->
   <section id="hero">
     <div class="hero-eyebrow">
-      <svg class="star-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#87ABE6"/>
+      <svg class="star-inline" width="15" height="15" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M13.5 0L14.9122 3.81639C16.3302 7.64846 19.3515 10.6698 23.1836 12.0878L27 13.5L23.1836 14.9122C19.3515 16.3302 16.3302 19.3515 14.9122 23.1836L13.5 27L12.0878 23.1836C10.6698 19.3515 7.64847 16.3302 3.81639 14.9122L0 13.5L3.81639 12.0878C7.64846 10.6698 10.6698 7.64847 12.0878 3.81639L13.5 0Z" fill="url(#sg-hero)"/>
+        <defs><linearGradient id="sg-hero" x1="12" y1="21" x2="19" y2="3" gradientUnits="userSpaceOnUse"><stop stop-color="#7BACFF"/><stop offset="1" stop-color="white"/></linearGradient></defs>
       </svg>
-      Neopolaris AI
+      NeoPolaris AI
     </div>
 
     <h1 class="hero-h1">
-      Your north star in<br/><em>AI adoption</em>
+      We help African businesses adopt AI that is <em>safe, legal,</em> and built to last.
     </h1>
 
     <p class="hero-sub">
-      We help companies move past the hype — identifying the AI opportunities that genuinely move the needle, then building and deploying systems your team will actually use.
+      From strategy to custom development, NeoPolaris AI gives CEOs and CTOs a clear path to AI that works for their business — not against it.
     </p>
 
     <div class="hero-cta">
       <a href="#cta" class="btn-ghost">
-        <span>View Live Demo</span>
+        <span>Talk to Us</span>
         <span aria-hidden="true">→</span>
       </a>
     </div>
@@ -725,88 +578,138 @@
     </div>
   </section>
 
-  <!-- ── NARRATIVE ── -->
-  <section id="narrative">
-    <div class="narrative-grid">
-
-      <div class="narrative-block reveal">
-        <div class="narrative-label">The Problem</div>
-        <p class="narrative-text">
-          Most companies know AI matters. That's where progress stalls.<br/><br/>
-          Ideas stay trapped in meetings. Tools get trialled and forgotten.
-          Teams are left wondering how to actually use what's been built —
-          if anything gets built at all.
-          <br/><br/>
-          The gap between <strong>knowing AI matters</strong> and <strong>making it work</strong> is where most organisations quietly give up.
+  <!-- ── WHAT WE DO ── -->
+  <section id="what">
+    <div class="what-grid">
+      <div class="reveal">
+        <span class="section-label">[ What We Do ]</span>
+        <h2 class="what-h2">
+          The gap between <em>knowing AI matters</em> and making it work
+        </h2>
+      </div>
+      <div class="reveal reveal-d1">
+        <p class="body-text">
+          African businesses are under real pressure to adopt AI. Most don't know where to start — and many have tried tools that didn't deliver, leaving teams frustrated and budgets wasted.
+        </p>
+        <br/>
+        <p class="body-text">
+          NeoPolaris AI changes that. We work with you to find the right AI opportunities inside your business, build the systems to capture them, and ensure every step is safe, compliant, and built to last. No experiments that go nowhere. No off-the-shelf shortcuts that don't fit your reality.
         </p>
       </div>
+    </div>
+  </section>
 
-      <div class="narrative-block reveal reveal-delay-1">
-        <div class="narrative-label">The Result</div>
-        <p class="narrative-text">
-          Wasted budgets on pilots that never scale.<br/><br/>
-          Fragmented systems that don't talk to each other.
-          Teams that don't trust the tools handed to them.
-          And somewhere across the market, <strong>a competitor who figured it out first.</strong>
-          <br/><br/>
-          The cost isn't just opportunity missed — it's ground you can't get back.
-        </p>
+  <!-- ── SERVICES ── -->
+  <section id="services">
+    <span class="section-label reveal">[ Our Services ]</span>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <span class="service-num">01</span>
+        <h3 class="service-title">AI Strategy</h3>
+        <p class="service-body">We assess your business, identify where AI adds real, measurable value, and give you a clear roadmap to follow — so you're building on solid ground from day one.</p>
       </div>
 
-      <div class="narrative-block reveal reveal-delay-2">
-        <div class="narrative-label">The Way Forward</div>
-        <p class="narrative-text">
-          That's where we come in.<br/><br/>
-          We don't just talk about AI — we make it work.
-          We identify the opportunities that will genuinely move your business forward,
-          then design, build, and deploy solutions tailored to your operations.
-          <br/><br/>
-          And we don't stop at delivery. We <strong>train your team</strong> to use it effectively —
-          so the value compounds long after we're done.
-        </p>
+      <div class="service-card reveal reveal-d1">
+        <span class="service-num">02</span>
+        <h3 class="service-title">AI Governance</h3>
+        <p class="service-body">We help you adopt AI responsibly. That means the right policies, compliance frameworks, and guardrails so your business stays protected as the regulatory landscape evolves across Africa.</p>
+      </div>
+
+      <div class="service-card reveal reveal-d2">
+        <span class="service-num">03</span>
+        <h3 class="service-title">Custom AI Development</h3>
+        <p class="service-body">We build AI systems tailored to your operations — from automating repetitive workflows to custom tools that solve the specific problems holding your team back every day.</p>
+      </div>
+
+      <div class="service-card reveal reveal-d3">
+        <span class="service-num">04</span>
+        <h3 class="service-title">Cybersecurity</h3>
+        <p class="service-body">AI introduces new attack surfaces and data risks. We help you understand and manage them so your systems, your data, and your customers stay secure as you scale.</p>
       </div>
 
     </div>
   </section>
 
-  <!-- ── STATS BAR ── -->
-  <div id="stats" class="stats-bar">
-    <div class="stat-item reveal">
-      <span class="stat-number">14</span>
-      <span class="stat-label">Days to first deployment</span>
+  <!-- ── WHY ── -->
+  <section id="why">
+    <div class="why-grid">
+      <div class="reveal">
+        <span class="section-label">[ Why NeoPolaris AI ]</span>
+        <h2 class="why-h2">Built for the African operating environment</h2>
+        <p class="body-text" style="margin-top:1.2rem;">
+          We understand the infrastructure constraints, regulatory realities, and business dynamics that generic AI consultancies simply don't account for.
+        </p>
+      </div>
+      <div class="reveal reveal-d1">
+        <ul class="why-list">
+          <li>
+            <span class="why-dot"></span>
+            <span>Built for African businesses and their unique operating environment — not adapted from a Western playbook.</span>
+          </li>
+          <li>
+            <span class="why-dot"></span>
+            <span>We cover the full journey: strategy, governance, development, and security — under one roof, with one team.</span>
+          </li>
+          <li>
+            <span class="why-dot"></span>
+            <span>No generic solutions. Everything is designed around your specific business, your team, and your goals.</span>
+          </li>
+          <li>
+            <span class="why-dot"></span>
+            <span>We don't stop at delivery. We train your team to use what we've built — so the value compounds long after we're done.</span>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="stat-item reveal reveal-delay-1">
-      <span class="stat-number">100%</span>
-      <span class="stat-label">Custom-built, no off-the-shelf shortcuts</span>
+  </section>
+
+  <!-- ── MERIDIAN OS ── -->
+  <section id="meridian">
+    <div class="meridian-inner">
+      <div class="meridian-badge reveal">
+        <span class="meridian-dot"></span>
+        In Development
+      </div>
+
+      <h2 class="meridian-h2 reveal reveal-d1">
+        Meridian <em>OS</em>
+      </h2>
+
+      <p class="meridian-sub reveal reveal-d2">
+        Our AI operating system for businesses. Meridian OS is currently in development — designed to give organisations a unified layer for deploying, monitoring, and governing AI across their entire operation.
+      </p>
+
+      <div class="reveal reveal-d3">
+        <a href="#" class="btn-ghost btn-dim" aria-disabled="true" tabindex="-1">
+          <span>Watch Demo</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
     </div>
-    <div class="stat-item reveal reveal-delay-2">
-      <span class="stat-number">∞</span>
-      <span class="stat-label">Compounding value over time</span>
-    </div>
-  </div>
+  </section>
 
   <!-- ── CTA ── -->
   <section id="cta">
-    <div class="cta-eyebrow">
-      <svg class="star-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#87ABE6"/>
+    <div class="cta-eyebrow reveal">
+      <svg class="star-inline" width="14" height="14" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M13.5 0L14.9122 3.81639C16.3302 7.64846 19.3515 10.6698 23.1836 12.0878L27 13.5L23.1836 14.9122C19.3515 16.3302 16.3302 19.3515 14.9122 23.1836L13.5 27L12.0878 23.1836C10.6698 19.3515 7.64847 16.3302 3.81639 14.9122L0 13.5L3.81639 12.0878C7.64846 10.6698 10.6698 7.64847 12.0878 3.81639L13.5 0Z" fill="url(#sg-cta)"/>
+        <defs><linearGradient id="sg-cta" x1="12" y1="21" x2="19" y2="3" gradientUnits="userSpaceOnUse"><stop stop-color="#7BACFF"/><stop offset="1" stop-color="white"/></linearGradient></defs>
       </svg>
-      Neopolaris AI
+      NeoPolaris AI
     </div>
 
-    <h2 class="cta-h1 reveal">
-      No fluff. No experiments<br/>that go nowhere.<br/>
-      Just <em>AI that delivers.</em>
+    <h2 class="cta-h2 reveal reveal-d1">
+      AI adoption doesn't have to be <em>complicated.</em>
     </h2>
 
-    <p class="cta-sub reveal reveal-delay-1">
-      Stop watching the AI wave from the shore. Let us help you get out of the weeds,
-      build what matters, and implement it properly — the first time.
+    <p class="cta-sub reveal reveal-d2">
+      Let's find the right starting point for your business and build from there — with clarity, confidence, and the right guardrails in place from the start.
     </p>
 
-    <div class="reveal reveal-delay-2">
+    <div class="reveal reveal-d3">
       <a href="mailto:info@neopolaris.ai" class="btn-ghost">
-        <span>Send a Message</span>
+        <span>Talk to Us</span>
         <span aria-hidden="true">→</span>
       </a>
     </div>
@@ -818,35 +721,34 @@
   <footer>
     <div class="footer-brand">
       <div class="footer-wordmark">
-        <svg class="star-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#87ABE6"/>
+        <svg width="16" height="13" viewBox="0 0 683 576" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M522.402 276.915L557.937 292.954L522.402 308.993L506.353 344.505L490.304 308.993L454.77 292.954L490.304 276.915L506.353 241.404L522.402 276.915Z" fill="white"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M353.717 0.000612966C353.887 0.000987533 354.057 0.000480171 354.226 0.0018389C446.573 0.222474 528.715 43.8498 581.303 111.55C580.82 110.895 580.331 110.241 579.834 109.589C578.522 107.868 577.186 106.193 575.833 104.568C585.337 101.8 594.359 99.4489 602.844 97.5389C657.688 85.1931 686.107 92.1376 682.51 117.005C680.211 132.893 655.874 157.2 622.911 185.475C635.055 217.326 641.707 251.886 641.707 287.998C641.706 446.855 513.006 575.67 354.122 575.993C354.008 575.994 353.895 575.994 353.781 575.995C353.695 575.995 353.609 575.996 353.523 575.996C353.488 575.996 353.452 575.995 353.417 575.995C353.267 575.995 353.117 575.995 352.967 575.994C269.124 575.836 193.682 539.897 141.119 482.642C102.237 496.268 69.3999 504.417 45.1378 506.254C2.76053 509.464 -10.3868 493.193 8.28274 460.643C20.4537 439.423 45.5721 412.288 80.9588 381.768C70.8351 352.374 65.3383 320.827 65.3383 287.998C65.3383 129.097 194.11 0.254288 353.053 0.00122593C353.121 0.000864648 353.188 0.000205663 353.256 0H353.523C353.588 7.68821e-08 353.652 0.000570127 353.717 0.000612966ZM354.992 430.436C318.928 430.953 283.48 437.321 250.39 447.141C244.812 448.796 239.324 450.643 233.934 452.655C235.169 455.597 236.438 458.497 237.743 461.355C260.654 511.547 292.746 550.841 328.188 561.823C329.368 562.189 330.549 562.528 331.731 562.842C338.921 563.403 346.189 563.69 353.523 563.69C354.013 563.69 354.502 563.688 354.992 563.685V430.436ZM365.988 563.413C369.111 563.274 372.221 563.082 375.317 562.84C394.824 557.659 413.731 545.536 430.895 526.856C448.587 507.601 463.753 480.253 475.598 448.752C471.952 447.557 468.267 446.438 464.544 445.405C433.237 436.711 399.754 431.083 365.988 430.46V563.413ZM224.516 456.376C202.766 465.44 182.76 477.048 165.067 489.333C201.63 523.528 247.514 547.891 298.498 558.205C272.316 540.715 248.965 510.933 230.966 471.502C228.718 466.577 226.568 461.532 224.516 456.376ZM478.572 449.746C468.26 484.098 454.723 513.854 435.424 534.857C426.834 544.205 417.831 552.001 408.545 558.204C462.206 547.35 510.218 520.932 547.659 483.868C527.121 470.592 503.824 458.358 478.572 449.746ZM84.4991 391.473C61.9185 412.573 45.5888 431.418 36.7409 446.844C19.6662 476.613 31.6903 491.494 70.4476 488.559C87.452 487.271 109.062 482.594 134.236 474.87C113.247 450.296 96.3217 422.151 84.4991 391.473ZM563.327 108.979C542.153 123.283 517.876 135.245 491.378 144.456C497.733 164.478 502.781 185.95 506.353 208.464C502.749 185.746 496.441 164.73 488.43 145.466C482.382 147.509 476.222 149.411 469.96 151.164C436.9 160.42 401.641 165.391 365.988 165.855V298.022C396.042 298.38 425.867 298.218 453.035 297.165C424.901 298.294 395.528 298.931 365.988 299.076V376.199C396.825 361.06 427.462 344.325 458.595 323.621C425.364 345.785 395.695 363.707 365.988 380.008V425.662C401.375 426.123 436.362 431.025 469.188 440.14C472.091 440.946 474.973 441.784 477.832 442.653C485.573 420.945 491.764 397.444 496.156 373.377C491.705 397.765 486.668 421.469 480.413 443.449C507.498 451.9 532.497 463.163 554.517 476.834C600.946 427.499 629.393 361.069 629.393 287.998C629.393 284.21 629.315 280.439 629.164 276.688C619.689 280.215 604.436 283.561 583.855 286.557C609.57 282.814 623.759 276.472 628.852 270.608C627.841 254.382 624.864 225.902 613.443 193.511C597.187 207.181 579.292 221.641 561.163 236.423C581.255 220.04 598.529 204.803 612.526 190.954C602.918 164.572 587.665 135.771 563.327 108.979ZM77.8705 276.966C77.7264 280.625 77.6528 284.303 77.6528 287.998C77.6528 358.126 103.854 422.137 147.007 470.791C168.993 463.506 193.346 454.135 219.458 442.876C203.812 398.451 195.147 346.948 194.542 293.966C156.241 291.233 124.258 287.532 101.628 283.135C91.4115 281.15 83.5461 279.087 77.8705 276.966ZM354.992 385.968C318.651 405.427 281.593 422.951 237.269 443.301C235.254 444.226 233.246 445.14 231.247 446.047C231.298 446.179 231.35 446.31 231.402 446.442C236.028 444.862 240.72 443.365 245.475 441.954C280.071 431.687 317.281 426.153 354.992 425.663V385.968ZM201.46 294.571C202.148 346.137 212.799 396.183 228.531 438.92C234.33 436.363 240.21 433.717 246.165 430.983C283.528 413.83 319.448 398.548 354.992 381.529V299.108C321.098 299.134 287.159 298.513 254.788 297.243C236.746 296.534 217.643 295.636 201.46 294.571ZM226.31 143.293C209.814 190.863 201.03 241.702 201.432 291.946C219.486 293.266 240.978 294.351 261.761 295.167C290.783 296.306 322.849 297.357 354.992 297.868V239.134C354.96 239.134 354.992 171.655 354.992 165.855C314.834 165.333 274.609 159.174 236.39 146.74C232.994 145.636 229.634 144.485 226.31 143.293ZM149.057 102.918C101.628 151.904 81.5821 221.927 78.3299 268.54C81.5432 273.236 97.6291 277.817 119.478 282.061C138.24 285.706 163.921 288.838 194.518 291.274C194.499 288.295 194.506 285.311 194.539 282.324C195.089 231.764 202.971 182.695 217.155 139.864C191.861 129.976 168.895 117.523 149.057 102.918ZM353.523 12.3059C351.77 12.3059 350.02 12.323 348.275 12.3556C347.267 12.5513 346.25 12.7698 345.225 13.0127C309.571 21.4581 265.588 57.9959 241.603 106.515C236.606 116.624 232.061 127.34 227.989 138.56C232.485 140.374 237.055 142.048 241.693 143.557C278.204 155.434 316.629 162.586 354.992 163.107V12.3102C354.502 12.3077 354.013 12.3059 353.523 12.3059ZM365.988 163.107C400.038 162.645 433.708 156.632 465.282 147.792C472.466 145.78 479.509 143.386 486.395 140.693C472.539 108.974 454.153 82.1632 435.907 60.49C415.439 36.1778 397.339 19.0516 376.62 13.2578C373.094 12.9658 369.55 12.74 365.988 12.5817V163.107ZM408.544 17.7907C419.776 25.2927 430.58 35.1177 440.729 47.1733C460.819 71.0363 477.504 102.638 489.723 139.363C514.437 129.278 537.055 115.428 556.774 101.588C518.16 59.5624 466.666 29.5473 408.544 17.7907ZM304.611 16.6267C246.793 26.965 195.219 55.3043 155.903 95.6362C174.253 109.847 195.497 124.034 218.917 134.668C223.656 121.021 229.046 108.043 235.052 95.8924C260.245 55.0296 272.868 35.2111 304.611 16.6267Z" fill="white"/>
         </svg>
-        Neopolaris AI
+        NeoPolaris AI
       </div>
-      <p class="footer-location">Nairobi, Kenya</p>
-      <p class="footer-email"><a href="mailto:info@neopolaris.ai">info@neopolaris.ai</a></p>
+      <p class="footer-meta">Nairobi, Kenya</p>
+      <p class="footer-meta"><a href="mailto:info@neopolaris.ai">info@neopolaris.ai</a></p>
     </div>
 
     <div class="footer-legal">
-      <p class="footer-copy">© 2026 Neopolaris AI. All rights reserved.</p>
+      <p class="footer-copy">© 2026 NeoPolaris AI. All rights reserved.</p>
       <div class="footer-links">
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
       </div>
     </div>
 
-    <div class="footer-back">
-      <a href="#hero" class="back-top">
-        Back to top
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path d="M12 19V5M5 12l7-7 7 7"/>
-        </svg>
-      </a>
-    </div>
+    <a href="#hero" class="back-top">
+      Back to top
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+      </svg>
+    </a>
   </footer>
 
   <script>
-    // ── NAV TOGGLE ──
+    // ── NAV ──
     const toggle = document.querySelector('.nav-toggle');
     const navLinks = document.getElementById('navLinks');
 
@@ -854,50 +756,48 @@
       const open = toggle.classList.toggle('open');
       navLinks.classList.toggle('open', open);
       toggle.setAttribute('aria-expanded', open);
+      document.body.style.overflow = open ? 'hidden' : '';
     });
 
     function closeNav() {
       toggle.classList.remove('open');
       navLinks.classList.remove('open');
       toggle.setAttribute('aria-expanded', false);
+      document.body.style.overflow = '';
     }
 
-    // Close on outside click
     document.addEventListener('click', (e) => {
       if (!toggle.contains(e.target) && !navLinks.contains(e.target)) closeNav();
     });
 
-    // ── SCROLL REVEAL ──
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
-        }
+    // ── REVEAL ──
+    const ro = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 
-    // ── NAV ACTIVE STATE ON SCROLL ──
-    const sections = document.querySelectorAll('section[id], div[id]');
-    const navAnchorMap = {
-      'narrative': document.querySelector('[href="#narrative"]'),
-      'stats': document.querySelector('[href="#stats"]'),
-      'cta': document.querySelector('[href="#cta"]'),
+    // ── NAV ACTIVE ──
+    const navMap = {
+      services: document.querySelector('[href="#services"]'),
+      why:      document.querySelector('[href="#why"]'),
+      meridian: document.querySelector('[href="#meridian"]'),
+      cta:      document.querySelector('[href="#cta"]'),
     };
 
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          Object.values(navAnchorMap).forEach(a => a && a.style.removeProperty('color'));
-          const anchor = navAnchorMap[entry.target.id];
-          if (anchor) anchor.style.color = 'var(--accent)';
+    const so = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          Object.values(navMap).forEach(a => a && a.style.removeProperty('color'));
+          const a = navMap[e.target.id];
+          if (a) a.style.color = 'var(--accent)';
         }
       });
-    }, { threshold: 0.4 });
+    }, { threshold: 0.3 });
 
-    sections.forEach(s => sectionObserver.observe(s));
+    document.querySelectorAll('section[id]').forEach(s => so.observe(s));
   </script>
 </body>
 </html>
