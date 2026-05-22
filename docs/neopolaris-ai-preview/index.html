@@ -85,7 +85,7 @@
       padding:1.3rem 5vw;
       backdrop-filter:blur(20px) saturate(1.4);
       -webkit-backdrop-filter:blur(20px) saturate(1.4);
-      background:rgba(0,0,0,0.75);
+      background:rgba(0,0,0,0.3);
       border-bottom:1px solid var(--border);
     }
 
@@ -133,6 +133,19 @@
       display:flex; flex-direction:column;
       justify-content:center; align-items:flex-start;
       padding:0 8vw; padding-top:80px;
+      background-image:url('../assets/images/door to space.jpg');
+      background-size:cover;
+      background-position:center;
+      background-attachment:fixed;
+    }
+
+    #hero::before {
+      content:'';
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.3);
+      z-index:1;
+      pointer-events:none;
     }
 
     .hero-eyebrow {
@@ -142,6 +155,7 @@
       margin-bottom:1.8rem;
       opacity:0; transform:translateY(20px);
       animation:fadeUp 0.8s ease 0.2s forwards;
+      position:relative; z-index:2;
     }
 
     .hero-h1 {
@@ -151,6 +165,7 @@
       max-width:22ch; margin-bottom:1.6rem;
       opacity:0; transform:translateY(30px);
       animation:fadeUp 0.9s ease 0.4s forwards;
+      position:relative; z-index:2;
     }
     .hero-h1 em { font-style:italic; color:var(--accent); }
 
@@ -160,11 +175,13 @@
       max-width:54ch; line-height:1.8; margin-bottom:2.8rem;
       opacity:0; transform:translateY(20px);
       animation:fadeUp 0.9s ease 0.6s forwards;
+      position:relative; z-index:2;
     }
 
     .hero-cta {
       opacity:0; transform:translateY(20px);
       animation:fadeUp 0.9s ease 0.8s forwards;
+      position:relative; z-index:2;
     }
 
     /* ── BUTTONS ── */
