@@ -1,0 +1,27 @@
+# Beben Design
+
+> Beben Design is a design-led digital product studio based in Nairobi, Kenya, specializing in UX research, UI design, brand identity, front-end development, and digital product strategy. The studio treats design as research-backed problem-solving rather than decoration — every engagement starts with understanding user behaviour before any visual or code work begins.
+
+Capabilities span brand identity and visual design, UX research, UI design for web/mobile/desktop, human-machine interfaces (HMI) for hardware-driven products, posters and corporate print, and front-end development in HTML/CSS, React, Webflow, Node.js, and WordPress. The studio serves clients across e-commerce, automotive, healthcare, recreation, real estate, retail, and agriculture, and works as full studio lead, team augmentation, or long-term partner. Pricing starts around $99 USD for simple static sites, scaling with scope via fixed-price, line-item quotes (no hourly billing). The studio is based in Westlands, Nairobi, and is reachable directly via WhatsApp or email — no sales layer.
+
+## Services
+
+- [Brand Identity & Visual Design](https://beben.design/services/): Logo systems (primary, secondary, monochrome, favicon-optimised), structured brand guides, WCAG-compliant colour systems, typography hierarchy, and optional motion branding.
+- [UX Research & Design](https://beben.design/services/): User interviews, journey mapping, information architecture, low-fidelity wireframes, clickable prototypes, and usability testing measured against SUS scores and task-completion data.
+- [UI Design & Component Systems](https://beben.design/services/): Atomic, developer-ready UI kits in Figma with full component states, WCAG AA accessibility annotations, and developer handoff specs.
+- [Digital Strategy & Product Planning](https://beben.design/services/): MVP feature prioritisation, phased technical roadmaps, competitor UX benchmarking, and discovery workshops for early-stage concepts.
+
+## Tools
+
+- [Free Web Tools](https://beben.design/tools/): A growing collection of single-purpose, browser-native utilities — no accounts, no server calls, no data collection. Downloadable as standalone HTML files that run offline.
+- [QR Code Generator](https://beben.design/qr-code-generator/): Free, watermark-free SVG QR code generator. Runs entirely client-side; exportable as SVG or downloadable as a self-contained HTML file.
+
+## Company
+
+- [Contact](https://beben.design/contact/): Direct WhatsApp and email contact. Studio hours Mon–Fri, 08:00–18:00 EAT. Discovery call → fixed-price proposal → 50% deposit to start.
+- [Legal](https://beben.design/legal/): Terms of use, IP ownership terms, and data-handling practices under Kenya's Data Protection Act.
+- [Privacy Policy](https://beben.design/privacy/): Data collection, cookies, and privacy practices.
+
+## Optional
+
+- [Shop](https://beben.design/shop/): Upcoming digital products — UI kits, templates, icon sets, and print assets. In development, launching 2026.
