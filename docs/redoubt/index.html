@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#18355A">
+<title>Redoubt — On-premises AI infrastructure</title>
+<meta name="description" content="Redoubt designs, deploys, and operates private AI infrastructure inside your own walls. Your data, your models, your roadmap.">
+<script>document.documentElement.classList.add('js');</script>
+
+<!--
+  Tiny inline favicon — a simplified version of the four-point
+  "bastion" mark used in the hero. Avoids a 404 request for
+  /favicon.ico. Swap for a real icon file once one exists.
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23FFFFFF'/%3E%3Cpath d='M50 6 L70 50 L50 94 L30 50 Z' fill='none' stroke='%2318355A' stroke-width='7'/%3E%3Ccircle cx='50' cy='50' r='9' fill='none' stroke='%23C43F36' stroke-width='6'/%3E%3C/svg%3E">
+
+<!--
+  Fonts — only the weights actually used in the page below.
+  Old Standard TT  : titles (one weight is enough; emphasis is
+                      carried by size/colour, not extra files)
+  IBM Plex Mono     : numbers, technical copy, the demo console
+  League Gothic     : strong / bold text (ships in one weight —
+                      see note above the .strong rules below)
+  Inter             : body copy and UI labels
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* =====================================================================
+   TABLE OF CONTENTS
+   1.  Design tokens (brand colours, type, layout, motion)
+   2.  Reset & base
+   3.  Layout utilities (container, sheet labels, buttons)
+   4.  Navigation
+   5.  Hero + bastion emblem
+   6.  Problem
+   7.  Capabilities
+   8.  Process
+   9.  Demo console
+   10. CTA
+   11. Footer
+   12. Scroll-reveal system
+   13. Reduced-motion overrides
+   14. Responsive (tablet / mobile)
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. DESIGN TOKENS
+   The five colour values and four typefaces are Luis's brand spec for
+   Redoubt — not invented here. Everything under "derived" is a
+   utility built FROM those five colours (hairlines, muted text,
+   focus rings) so no new brand colours enter the system.
+   --------------------------------------------------------------------- */
+:root {
+  /* brand — given */
+  --color-bg:        #FFFFFF;
+  --color-bg-soft:   #F5F5F5;
+  --color-headers:   #18355A;
+  --color-highlight: #C43F36;
+  --color-text:      #262D38;
+
+  /* derived utilities */
+  --color-border:        rgba(24, 53, 90, 0.16);
+  --color-border-strong: rgba(24, 53, 90, 0.32);
+  --color-text-muted:    rgba(38, 45, 56, 0.64);
+  --color-on-dark:       #F5F5F5;
+  --color-on-dark-muted: rgba(245, 245, 245, 0.6);
+  /* The brand highlight red reads at under 3:1 against the console's
+     own dark surface (#262D38) — too low for reliable text contrast.
+     This is the same red, lightened just enough to clear 4.5:1, used
+     only inside the console for the log timestamps. */
+  --color-highlight-on-dark: #D9827C;
+
+  /* type roles, exactly as briefed:
+     titles → Old Standard TT · strong/bold → League Gothic
+     numbers/technical → IBM Plex Mono · body → Inter */
+  --font-title:  'Old Standard TT', Georgia, 'Times New Roman', serif;
+  --font-strong: 'League Gothic', 'Arial Narrow', sans-serif;
+  --font-mono:   'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-body:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* layout */
+  --nav-height: 76px;
+  --container:  1140px;
+  --radius-sm:  3px;
+  --radius-md:  7px;
+
+  /* motion */
+  --ease-snap: cubic-bezier(0.22, 0.9, 0.32, 1);
+  --dur-fast:  180ms;
+  --dur-base:  600ms;
+}
+
+/* ---------------------------------------------------------------------
+   2. RESET & BASE
+   --------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body, h1, h2, h3, p, figure { margin: 0; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; background: none; border: none; cursor: pointer; color: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  /* Faint drafting-paper grid — a hairline rule, not a dot pattern,
+     to keep this visually distinct from the other Beben / NeoPolaris
+     properties while still feeling like a blueprint sheet. */
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+section[id] { scroll-margin-top: var(--nav-height); }
+
+:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--color-headers);
+  color: var(--color-on-dark);
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  z-index: 100;
+}
+.skip-link:focus { left: 12px; top: 12px; border-radius: var(--radius-sm); }
+
+/* ---------------------------------------------------------------------
+   3. LAYOUT UTILITIES
+   --------------------------------------------------------------------- */
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-inline: clamp(20px, 5vw, 48px);
+}
+
+.section { padding: clamp(64px, 10vw, 120px) 0; border-top: 1px solid var(--color-border); }
+.section--soft { background: var(--color-bg-soft); }
+
+/* Sheet labels: each section is "numbered" as a sheet in a blueprint
+   set. This is a real structural device, not decoration — it tells
+   you where you are in the document, the same way drafting sheets
+   are numbered SHEET 1 OF 6 in a real plan set. */
+.sheet-label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sheet-label__num { color: var(--color-highlight); font-weight: 500; font-size: 13px; }
+.sheet-label__name { color: var(--color-text-muted); font-size: 13px; }
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+h2 {
+  font-family: var(--font-title);
+  font-weight: 400;
+  color: var(--color-headers);
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+p.lead {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: var(--color-text-muted);
+  max-width: 46ch;
+  margin-top: 14px;
+}
+
+/* League Gothic ships in a single weight with no native bold or
+   italic, so "strong" treatment here leans on size, spacing and
+   colour — never font-weight — to avoid the browser faking a bold
+   cut, which looks rough on a condensed face. */
+.strong {
+  font-family: var(--font-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+/* Buttons — gentle, snappy hover: short duration, small distance,
+   a soft overshoot easing so the press feels alive without being
+   bouncy. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: transform var(--dur-fast) var(--ease-snap),
+              background-color var(--dur-fast) ease,
+              border-color var(--dur-fast) ease,
+              color var(--dur-fast) ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(0.98); }
+
+.btn--primary {
+  background: var(--color-highlight);
+  color: var(--color-on-dark);
+}
+.btn--primary:hover { background: #aa342c; }
+
+.btn--secondary {
+  background: transparent;
+  color: var(--color-headers);
+  border-color: var(--color-border-strong);
+}
+.btn--secondary:hover { border-color: var(--color-highlight); color: var(--color-highlight); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-on-dark);
+  border-color: rgba(245, 245, 245, 0.4);
+}
+.btn--ghost:hover { border-color: var(--color-on-dark); }
+
+/* ---------------------------------------------------------------------
+   4. NAVIGATION
+   --------------------------------------------------------------------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  transition: box-shadow var(--dur-fast) ease;
+}
+.nav--scrolled { box-shadow: 0 1px 0 var(--color-border-strong); }
+
+.nav__inner { display: flex; align-items: center; justify-content: space-between; width: 100%; position: relative; }
+
+.nav__brand {
+  font-family: var(--font-strong);
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-headers);
+  transition: color var(--dur-fast) ease;
+}
+.nav__brand:hover { color: var(--color-highlight); }
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 15px;
+}
+.nav__links a:not(.nav__cta) {
+  color: var(--color-text);
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.nav__links a:not(.nav__cta):hover,
+.nav__links a.is-active {
+  color: var(--color-highlight);
+  border-bottom-color: var(--color-highlight);
+}
+.nav__cta {
+  font-weight: 600;
+  color: var(--color-headers);
+  border: 1px solid var(--color-border-strong);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-snap);
+}
+.nav__cta:hover { border-color: var(--color-highlight); color: var(--color-highlight); transform: translateY(-1px); }
+
+.nav__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+}
+.nav__toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--color-headers);
+  transition: transform var(--dur-fast) ease, opacity var(--dur-fast) ease;
+}
+.nav__toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------------------------------------------------------------------
+   5. HERO + BASTION EMBLEM
+   The emblem is a simplified four-bastion star-fort plan — the
+   site's one signature flourish. It "draws itself in" using
+   pathLength="1" on the SVG shapes, which normalises stroke-dasharray
+   to 0–1 regardless of the exact geometry, so the line-draw animation
+   stays correct even if the artwork changes later.
+   --------------------------------------------------------------------- */
+.hero { padding-top: clamp(72px, 11vw, 130px); padding-bottom: clamp(64px, 10vw, 110px); border-top: none; }
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(32px, 6vw, 64px);
+  align-items: center;
+}
+.hero__title {
+  font-family: var(--font-title);
+  font-weight: 400;
+  color: var(--color-headers);
+  font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.hero__title em { font-style: normal; color: var(--color-highlight); }
+.hero__subtitle {
+  margin-top: 20px;
+  max-width: 46ch;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  color: var(--color-text-muted);
+}
+.hero__actions { margin-top: 32px; display: flex; gap: 14px; flex-wrap: wrap; }
+.hero__note {
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.hero__art { position: relative; }
+.bastion { width: 100%; max-width: 420px; margin-inline: auto; }
+.bastion-moat, .bastion-wall, .bastion-keep {
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s var(--ease-snap);
+}
+.bastion-moat { stroke: var(--color-headers); stroke-width: 1; opacity: 0.35; }
+.bastion-wall { stroke: var(--color-headers); stroke-width: 1.6; transition-delay: 0.25s; }
+.bastion-keep { stroke: var(--color-highlight); stroke-width: 2; transition-delay: 0.55s; }
+.js .hero__art.is-visible .bastion-moat,
+.js .hero__art.is-visible .bastion-wall,
+.js .hero__art.is-visible .bastion-keep { stroke-dashoffset: 0; }
+
+/* ---------------------------------------------------------------------
+   6. PROBLEM
+   --------------------------------------------------------------------- */
+.problem__grid {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.problem__item { border-top: 2px solid var(--color-border-strong); padding-top: 18px; }
+.problem__item-label {
+  display: block;
+  font-family: var(--font-strong);
+  text-transform: uppercase;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+  color: var(--color-headers);
+  margin-bottom: 8px;
+}
+.problem__item-text { color: var(--color-text-muted); font-size: 15px; }
+
+/* ---------------------------------------------------------------------
+   7. CAPABILITIES
+   --------------------------------------------------------------------- */
+.capabilities__grid {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 26px 22px;
+  transition: transform var(--dur-fast) var(--ease-snap), border-color var(--dur-fast) ease;
+}
+.card:hover { transform: translateY(-4px); border-color: var(--color-border-strong); }
+.card__icon { width: 32px; height: 32px; color: var(--color-headers); margin-bottom: 16px; transition: color var(--dur-fast) ease; }
+.card:hover .card__icon { color: var(--color-highlight); }
+.card__title {
+  font-family: var(--font-strong);
+  text-transform: uppercase;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+  color: var(--color-headers);
+  margin-bottom: 8px;
+}
+.card__text { font-size: 14.5px; color: var(--color-text-muted); }
+
+/* ---------------------------------------------------------------------
+   8. PROCESS
+   A literal ordered sequence — numbering here is information, not
+   decoration.
+   --------------------------------------------------------------------- */
+.process__list {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.step__num {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--color-highlight);
+  display: block;
+  margin-bottom: 10px;
+}
+.step__title {
+  font-family: var(--font-strong);
+  text-transform: uppercase;
+  font-size: 19px;
+  color: var(--color-headers);
+  margin-bottom: 8px;
+}
+.step__text { font-size: 15px; color: var(--color-text-muted); }
+
+/* ---------------------------------------------------------------------
+   9. DEMO CONSOLE
+   The one deliberately dark surface on the page — reusing the brand's
+   own "main text" colour as a background instead of introducing a
+   new dark tone, because a console reasonably looks like a console.
+   --------------------------------------------------------------------- */
+.demo__intro { max-width: 60ch; }
+.console {
+  margin-top: 36px;
+  background: var(--color-text);
+  color: var(--color-on-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.console__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(245, 245, 245, 0.12);
+}
+.console__status { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; }
+.console__dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #6fcf8e;
+  box-shadow: 0 0 0 0 rgba(111, 207, 142, 0.6);
+  animation: pulse 2.4s ease-out infinite;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(111, 207, 142, 0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(111, 207, 142, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(111, 207, 142, 0); }
+}
+.console__badge {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-on-dark-muted);
+  border: 1px solid rgba(245, 245, 245, 0.22);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+}
+.console__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(245, 245, 245, 0.1);
+}
+.metric { background: var(--color-text); padding: 18px 20px; }
+.metric__label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-on-dark-muted); }
+.metric__value { font-family: var(--font-mono); font-size: clamp(1.2rem, 2vw, 1.5rem); color: var(--color-on-dark); margin-top: 6px; }
+.console__log {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 16px 20px;
+  height: 168px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.demo-log__row { padding: 3px 0; color: rgba(245, 245, 245, 0.82); }
+.demo-log__time { color: var(--color-highlight-on-dark); margin-right: 8px; }
+
+/* ---------------------------------------------------------------------
+   10. CTA
+   --------------------------------------------------------------------- */
+.cta__inner { max-width: 56ch; }
+.cta__actions { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.cta__fine { font-family: var(--font-mono); font-size: 13px; color: var(--color-text-muted); }
+.cta__fine a { color: var(--color-headers); border-bottom: 1px solid var(--color-border-strong); transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease; }
+.cta__fine a:hover { color: var(--color-highlight); border-color: var(--color-highlight); }
+
+/* ---------------------------------------------------------------------
+   11. FOOTER
+   --------------------------------------------------------------------- */
+.footer { padding: 48px 0 36px; border-top: 1px solid var(--color-border); }
+.footer__inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footer__brand { font-family: var(--font-strong); text-transform: uppercase; font-size: 19px; letter-spacing: 0.05em; color: var(--color-headers); }
+.footer__tagline { font-size: 13.5px; color: var(--color-text-muted); margin-top: 6px; }
+.footer__links { display: flex; gap: 20px; font-size: 14px; }
+.footer__links a { color: var(--color-text-muted); transition: color var(--dur-fast) ease; }
+.footer__links a:hover { color: var(--color-highlight); }
+.footer__meta {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* ---------------------------------------------------------------------
+   12. SCROLL-REVEAL SYSTEM
+   Hidden state is scoped to ".js [data-reveal]" so that with
+   JavaScript disabled — or if it fails to load — every element is
+   visible by default rather than permanently hidden. The stagger
+   itself is pure CSS: each element carries its own --i custom
+   property, no JS timers required.
+   --------------------------------------------------------------------- */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity var(--dur-base) ease, transform var(--dur-base) ease;
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------
+   13. REDUCED MOTION
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .bastion-moat, .bastion-wall, .bastion-keep { stroke-dashoffset: 0 !important; transition: none !important; }
+  .console__dot { animation: none; }
+  .btn:hover, .card:hover { transform: none; }
+}
+
+/* ---------------------------------------------------------------------
+   14. RESPONSIVE — tablet & mobile
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .hero__grid { grid-template-columns: 1fr; }
+  .hero__art { order: -1; max-width: 280px; margin-inline: auto; }
+  .problem__grid { grid-template-columns: 1fr 1fr; }
+  .process__list { grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 768px) {
+  .nav__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    padding: 20px clamp(20px, 5vw, 48px) 28px;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height var(--dur-base) ease, opacity var(--dur-fast) ease;
+  }
+  .nav__links.is-open { max-height: 60vh; opacity: 1; visibility: visible; pointer-events: auto; }
+  .nav__cta { width: 100%; justify-content: center; display: flex; }
+  .nav__toggle { display: inline-flex; }
+  .problem__grid { grid-template-columns: 1fr; gap: 24px; }
+  .console__metrics { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .hero__actions { flex-direction: column; align-items: stretch; }
+  .console__metrics { grid-template-columns: 1fr 1fr; }
+  .footer__inner { flex-direction: column; }
+}
+
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============================ NAVIGATION ============================ -->
+<header class="nav" id="siteNav">
+  <div class="nav__inner container">
+    <a class="nav__brand" href="#hero">Redoubt</a>
+
+    <nav class="nav__links" id="navLinks" aria-label="Primary">
+      <a href="#problem">Problem</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#demo">Demo</a>
+      <a href="#contact" class="nav__cta">Get in touch</a>
+    </nav>
+
+    <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero" id="hero">
+    <div class="container hero__grid">
+      <div>
+        <span class="eyebrow" data-reveal style="--i:0">On-premises AI infrastructure</span>
+        <h1 class="hero__title" data-reveal style="--i:1">Own the ground your models stand on.</h1>
+        <p class="hero__subtitle" data-reveal style="--i:2">Redoubt designs, deploys, and operates private AI infrastructure inside your own walls — so your data, your models, and your uptime answer to no one else's roadmap.</p>
+        <div class="hero__actions" data-reveal style="--i:3">
+          <a class="btn btn--primary" href="#contact">Start an assessment</a>
+          <a class="btn btn--secondary" href="#demo">See it running ↓</a>
+        </div>
+        <span class="hero__note" data-reveal style="--i:3">Scale — N.T.S.</span>
+      </div>
+
+      <div class="hero__art" data-reveal style="--i:2">
+        <svg class="bastion" viewBox="0 0 400 400" role="img" aria-label="Line illustration of a four-point star fort, representing a redoubt">
+          <circle class="bastion-moat" pathLength="1" cx="200" cy="200" r="185"></circle>
+          <polygon class="bastion-wall" pathLength="1" points="365,200 267.2,267.2 200,365 132.8,267.2 35,200 132.8,132.8 200,35 267.2,132.8"></polygon>
+          <circle class="bastion-keep" pathLength="1" cx="200" cy="200" r="42"></circle>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= PROBLEM ============================= -->
+  <section class="section section--soft" id="problem">
+    <div class="container">
+      <div class="sheet-label" data-reveal style="--i:0">
+        <span class="sheet-label__num">02</span><span class="sheet-label__name">The problem</span>
+      </div>
+      <h2 data-reveal style="--i:1">The cloud was a fine place to start. It's a poor place to live.</h2>
+      <p class="lead" data-reveal style="--i:2">Three things tend to surface once an AI workload stops being a pilot.</p>
+
+      <div class="problem__grid">
+        <div class="problem__item" data-reveal style="--i:2">
+          <span class="problem__item-label">Data leaves the building</span>
+          <p class="problem__item-text">Every inference call is a round trip through someone else's infrastructure, policy, and incident report.</p>
+        </div>
+        <div class="problem__item" data-reveal style="--i:3">
+          <span class="problem__item-label">Costs follow usage, not budgets</span>
+          <p class="problem__item-text">Token meters don't pause for your fiscal year, and neither does the invoice.</p>
+        </div>
+        <div class="problem__item" data-reveal style="--i:4">
+          <span class="problem__item-label">The roadmap isn't yours</span>
+          <p class="problem__item-text">Model deprecations, rate limits, and pricing changes arrive on someone else's schedule.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== CAPABILITIES =========================== -->
+  <section class="section" id="capabilities">
+    <div class="container">
+      <div class="sheet-label" data-reveal style="--i:0">
+        <span class="sheet-label__num">03</span><span class="sheet-label__name">Capabilities</span>
+      </div>
+      <h2 data-reveal style="--i:1">What we build inside your walls</h2>
+      <p class="lead" data-reveal style="--i:2">Four disciplines, one accountable team.</p>
+
+      <div class="capabilities__grid">
+        <div class="card" data-reveal style="--i:3">
+          <svg class="card__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="4" width="22" height="6" rx="1"></rect>
+            <rect x="5" y="13" width="22" height="6" rx="1"></rect>
+            <rect x="5" y="22" width="22" height="6" rx="1"></rect>
+            <circle cx="9" cy="7" r="0.9" fill="currentColor" stroke="none"></circle>
+            <circle cx="9" cy="16" r="0.9" fill="currentColor" stroke="none"></circle>
+            <circle cx="9" cy="25" r="0.9" fill="currentColor" stroke="none"></circle>
+          </svg>
+          <div class="card__title">Hardware &amp; deployment</div>
+          <p class="card__text">Sourcing, racking, and commissioning compute sized to the workload you actually have, not a vendor's minimum order.</p>
+        </div>
+
+        <div class="card" data-reveal style="--i:4">
+          <svg class="card__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="16" cy="6" r="3"></circle>
+            <circle cx="6" cy="24" r="3"></circle>
+            <circle cx="26" cy="24" r="3"></circle>
+            <line x1="16" y1="9" x2="7.5" y2="21.5"></line>
+            <line x1="16" y1="9" x2="24.5" y2="21.5"></line>
+            <line x1="9" y1="24" x2="23" y2="24"></line>
+          </svg>
+          <div class="card__title">Model orchestration</div>
+          <p class="card__text">Running, versioning, and routing open and licensed models across your own cluster, with no update arriving uninvited.</p>
+        </div>
+
+        <div class="card" data-reveal style="--i:5">
+          <svg class="card__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="7" y="15" width="18" height="13" rx="1.5"></rect>
+            <path d="M11 15v-4a5 5 0 0 1 10 0v4"></path>
+            <line x1="16" y1="20" x2="16" y2="24"></line>
+          </svg>
+          <div class="card__title">Security &amp; isolation</div>
+          <p class="card__text">Network segmentation, encryption at rest and in transit, and access control built around the compliance you already answer to.</p>
+        </div>
+
+        <div class="card" data-reveal style="--i:6">
+          <svg class="card__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="6" width="26" height="20" rx="1.5"></rect>
+            <polyline points="6,18 11,18 14,11 18,23 21,15 26,15"></polyline>
+          </svg>
+          <div class="card__title">Monitoring &amp; support</div>
+          <p class="card__text">Live visibility into utilization, latency, and health, with a team that picks up when something needs attention.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= PROCESS ============================= -->
+  <section class="section section--soft" id="process">
+    <div class="container">
+      <div class="sheet-label" data-reveal style="--i:0">
+        <span class="sheet-label__num">04</span><span class="sheet-label__name">How it works</span>
+      </div>
+      <h2 data-reveal style="--i:1">Three moves, in order</h2>
+
+      <div class="process__list">
+        <div data-reveal style="--i:2">
+          <span class="step__num">01</span>
+          <div class="step__title">Assess</div>
+          <p class="step__text">We map your workloads, data sensitivity, and growth curve against real hardware economics.</p>
+        </div>
+        <div data-reveal style="--i:3">
+          <span class="step__num">02</span>
+          <div class="step__title">Deploy</div>
+          <p class="step__text">We build and commission the stack on your premises or your colocation rack, tuned to what we found.</p>
+        </div>
+        <div data-reveal style="--i:4">
+          <span class="step__num">03</span>
+          <div class="step__title">Operate</div>
+          <p class="step__text">We monitor, patch, and scale the system, so your team runs the product, not the data center.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== DEMO ============================== -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="sheet-label" data-reveal style="--i:0">
+        <span class="sheet-label__num">05</span><span class="sheet-label__name">See it running</span>
+      </div>
+      <h2 data-reveal style="--i:1">Inside a Redoubt deployment</h2>
+      <p class="lead demo__intro" data-reveal style="--i:2">A live-style preview of the console your team would actually watch. The full interactive demo is still being built — this is an honest preview, not a screen recording.</p>
+
+      <div class="console" data-reveal style="--i:3">
+        <div class="console__header">
+          <div class="console__status">
+            <span class="console__dot" aria-hidden="true"></span>
+            NODE-04 &middot; OPERATIONAL
+          </div>
+          <span class="console__badge">Live preview &middot; full demo in development</span>
+        </div>
+
+        <div class="console__metrics">
+          <div class="metric">
+            <div class="metric__label">GPU utilization</div>
+            <div class="metric__value" id="metricGpu">70%</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Throughput</div>
+            <div class="metric__value" id="metricThroughput">1,500 tok/s</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Active requests</div>
+            <div class="metric__value" id="metricRequests">8</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Latency p99</div>
+            <div class="metric__value" id="metricLatency">46 ms</div>
+          </div>
+        </div>
+
+        <div class="console__log" id="demoLog" aria-label="Simulated deployment log" aria-live="off"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== CTA =============================== -->
+  <section class="section section--soft" id="contact">
+    <div class="container cta__inner">
+      <div class="sheet-label" data-reveal style="--i:0">
+        <span class="sheet-label__num">06</span><span class="sheet-label__name">Get in touch</span>
+      </div>
+      <h2 data-reveal style="--i:1">Let's look at what you're running.</h2>
+      <p class="lead" data-reveal style="--i:2">Bring your current setup, your constraints, and the questions no vendor has answered honestly yet.</p>
+
+      <div class="cta__actions" data-reveal style="--i:3">
+        <!-- Placeholder address — .example is a reserved, non-routable
+             domain (RFC 2606), used here deliberately so this is
+             impossible to miss before launch. Swap for the real
+             contact address or form endpoint. -->
+        <a class="btn btn--primary" href="mailto:hello@redoubt.example">Book an assessment</a>
+        <span class="cta__fine">Or write to <a href="mailto:hello@redoubt.example">hello@redoubt.example</a> directly.</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div>
+        <div class="footer__brand">Redoubt</div>
+        <p class="footer__tagline">On-premises AI infrastructure.</p>
+      </div>
+      <nav class="footer__links" aria-label="Footer">
+        <a href="#problem">Problem</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#demo">Demo</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="footer__meta">
+      <span>1&deg;17&prime;S 36&deg;49&prime;E &mdash; built in Nairobi</span>
+      <span>&copy; 2026 Redoubt. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   1. NAV — sticky shadow on scroll, mobile menu toggle, active section
+   ===================================================================== */
+(function () {
+  var siteNav = document.getElementById('siteNav');
+  window.addEventListener('scroll', function () {
+    siteNav.classList.toggle('nav--scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  var navToggle = document.getElementById('navToggle');
+  var navLinksEl = document.getElementById('navLinks');
+
+  function closeMenu() {
+    navLinksEl.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+  function openMenu() {
+    navLinksEl.classList.add('is-open');
+    navToggle.setAttribute('aria-expanded', 'true');
+  }
+  navToggle.addEventListener('click', function () {
+    navLinksEl.classList.contains('is-open') ? closeMenu() : openMenu();
+  });
+  navLinksEl.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', closeMenu);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && navLinksEl.classList.contains('is-open')) {
+      closeMenu();
+      navToggle.focus();
+    }
+  });
+
+  // Highlight the nav link for whichever section sits at the vertical
+  // centre of the viewport.
+  var sections = document.querySelectorAll('main section[id]');
+  var navAnchors = navLinksEl.querySelectorAll('a[href^="#"]');
+  var sectionObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var id = entry.target.id;
+      navAnchors.forEach(function (a) {
+        a.classList.toggle('is-active', a.getAttribute('href') === '#' + id);
+      });
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  sections.forEach(function (s) { sectionObserver.observe(s); });
+})();
+
+/* =====================================================================
+   2. SCROLL REVEAL
+   Adds .is-visible to any [data-reveal] element once it enters the
+   viewport. Stagger comes from the --i custom property already set
+   in the markup, not from JS timing, so it can't drift under load.
+   prefers-reduced-motion: reveal everything immediately, no observer.
+   ===================================================================== */
+var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var revealEls = document.querySelectorAll('[data-reveal]');
+
+if (prefersReduced) {
+  revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+} else {
+  var revealObserver = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.18 });
+  revealEls.forEach(function (el) { revealObserver.observe(el); });
+}
+
+/* =====================================================================
+   3. DEMO CONSOLE SIMULATION
+   Metrics random-walk within a realistic range rather than jumping
+   to a fresh random value each tick, so they read as "live" instead
+   of "flickering". The log keeps at most 8 rows so the DOM can't
+   grow unbounded on a long-open tab. Starts only once the demo
+   section actually scrolls into view, and not at all under
+   prefers-reduced-motion (a short static preview is shown instead).
+   ===================================================================== */
+(function () {
+  var demoSection = document.getElementById('demo');
+  var logFeed = document.getElementById('demoLog');
+  var metricEls = {
+    gpu: document.getElementById('metricGpu'),
+    throughput: document.getElementById('metricThroughput'),
+    requests: document.getElementById('metricRequests'),
+    latency: document.getElementById('metricLatency')
+  };
+
+  var logLines = [
+    'model shard 3/8 loaded onto gpu:02',
+    'inference request served',
+    'encryption keys rotated',
+    'nightly backup synced to cold storage',
+    'health check passed on all nodes',
+    'autoscaler held steady at 4 replicas',
+    'tls certificate renewed',
+    'audit log exported',
+    'cache warmed for active model',
+    'no anomalies detected in network egress'
+  ];
+
+  var metrics = { gpu: 70, throughput: 1500, requests: 8, latency: 46 };
+
+  function clampStep(value, min, max, maxStep) {
+    var step = (Math.random() * 2 - 1) * maxStep;
+    return Math.min(max, Math.max(min, value + step));
+  }
+
+  function renderMetrics() {
+    metricEls.gpu.textContent = Math.round(metrics.gpu) + '%';
+    metricEls.throughput.textContent = Math.round(metrics.throughput).toLocaleString() + ' tok/s';
+    metricEls.requests.textContent = Math.round(metrics.requests);
+    metricEls.latency.textContent = Math.round(metrics.latency) + ' ms';
+  }
+
+  function tickMetrics() {
+    metrics.gpu = clampStep(metrics.gpu, 58, 84, 4);
+    metrics.throughput = clampStep(metrics.throughput, 1100, 1900, 90);
+    metrics.requests = clampStep(metrics.requests, 2, 15, 2);
+    metrics.latency = clampStep(metrics.latency, 34, 61, 4);
+    renderMetrics();
+  }
+
+  function appendLog() {
+    var time = new Date().toLocaleTimeString([], { hour12: false });
+    var line = logLines[Math.floor(Math.random() * logLines.length)];
+    var row = document.createElement('div');
+    row.className = 'demo-log__row';
+    row.innerHTML = '<span class="demo-log__time">[' + time + ']</span>' + line;
+    logFeed.appendChild(row);
+    while (logFeed.children.length > 8) {
+      logFeed.removeChild(logFeed.firstChild);
+    }
+    logFeed.scrollTop = logFeed.scrollHeight;
+  }
+
+  var demoStarted = false;
+  function startDemo() {
+    if (demoStarted) return;
+    demoStarted = true;
+    renderMetrics();
+
+    if (prefersReduced) {
+      appendLog();
+      appendLog();
+      appendLog();
+      return;
+    }
+    appendLog();
+    setInterval(tickMetrics, 1600);
+    setInterval(appendLog, 2200);
+  }
+
+  var demoObserver = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        startDemo();
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  demoObserver.observe(demoSection);
+})();
+</script>
+
+</body>
+</html>
