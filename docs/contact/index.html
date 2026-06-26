@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#141414">
 
     <title>Contact | Beben Design — Start a Project</title>
     <meta name="title" content="Contact | Beben Design — Start a Project">
@@ -42,8 +44,7 @@
       }
     }
     </script>
-     
-    <!-- ================= CONTACT PAGE ================= -->
+
     <script type="application/ld+json">
     {
      "@context": "https://schema.org",
@@ -95,208 +96,371 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 
-    <link rel="stylesheet" href="contact.css">
+    <style>
+        .contact-hero {
+            padding-top: clamp(130px, 16vw, 180px);
+            padding-bottom: 60px;
+        }
+        .contact-hero h1 {
+            font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+            line-height: 1.08;
+            margin-bottom: 1.2rem;
+        }
+        .contact-hero p {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 1.4vw, 1.1rem);
+            max-width: 48ch;
+            line-height: 1.7;
+            color: var(--text-muted);
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0;
+        }
+        .channel-card {
+            padding: clamp(1.5rem, 3vw, 2.5rem);
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: background var(--dur-fast) ease;
+        }
+        .channel-card:nth-child(2n) { border-right: none; }
+        .channel-card:nth-child(n+3) { border-bottom: none; }
+        .channel-card:hover { background: var(--bg-soft); }
+
+        .channel-label {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+        .channel-card h3 {
+            font-family: var(--font-title);
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        .channel-card p {
+            font-size: clamp(0.85rem, 1.1vw, 0.95rem);
+            color: var(--text-muted);
+            line-height: 1.6;
+            flex: 1;
+        }
+        .channel-cta {
+            display: inline-block;
+            margin-top: 1.2rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            color: var(--highlight);
+            transition: letter-spacing var(--dur-fast) ease;
+        }
+        .channel-card:hover .channel-cta { letter-spacing: 0.1em; }
+        .channel-cta.whatsapp { color: #25D366; }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid var(--border);
+        }
+        .process-step {
+            padding: clamp(1.5rem, 2.5vw, 2rem);
+            border-right: 1px solid var(--border);
+            transition: background var(--dur-fast) ease;
+        }
+        .process-step:last-child { border-right: none; }
+        .process-step:hover { background: var(--bg-soft); }
+        .process-num {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--highlight);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .process-step h3 {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+        .process-step p {
+            font-size: clamp(0.82rem, 1vw, 0.88rem);
+            line-height: 1.65;
+            color: var(--text-muted);
+        }
+
+        .contact-cta {
+            text-align: center;
+        }
+        .contact-cta p {
+            font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+            color: var(--text-muted);
+            margin-top: 0.8rem;
+        }
+        .cta-row {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .cta-row .cta-link.whatsapp { color: #25D366; }
+        .cta-row .cta-link.whatsapp::after { background: #25D366; }
+
+        @media (max-width: 900px) {
+            .channel-grid { grid-template-columns: 1fr; }
+            .channel-card { border-right: none; border-bottom: 1px solid var(--border); }
+            .channel-card:last-child { border-bottom: none; }
+            .process-grid { grid-template-columns: repeat(2, 1fr); }
+            .process-step:nth-child(2) { border-right: none; }
+            .process-step:nth-child(1),
+            .process-step:nth-child(2) { border-bottom: 1px solid var(--border); }
+        }
+        @media (max-width: 600px) {
+            .process-grid { grid-template-columns: 1fr; }
+            .process-step { border-right: none; border-bottom: 1px solid var(--border); }
+            .process-step:last-child { border-bottom: none; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     NAVBAR — identical structure to homepage
-════════════════════════════════════════════ -->
+<a class="skip-link" href="#main-content" style="position:absolute;left:-999px;top:0;background:#141414;color:#F7F4F3;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;z-index:999;">Skip to content</a>
+<style>.skip-link:focus{left:12px;top:12px;}</style>
+
+<!-- NAVBAR -->
 <nav>
-    <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">Beben Design</a></div>
+    <a href="/" class="logo" aria-label="Beben Design - home">
+        <svg class="logo__mark" viewBox="0 0 768 255" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M637.641 117.198L555.832 117.198V63.9144C555.832 61.7615 554.086 60.0162 551.933 60.0162C549.781 60.0162 548.035 61.7615 548.035 63.9144V117.198H520.446V0.000212398L561.832 0.000212398L603.684 72.487C604.761 74.3512 607.144 74.9895 609.008 73.9132C610.873 72.8367 611.511 70.4533 610.435 68.5888L570.836 0.000212398L637.641 0.000212398V117.198Z" fill="#FFC710"/>
+            <path d="M767.754 254.489H685.944V201.206C685.944 199.053 684.199 197.308 682.046 197.308C679.893 197.308 678.148 199.053 678.148 201.206V254.489H650.559V137.292H691.944L733.797 209.779C734.873 211.643 737.257 212.281 739.121 211.205C740.986 210.128 741.624 207.745 740.547 205.881L700.948 137.292H767.754V254.489Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M106.005 14.6494L106.005 117.197L0 117.197L0 0L92.7541 0L106.005 14.6494ZM36.3094 78.5656C34.1564 78.5656 32.4111 80.3129 32.4111 82.4658C32.4117 84.6183 34.1568 86.3621 36.3094 86.3621L69.6956 86.3621C71.8485 86.3621 73.5938 84.6168 73.5938 82.4639C73.5933 80.3114 71.8482 78.5656 69.6956 78.5656L36.3094 78.5656ZM36.3094 30.8333C34.1564 30.8333 32.4111 32.5786 32.4111 34.7316C32.4111 36.8845 34.1564 38.6298 36.3094 38.6298L69.6956 38.6298C71.8485 38.6298 73.5938 36.8845 73.5938 34.7316C73.5938 32.5786 71.8485 30.8333 69.6956 30.8333L36.3094 30.8333Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M366.228 14.6495V117.198L260.223 117.198V0.000106199L352.977 0.000106199L366.228 14.6495ZM296.532 78.5657C294.379 78.5657 292.634 80.313 292.634 82.4659C292.635 84.6184 294.38 86.3622 296.532 86.3622L329.919 86.3622C332.072 86.3622 333.817 84.6169 333.817 82.464C333.816 80.3115 332.071 78.5657 329.919 78.5657L296.532 78.5657ZM296.532 30.8334C294.379 30.8334 292.634 32.5787 292.634 34.7317C292.634 36.8846 294.379 38.6299 296.532 38.6299H329.919C332.072 38.6299 333.817 36.8846 333.817 34.7317C333.817 32.5787 332.072 30.8334 329.919 30.8334L296.532 30.8334Z" fill="#FFC710"/>
+            <path d="M236.117 73.4432L217.934 41.95C216.855 40.0804 214.464 39.4398 212.594 40.5193C210.725 41.5988 210.084 43.9896 211.163 45.8592L236.117 89.0793L172.607 89.0824C170.448 89.0824 168.698 90.8325 168.698 92.9914C168.698 95.1502 170.448 96.9006 172.607 96.9006L236.117 96.9006V117.196L130.112 117.196L130.112 0.000106199L236.117 0.000106199V73.4432Z" fill="#FFC710"/>
+            <path d="M496.34 73.4451L478.157 41.9519C477.078 40.0822 474.687 39.4415 472.817 40.521C470.948 41.6004 470.307 43.9912 471.387 45.8609L496.34 89.081L432.83 89.0841C430.671 89.0841 428.921 90.8343 428.921 92.9933C428.921 95.1522 430.671 96.9025 432.83 96.9025L496.34 96.9025V117.198L390.335 117.198V0.00201779L496.34 0.00201779V73.4451Z" fill="#FFC710"/>
+            <path d="M236.119 210.741L217.936 179.248C216.857 177.378 214.466 176.737 212.597 177.817C210.727 178.896 210.086 181.287 211.166 183.157L236.119 226.377L172.609 226.38C170.451 226.38 168.701 228.13 168.701 230.289C168.701 232.448 170.451 234.198 172.609 234.198H236.119V254.493H130.114V137.298H236.119V210.741Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M106.007 151.943L106.007 254.491L0.00229732 254.491L0.00229732 137.294L92.7563 137.294L106.007 151.943ZM36.0552 175.3C33.9283 175.3 32.204 177.024 32.204 179.151L32.204 212.634C32.204 214.761 33.9283 216.486 36.0552 216.486C38.1823 216.486 39.9068 214.761 39.9068 212.634L39.9068 179.151C39.9068 177.024 38.1823 175.3 36.0552 175.3Z" fill="#FFC710"/>
+            <path d="M366.231 192.243L329.434 173.024C327.536 172.033 325.194 172.768 324.203 174.666C323.212 176.564 323.946 178.906 325.844 179.897L366.231 200.99V254.489L260.225 254.489V234.156L288.297 234.156C290.438 234.156 292.174 232.42 292.174 230.279C292.174 228.138 290.438 226.402 288.297 226.402L260.225 226.402L260.225 137.294L366.231 137.294L366.231 192.243Z" fill="#FFC710"/>
+            <path d="M496.342 254.489L390.337 254.489L390.337 163.095L496.342 163.095L496.342 254.489Z" fill="#FFC710"/>
+            <path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/>
+            <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
+        </svg>
+    </a>
     <div class="nav-right">
-        <button id="theme-toggle">LIGHT/ DARK</button>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+            <span class="theme-toggle__label">LIGHT</span>
+            <span class="theme-toggle__dial">
+                <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <line x1="12" y1="2" x2="12" y2="4.3"></line><line x1="12" y1="19.7" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="4.3" y2="12"></line><line x1="19.7" y1="12" x2="22" y2="12"></line>
+                    <line x1="4.93" y1="4.93" x2="6.55" y2="6.55"></line><line x1="17.45" y1="17.45" x2="19.07" y2="19.07"></line>
+                    <line x1="4.93" y1="19.07" x2="6.55" y2="17.45"></line><line x1="17.45" y1="6.55" x2="19.07" y2="4.93"></line>
+                </svg>
+                <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+                </svg>
+            </span>
+        </button>
         <ul class="menu desktop-only">
-            <li><a href="/services/">SERVICES</a></li>
-            <li><a href="/work/">SHOP</a></li>
-            <li><a href="/team/">WORK</a></li>
-            <li><a href="/contact/" class="active">CONTACT</a></li>
+            <li><a href="../services/">SERVICES</a></li>
+            <li><a href="../tools/">TOOLS</a></li>
+            <li><a href="../shop/">SHOP</a></li>
+            <li><a href="../work/">WORK</a></li>
+            <li><a href="../contact/" class="active">CONTACT</a></li>
         </ul>
-        <button id="hamburger" aria-label="Toggle Menu">
-            <span></span>
-            <span></span>
-            <span></span>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span><span></span><span></span>
         </button>
     </div>
 </nav>
 
-<div id="mobile-menu-overlay">
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
     <ul class="mobile-menu">
-        <li><a href="/">HOME</a></li>
-        <li><a href="/services/">SERVICES</a></li>
-        <li><a href="/work/">SHOP</a></li>
-        <li><a href="/team/">WORK</a></li>
-        <li><a href="/contact/" class="active">CONTACT</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="../services/">Services</a></li>
+        <li><a href="../tools/">Tools</a></li>
+        <li><a href="../shop/">Shop</a></li>
+        <li><a href="../work/">Work</a></li>
+        <li><a href="../contact/" class="active">Contact</a></li>
     </ul>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MAIN CONTENT
-════════════════════════════════════════════ -->
-<main>
+<!-- MAIN -->
+<main id="main-content">
 
     <!-- Hero -->
-    <section class="hero reveal">
-        <p class="section-label">[ CONTACT.01 ]</p>
-        <h1>Design <span class="highlight-box">logic</span><br>starts with<br>a conversation.</h1>
-        <p class="hero-sub">No aggressive sales pitch. Just a direct technical discussion about your goals — with the people who will actually build it.</p>
-    </section>
-
-    <!-- Contact Cards -->
-    <section class="contact-channels reveal">
-        <div class="grid">
-
-            <a href="https://wa.me/254114728233" class="channel-card" target="_blank" rel="noopener">
-                <span class="channel-label">// 01</span>
-                <h3>WhatsApp</h3>
-                <p>Fastest route. Direct line to the studio.</p>
-                <span class="channel-cta">MESSAGE NOW ↗</span>
-            </a>
-
-            <a href="mailto:hello.beben.design@gmail.com" class="channel-card copy-email" data-email="hello.beben.design@gmail.com">
-                <span class="channel-label">// 02</span>
-                <h3>Email</h3>
-                <p>For detailed briefs, attachments, and formal project requests.</p>
-                <span class="channel-cta">hello.beben.design@gmail.com ↗</span>
-            </a>
-
-            <a href="mailto:hello.beben.design@gmail.com" class="channel-card">
-                <span class="channel-label">// 03</span>
-                <h3>Existing Clients</h3>
-                <p>Ongoing project support, revisions, and maintenance requests.</p>
-                <span class="channel-cta">hello.beben.design@gmail.com ↗</span>
-            </a>
-
-            <div class="channel-card no-link">
-                <span class="channel-label">// 04</span>
-                <h3>Location</h3>
-                <p>Nairobi, Westlands — Kenya.</p>
-                <span class="channel-cta">MON - FRI, <BR>08:00 - 18:00 EAT</span>
-            </div>
-
+    <section class="contact-hero">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Get in touch</span>
+            <h1 data-reveal style="--i:1">Design <em class="highlight-box">logic</em> starts with a conversation.</h1>
+            <p data-reveal style="--i:2">No aggressive sales pitch. Just a direct technical discussion about your goals &mdash; with the people who will actually build it.</p>
         </div>
     </section>
 
-    <!-- Process: how engagement starts -->
-    <section class="process-section reveal">
-        <h2>HOW ENGAGEMENT STARTS</h2>
-        <div class="process-list">
-            <div class="process-step">
-                <span>01</span>
-                <p><strong>You reach out.</strong> Tell us the problem — not the solution. We'll figure out the rest together.</p>
+    <!-- Contact channels -->
+    <section class="section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Channels</span>
+            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Reach the studio</h2>
+            <div class="channel-grid" data-reveal style="--i:2">
+                <a href="https://wa.me/254114728233" class="channel-card" target="_blank" rel="noopener">
+                    <span class="channel-label">// 01</span>
+                    <h3>WhatsApp</h3>
+                    <p>Fastest route. Direct line to the studio.</p>
+                    <span class="channel-cta whatsapp">MESSAGE NOW &#x2197;</span>
+                </a>
+                <a href="mailto:hello.beben.design@gmail.com" class="channel-card copy-email" data-email="hello.beben.design@gmail.com">
+                    <span class="channel-label">// 02</span>
+                    <h3>Email</h3>
+                    <p>For detailed briefs, attachments, and formal project requests.</p>
+                    <span class="channel-cta">hello.beben.design@gmail.com &#x2197;</span>
+                </a>
+                <a href="mailto:hello.beben.design@gmail.com" class="channel-card">
+                    <span class="channel-label">// 03</span>
+                    <h3>Existing Clients</h3>
+                    <p>Ongoing project support, revisions, and maintenance requests.</p>
+                    <span class="channel-cta">hello.beben.design@gmail.com &#x2197;</span>
+                </a>
+                <div class="channel-card">
+                    <span class="channel-label">// 04</span>
+                    <h3>Location</h3>
+                    <p>Nairobi, Westlands &mdash; Kenya.</p>
+                    <span class="channel-cta">MON &ndash; FRI, 08:00 &ndash; 18:00 EAT</span>
+                </div>
             </div>
-            <div class="process-step">
-                <span>02</span>
-                <p><strong>Discovery call.</strong> A 30-minute technical audit of your goals, constraints, and timelines.</p>
-            </div>
-            <div class="process-step">
-                <span>03</span>
-                <p><strong>Fixed-price proposal.</strong> Line-item quote in USD. No ambiguity. No hourly billing surprises.</p>
-            </div>
-            <div class="process-step">
-                <span>04</span>
-                <p><strong>50% deposit to kick off.</strong> We start with requirement analysis and get moving fast.</p>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section>
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">How it works</span>
+            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">How engagement starts</h2>
+            <div class="process-grid" data-reveal style="--i:2">
+                <div class="process-step">
+                    <span class="process-num">01</span>
+                    <h3>You reach out</h3>
+                    <p>Tell us the problem &mdash; not the solution. We'll figure out the rest together.</p>
+                </div>
+                <div class="process-step">
+                    <span class="process-num">02</span>
+                    <h3>Discovery call</h3>
+                    <p>A 30-minute technical audit of your goals, constraints, and timelines.</p>
+                </div>
+                <div class="process-step">
+                    <span class="process-num">03</span>
+                    <h3>Fixed-price proposal</h3>
+                    <p>Line-item quote in USD. No ambiguity. No hourly billing surprises.</p>
+                </div>
+                <div class="process-step">
+                    <span class="process-num">04</span>
+                    <h3>50% deposit to kick off</h3>
+                    <p>We start with requirement analysis and get moving fast.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- FAQ -->
-    <section class="faq-section reveal">
-        <h2 style="padding-bottom: 2rem;">COMMON QUESTIONS</h2>
+    <section id="faq" class="section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Questions</span>
+            <h2 data-reveal style="--i:1">Common questions</h2>
 
-        <div class="faq-item">
-            <button class="faq-trigger" aria-expanded="false">
-                <span><strong>+</strong> How much does a website cost?</span>
-            </button>
-            <div class="faq-answer">
-                <p>Static sites start at $99 USD. Complexity drives pricing — we provide transparent, line-item quotes after discovery. No guesswork.</p>
+            <div class="faq-item" data-reveal style="--i:2">
+                <button class="faq-trigger" aria-expanded="false">How much does a website cost?</button>
+                <div class="faq-answer">
+                    <p>Static sites start at $99 USD. Complexity drives pricing &mdash; we provide transparent, line-item quotes after discovery. No guesswork.</p>
+                </div>
             </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-trigger" aria-expanded="false">
-                <span><strong>+</strong> How long does a typical project take?</span>
-            </button>
-            <div class="faq-answer">
-                <p>UX/UI projects typically run 4-8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed — always.</p>
+            <div class="faq-item" data-reveal style="--i:2">
+                <button class="faq-trigger" aria-expanded="false">How long does a typical project take?</button>
+                <div class="faq-answer">
+                    <p>UX/UI projects typically run 4&ndash;8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed &mdash; always.</p>
+                </div>
             </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-trigger" aria-expanded="false">
-                <span><strong>+</strong> Do you work with startups or early-stage products?</strong></span>
-            </button>
-            <div class="faq-answer">
-                <p>Frequently. We help define your Minimum Viable Design — just enough to launch professionally without over-engineering before you have users.</p>
+            <div class="faq-item" data-reveal style="--i:3">
+                <button class="faq-trigger" aria-expanded="false">Do you work with startups or early-stage products?</button>
+                <div class="faq-answer">
+                    <p>Frequently. We help define your Minimum Viable Design &mdash; just enough to launch professionally without over-engineering before you have users.</p>
+                </div>
             </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-trigger" aria-expanded="false">
-                <span><strong>+</strong> Can you redesign an existing product?</span>
-            </button>
-            <div class="faq-answer">
-                <p>Yes. We start with a UX audit to identify what's actually broken — so we don't just paint over structural problems.</p>
+            <div class="faq-item" data-reveal style="--i:3">
+                <button class="faq-trigger" aria-expanded="false">Can you redesign an existing product?</button>
+                <div class="faq-answer">
+                    <p>Yes. We start with a UX audit to identify what's actually broken &mdash; so we don't just paint over structural problems.</p>
+                </div>
             </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-trigger" aria-expanded="false">
-                <span><strong>+</strong> Do you use AI in your workflow?</span>
-            </button>
-            <div class="faq-answer">
-                <p>Yes — where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first.</p>
+            <div class="faq-item" data-reveal style="--i:4">
+                <button class="faq-trigger" aria-expanded="false">Do you use AI in your workflow?</button>
+                <div class="faq-answer">
+                    <p>Yes &mdash; where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Block -->
-    <section class="cta-block reveal">
-        <h2>READY TO START?</h2>
-        <p>The best time to talk is before you've written a single line of code.</p>
-        <a href="https://wa.me/254114728233"
-           class="cta-link"
-           target="_blank" rel="noopener">
-            MESSAGE ON WHATSAPP <strong>↗</strong>
-        </a>
+    <!-- CTA -->
+    <section class="contact-cta">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Ready?</span>
+            <h2 data-reveal style="--i:1">The best time to talk is before you've written a single line of code.</h2>
+            <div class="cta-row" data-reveal style="--i:2">
+                <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">MESSAGE ON WHATSAPP &#x2197;</a>
+                <a href="mailto:hello.beben.design@gmail.com" class="cta-link copy-email" data-email="hello.beben.design@gmail.com">SEND AN EMAIL &#x2197;<span class="tooltip">CLICK TO COPY EMAIL</span></a>
+            </div>
+        </div>
     </section>
 
 </main>
 
-<!-- ═══════════════════════════════════════════
-     FOOTER — identical structure to homepage
-════════════════════════════════════════════ -->
-<footer class="reveal">
+<!-- FOOTER -->
+<footer>
     <div class="footer-container">
         <div class="footer-brand">
             <p><strong>Beben Design</strong></p>
             <p>Design &amp; Interface Studio</p>
             <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
-            <p class="copyright">© Beben Design | All rights reserved</p>
+            <p class="copyright">&copy; Beben Design | All rights reserved</p>
         </div>
         <div class="footer-links">
             <ul class="footer-nav">
-                <li><a href="/contact/">CONTACT</a></li>
-                <li><a href="/legal/">LEGAL</a></li>
-                <li><a href="/privacy/">PRIVACY POLICY</a></li>
-                <li><a href="/credits/">CREDITS</a></li>
+                <li><a href="../contact/">CONTACT</a></li>
+                <li><a href="../legal/">LEGAL</a></li>
+                <li><a href="../privacy/">PRIVACY POLICY</a></li>
+                <li><a href="../credits/">CREDITS</a></li>
             </ul>
-            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
-                BACK TO TOP ↑
-            </button>
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
         </div>
+    </div>
+    <div class="footer-meta">
+        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>&copy; 2026 Beben Design. All rights reserved.</span>
     </div>
 </footer>
 
-<!-- Toast notification -->
 <div id="copy-toast">Email copied to clipboard.</div>
 
-<script src="contact.js"></script>
+<script src="../assets/JS/index.js"></script>
 </body>
 </html>
