@@ -1,136 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legal | Beben Design</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#141414">
+
+    <title>Legal | Beben Design — Terms of Service</title>
+    <meta name="description" content="Terms of service, intellectual property, data protection, and legal framework for Beben Design. Governed by the laws of Kenya.">
+    <link rel="canonical" href="https://beben.design/legal/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/legal/">
+    <meta property="og:title" content="Legal | Beben Design">
+    <meta property="og:description" content="Terms of service and legal framework. Governed by the laws of Kenya.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
     <style>
-        :root {
-            --primary: #000000;
-            --bg: #ffffff;
-            --accent: #FFC917; 
-            --border: #000000;
-            --spacing: 40px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: var(--bg);
-            color: var(--primary);
-            line-height: 1.6;
-            padding: var(--spacing);
-            display: flex;
-            justify-content: center;
-        }
-
-        .wrapper { max-width: 1200px; width: 100%; }
-
-        header {
-            border-bottom: 4px solid var(--primary);
+        .legal-hero {
+            padding-top: clamp(130px, 16vw, 180px);
             padding-bottom: 40px;
-            margin-bottom: 60px;
+        }
+        .legal-hero h1 {
+            font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+            line-height: 1.08;
+            margin-bottom: 1rem;
+        }
+        .legal-hero p {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 1.4vw, 1.1rem);
+            max-width: 52ch;
+            line-height: 1.7;
+            color: var(--text-muted);
+        }
+        .legal-meta {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            margin-top: 1.2rem;
         }
 
-        h1 { font-size: clamp(2rem, 8vw, 4.5rem); text-transform: uppercase; font-weight: 700; letter-spacing: -3px; line-height: 0.9; }
-        h2 { font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px; background: var(--primary); color: #fff; display: inline-block; padding: 5px 15px; }
-        h3 { font-size: 1.1rem; margin-top: 20px; text-decoration: underline; }
-
-        .highlight { background-color: var(--accent); padding: 0 5px; font-weight: 700; }
-
-        /* Bento Grid */
-        .legal-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
-        .card { border: 2px solid var(--primary); padding: 30px; grid-column: span 6; }
-        .card-full { grid-column: span 12; }
-        .card-third { grid-column: span 4; }
-
-        .card p, .card li { font-size: 0.9rem; margin-bottom: 12px; list-style: none; }
-        .card li::before { content: "// "; font-weight: bold; }
-
-        /* Tablet/Mobile Responsive */
-        @media (max-width: 1024px) { .card { grid-column: span 12; } .card-third { grid-column: span 6; } }
-        @media (max-width: 600px) { .card-third { grid-column: span 12; } body { padding: 20px; } }
-
-        footer {
-            margin-top: 80px;
-            padding: 40px 0;
-            border-top: 2px solid var(--primary);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 20px;
+        .legal-section { max-width: 720px; }
+        .legal-section h2 { margin-bottom: 1rem; }
+        .legal-section h3 {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.6rem;
+            margin-bottom: 0.5rem;
         }
-
-        .contact-info { font-size: 0.85rem; font-weight: 700; }
-        .btn-contact { background: var(--primary); color: #fff; padding: 15px 25px; text-decoration: none; font-weight: bold; }
-        .btn-contact:hover { background: var(--accent); color: var(--primary); }
+        .legal-section p,
+        .legal-section li {
+            font-size: clamp(0.88rem, 1.2vw, 0.95rem);
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+        .legal-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .legal-section li {
+            padding-left: 1.4rem;
+            position: relative;
+        }
+        .legal-section li::before {
+            content: "//";
+            position: absolute;
+            left: 0;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--highlight);
+        }
+        .legal-ref {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: var(--bg-soft);
+            padding: 2px 6px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <header>
-        <p>[ VERSION 2026.01 ]</p>
-        <h1>LEGAL <span class="highlight">FRAMEWORK</span></h1>
-        <p>Beben Design: UX Research, UI Design & Digital Product Studio.</p>
-    </header>
+<a class="skip-link" href="#main-content" style="position:absolute;left:-999px;top:0;background:#141414;color:#F7F4F3;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;z-index:999;">Skip to content</a>
+<style>.skip-link:focus{left:12px;top:12px;}</style>
 
-    <div class="legal-grid">
-        
-        <section class="card card-full">
-            <h2>0.1 Terms of Use</h2>
-            <p>By accessing beben.design, you accept these terms in full. We provide high-end digital product services; misuse of this site or its content is strictly prohibited.</p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                <div>
-                    <h3>Governing Law</h3>
-                    <p>These terms are governed by the laws of <span class="highlight">Kenya</span>. Any disputes will be settled within the jurisdiction of Kenyan courts.</p>
-                </div>
-                <div>
-                    <h3>Liability</h3>
-                    <p>Services are provided "as-is." Beben Design is not liable for indirect damages or implementation errors by third parties.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="card">
-            <h2>0.2 Data & Privacy</h2>
-            <p>In alignment with <span class="highlight">Kenya’s Data Protection Act</span>, we are transparent about your footprint:</p>
-            <ul>
-                <li><strong>Collection:</strong> Name, email, and project details via contact forms.</li>
-                <li><strong>Analytics:</strong> We use cookies to understand UX patterns via Google Analytics.</li>
-                <li><strong>Storage:</strong> Data is encrypted and only stored as long as necessary for the project life-cycle.</li>
-                <li><strong>Rights:</strong> You may request data deletion or correction at any time.</li>
-            </ul>
-        </section>
-
-        <section class="card">
-            <h2>0.3 Intellectual Property</h2>
-            <p>Ownership is the core of our value exchange:</p>
-            <ul>
-                <li><strong>Site Content:</strong> All code, logos, and copy on this site are owned by Beben Design.</li>
-                <li><strong>Client Work:</strong> Full IP rights transfer to the client only after final <span class="highlight">USD</span> payment is confirmed.</li>
-                <li><strong>Portfolio:</strong> We reserve the right to display project case studies unless a specific NDA is signed.</li>
-            </ul>
-        </section>
-
-        <section class="card card-full">
-            <h2>0.4 Disclaimer</h2>
-            <p>While we strive for 100% uptime and technical precision, we do not guarantee that the website will be uninterrupted or error-free. External links are provided for convenience; we hold no responsibility for third-party content. Design outcomes are collaborative and depend on client implementation and technical constraints.</p>
-        </section>
-
-        <footer class="card-full">
-            <div class="contact-info">
-                <p>BEBEN DESIGN STUDIO</p>
-                <p>REF: [AVAILABLE UPON REQUEST]</p>
-                <p>LOCATION: NAIROBI, KENYA / GLOBAL</p>
-                <p>EMAIL: hello.beben.design@gmail.com</p>
-            </div>
-            <a href="mailto:hello.beben.design@gmail.com" class="btn-contact">INITIATE INQUIRY</a>
-        </footer>
+<!-- NAVBAR -->
+<nav>
+    <a href="/" class="logo" aria-label="Beben Design - home">
+        <svg class="logo__mark" viewBox="0 0 768 255" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M637.641 117.198L555.832 117.198V63.9144C555.832 61.7615 554.086 60.0162 551.933 60.0162C549.781 60.0162 548.035 61.7615 548.035 63.9144V117.198H520.446V0.000212398L561.832 0.000212398L603.684 72.487C604.761 74.3512 607.144 74.9895 609.008 73.9132C610.873 72.8367 611.511 70.4533 610.435 68.5888L570.836 0.000212398L637.641 0.000212398V117.198Z" fill="#FFC710"/><path d="M767.754 254.489H685.944V201.206C685.944 199.053 684.199 197.308 682.046 197.308C679.893 197.308 678.148 199.053 678.148 201.206V254.489H650.559V137.292H691.944L733.797 209.779C734.873 211.643 737.257 212.281 739.121 211.205C740.986 210.128 741.624 207.745 740.547 205.881L700.948 137.292H767.754V254.489Z" fill="#FFC710"/><path fill-rule="evenodd" clip-rule="evenodd" d="M106.005 14.6494L106.005 117.197L0 117.197L0 0L92.7541 0L106.005 14.6494ZM36.3094 78.5656C34.1564 78.5656 32.4111 80.3129 32.4111 82.4658C32.4117 84.6183 34.1568 86.3621 36.3094 86.3621L69.6956 86.3621C71.8485 86.3621 73.5938 84.6168 73.5938 82.4639C73.5933 80.3114 71.8482 78.5656 69.6956 78.5656L36.3094 78.5656ZM36.3094 30.8333C34.1564 30.8333 32.4111 32.5786 32.4111 34.7316C32.4111 36.8845 34.1564 38.6298 36.3094 38.6298L69.6956 38.6298C71.8485 38.6298 73.5938 36.8845 73.5938 34.7316C73.5938 32.5786 71.8485 30.8333 69.6956 30.8333L36.3094 30.8333Z" fill="#FFC710"/><path fill-rule="evenodd" clip-rule="evenodd" d="M366.228 14.6495V117.198L260.223 117.198V0.000106199L352.977 0.000106199L366.228 14.6495ZM296.532 78.5657C294.379 78.5657 292.634 80.313 292.634 82.4659C292.635 84.6184 294.38 86.3622 296.532 86.3622L329.919 86.3622C332.072 86.3622 333.817 84.6169 333.817 82.464C333.816 80.3115 332.071 78.5657 329.919 78.5657L296.532 78.5657ZM296.532 30.8334C294.379 30.8334 292.634 32.5787 292.634 34.7317C292.634 36.8846 294.379 38.6299 296.532 38.6299H329.919C332.072 38.6299 333.817 36.8846 333.817 34.7317C333.817 32.5787 332.072 30.8334 329.919 30.8334L296.532 30.8334Z" fill="#FFC710"/><path d="M236.117 73.4432L217.934 41.95C216.855 40.0804 214.464 39.4398 212.594 40.5193C210.725 41.5988 210.084 43.9896 211.163 45.8592L236.117 89.0793L172.607 89.0824C170.448 89.0824 168.698 90.8325 168.698 92.9914C168.698 95.1502 170.448 96.9006 172.607 96.9006L236.117 96.9006V117.196L130.112 117.196L130.112 0.000106199L236.117 0.000106199V73.4432Z" fill="#FFC710"/><path d="M496.34 73.4451L478.157 41.9519C477.078 40.0822 474.687 39.4415 472.817 40.521C470.948 41.6004 470.307 43.9912 471.387 45.8609L496.34 89.081L432.83 89.0841C430.671 89.0841 428.921 90.8343 428.921 92.9933C428.921 95.1522 430.671 96.9025 432.83 96.9025L496.34 96.9025V117.198L390.335 117.198V0.00201779L496.34 0.00201779V73.4451Z" fill="#FFC710"/><path d="M236.119 210.741L217.936 179.248C216.857 177.378 214.466 176.737 212.597 177.817C210.727 178.896 210.086 181.287 211.166 183.157L236.119 226.377L172.609 226.38C170.451 226.38 168.701 228.13 168.701 230.289C168.701 232.448 170.451 234.198 172.609 234.198H236.119V254.493H130.114V137.298H236.119V210.741Z" fill="#FFC710"/><path fill-rule="evenodd" clip-rule="evenodd" d="M106.007 151.943L106.007 254.491L0.00229732 254.491L0.00229732 137.294L92.7563 137.294L106.007 151.943ZM36.0552 175.3C33.9283 175.3 32.204 177.024 32.204 179.151L32.204 212.634C32.204 214.761 33.9283 216.486 36.0552 216.486C38.1823 216.486 39.9068 214.761 39.9068 212.634L39.9068 179.151C39.9068 177.024 38.1823 175.3 36.0552 175.3Z" fill="#FFC710"/><path d="M366.231 192.243L329.434 173.024C327.536 172.033 325.194 172.768 324.203 174.666C323.212 176.564 323.946 178.906 325.844 179.897L366.231 200.99V254.489L260.225 254.489V234.156L288.297 234.156C290.438 234.156 292.174 232.42 292.174 230.279C292.174 228.138 290.438 226.402 288.297 226.402L260.225 226.402L260.225 137.294L366.231 137.294L366.231 192.243Z" fill="#FFC710"/><path d="M496.342 254.489L390.337 254.489L390.337 163.095L496.342 163.095L496.342 254.489Z" fill="#FFC710"/><path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/><path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
+        </svg>
+    </a>
+    <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+            <span class="theme-toggle__label">LIGHT</span>
+            <span class="theme-toggle__dial">
+                <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <line x1="12" y1="2" x2="12" y2="4.3"></line><line x1="12" y1="19.7" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="4.3" y2="12"></line><line x1="19.7" y1="12" x2="22" y2="12"></line>
+                    <line x1="4.93" y1="4.93" x2="6.55" y2="6.55"></line><line x1="17.45" y1="17.45" x2="19.07" y2="19.07"></line>
+                    <line x1="4.93" y1="19.07" x2="6.55" y2="17.45"></line><line x1="17.45" y1="6.55" x2="19.07" y2="4.93"></line>
+                </svg>
+                <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+                </svg>
+            </span>
+        </button>
+        <ul class="menu desktop-only">
+            <li><a href="../services/">SERVICES</a></li>
+            <li><a href="../tools/">TOOLS</a></li>
+            <li><a href="../shop/">SHOP</a></li>
+            <li><a href="../work/">WORK</a></li>
+            <li><a href="../contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span><span></span><span></span>
+        </button>
     </div>
+</nav>
+
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="../services/">Services</a></li>
+        <li><a href="../tools/">Tools</a></li>
+        <li><a href="../shop/">Shop</a></li>
+        <li><a href="../work/">Work</a></li>
+        <li><a href="../contact/">Contact</a></li>
+    </ul>
 </div>
 
+<!-- MAIN -->
+<main id="main-content">
+
+    <!-- Hero -->
+    <section class="legal-hero">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Legal</span>
+            <h1 data-reveal style="--i:1">Terms of <em class="highlight-box">Service</em></h1>
+            <p data-reveal style="--i:2">The legal framework governing your use of beben.design and all services provided by Beben Design. Governed by the laws of the Republic of Kenya.</p>
+            <p class="legal-meta" data-reveal style="--i:3">Version 2026.01 &middot; Effective 1 January 2026 &middot; Last updated 26 June 2026</p>
+        </div>
+    </section>
+
+    <!-- 1. Terms of Use -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">01</span>
+                <h2 data-reveal style="--i:1">Terms of use</h2>
+                <p data-reveal style="--i:2">By accessing or using beben.design, you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use this website or engage our services. These terms constitute a legally binding agreement between you and Beben Design.</p>
+
+                <h3 data-reveal style="--i:3">Eligibility</h3>
+                <p data-reveal style="--i:3">You must be at least 18 years of age or the age of legal majority in your jurisdiction to enter into a contract with Beben Design. By engaging our services, you represent that you have the legal capacity and authority to bind yourself or the entity you represent to these terms.</p>
+
+                <h3 data-reveal style="--i:3">Acceptable use</h3>
+                <p data-reveal style="--i:3">You agree not to use this website to engage in any activity that is unlawful under Kenyan law, including but not limited to activities prohibited under the <span class="legal-ref">Computer Misuse and Cybercrimes Act, 2018</span>. This includes unauthorised access to systems, distribution of malicious software, interference with the website's operation, or any form of cyber-harassment.</p>
+
+                <h3 data-reveal style="--i:3">Modification of terms</h3>
+                <p data-reveal style="--i:3">Beben Design reserves the right to update these terms at any time. Material changes will be indicated by updating the version number and effective date at the top of this page. Continued use of the website or services after changes are posted constitutes acceptance of the revised terms.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Governing Law & Jurisdiction -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">02</span>
+                <h2 data-reveal style="--i:1">Governing law &amp; jurisdiction</h2>
+                <p data-reveal style="--i:2">These terms are governed by and construed in accordance with the laws of the Republic of Kenya. Any disputes arising from or relating to these terms, the use of this website, or services provided by Beben Design shall be subject to the exclusive jurisdiction of the courts of Kenya, seated in Nairobi.</p>
+
+                <h3 data-reveal style="--i:3">Applicable legislation</h3>
+                <ul data-reveal style="--i:3">
+                    <li><strong>Law of Contract Act, Cap 23</strong> &mdash; governs the formation, interpretation, and enforcement of all service agreements between Beben Design and its clients.</li>
+                    <li><strong>Data Protection Act, 2019</strong> &mdash; governs the collection, processing, storage, and transfer of personal data. Beben Design is registered as a data controller with the Office of the Data Protection Commissioner (ODPC).</li>
+                    <li><strong>Computer Misuse and Cybercrimes Act, 2018</strong> &mdash; governs unauthorised access, data interference, and cybercrimes. Applies to all interactions with this website and digital deliverables.</li>
+                    <li><strong>Consumer Protection Act, 2012</strong> &mdash; protects the rights of consumers engaging Beben Design's services, including rights to fair and honest dealing, disclosure, and product safety.</li>
+                    <li><strong>Copyright Act, Cap 130</strong> &mdash; governs intellectual property rights over original works created by Beben Design, including designs, code, and written content.</li>
+                    <li><strong>Kenya Information and Communications Act (KICA)</strong> &mdash; governs electronic transactions, digital communications, and the use of information and communications technology in commerce.</li>
+                </ul>
+
+                <h3 data-reveal style="--i:4">Dispute resolution</h3>
+                <p data-reveal style="--i:4">Before initiating formal legal proceedings, both parties agree to attempt to resolve disputes through good-faith negotiation. If negotiation fails within thirty (30) days, either party may refer the dispute to mediation under the Nairobi Centre for International Arbitration (NCIA) rules. If mediation does not resolve the dispute within sixty (60) days, either party may pursue remedies in the Kenyan courts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Service Agreements -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">03</span>
+                <h2 data-reveal style="--i:1">Service agreements</h2>
+                <p data-reveal style="--i:2">All design and development services are governed by individual service agreements issued on a per-project basis. These terms apply in addition to any project-specific agreement. In the event of a conflict, the project-specific agreement prevails.</p>
+
+                <h3 data-reveal style="--i:3">Quotation &amp; pricing</h3>
+                <p data-reveal style="--i:3">All prices are quoted in United States Dollars (USD) unless otherwise stated. Quotations are valid for fourteen (14) days from the date of issue. Pricing is fixed at the time of agreement; no additional charges will be incurred without written client approval. In accordance with the <span class="legal-ref">Consumer Protection Act, 2012</span>, all pricing is transparent, itemised, and free of hidden fees.</p>
+
+                <h3 data-reveal style="--i:3">Payment terms</h3>
+                <p data-reveal style="--i:3">A deposit of fifty percent (50%) of the total project fee is required before work begins. The remaining balance is due upon project completion and final deliverable handoff. Late payments exceeding fourteen (14) days will incur interest at the rate prescribed under the <span class="legal-ref">Law of Contract Act, Cap 23</span>. Beben Design reserves the right to suspend work on any project with an outstanding balance.</p>
+
+                <h3 data-reveal style="--i:3">Scope changes</h3>
+                <p data-reveal style="--i:3">Changes to the agreed scope of work require written approval from both parties. Additional scope will be quoted separately and invoiced as an amendment to the original agreement. Verbal agreements on scope changes are not binding.</p>
+
+                <h3 data-reveal style="--i:3">Cancellation &amp; refunds</h3>
+                <p data-reveal style="--i:3">Either party may terminate a service agreement with fourteen (14) days' written notice. If the client terminates, payment is due for all work completed to date plus any non-recoverable costs incurred. The initial deposit is non-refundable once work has commenced. If Beben Design terminates, all completed deliverables to date will be transferred to the client.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Intellectual Property -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">04</span>
+                <h2 data-reveal style="--i:1">Intellectual property</h2>
+                <p data-reveal style="--i:2">Intellectual property rights are governed by the <span class="legal-ref">Copyright Act, Cap 130</span> of the Laws of Kenya and applicable international treaties to which Kenya is a signatory, including the Berne Convention for the Protection of Literary and Artistic Works.</p>
+
+                <h3 data-reveal style="--i:3">Website content</h3>
+                <p data-reveal style="--i:3">All content on beben.design &mdash; including but not limited to source code, visual designs, logos, written copy, images, and animations &mdash; is the exclusive intellectual property of Beben Design and is protected under the Copyright Act. Unauthorised reproduction, distribution, or modification of this content is prohibited.</p>
+
+                <h3 data-reveal style="--i:3">Client deliverables</h3>
+                <p data-reveal style="--i:3">Full intellectual property rights over project deliverables transfer to the client only upon receipt and clearance of final payment in full. Until final payment is received, all deliverables remain the property of Beben Design. This transfer is exclusive &mdash; Beben Design retains no usage rights over client-specific work after transfer, except as outlined below.</p>
+
+                <h3 data-reveal style="--i:3">Portfolio rights</h3>
+                <p data-reveal style="--i:3">Beben Design reserves the right to display completed project work in its portfolio, case studies, and promotional materials for the purpose of demonstrating capability. This right is non-exclusive and does not constitute a claim of ownership over the client's intellectual property. Clients may opt out of portfolio display by executing a non-disclosure agreement (NDA) prior to the commencement of work.</p>
+
+                <h3 data-reveal style="--i:3">Third-party assets</h3>
+                <p data-reveal style="--i:3">Where third-party assets (fonts, stock photography, open-source software) are incorporated into deliverables, they are subject to their respective licence terms. Beben Design will disclose all third-party dependencies and their licence obligations in the project handoff documentation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Data Protection -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">05</span>
+                <h2 data-reveal style="--i:1">Data protection &amp; privacy</h2>
+                <p data-reveal style="--i:2">Beben Design processes personal data in compliance with the <span class="legal-ref">Data Protection Act, 2019</span> of Kenya, administered by the Office of the Data Protection Commissioner (ODPC). For detailed information on data handling practices, refer to our <a href="../privacy/" style="color:var(--highlight)">Privacy Policy</a>.</p>
+
+                <h3 data-reveal style="--i:3">Data we collect</h3>
+                <ul data-reveal style="--i:3">
+                    <li><strong>Contact information</strong> &mdash; name, email address, phone number, and company name provided through contact forms or direct communication.</li>
+                    <li><strong>Project data</strong> &mdash; briefs, requirements, assets, and feedback exchanged during the course of a project.</li>
+                    <li><strong>Analytics data</strong> &mdash; anonymised usage data collected through cookies and analytics tools to understand website performance and user behaviour.</li>
+                </ul>
+
+                <h3 data-reveal style="--i:3">Lawful basis for processing</h3>
+                <p data-reveal style="--i:3">Personal data is processed on the following lawful bases as defined in Section 30 of the Data Protection Act: consent (for marketing communications), contractual necessity (for service delivery), and legitimate interest (for website analytics and security).</p>
+
+                <h3 data-reveal style="--i:3">Data subject rights</h3>
+                <p data-reveal style="--i:3">Under the Data Protection Act, you have the right to:</p>
+                <ul data-reveal style="--i:3">
+                    <li><strong>Access</strong> &mdash; request a copy of the personal data we hold about you.</li>
+                    <li><strong>Rectification</strong> &mdash; request correction of inaccurate or incomplete personal data.</li>
+                    <li><strong>Erasure</strong> &mdash; request deletion of your personal data where there is no compelling reason for its continued processing.</li>
+                    <li><strong>Objection</strong> &mdash; object to the processing of your personal data for direct marketing purposes.</li>
+                    <li><strong>Portability</strong> &mdash; request transfer of your personal data in a structured, commonly used, machine-readable format.</li>
+                    <li><strong>Complaint</strong> &mdash; lodge a complaint with the Office of the Data Protection Commissioner if you believe your data rights have been violated.</li>
+                </ul>
+
+                <h3 data-reveal style="--i:4">Data retention</h3>
+                <p data-reveal style="--i:4">Personal data is retained only for as long as necessary to fulfil the purpose for which it was collected. Contact information is retained for the duration of the client relationship plus twenty-four (24) months. Project data is retained for thirty-six (36) months after project completion. Analytics data is anonymised and retained indefinitely.</p>
+
+                <h3 data-reveal style="--i:4">Cross-border transfers</h3>
+                <p data-reveal style="--i:4">Where personal data is transferred outside Kenya, Beben Design ensures adequate safeguards are in place as required by Section 48 of the Data Protection Act. This includes ensuring the recipient country provides adequate data protection or implementing appropriate contractual safeguards.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Limitation of Liability -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">06</span>
+                <h2 data-reveal style="--i:1">Limitation of liability</h2>
+                <p data-reveal style="--i:2">All services are provided on an "as-is" basis. To the maximum extent permitted by the laws of Kenya, Beben Design shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from the use of this website or the services provided, including but not limited to loss of profits, data, or business opportunity.</p>
+
+                <h3 data-reveal style="--i:3">Scope of liability</h3>
+                <p data-reveal style="--i:3">Beben Design's total aggregate liability for any claim arising from or relating to these terms or the services provided shall not exceed the total fees paid by the client for the specific project giving rise to the claim. This limitation applies regardless of the legal theory under which the claim is brought.</p>
+
+                <h3 data-reveal style="--i:3">Force majeure</h3>
+                <p data-reveal style="--i:3">Neither party shall be liable for delays or failures in performance resulting from events beyond reasonable control, including but not limited to natural disasters, pandemics, government actions, civil unrest, internet outages, or infrastructure failures. The affected party shall notify the other party promptly and take reasonable steps to mitigate the impact.</p>
+
+                <h3 data-reveal style="--i:3">Third-party content</h3>
+                <p data-reveal style="--i:3">This website may contain links to third-party websites for convenience. Beben Design does not endorse, verify, or assume responsibility for the content, privacy policies, or practices of any third-party website. Access to third-party sites is at your own risk.</p>
+
+                <h3 data-reveal style="--i:3">Website availability</h3>
+                <p data-reveal style="--i:3">While Beben Design endeavours to maintain continuous availability of this website, we do not guarantee that the website will be uninterrupted, error-free, or free from viruses or other harmful components. We reserve the right to suspend access for maintenance, updates, or security reasons without prior notice.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Confidentiality -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">07</span>
+                <h2 data-reveal style="--i:1">Confidentiality</h2>
+                <p data-reveal style="--i:2">Both Beben Design and the client agree to keep confidential any proprietary, technical, or business information disclosed during the course of a project. Confidential information shall not be disclosed to third parties without the prior written consent of the disclosing party.</p>
+                <p data-reveal style="--i:3">This obligation of confidentiality survives the termination of any service agreement for a period of twenty-four (24) months. It does not apply to information that is publicly available, independently developed, or lawfully obtained from a third party without restriction.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Contact -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">08</span>
+                <h2 data-reveal style="--i:1">Contact</h2>
+                <p data-reveal style="--i:2">For questions about these terms, data protection requests, or legal inquiries:</p>
+                <ul data-reveal style="--i:3">
+                    <li><strong>Entity</strong> &mdash; Beben Design</li>
+                    <li><strong>Email</strong> &mdash; hello.beben.design@gmail.com</li>
+                    <li><strong>Phone</strong> &mdash; +254 114 728 233</li>
+                    <li><strong>Address</strong> &mdash; Westlands, Nairobi, Kenya</li>
+                    <li><strong>Data Protection</strong> &mdash; Office of the Data Protection Commissioner (ODPC), Nairobi, Kenya</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">&copy; Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="../contact/">CONTACT</a></li>
+                <li><a href="../legal/">LEGAL</a></li>
+                <li><a href="../privacy/">PRIVACY POLICY</a></li>
+                <li><a href="../credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
+        </div>
+    </div>
+    <div class="footer-meta">
+        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>&copy; 2026 Beben Design. All rights reserved.</span>
+    </div>
+</footer>
+
+<script src="../assets/JS/index.js"></script>
 </body>
 </html>
