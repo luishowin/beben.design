@@ -568,6 +568,9 @@ const SpriteChat = (() => {
     // bare site paths the model may emit without markdown, e.g. /services/
     text = text.replace(/(^|\s)(\/(?:services|tools|shop|work|contact|sprite|kilimo-pal|trek-watch|rev-log|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
       '$1<a class="nav-link-inline" href="$2">$2</a>');
+    // bare WhatsApp URLs become tappable too
+    text = text.replace(/(^|\s)(https:\/\/wa\.me\/\d+)(?=[\s.,!?)]|$)/g,
+      '$1<a class="nav-link-inline" href="$2" target="_blank" rel="noopener">WhatsApp</a>');
     return text.replace(/\n/g, '<br>');
   }
 
