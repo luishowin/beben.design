@@ -6,15 +6,14 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Rev Log - Case Study Coming Soon | Beben Design</title>
-    <meta name="description" content="Rev Log is a hackable data-gathering harness for motorcycle hobbyists and grassroots athletes. Full case study coming soon.">
-    <meta name="robots" content="noindex">
+    <title>Rev Log - Open Motorcycle Telemetry | Beben Design</title>
+    <meta name="description" content="Rev Log is an open source motorcycle telemetry project: open hardware, open firmware, and an open ride-data format, built in public. Progression telemetry for riders getting better, not just going faster.">
     <link rel="canonical" href="https://beben.design/rev-log/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/rev-log/">
-    <meta property="og:title" content="Rev Log - Case Study Coming Soon | Beben Design">
-    <meta property="og:description" content="Rev Log is a hackable data-gathering harness for motorcycle hobbyists and grassroots athletes. Full case study coming soon.">
+    <meta property="og:title" content="Rev Log - Open Motorcycle Telemetry | Beben Design">
+    <meta property="og:description" content="Open hardware, open firmware, and an open ride-data format for motorcycles, built in public. Progression telemetry for riders getting better, not just going faster.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +28,7 @@
 
     <style>
         /* ─────────────────────────────────────────────────────────
-           PROJECT PLACEHOLDER PAGE — scoped additions only.
+           REV LOG PROJECT PAGE — scoped additions only.
            Tokens, nav, footer, page-hero, reveal from index.css.
         ───────────────────────────────────────────────────────── */
 
@@ -65,34 +64,21 @@
             .status-badge .dot { animation: none; }
         }
 
-        .brief-body p {
-            font-size: 0.95rem;
+        .content-block {
+            max-width: 640px;
+        }
+        .content-block h2 {
+            margin-bottom: 1rem;
+        }
+        .content-block p {
+            font-size: clamp(0.95rem, 1.3vw, 1.05rem);
             line-height: 1.75;
             color: var(--text-muted);
-            max-width: 60ch;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1.4rem;
         }
+        .content-block p:last-child { margin-bottom: 0; }
 
-        .project-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 1.4rem;
-        }
-
-        .project-tag {
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--text-muted);
-        }
-
-        .brief-note {
+        .logbook-note {
             font-family: var(--font-mono);
             font-size: 0.78rem;
             line-height: 1.75;
@@ -101,6 +87,112 @@
             padding-left: 1rem;
             margin-top: 2rem;
             max-width: 60ch;
+        }
+
+        /* Bearings: open rows, top-border separators */
+        .bearings {
+            margin-top: 2rem;
+            max-width: 760px;
+        }
+        .bearing {
+            display: grid;
+            grid-template-columns: 64px 1fr;
+            gap: 1.2rem;
+            padding: 1.4rem 0;
+            border-top: 1px solid var(--border);
+        }
+        .bearing-num {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding-top: 0.25rem;
+        }
+        .bearing h3 {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+        .bearing p {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 58ch;
+        }
+        @media (max-width: 560px) {
+            .bearing { grid-template-columns: 1fr; gap: 0.4rem; }
+        }
+
+        .tech-list {
+            list-style: none;
+            margin-top: 1.2rem;
+        }
+        .tech-list li {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            color: var(--text);
+            letter-spacing: 0.02em;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .tech-list li:last-child { border-bottom: none; }
+        .tech-list .tech-desc { color: var(--text-muted); text-align: right; }
+
+        .roadmap {
+            margin-top: 1.5rem;
+        }
+        .roadmap-item {
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .roadmap-item:last-child { border-bottom: none; }
+        .roadmap-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 0.6rem;
+        }
+        .roadmap-label--now {
+            background: rgba(255, 199, 16, 0.15);
+            color: var(--yellow);
+        }
+        [data-theme="light"] .roadmap-label--now {
+            color: #8A6A00;
+        }
+        .roadmap-label--next {
+            background: rgba(247, 244, 243, 0.08);
+            color: var(--text);
+        }
+        [data-theme="light"] .roadmap-label--next {
+            background: rgba(20, 20, 20, 0.06);
+        }
+        .roadmap-label--planned {
+            background: rgba(247, 244, 243, 0.08);
+            color: var(--text-muted);
+        }
+        [data-theme="light"] .roadmap-label--planned {
+            background: rgba(20, 20, 20, 0.06);
+        }
+        .roadmap-item h3 {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .roadmap-item p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-muted);
         }
 
         .cta-row {
@@ -180,45 +272,160 @@
     <!-- Hero - plain -->
     <section class="page-hero">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">IoT &amp; AI · Platform · Case study</span>
+            <span class="eyebrow" data-reveal style="--i:0">Open Hardware &middot; Telemetry &middot; Building in Public</span>
             <h1 data-reveal style="--i:1">Rev <em class="highlight-box">Log</em></h1>
-            <p data-reveal style="--i:2">A hackable data-gathering harness for motorcycle hobbyists and grassroots athletes. Lean angle, throttle position, GPS, RPM: captured, visualised, and made meaningful through AI.</p>
+            <p data-reveal style="--i:2">An open source telemetry system for motorcycles. A camera records the ride and a GPS records the route. Rev Log records the machine itself: throttle, brakes, revs, lean, and how they change as a rider improves.</p>
             <div class="status-badge" data-reveal style="--i:3">
                 <span class="dot" aria-hidden="true"></span>
-                In progress · case study coming soon
+                Phase 0 &middot; groundwork
             </div>
         </div>
     </section>
 
-    <!-- Brief - soft -->
+    <!-- The idea - soft -->
     <section class="section--soft">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Project brief</span>
-            <h2 data-reveal style="padding-bottom: 1.5rem; --i:1;">What we're building</h2>
-            <div class="brief-body" data-reveal style="--i:2">
-                <p>Think Strava for motorbikes, but with a hardware layer you can bolt onto any bike. Open data format, community-driven insights, and AI coaching for lap improvement.</p>
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">The idea</span>
+                <h2 data-reveal style="--i:1">The motorcycle's flight recorder</h2>
+                <p data-reveal style="--i:2">Almost every data product in motorcycling is built for riders who are already fast. Lap timers assume you know what a good lap feels like. Dash loggers assume you can read one. Rev Log starts at the other end of the grid: a rider learning the craft, who wants proof they are getting better.</p>
+                <p data-reveal style="--i:3">That changes what gets measured. A lap time tells you how fast you went once. Progression telemetry tracks smoother throttle, more confident braking, and more consistent lines, month over month. It is Strava logic applied to skill instead of speed.</p>
+                <p data-reveal style="--i:4">And it ships open source first. The reference hardware, the firmware, and the ride-data format all go public before any product does. The format is designed to outlive the hardware, and the community around it is the point, not an audience for it.</p>
+                <p class="logbook-note" data-reveal style="--i:5">
+                    This page is the project's public logbook, written before the first
+                    prototype on purpose. It gets updated as decisions are made, hardware
+                    gets built, and rides get logged. Last updated: July 2026.
+                </p>
             </div>
-            <div class="project-tags" data-reveal style="--i:3">
-                <span class="project-tag">Hardware Harness</span>
-                <span class="project-tag">Data Viz</span>
-                <span class="project-tag">AI Analytics</span>
-                <span class="project-tag">Mobile App</span>
-            </div>
-            <p class="brief-note" data-reveal style="--i:4">
-                The full case study (research, decisions, iterations, and results) will be published here
-                as the project matures. No polished-render-only reveals; we document the thinking.
-            </p>
         </div>
     </section>
 
-    <!-- CTA - plain -->
+    <!-- Bearings - plain -->
     <section>
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Meanwhile</span>
-            <h2 data-reveal style="--i:1">See what else we're making</h2>
-            <div class="cta-row" data-reveal style="--i:2">
-                <a href="../work/" class="cta-link">← Back to work</a>
-                <a href="mailto:hello.beben.design@gmail.com" class="cta-link">Start a conversation ↗</a>
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">Bearings</span>
+                <h2 data-reveal style="--i:1">Six decisions, written down</h2>
+                <p data-reveal style="--i:2">The reference points this project navigates by. If a feature or a shortcut fights one of these, the feature loses.</p>
+            </div>
+            <div class="bearings" data-reveal style="--i:3">
+                <div class="bearing">
+                    <span class="bearing-num">01</span>
+                    <div>
+                        <h3>Open source before market</h3>
+                        <p>Success at this stage is measured in strangers: ten people who build one, the first pull request from someone we have never met, another tool that reads the format. Revenue questions wait their turn.</p>
+                    </div>
+                </div>
+                <div class="bearing">
+                    <span class="bearing-num">02</span>
+                    <div>
+                        <h3>The data format is the crown jewel</h3>
+                        <p>A versioned, openly licensed spec for how a motorcycle is being ridden. Hardware revisions come and go; a good format outlives them all. The harness is the reference implementation, not the product.</p>
+                    </div>
+                </div>
+                <div class="bearing">
+                    <span class="bearing-num">03</span>
+                    <div>
+                        <h3>Vehicle inputs are the point</h3>
+                        <p>Phones already do GPS and lean angle well enough. The reason hardware exists is the bike's nervous system: revs, throttle, brakes, wheel speed. That layer is core, never optional.</p>
+                    </div>
+                </div>
+                <div class="bearing">
+                    <span class="bearing-num">04</span>
+                    <div>
+                        <h3>Analog first, CAN later</h3>
+                        <p>If it works on a carburetted 200cc single, it works on almost anything with a battery. RPM from the ignition coil, brake from the brake-light switch, speed from a hall sensor. CAN bus support is a future module, not a dependency.</p>
+                    </div>
+                </div>
+                <div class="bearing">
+                    <span class="bearing-num">05</span>
+                    <div>
+                        <h3>Progression over performance</h3>
+                        <p>Feedback a novice can act on safely: smoothness, consistency, confidence. No machine-generated "brake later" advice. The numbers celebrate improvement; they do not push risk.</p>
+                    </div>
+                </div>
+                <div class="bearing">
+                    <span class="bearing-num">06</span>
+                    <div>
+                        <h3>The rig never leads the riding</h3>
+                        <p>Training first, proper gear second, data third. The logger gets taped to a bike that is being ridden normally. If instrumenting the machine ever competes with learning to ride it, the data loses.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reference stack - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">Reference stack</span>
+                <h2 data-reveal style="--i:1">Boring parts, deliberate choices</h2>
+                <p data-reveal style="--i:2">Nothing exotic, on purpose. The bill of materials should be orderable by anyone, solderable on a kitchen table, and cheap enough to crash with.</p>
+                <ul class="tech-list" data-reveal style="--i:3">
+                    <li><span>ESP32</span><span class="tech-desc">Reference logger and firmware target</span></li>
+                    <li><span>9-axis IMU</span><span class="tech-desc">Lean, acceleration, braking forces</span></li>
+                    <li><span>GNSS receiver</span><span class="tech-desc">Position, speed, heading</span></li>
+                    <li><span>Analog inputs</span><span class="tech-desc">RPM, throttle, brake, wheel speed</span></li>
+                    <li><span>microSD</span><span class="tech-desc">Rides logged on-device, owned by the rider</span></li>
+                    <li><span>BLE &middot; Wi-Fi &middot; USB-C</span><span class="tech-desc">Sync, configuration, flashing</span></li>
+                    <li><span>Ride format v0.1</span><span class="tech-desc">Versioned open spec, plain-text friendly</span></li>
+                    <li><span>Web visualiser</span><span class="tech-desc">Ride playback and graphs in the browser</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap - plain -->
+    <section>
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">Roadmap</span>
+                <h2 data-reveal style="--i:1">From bench to paddock</h2>
+                <p data-reveal style="--i:2">Phase zero runs on a four-month horizon. Everything after moves at the speed of evenings and weekends.</p>
+
+                <div class="roadmap" data-reveal style="--i:3">
+                    <div class="roadmap-item">
+                        <span class="roadmap-label roadmap-label--now">Now</span>
+                        <h3>Groundwork</h3>
+                        <p>Rider training, first gear, and a project bike: a small single-cylinder machine that doubles as the development mule. On the bench, a first logger from off-the-shelf dev boards: ESP32, IMU, GPS, SD card.</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <span class="roadmap-label roadmap-label--next">Next</span>
+                        <h3>Format v0.1 and a public repo</h3>
+                        <p>Freeze the first version of the ride-data format and publish everything: schema, firmware, build notes, and a web visualiser that turns a memory card full of numbers into a ride you can see.</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <span class="roadmap-label roadmap-label--planned">Planned</span>
+                        <h3>Rides, documented in public</h3>
+                        <p>Real data logged from day one of the riding journey, published alongside the story. A telemetry project run by a beginner is the honest test of whether the output means anything.</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <span class="roadmap-label roadmap-label--planned">Planned</span>
+                        <h3>Reference hardware</h3>
+                        <p>A custom PCB, the analog vehicle-input harness, and a vibration-tolerant, weather-sealed enclosure. Designed for hand assembly first, small batches second.</p>
+                    </div>
+                    <div class="roadmap-item">
+                        <span class="roadmap-label roadmap-label--planned">Later</span>
+                        <h3>The ecosystem</h3>
+                        <p>Community builds, a CAN module for modern bikes, and analytics on top of the open format. Down the road, a motorcycle business in its own right: software, niche accessories, distribution, and one day a garage.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get involved - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">Get involved</span>
+                <h2 data-reveal style="--i:1">Riders, builders, and backers</h2>
+                <p data-reveal style="--i:2">Rev Log is not looking for customers yet; it is looking for people. Riders who want to own their data. Firmware and hardware folks who want a project worth soldering. Anyone who believes grassroots motorsport deserves open tools. If that is you, say hello.</p>
+                <div class="cta-row" data-reveal style="--i:3">
+                    <a href="mailto:hello.beben.design@gmail.com" class="cta-link">Start a conversation ↗</a>
+                    <a href="../work/" class="cta-link">← Back to work</a>
+                </div>
             </div>
         </div>
     </section>

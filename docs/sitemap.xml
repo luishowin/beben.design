@@ -40,6 +40,13 @@
   </url>
 
   <url>
+    <loc>https://beben.design/rev-log/</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
     <loc>https://beben.design/privacy/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

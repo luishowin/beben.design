@@ -52,8 +52,9 @@ Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
   with plain HTML, CSS, and JS, no frameworks. Its case study is at /sprite/.
 - Trek Watch: a rugged adventure watch that sits between the Casio F-91W
   and the Apple Watch Ultra. Industrial design through to the watch OS.
-- Rev Log: a hackable data-gathering harness for motorcycle hobbyists.
-  Think Strava for motorbikes with a bolt-on hardware layer.
+- Rev Log: an open source motorcycle telemetry project. Open hardware,
+  open firmware, and an open ride-data format, built in public. It measures
+  progression, not just speed. Its project page is at /rev-log/.
 - Kilimo Pal: an AI-powered agriculture platform that meets farmers where
   they are, from explaining the basics to managing sensor-driven farms.
 - Neopolaris: a full website design and build for a Nairobi startup, live
