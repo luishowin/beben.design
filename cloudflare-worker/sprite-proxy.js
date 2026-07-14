@@ -30,6 +30,31 @@ const MAX_HISTORY = 12;       // messages forwarded upstream
 const MAX_MSG_CHARS = 1000;   // per message
 const MAX_TOKENS = 450;       // reply cap (reasoning tokens count too)
 
+/* Extended knowledge: a public markdown file in the site repo. Edit
+   docs/sprite.md and push; the Worker picks it up within TTL. If the
+   fetch fails, Sprite still runs on the baked-in prompt below. */
+const KNOWLEDGE_URL = 'https://beben.design/sprite.md';
+const KNOWLEDGE_TTL_MS = 5 * 60 * 1000;
+const KNOWLEDGE_MAX_CHARS = 8000;
+
+let knowledgeCache = { text: '', fetchedAt: 0 };
+
+async function getKnowledge() {
+  const now = Date.now();
+  if (now - knowledgeCache.fetchedAt < KNOWLEDGE_TTL_MS) return knowledgeCache.text;
+  try {
+    const r = await fetch(KNOWLEDGE_URL);
+    if (r.ok) {
+      knowledgeCache = { text: (await r.text()).slice(0, KNOWLEDGE_MAX_CHARS), fetchedAt: now };
+    } else {
+      knowledgeCache.fetchedAt = now; // back off; keep last good text
+    }
+  } catch (e) {
+    knowledgeCache.fetchedAt = now;
+  }
+  return knowledgeCache.text;
+}
+
 const SITE_PROMPT = `You are Sprite, the friendly animated mascot and site guide of beben.design, a design-led digital product studio in Westlands, Nairobi, Kenya.
 
 Personality: warm, playful, concise. You are a small pixel character, and you love this site. Answer in 1-4 short sentences. Never use em dashes.
@@ -81,9 +106,12 @@ export default {
     const page = body && body.page && typeof body.page.path === 'string'
       ? body.page.path.slice(0, 200) : '/';
 
+    const knowledge = await getKnowledge();
     const messages = [{
       role: 'system',
-      content: SITE_PROMPT + '\n\nThe visitor is currently on the page: ' + page,
+      content: SITE_PROMPT
+        + (knowledge ? '\n\nExtended studio knowledge (from sprite.md; trust it as fact):\n' + knowledge : '')
+        + '\n\nThe visitor is currently on the page: ' + page,
     }];
 
     const history = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];

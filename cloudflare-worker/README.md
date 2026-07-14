@@ -63,6 +63,14 @@ curl -s -X POST https://sprite-proxy.YOURNAME.workers.dev \
 
 You should get `{"reply":"..."}` mentioning the services with a link.
 
+## Teaching Sprite new things
+
+The Worker fetches https://beben.design/sprite.md (the repo file
+`docs/sprite.md`) and appends it to the system prompt, cached for 5 minutes.
+To teach Sprite anything not on the website, add a few factual lines to that
+file and push. No Worker redeploy needed. The file is public, so never put
+secrets or private information in it.
+
 ## Costs and protections
 
 - Small models on Fireworks run roughly $0.10-0.20 per million tokens.

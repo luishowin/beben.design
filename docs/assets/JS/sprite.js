@@ -220,6 +220,13 @@ const SpriteChat = (() => {
         { text: "Yo! What's good? Need help finding something?", emotion: "waving" },
       ]
     },
+    studio: {
+      patterns: [/\b(beben|this (site|studio|company|place)|the studio|what is this)\b/i],
+      responses: [
+        { text: "Beben Design is a design-led digital product studio in Westlands, Nairobi. Research first, pixels second: UX research, UI design, brand identity, and front-end builds. Get the full picture at <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span> or see the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('work')\">Work</span>.", emotion: "happy" },
+        { text: "You're at the home of Beben Design, a small studio that puts design logic before the first line of code. Websites, brands, UX research, product strategy. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">start a conversation</span>?", emotion: "happy" },
+      ]
+    },
     services: {
       patterns: [/\b(services?|what do you (do|offer)|capabilities|help with)\b/i],
       responses: [
