@@ -28,7 +28,7 @@
     --text-muted:    rgba(20, 20, 20, 0.62);
     --border:        rgba(20, 20, 20, 0.18);
     --border-strong: rgba(20, 20, 20, 0.34);
-    --grid-line:     rgba(20, 20, 20, 0.07);
+    --grid-line:     rgba(20, 20, 20, 0.04);
 
     --whatsapp:      #25D366;
     --nav-bg:        rgba(245, 245, 245, 0.86);
@@ -46,7 +46,7 @@
     --text-muted:    rgba(247, 244, 243, 0.62);
     --border:        rgba(247, 244, 243, 0.16);
     --border-strong: rgba(247, 244, 243, 0.32);
-    --grid-line:     rgba(247, 244, 243, 0.07);
+    --grid-line:     rgba(247, 244, 243, 0.04);
 
     --whatsapp:      #25D366;
     --nav-bg:        rgba(20, 20, 20, 0.86);
@@ -55,7 +55,6 @@
 
 :root {
     --font-title:  'Old Standard TT', Georgia, 'Times New Roman', serif;
-    --font-strong: 'League Gothic', 'Arial Narrow', sans-serif;
     --font-mono:   'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
     --font-body:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -391,6 +390,27 @@ h2 {
     margin-bottom: 2rem;
 }
 
+/* Subpage hero — every inner page (work, contact, legal, shop,
+   tools, services, …) opens with this so the whole site shares one
+   rhythm: eyebrow, serif h1, muted intro. */
+.page-hero {
+    padding-top: clamp(130px, 16vw, 180px);
+    padding-bottom: 60px;
+}
+
+.page-hero h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    line-height: 1.08;
+    margin-bottom: 1.2rem;
+}
+
+.page-hero p {
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
+    max-width: 52ch;
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
 /* ── 8. CTA LINK + TOOLTIP ────────────────────────────────────── */
 .cta-wrapper { display: block; padding-top: 1rem; }
 
@@ -480,11 +500,9 @@ h2 {
 }
 
 .service-card h3 {
-    font-family: var(--font-strong);
-    font-weight: 400;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
     margin-bottom: 0.75rem;
 }
 
@@ -577,17 +595,15 @@ h2 {
     font-family: var(--font-mono);
     font-size: 0.78rem;
     font-weight: 500;
-    color: var(--highlight);
+    color: var(--text-muted);
     letter-spacing: 0.06em;
     padding-top: 2px;
 }
 
 .process-step .step-title {
-    font-family: var(--font-strong);
-    font-weight: 400;
-    font-size: 1.02rem;
-    text-transform: uppercase;
-    letter-spacing: 0.01em;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.98rem;
     color: var(--headers);
     display: block;
     margin-bottom: 0.3rem;
@@ -749,11 +765,9 @@ h2 {
     background: none;
     border: none;
     color: var(--headers);
-    font-family: var(--font-strong);
-    font-weight: 400;
-    font-size: 1.02rem;
-    text-transform: uppercase;
-    letter-spacing: 0.01em;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
     padding: 1.2rem 0;
     cursor: pointer;
     display: flex;
@@ -771,7 +785,7 @@ h2 {
     font-size: 1.3rem;
     font-weight: 300;
     flex-shrink: 0;
-    color: var(--highlight);
+    color: var(--text-muted);
     transition: transform var(--dur-fast) var(--ease-snap);
     line-height: 1;
 }
@@ -792,7 +806,7 @@ h2 {
     line-height: 1.8;
     color: var(--text-muted);
     padding-left: 1.1rem;
-    border-left: 2px solid var(--highlight);
+    border-left: 2px solid var(--border-strong);
 }
 
 /* ── 16. CONTACT SECTION ──────────────────────────────────────── */
@@ -825,7 +839,7 @@ footer {
 }
 
 .footer-brand p { font-size: 0.85rem; line-height: 1.8; color: var(--text); }
-.footer-brand strong { font-family: var(--font-strong); font-weight: 400; text-transform: uppercase; letter-spacing: 0.03em; color: var(--headers); }
+.footer-brand strong { font-family: var(--font-body); font-weight: 600; color: var(--headers); }
 
 .footer-brand a { color: var(--text); transition: color var(--dur-fast) ease; }
 .footer-brand a:hover { color: var(--highlight); }

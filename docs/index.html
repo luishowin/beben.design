@@ -73,14 +73,14 @@
     }
     </script>
 
-    <!-- Fonts - Old Standard TT (titles), League Gothic (strong/bold
-         caps), IBM Plex Mono (technical copy, labels), Inter (body). -->
+    <!-- Fonts - Old Standard TT (titles), IBM Plex Mono (technical
+         copy, labels), Inter (body + strong). -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./assets/css/index.css">
-    <link rel="stylesheet" href="./assets/css/sprite.css">
+    <link rel="stylesheet" href="./assets/css/sprite.css?v=3.2">
 
 
     <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
@@ -437,66 +437,10 @@
     </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════
-     SPRITE — AI SITE GUIDE
-════════════════════════════════════════════ -->
-<div id="sprite-widget">
-  <div class="sprite-pill" id="spritePill" onclick="SpriteChat.open()">
-    <div class="sprite-character" data-emotion="happy">
-      <div class="sprite-body">
-        <div class="sprite-eyes">
-          <div class="sprite-eye"><div class="sprite-brow"></div></div>
-          <div class="sprite-eye"><div class="sprite-brow"></div></div>
-        </div>
-        <div class="sprite-mouth"></div>
-      </div>
-    </div>
-    <span class="pill-text">Hey, need help?</span>
-  </div>
-  <div class="sprite-panel" id="spritePanel">
-    <div class="panel-header">
-      <div class="panel-banner" id="panelBanner"></div>
-      <button class="panel-close" onclick="SpriteChat.close()" aria-label="Minimize">&minus;</button>
-      <div class="panel-identity">
-        <div class="sprite-character large" id="panelSprite" data-emotion="happy">
-          <div class="sprite-body">
-            <div class="sprite-eyes">
-              <div class="sprite-eye"><div class="sprite-brow"></div></div>
-              <div class="sprite-eye"><div class="sprite-brow"></div></div>
-            </div>
-            <div class="sprite-mouth"></div>
-          </div>
-        </div>
-        <div class="panel-identity-info">
-          <span class="sprite-name">Sprite</span>
-          <div class="sprite-status" id="spriteStatus" data-status="online">
-            <span class="status-dot"></span>
-            <span class="status-text">online</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="chat-area" id="chatArea"></div>
-    <div class="quick-chips" id="quickChips"></div>
-    <div class="chat-input-area">
-      <input class="chat-input" id="chatInput" type="text" placeholder="Ask me anything..." autocomplete="off">
-      <button class="input-btn" id="ttsToggle" onclick="SpriteChat.toggleTTS()" title="Toggle voice output">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
-      </button>
-      <button class="input-btn" id="micBtn" onclick="SpriteChat.toggleMic()" title="Voice input">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      </button>
-      <button class="input-btn send-btn" onclick="SpriteChat.send()" title="Send">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- Toast notification for email copy -->
 <div id="copy-toast">Email copied to clipboard.</div>
 
 <script src="./assets/JS/index.js"></script>
-<script src="./assets/JS/sprite.js"></script>
+<script src="./assets/JS/sprite.js?v=3.2"></script>
 </body>
 </html>

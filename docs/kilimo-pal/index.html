@@ -6,36 +6,15 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Tools | Beben Design - Free Web Tools, No Server Required</title>
-    <meta name="description" content="A small collection of free, offline-capable web tools built by Beben Design. Run them in your browser or download the HTML file and use them locally. No server, no sign-up.">
-    <link rel="canonical" href="https://beben.design/tools/">
+    <title>Kilimo Pal - Case Study Coming Soon | Beben Design</title>
+    <meta name="description" content="Kilimo Pal is an AI-powered agriculture platform that meets farmers where they are. Full case study coming soon.">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://beben.design/kilimo-pal/">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://beben.design/tools/">
-    <meta property="og:title" content="Tools | Beben Design - Free Web Tools">
-    <meta property="og:description" content="Free, offline-capable browser tools. Run online or download and use locally.">
-    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
-
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://beben.design/tools/">
-    <meta property="twitter:title" content="Tools | Beben Design - Free Web Tools">
-    <meta property="twitter:description" content="Free, offline-capable browser tools. Run online or download and use locally.">
-    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Tools - Beben Design",
-      "url": "https://beben.design/tools/",
-      "description": "A curated collection of free, offline-capable web tools built by Beben Design.",
-      "publisher": {
-        "@type": "ProfessionalService",
-        "name": "Beben Design",
-        "url": "https://beben.design"
-      }
-    }
-    </script>
+    <meta property="og:url" content="https://beben.design/kilimo-pal/">
+    <meta property="og:title" content="Kilimo Pal - Case Study Coming Soon | Beben Design">
+    <meta property="og:description" content="Kilimo Pal is an AI-powered agriculture platform that meets farmers where they are. Full case study coming soon.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,133 +29,85 @@
 
     <style>
         /* ─────────────────────────────────────────────────────────
-           TOOLS PAGE — scoped additions only.
+           PROJECT PLACEHOLDER PAGE — scoped additions only.
            Tokens, nav, footer, page-hero, reveal from index.css.
-
-           To add a tool: duplicate an <article class="tool-card">
-           block, update the tag, title, description, and the two
-           footer links (open + download). The grid reflows.
-           For an unreleased tool use <article class="tool-card
-           tool-card--soon"> and a plain footer span.
         ───────────────────────────────────────────────────────── */
 
-        .feedback-line {
-            margin-top: 1.5rem;
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1.75rem;
             font-family: var(--font-mono);
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        .feedback-line a {
-            color: var(--highlight);
-            transition: opacity var(--dur-fast) ease;
-        }
-
-        .feedback-line a:hover { opacity: 0.7; }
-
-        /* ── Tool grid — same DNA as the homepage service grid ── */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1px;
-            border: 1px solid var(--border);
-            margin-top: 1rem;
-        }
-
-        .tool-card {
-            background: var(--bg);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            transition: transform var(--dur-fast) var(--ease-snap);
-        }
-
-        .tool-card:last-child { border-right: none; }
-        .tool-card:hover { transform: translateY(-3px); }
-
-        .card-body {
-            display: block;
-            flex: 1;
-            padding: 1.75rem;
-            color: inherit;
-        }
-
-        .card-tag {
-            display: block;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
+            font-size: 0.74rem;
             font-weight: 500;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-bottom: 0.75rem;
         }
 
-        .card-body h3 {
-            font-family: var(--font-body);
-            font-weight: 600;
+        .status-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--yellow);
+            box-shadow: 0 0 0 0 rgba(255, 199, 16, 0.5);
+            animation: badge-pulse 2.4s ease-out infinite;
+        }
+
+        @keyframes badge-pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(255, 199, 16, 0.5); }
+            70%  { box-shadow: 0 0 0 7px rgba(255, 199, 16, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 199, 16, 0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .status-badge .dot { animation: none; }
+        }
+
+        .brief-body p {
             font-size: 0.95rem;
-            color: var(--headers);
-            margin-bottom: 0.75rem;
-        }
-
-        .card-body p {
-            font-size: 0.86rem;
-            line-height: 1.65;
+            line-height: 1.75;
             color: var(--text-muted);
+            max-width: 60ch;
+            margin-bottom: 0.8rem;
         }
 
-        /* ── Card footer — open + download strip ── */
-        .card-footer {
+        .project-tags {
             display: flex;
-            align-items: stretch;
-            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 1.4rem;
+        }
+
+        .project-tag {
             font-family: var(--font-mono);
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 500;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-        }
-
-        .card-open {
-            flex: 1;
-            padding: 0.85rem 1.75rem;
-            color: var(--headers);
-            transition: color var(--dur-fast) ease;
-        }
-
-        .card-download {
-            padding: 0.85rem 1.1rem;
-            border-left: 1px solid var(--border);
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
             color: var(--text-muted);
-            white-space: nowrap;
-            transition: color var(--dur-fast) ease;
         }
 
-        a.card-open:hover,
-        a.card-download:hover { color: var(--highlight); }
-
-        /* Unreleased tools render muted and inert */
-        .tool-card--soon { opacity: 0.55; }
-        .tool-card--soon .card-open { color: var(--text-muted); }
-
-        .tools-note {
+        .brief-note {
             font-family: var(--font-mono);
-            font-size: 0.82rem;
+            font-size: 0.78rem;
+            line-height: 1.75;
             color: var(--text-muted);
-            margin-top: 1.25rem;
+            border-left: 2px solid var(--yellow);
+            padding-left: 1rem;
+            margin-top: 2rem;
+            max-width: 60ch;
         }
 
-        /* ── Responsive ── */
-        @media (max-width: 900px) {
-            .tools-grid { grid-template-columns: repeat(2, 1fr); }
-            .tool-card { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        }
-
-        @media (max-width: 768px) {
-            .tools-grid { grid-template-columns: 1fr; }
-            .tool-card { border-right: none; }
-            .tool-card:last-child { border-bottom: none; }
+        .cta-row {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
         }
     </style>
 </head>
@@ -185,9 +116,7 @@
 <a class="skip-link" href="#main-content" style="position:absolute;left:-999px;top:0;background:#141414;color:#F7F4F3;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;z-index:999;">Skip to content</a>
 <style>.skip-link:focus{left:12px;top:12px;}</style>
 
-<!-- ═══════════════════════════════════════════
-     NAVBAR
-════════════════════════════════════════════ -->
+<!-- NAVBAR -->
 <nav>
     <a href="/" class="logo" aria-label="Beben Design - home">
         <svg class="logo__mark" viewBox="0 0 768 255" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -205,7 +134,6 @@
             <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
         </svg>
     </a>
-
     <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
             <span class="theme-toggle__label">LIGHT</span>
@@ -222,122 +150,82 @@
                 </svg>
             </span>
         </button>
-
         <ul class="menu desktop-only">
             <li><a href="../services/">SERVICES</a></li>
-            <li><a href="../tools/" class="active">TOOLS</a></li>
+            <li><a href="../tools/">TOOLS</a></li>
             <li><a href="../shop/">SHOP</a></li>
-            <li><a href="../work/">WORK</a></li>
+            <li><a href="../work/" class="active">WORK</a></li>
             <li><a href="../contact/">CONTACT</a></li>
         </ul>
-
         <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
             <span></span><span></span><span></span>
         </button>
     </div>
 </nav>
 
-<!-- Mobile overlay -->
 <div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
     <ul class="mobile-menu">
         <li><a href="/">Home</a></li>
         <li><a href="../services/">Services</a></li>
-        <li><a href="../tools/" class="active">Tools</a></li>
+        <li><a href="../tools/">Tools</a></li>
         <li><a href="../shop/">Shop</a></li>
-        <li><a href="../work/">Work</a></li>
+        <li><a href="../work/" class="active">Work</a></li>
         <li><a href="../contact/">Contact</a></li>
     </ul>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MAIN — sections alternate plain / soft
-════════════════════════════════════════════ -->
+<!-- MAIN -->
 <main id="main-content">
 
     <!-- Hero - plain -->
     <section class="page-hero">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Tools · Browser-native utilities</span>
-            <h1 data-reveal style="--i:1">Small tools. <em class="highlight-box">Zero</em> friction.</h1>
-            <p data-reveal style="--i:2">A growing collection of single-purpose web utilities built with the same design
-                logic we apply to client work: fast, focused, and free. Every tool runs entirely in your browser.
-                No accounts, no data collection, no server calls.</p>
-            <p data-reveal style="margin-top: 0.8rem; --i:3;">Download any tool as a standalone HTML file and run it
-                locally forever. Works offline, works on any device, works without us.</p>
-            <p class="feedback-line" data-reveal style="--i:4">
-                Built something you'd want to see here? Found a bug?
-                <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a>
+            <span class="eyebrow" data-reveal style="--i:0">AgriTech &amp; AI · Platform · Case study</span>
+            <h1 data-reveal style="--i:1">Kilimo <em class="highlight-box">Pal</em></h1>
+            <p data-reveal style="--i:2">An AI-powered agriculture platform that meets farmers where they are: from the absolute basics of what manure is, to managing large-scale onion plantations with sensor data and weather forecasts.</p>
+            <div class="status-badge" data-reveal style="--i:3">
+                <span class="dot" aria-hidden="true"></span>
+                In progress · case study coming soon
+            </div>
+        </div>
+    </section>
+
+    <!-- Brief - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Project brief</span>
+            <h2 data-reveal style="padding-bottom: 1.5rem; --i:1;">What we're building</h2>
+            <div class="brief-body" data-reveal style="--i:2">
+                <p>Modular hardware and software: start with just the app and AI guidance, add soil sensors, weather stations, and irrigation controllers as you grow. Regular soil test reminders, localised planting calendars, and yield predictions.</p>
+            </div>
+            <div class="project-tags" data-reveal style="--i:3">
+                <span class="project-tag">AI Guidance</span>
+                <span class="project-tag">IoT Sensors</span>
+                <span class="project-tag">Weather API</span>
+                <span class="project-tag">Modular Hardware</span>
+            </div>
+            <p class="brief-note" data-reveal style="--i:4">
+                The full case study (research, decisions, iterations, and results) will be published here
+                as the project matures. No polished-render-only reveals; we document the thinking.
             </p>
         </div>
     </section>
 
-    <!-- Tools grid - soft -->
-    <section class="section--soft">
+    <!-- CTA - plain -->
+    <section>
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">The toolbox</span>
-            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Available tools</h2>
-
-            <div class="tools-grid">
-
-                <article class="tool-card" data-reveal style="--i:2">
-                    <a href="../qr-code-generator/" class="card-body">
-                        <span class="card-tag">// Generator</span>
-                        <h3>QR Code Generator</h3>
-                        <p>Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.</p>
-                    </a>
-                    <div class="card-footer">
-                        <a href="../qr-code-generator/" class="card-open">Open tool ↗</a>
-                        <a href="../qr-code-generator/index.html"
-                           class="card-download"
-                           download="beben-qr-generator.html"
-                           title="Download as standalone HTML file">↓ .HTML</a>
-                    </div>
-                </article>
-
-                <article class="tool-card tool-card--soon" data-reveal style="--i:2">
-                    <div class="card-body">
-                        <span class="card-tag">// Utility</span>
-                        <h3>Colour Contrast Checker</h3>
-                        <p>Paste two hex values, get an instant WCAG AA/AAA pass/fail with contrast ratio.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-open">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="tool-card tool-card--soon" data-reveal style="--i:3">
-                    <div class="card-body">
-                        <span class="card-tag">// Utility</span>
-                        <h3>CSS Unit Converter</h3>
-                        <p>px ↔ rem ↔ em ↔ vw. Set your base font size, convert any value in real time.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-open">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="tool-card tool-card--soon" data-reveal style="--i:3">
-                    <div class="card-body">
-                        <span class="card-tag">// Generator</span>
-                        <h3>Placeholder Image Generator</h3>
-                        <p>Generate sized placeholder images with custom colours and labels. No CDN dependency.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-open">Coming soon</span>
-                    </div>
-                </article>
-
+            <span class="eyebrow" data-reveal style="--i:0">Meanwhile</span>
+            <h2 data-reveal style="--i:1">See what else we're making</h2>
+            <div class="cta-row" data-reveal style="--i:2">
+                <a href="../work/" class="cta-link">← Back to work</a>
+                <a href="mailto:hello.beben.design@gmail.com" class="cta-link">Start a conversation ↗</a>
             </div>
-
-            <p class="tools-note" data-reveal style="--i:4"><em>More tools shipping soon. Each one built to solve a real workflow problem, not to pad the list.</em></p>
         </div>
     </section>
 
 </main>
 
-<!-- ═══════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
     <div class="footer-container">
         <div class="footer-brand">

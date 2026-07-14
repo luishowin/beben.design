@@ -6,20 +6,19 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Contact | Beben Design — Start a Project</title>
-    <meta name="title" content="Contact | Beben Design — Start a Project">
-    <meta name="description" content="Start a design or development project with Beben Design. No sales pitch — just a direct technical discussion about your goals. Based in Nairobi, Kenya.">
+    <title>Contact | Beben Design - Start a Project</title>
+    <meta name="description" content="Start a design or development project with Beben Design. No sales pitch, just a direct technical discussion about your goals. Based in Nairobi, Kenya.">
     <link rel="canonical" href="https://beben.design/contact/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/contact/">
-    <meta property="og:title" content="Contact | Beben Design — Start a Project">
+    <meta property="og:title" content="Contact | Beben Design - Start a Project">
     <meta property="og:description" content="Direct access to the builders. No account managers, no lost translations. Let's talk about your project.">
     <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://beben.design/contact/">
-    <meta property="twitter:title" content="Contact | Beben Design — Start a Project">
+    <meta property="twitter:title" content="Contact | Beben Design - Start a Project">
     <meta property="twitter:description" content="Direct access to the builders. Let's talk about your project.">
     <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
 
@@ -55,7 +54,7 @@
       "name": "How much does a website cost?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Static sites start at $99 USD. Complexity drives pricing — we provide transparent, line-item quotes after discovery. No guesswork."
+        "text": "Static sites start at $99 USD. Complexity drives pricing. We provide transparent, line-item quotes after discovery. No guesswork."
       }
     },
     {
@@ -63,7 +62,7 @@
       "name": "How long does a typical project take?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "UX/UI projects typically run 4-8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed — always."
+        "text": "UX/UI projects typically run 4-8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed, always."
       }
     },
     {
@@ -71,7 +70,7 @@
       "name": "Do you work with startups or early-stage products?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Frequently. We help define your Minimum Viable Design — just enough to launch professionally without over-engineering before you have users."
+        "text": "Frequently. We help define your Minimum Viable Design: just enough to launch professionally without over-engineering before you have users."
       }
     },
     {
@@ -79,7 +78,7 @@
       "name": "Can you redesign an existing product?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. We start with a UX audit to identify what's actually broken — so we don't just paint over structural problems."
+        "text": "Yes. We start with a UX audit to identify what's actually broken, so we don't just paint over structural problems."
       }
     },
     {
@@ -87,7 +86,7 @@
       "name": "Do you use AI in your workflow?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes — where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first."
+        "text": "Yes, where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first."
        }
       }
      ]
@@ -96,149 +95,143 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.2">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 
     <style>
-        .contact-hero {
-            padding-top: clamp(130px, 16vw, 180px);
-            padding-bottom: 60px;
-        }
-        .contact-hero h1 {
-            font-size: clamp(2.2rem, 5.5vw, 3.8rem);
-            line-height: 1.08;
-            margin-bottom: 1.2rem;
-        }
-        .contact-hero p {
-            font-family: var(--font-body);
-            font-size: clamp(1rem, 1.4vw, 1.1rem);
-            max-width: 48ch;
-            line-height: 1.7;
+        /* ─────────────────────────────────────────────────────────
+           CONTACT PAGE — scoped additions only.
+           Tokens, nav, footer, page-hero, FAQ, reveal from index.css.
+        ───────────────────────────────────────────────────────── */
+
+        /* ── Project form — the primary channel ── */
+        .form-intro {
+            font-size: 0.95rem;
+            line-height: 1.75;
             color: var(--text-muted);
+            max-width: 52ch;
+            margin-bottom: 2.5rem;
         }
 
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0;
-        }
-        .channel-card {
-            padding: clamp(1.5rem, 3vw, 2.5rem);
-            border-bottom: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            text-decoration: none;
-            color: inherit;
+        .contact-form {
+            max-width: 560px;
             display: flex;
             flex-direction: column;
-            transition: background var(--dur-fast) ease;
+            gap: 1.75rem;
         }
-        .channel-card:nth-child(2n) { border-right: none; }
-        .channel-card:nth-child(n+3) { border-bottom: none; }
-        .channel-card:hover { background: var(--bg-soft); }
 
-        .channel-label {
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 0.8rem;
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
         }
-        .channel-card h3 {
-            font-family: var(--font-title);
-            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-        }
-        .channel-card p {
-            font-size: clamp(0.85rem, 1.1vw, 0.95rem);
-            color: var(--text-muted);
-            line-height: 1.6;
-            flex: 1;
-        }
-        .channel-cta {
-            display: inline-block;
-            margin-top: 1.2rem;
+
+        .form-field label {
             font-family: var(--font-mono);
             font-size: 0.72rem;
             font-weight: 500;
-            letter-spacing: 0.06em;
-            color: var(--highlight);
-            transition: letter-spacing var(--dur-fast) ease;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
-        .channel-card:hover .channel-cta { letter-spacing: 0.1em; }
-        .channel-cta.whatsapp { color: #25D366; }
 
-        .process-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            border: 1px solid var(--border);
-        }
-        .process-step {
-            padding: clamp(1.5rem, 2.5vw, 2rem);
-            border-right: 1px solid var(--border);
-            transition: background var(--dur-fast) ease;
-        }
-        .process-step:last-child { border-right: none; }
-        .process-step:hover { background: var(--bg-soft); }
-        .process-num {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            font-weight: 500;
-            color: var(--highlight);
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-        .process-step h3 {
+        .form-field input,
+        .form-field textarea {
             font-family: var(--font-body);
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-        }
-        .process-step p {
-            font-size: clamp(0.82rem, 1vw, 0.88rem);
-            line-height: 1.65;
-            color: var(--text-muted);
+            /* 16px floor — anything smaller triggers iOS auto-zoom on focus */
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            border: 1px solid var(--border-strong);
+            border-radius: 0;
+            padding: 0.85rem 1rem;
+            transition: border-color var(--dur-fast) ease;
         }
 
-        .contact-cta {
-            text-align: center;
+        .form-field textarea {
+            resize: vertical;
+            min-height: 150px;
         }
-        .contact-cta p {
-            font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: var(--headers);
+        }
+
+        .form-submit {
+            align-self: flex-start;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--headers);
+            background: none;
+            border: 1px solid var(--headers);
+            padding: 0.9rem 1.75rem;
+            cursor: pointer;
+            transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+        }
+
+        .form-submit:hover {
+            background: var(--headers);
+            color: var(--bg);
+        }
+
+        .form-note {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
             color: var(--text-muted);
-            margin-top: 0.8rem;
-        }
-        .cta-row {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            flex-wrap: wrap;
             margin-top: 2rem;
         }
-        .cta-row .cta-link.whatsapp { color: #25D366; }
-        .cta-row .cta-link.whatsapp::after { background: #25D366; }
 
-        @media (max-width: 900px) {
-            .channel-grid { grid-template-columns: 1fr; }
-            .channel-card { border-right: none; border-bottom: 1px solid var(--border); }
-            .channel-card:last-child { border-bottom: none; }
-            .process-grid { grid-template-columns: repeat(2, 1fr); }
-            .process-step:nth-child(2) { border-right: none; }
-            .process-step:nth-child(1),
-            .process-step:nth-child(2) { border-bottom: 1px solid var(--border); }
+        .form-note a {
+            color: var(--headers);
+            border-bottom: 1px solid var(--border-strong);
+            transition: color var(--dur-fast) ease;
         }
-        @media (max-width: 600px) {
-            .process-grid { grid-template-columns: 1fr; }
-            .process-step { border-right: none; border-bottom: 1px solid var(--border); }
-            .process-step:last-child { border-bottom: none; }
+
+        .form-note a:hover { color: var(--highlight); }
+
+        /* ── Phone — the secondary channel ── */
+        .phone-display {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: var(--headers);
+            margin-top: 1rem;
+            transition: color var(--dur-fast) ease;
+        }
+
+        .phone-display:hover { color: var(--highlight); }
+
+        .cta-row {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.75rem;
+        }
+
+        .cta-link.whatsapp { color: var(--whatsapp); }
+        .cta-link.whatsapp::after { background: var(--whatsapp); }
+
+        .phone-meta {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            margin-top: 2rem;
         }
     </style>
 </head>
@@ -308,80 +301,65 @@
 <!-- MAIN -->
 <main id="main-content">
 
-    <!-- Hero -->
-    <section class="contact-hero">
+    <!-- Hero - plain -->
+    <section class="page-hero">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Get in touch</span>
             <h1 data-reveal style="--i:1">Design <em class="highlight-box">logic</em> starts with a conversation.</h1>
-            <p data-reveal style="--i:2">No aggressive sales pitch. Just a direct technical discussion about your goals &mdash; with the people who will actually build it.</p>
+            <p data-reveal style="--i:2">No aggressive sales pitch. Just a direct technical discussion about your goals, with the people who will actually build it.</p>
         </div>
     </section>
 
-    <!-- Contact channels -->
+    <!-- Project form - soft, primary channel -->
     <section class="section--soft">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Channels</span>
-            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Reach the studio</h2>
-            <div class="channel-grid" data-reveal style="--i:2">
-                <a href="https://wa.me/254114728233" class="channel-card" target="_blank" rel="noopener">
-                    <span class="channel-label">// 01</span>
-                    <h3>WhatsApp</h3>
-                    <p>Fastest route. Direct line to the studio.</p>
-                    <span class="channel-cta whatsapp">MESSAGE NOW &#x2197;</span>
-                </a>
-                <a href="mailto:hello.beben.design@gmail.com" class="channel-card copy-email" data-email="hello.beben.design@gmail.com">
-                    <span class="channel-label">// 02</span>
-                    <h3>Email</h3>
-                    <p>For detailed briefs, attachments, and formal project requests.</p>
-                    <span class="channel-cta">hello.beben.design@gmail.com &#x2197;</span>
-                </a>
-                <a href="mailto:hello.beben.design@gmail.com" class="channel-card">
-                    <span class="channel-label">// 03</span>
-                    <h3>Existing Clients</h3>
-                    <p>Ongoing project support, revisions, and maintenance requests.</p>
-                    <span class="channel-cta">hello.beben.design@gmail.com &#x2197;</span>
-                </a>
-                <div class="channel-card">
-                    <span class="channel-label">// 04</span>
-                    <h3>Location</h3>
-                    <p>Nairobi, Westlands &mdash; Kenya.</p>
-                    <span class="channel-cta">MON &ndash; FRI, 08:00 &ndash; 18:00 EAT</span>
+            <span class="eyebrow" data-reveal style="--i:0">Start a project</span>
+            <h2 data-reveal style="--i:1">Tell us what you're building</h2>
+            <p class="form-intro" data-reveal style="--i:2">A few lines is enough: the problem, not the solution.
+                We reply within one working day.</p>
+
+            <!--
+                Connect to Formspree: create a form at https://formspree.io,
+                then replace YOUR_FORM_ID in the action URL below with the
+                ID Formspree gives you (it looks like "mabcdxyz").
+            -->
+            <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" data-reveal style="--i:3">
+                <div class="form-field">
+                    <label for="cf-name">Name</label>
+                    <input id="cf-name" type="text" name="name" required autocomplete="name">
                 </div>
-            </div>
+                <div class="form-field">
+                    <label for="cf-email">Email</label>
+                    <input id="cf-email" type="email" name="email" required autocomplete="email">
+                </div>
+                <div class="form-field">
+                    <label for="cf-message">What are you building?</label>
+                    <textarea id="cf-message" name="message" rows="6" required></textarea>
+                </div>
+                <button type="submit" class="form-submit">Send message &rarr;</button>
+            </form>
+
+            <p class="form-note" data-reveal style="--i:4">Prefer email?
+                <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a>
+            </p>
         </div>
     </section>
 
-    <!-- Process -->
+    <!-- Phone - plain, secondary channel -->
     <section>
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">How it works</span>
-            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">How engagement starts</h2>
-            <div class="process-grid" data-reveal style="--i:2">
-                <div class="process-step">
-                    <span class="process-num">01</span>
-                    <h3>You reach out</h3>
-                    <p>Tell us the problem &mdash; not the solution. We'll figure out the rest together.</p>
-                </div>
-                <div class="process-step">
-                    <span class="process-num">02</span>
-                    <h3>Discovery call</h3>
-                    <p>A 30-minute technical audit of your goals, constraints, and timelines.</p>
-                </div>
-                <div class="process-step">
-                    <span class="process-num">03</span>
-                    <h3>Fixed-price proposal</h3>
-                    <p>Line-item quote in USD. No ambiguity. No hourly billing surprises.</p>
-                </div>
-                <div class="process-step">
-                    <span class="process-num">04</span>
-                    <h3>50% deposit to kick off</h3>
-                    <p>We start with requirement analysis and get moving fast.</p>
-                </div>
+            <span class="eyebrow" data-reveal style="--i:0">Prefer to talk?</span>
+            <h2 data-reveal style="--i:1">Call or WhatsApp the studio</h2>
+            <a class="phone-display" href="tel:+254114728233" data-reveal style="--i:2">+254 114 728 233</a>
+            <div class="cta-row" data-reveal style="--i:3">
+                <a href="tel:+254114728233" class="cta-link">Call ↗</a>
+                <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">WhatsApp ↗</a>
             </div>
+            <p class="phone-meta" data-reveal style="--i:4">Mon&ndash;Fri &middot; 08:00&ndash;18:00 EAT &middot; Westlands, Nairobi</p>
         </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- FAQ - soft -->
     <section id="faq" class="section--soft">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Questions</span>
@@ -390,44 +368,32 @@
             <div class="faq-item" data-reveal style="--i:2">
                 <button class="faq-trigger" aria-expanded="false">How much does a website cost?</button>
                 <div class="faq-answer">
-                    <p>Static sites start at $99 USD. Complexity drives pricing &mdash; we provide transparent, line-item quotes after discovery. No guesswork.</p>
+                    <p>Static sites start at $99 USD. Complexity drives pricing. We provide transparent, line-item quotes after discovery. No guesswork.</p>
                 </div>
             </div>
             <div class="faq-item" data-reveal style="--i:2">
                 <button class="faq-trigger" aria-expanded="false">How long does a typical project take?</button>
                 <div class="faq-answer">
-                    <p>UX/UI projects typically run 4&ndash;8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed &mdash; always.</p>
+                    <p>UX/UI projects typically run 4&ndash;8 weeks. Rapid prototyping can move in as little as 14 days. We prioritise quality over speed, always.</p>
                 </div>
             </div>
             <div class="faq-item" data-reveal style="--i:3">
                 <button class="faq-trigger" aria-expanded="false">Do you work with startups or early-stage products?</button>
                 <div class="faq-answer">
-                    <p>Frequently. We help define your Minimum Viable Design &mdash; just enough to launch professionally without over-engineering before you have users.</p>
+                    <p>Frequently. We help define your Minimum Viable Design: just enough to launch professionally without over-engineering before you have users.</p>
                 </div>
             </div>
             <div class="faq-item" data-reveal style="--i:3">
                 <button class="faq-trigger" aria-expanded="false">Can you redesign an existing product?</button>
                 <div class="faq-answer">
-                    <p>Yes. We start with a UX audit to identify what's actually broken &mdash; so we don't just paint over structural problems.</p>
+                    <p>Yes. We start with a UX audit to identify what's actually broken, so we don't just paint over structural problems.</p>
                 </div>
             </div>
             <div class="faq-item" data-reveal style="--i:4">
                 <button class="faq-trigger" aria-expanded="false">Do you use AI in your workflow?</button>
                 <div class="faq-answer">
-                    <p>Yes &mdash; where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first.</p>
+                    <p>Yes, where it enhances efficiency and creativity, not where it shortcuts thinking. Design logic still comes first.</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="contact-cta">
-        <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Ready?</span>
-            <h2 data-reveal style="--i:1">The best time to talk is before you've written a single line of code.</h2>
-            <div class="cta-row" data-reveal style="--i:2">
-                <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">MESSAGE ON WHATSAPP &#x2197;</a>
-                <a href="mailto:hello.beben.design@gmail.com" class="cta-link copy-email" data-email="hello.beben.design@gmail.com">SEND AN EMAIL &#x2197;<span class="tooltip">CLICK TO COPY EMAIL</span></a>
             </div>
         </div>
     </section>
@@ -459,8 +425,7 @@
     </div>
 </footer>
 
-<div id="copy-toast">Email copied to clipboard.</div>
-
 <script src="../assets/JS/index.js"></script>
+<script src="../assets/JS/sprite.js?v=3.2"></script>
 </body>
 </html>

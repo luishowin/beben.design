@@ -207,9 +207,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.2">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -217,315 +218,151 @@
 
     <style>
         /* ─────────────────────────────────────────────────────────
-           SERVICES PAGE - scoped additions.
-           Tokens, nav, footer, reveal from index.css.
-           Font sizes bumped ~1 step. Animations +0.5s throughout.
+           SERVICES PAGE — scoped additions only.
+           Tokens, nav, footer, page-hero, grid, cards, FAQ,
+           reveal from index.css.
         ───────────────────────────────────────────────────────── */
 
-        /* ── ANIMATION OVERRIDES (+0.5s) ──────────────────────── */
-        .reveal {
-            opacity: 0;
-            transform: translateY(28px);
-            transition: opacity 1.1s ease, transform 1.1s ease;
-        }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* ── PAGE HERO ─────────────────────────────────────────── */
-        .page-hero {
-            padding-top: 120px;
-            padding-bottom: 90px;
-            border-bottom: 1px solid var(--border);
+        /* Pipeline numbers inside the shared service cards */
+        .pipeline-num {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            margin-bottom: 0.75rem;
         }
 
-        .page-label {
-            font-size: 0.72rem;
-            font-weight: 400;
-            color: var(--muted);
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
+        .section-intro {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 60ch;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Service catalogue - open rows, no boxes.
+           Hierarchy: muted number, large serif name, tagline, goal;
+           deliverables in the second column; questions collapsed
+           below at a narrower measure. ── */
+        .service-row {
+            border-top: 1px solid var(--border);
+            padding: 4rem 0;
+        }
+
+        .service-num {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
             margin-bottom: 1.5rem;
         }
 
-        .page-hero h1 {
-            font-size: clamp(2.8rem, 7.5vw, 5rem);
-            font-weight: 800;
-            line-height: 0.92;
-            letter-spacing: -0.05em;
-            text-transform: uppercase;
-            margin-bottom: 1.75rem;
+        .service-row__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2rem, 5vw, 4.5rem);
+            align-items: start;
         }
 
-        .page-hero .intro {
-            font-size: 1rem;
-            max-width: 620px;
-            line-height: 1.8;
-            color: var(--muted);
+        .service-row h3 {
+            font-family: var(--font-title);
             font-weight: 400;
-        }
-
-        /* ── PIPELINE ──────────────────────────────────────────── */
-        .pipeline-section { padding: 90px 0; }
-
-        .pipeline-section h2 {
-            font-size: clamp(1.1rem, 3vw, 1.4rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+            line-height: 1.15;
+            color: var(--headers);
             margin-bottom: 1rem;
         }
 
-        .pipeline-section .section-intro {
-            font-size: 0.95rem;
-            color: var(--muted);
-            max-width: 640px;
-            line-height: 1.8;
-            margin-bottom: 3rem;
-        }
-
-        .pipeline-steps {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            border: 1px solid var(--border);
-        }
-
-        .pipeline-step {
-            padding: 2rem 1.75rem;
-            border-right: 1px solid var(--border);
-            background: var(--card-bg);
-            transition: background 0.25s ease, color 0.25s ease;
-        }
-
-        .pipeline-step:last-child { border-right: none; }
-        .pipeline-step:hover { background: var(--text); color: var(--bg); }
-
-        .pipeline-num {
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--accent);
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .pipeline-step h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-bottom: 0.5rem;
-        }
-
-        .pipeline-step p {
-            font-size: 0.82rem;
-            line-height: 1.65;
-            color: var(--muted);
-            font-weight: 400;
-            transition: color 0.25s ease;
-        }
-
-        .pipeline-step:hover p { color: var(--bg); opacity: 0.7; }
-
-        /* ── SECTION SHARED ────────────────────────────────────── */
-        .services-section { padding: 90px 0; }
-
-        .section-label {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--dot);
-        }
-
-        /* ── SERVICE BLOCK ─────────────────────────────────────── */
-        /*
-           Each service: label + two-column layout.
-           Left: heading + goal + deliverables.
-           Right: sub-services list + FAQ accordion.
-        */
-        .service-block {
-            border: 1px solid var(--border);
-            margin-bottom: 2px;
-            background: var(--card-bg);
-            margin-bottom: 9rem;
-        }
-
-        .service-block-header {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .service-block-left {
-            padding: 2.5rem;
-            border-right: 1px solid var(--border);
-        }
-
-        .service-block-right { padding: 2.5rem; }
-
-        .service-num {
-            font-size: 0.62rem;
-            font-weight: 800;
-            color: var(--yellow);
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .service-block h3 {
-            font-size: clamp(1.3rem, 3vw, 2.9rem);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            margin-bottom: 0.9rem;
-        }
-
         .service-tagline {
-            font-size: 0.88rem;
-            color: var(--muted);
+            font-size: 0.95rem;
+            color: var(--text-muted);
             line-height: 1.75;
+            max-width: 44ch;
             margin-bottom: 1.5rem;
         }
 
         .service-goal {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
+            color: var(--headers);
         }
 
         .service-goal::before {
-            content: "GOAL //";
-            color: var(--accent);
+            content: "Goal // ";
+            color: var(--text-muted);
         }
 
         .deliverables-label {
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 0.85rem;
+            color: var(--text-muted);
+            /* optically aligns the label with the serif h3 cap height */
+            padding-top: 0.6rem;
+            margin-bottom: 0.5rem;
         }
 
-        .deliverables-list {
-            list-style: none;
-            margin-bottom: 1.75rem;
-        }
+        .deliverables-list { list-style: none; }
 
         .deliverables-list li {
-            font-size: 0.8rem;
-            line-height: 1.6;
-            color: var(--text);
-            padding: 0.4rem 0;
-            border-bottom: 1px solid var(--dot);
             display: flex;
             align-items: baseline;
             gap: 0.6rem;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: var(--text);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
         .deliverables-list li:last-child { border-bottom: none; }
 
         .deliverables-list li::before {
             content: "//";
-            color: var(--accent);
-            font-size: 0.65rem;
-            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
             flex-shrink: 0;
         }
 
-        /* ── SERVICE FAQ ACCORDION ─────────────────────────────── */
+        /* Collapsed questions under each service - quiet by default;
+           trigger and answer styling comes from index.css. */
         .service-faq {
-            border-top: 1px solid var(--border);
+            max-width: 720px;
+            margin-top: 2.5rem;
         }
 
         .faq-header {
-            padding: 1.25rem 2.5rem;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--muted);
-            border-bottom: 1px solid var(--dot);
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
         }
 
-        .faq-item { border-bottom: 1px solid var(--dot); }
-        .faq-item:last-child { border-bottom: none; }
-
-        .faq-trigger {
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            color: var(--text);
-            font-family: inherit;
+        .service-faq .faq-trigger {
             font-size: 0.9rem;
-            font-weight: 700;
-            padding: 1.1rem 2.5rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            transition: color 0.2s ease, background 0.2s ease;
+            padding: 1rem 0;
         }
 
-        .faq-trigger:hover { color: var(--accent); }
-
-        .faq-trigger::after {
-            content: "+";
-            font-size: 1.3rem;
-            font-weight: 300;
-            color: var(--accent);
-            flex-shrink: 0;
-            transition: transform 0.35s ease;
-            line-height: 1;
-        }
-
-        .faq-trigger[aria-expanded="true"]::after { transform: rotate(45deg); }
-
-        .faq-answer {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.45s ease, padding 0.45s ease;
-            padding: 0 2.5rem;
-        }
-
-        .faq-answer.open {
-            max-height: 400px;
-            padding: 0 2.5rem 1.25rem;
-        }
-
-        .faq-answer p {
-            font-size: 0.85rem;
-            line-height: 1.85;
-            color: var(--muted);
-            font-weight: 400;
-            border-left: 2px solid var(--accent);
-            padding-left: 1rem;
-        }
-
-        /* ── EDGE CASES BLOCK ──────────────────────────────────── */
+        /* ── Edge-case panel ── */
         .edge-block {
             border: 1px solid var(--border);
-            padding: 3rem;
-            margin-bottom: 2px;
-            background: var(--card-bg);
+            background: var(--bg);
+            padding: clamp(1.75rem, 4vw, 3rem);
+            margin-top: 4rem;
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 3rem;
@@ -533,54 +370,45 @@
         }
 
         .edge-label {
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--muted);
+            color: var(--text-muted);
             margin-bottom: 0.75rem;
         }
 
         .edge-block h3 {
-            font-size: clamp(1.2rem, 2.5vw, 1.7rem);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: -0.03em;
-            line-height: 1.05;
+            font-family: var(--font-title);
+            font-weight: 400;
+            font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+            line-height: 1.15;
+            color: var(--headers);
         }
 
-        .edge-block .edge-body {
+        .edge-body {
             font-size: 0.9rem;
-            line-height: 1.85;
-            color: var(--muted);
-        }
-
-        .edge-block .edge-body strong { color: var(--text); font-weight: 700; }
-
-        /* ── CTA BLOCK ─────────────────────────────────────────── */
-        .cta-section { padding: 90px 0; }
-
-        .cta-section h2 {
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: -0.04em;
-            line-height: 1;
-            margin-bottom: 1.25rem;
-        }
-
-        .cta-section p {
-            font-size: 0.95rem;
-            color: var(--muted);
-            max-width: 520px;
             line-height: 1.8;
-            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .edge-body strong { color: var(--text); font-weight: 600; }
+
+        /* ── CTA ── */
+        .cta-section p {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 52ch;
+            margin-top: 0.8rem;
         }
 
         .pro-tip {
+            font-family: var(--font-mono);
             font-size: 0.78rem;
-            color: var(--muted);
-            max-width: 520px;
+            color: var(--text-muted);
+            max-width: 56ch;
             line-height: 1.75;
             border-left: 2px solid var(--yellow);
             padding-left: 1rem;
@@ -596,56 +424,15 @@
             margin-top: 2rem;
         }
 
-        .cta-link {
-            display: inline;
-            position: relative;
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--accent);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .cta-link::after {
-            content: '';
-            position: absolute;
-            bottom: -3px; left: 0;
-            width: 0; height: 2px;
-            background: var(--accent);
-            transition: width 0.25s ease;
-        }
-
-        .cta-link:hover::after { width: 100%; }
-
         .cta-link.whatsapp { color: var(--whatsapp); }
         .cta-link.whatsapp::after { background: var(--whatsapp); }
 
-        /* ── RESPONSIVE ────────────────────────────────────────── */
+        /* ── Responsive ── */
         @media (max-width: 900px) {
-            .service-block-header { grid-template-columns: 1fr; }
-            .service-block-left  { border-right: none; border-bottom: 1px solid var(--border); }
-            .pipeline-steps      { grid-template-columns: repeat(2, 1fr); }
-            .pipeline-step:nth-child(2) { border-right: none; }
-            .pipeline-step:nth-child(3) { border-top: 1px solid var(--border); }
-            .edge-block          { grid-template-columns: 1fr; gap: 1.5rem; }
-        }
-
-        @media (max-width: 600px) {
-            .pipeline-steps { grid-template-columns: 1fr; }
-            .pipeline-step  { border-right: none; border-bottom: 1px solid var(--border); }
-            .pipeline-step:last-child { border-bottom: none; }
-            .faq-trigger    { font-size: 0.82rem; padding: 1rem 1.5rem; }
-            .faq-answer     { padding: 0 1.5rem; }
-            .faq-answer.open { padding: 0 1.5rem 1rem; }
-            .service-block-left,
-            .service-block-right { padding: 1.75rem; }
-            .edge-block { padding: 1.75rem; }
-            .faq-header { padding: 1rem 1.5rem; }
-        }
-
-        @media (max-width: 768px) {
-            .page-hero { padding-top: 90px; }
+            .service-row { padding: 3rem 0; }
+            .service-row__grid { grid-template-columns: 1fr; gap: 2rem; }
+            .deliverables-label { padding-top: 0; }
+            .edge-block { grid-template-columns: 1fr; gap: 1.5rem; }
         }
     </style>
 </head>
@@ -719,58 +506,63 @@
 ════════════════════════════════════════════ -->
 <main id="main-content">
 
-    <!-- HERO -->
-    <section class="page-hero reveal">
-        <p class="page-label">[ 01. CAPABILITIES ]</p>
-        <h1>Design that<br>works before<br>it <span class="highlight-box">looks</span> good.</h1>
-        <p class="intro">
-            From early research to production-ready interfaces - clarity, usability, and
-            measurable outcomes. Decisions backed by reasoning, not trends.
-        </p>
+    <!-- Hero - plain -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Capabilities</span>
+            <h1 data-reveal style="--i:1">Design that works<br>before it <em class="highlight-box">looks</em> good.</h1>
+            <p data-reveal style="--i:2">From early research to production-ready interfaces: clarity, usability, and
+                measurable outcomes. Decisions backed by reasoning, not trends.</p>
+        </div>
     </section>
 
-    <!-- PIPELINE -->
-    <section class="pipeline-section reveal">
-        <h2>THE PIPELINE</h2>
-        <p class="section-intro">
-            Interfaces must reduce friction. We treat design as problem-solving, connecting research
-            to implementation in a seamless flow. Whether you need a single stage or the full
-            pipeline, we build for scale.
-        </p>
-        <div class="pipeline-steps">
-            <div class="pipeline-step">
-                <span class="pipeline-num">01</span>
-                <h3>Research</h3>
-                <p>Understand behaviour. Map the problem before touching a pixel.</p>
-            </div>
-            <div class="pipeline-step">
-                <span class="pipeline-num">02</span>
-                <h3>Structure</h3>
-                <p>Map the logic. Information architecture and user journey definition.</p>
-            </div>
-            <div class="pipeline-step">
-                <span class="pipeline-num">03</span>
-                <h3>Visual</h3>
-                <p>Apply the interface. High-fidelity design, component systems, motion.</p>
-            </div>
-            <div class="pipeline-step">
-                <span class="pipeline-num">04</span>
-                <h3>Execute</h3>
-                <p>Final implementation. Production-ready code or developer handoff.</p>
+    <!-- Pipeline - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">How work moves</span>
+            <h2 data-reveal style="--i:1">The pipeline</h2>
+            <p class="section-intro" data-reveal style="--i:2">
+                Interfaces must reduce friction. We treat design as problem-solving, connecting research
+                to implementation in a seamless flow. Whether you need a single stage or the full
+                pipeline, we build for scale.
+            </p>
+            <div class="grid">
+                <div class="service-card" data-reveal style="--i:3">
+                    <span class="pipeline-num">01</span>
+                    <h3>Research</h3>
+                    <p>Understand behaviour. Map the problem before touching a pixel.</p>
+                </div>
+                <div class="service-card" data-reveal style="--i:3">
+                    <span class="pipeline-num">02</span>
+                    <h3>Structure</h3>
+                    <p>Map the logic. Information architecture and user journey definition.</p>
+                </div>
+                <div class="service-card" data-reveal style="--i:4">
+                    <span class="pipeline-num">03</span>
+                    <h3>Visual</h3>
+                    <p>Apply the interface. High-fidelity design, component systems, motion.</p>
+                </div>
+                <div class="service-card" data-reveal style="--i:4">
+                    <span class="pipeline-num">04</span>
+                    <h3>Execute</h3>
+                    <p>Final implementation. Production-ready code or developer handoff.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- ═══ SERVICES ═══ -->
-    <section class="services-section">
-        <p class="section-label reveal">// SERVICE CATALOGUE</p>
+    <!-- Service catalogue - plain -->
+    <section>
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Service catalogue</span>
+            <h2 data-reveal style="padding-bottom: 2.5rem; --i:1;">What we deliver, in depth</h2>
 
         <!-- ─── 1. BRAND IDENTITY ─────────────────────────────── -->
-        <div class="service-block reveal">
-            <div class="service-block-header">
-                <div class="service-block-left">
-                    <span class="service-num">01 // BRAND_IDENTITY</span>
-                    <h3>Brand Identity<br>&amp; Visual Design</h3>
+        <article class="service-row" data-reveal>
+            <div class="service-row__grid">
+                <div>
+                    <span class="service-num">01</span>
+                    <h3>Brand Identity &amp; Visual Design</h3>
                     <p class="service-tagline">
                         Focusing on the intersection of storytelling and systematic design.
                         A logo that works on a favicon and a billboard. A colour system that
@@ -778,8 +570,8 @@
                     </p>
                     <p class="service-goal">Turn a concept into a recognisable visual language.</p>
                 </div>
-                <div class="service-block-right">
-                    <p class="deliverables-label">// DELIVERABLES</p>
+                <div>
+                    <p class="deliverables-label">Deliverables</p>
                     <ul class="deliverables-list">
                         <li>Logo system - primary, secondary, monochrome, favicon</li>
                         <li>Structured Brand Guide (PDF + editable source files)</li>
@@ -791,7 +583,7 @@
                 </div>
             </div>
             <div class="service-faq">
-                <p class="faq-header">// FREQUENTLY ASKED - BRAND IDENTITY</p>
+                <p class="faq-header">Common questions</p>
 
                 <div class="faq-item">
                     <button class="faq-trigger" aria-expanded="false">How do you ensure the logo works across digital and physical scales - from favicons to billboards?</button>
@@ -814,22 +606,22 @@
                     <div class="faq-answer"><p>This is one of the most technically demanding briefs we take on. We start with a brand equity audit - identifying which elements (colour, shape, typeface) carry the most recognition value with your existing audience. The refresh then preserves those anchor elements while modernising everything else. You don't lose the brand; you evolve it.</p></div>
                 </div>
             </div>
-        </div>
+        </article>
 
         <!-- ─── 2. UX DESIGN ──────────────────────────────────── -->
-        <div class="service-block reveal">
-            <div class="service-block-header">
-                <div class="service-block-left">
-                    <span class="service-num">02 // UX_DESIGN</span>
-                    <h3>UX Research<br>&amp; Design</h3>
+        <article class="service-row" data-reveal>
+            <div class="service-row__grid">
+                <div>
+                    <span class="service-num">02</span>
+                    <h3>UX Research &amp; Design</h3>
                     <p class="service-tagline">
                         Prioritising research-driven flows and usability. Understanding why
                         users do what they do before designing where they should go.
                     </p>
                     <p class="service-goal">Reduce redesign costs. Build the right thing first.</p>
                 </div>
-                <div class="service-block-right">
-                    <p class="deliverables-label">// DELIVERABLES</p>
+                <div>
+                    <p class="deliverables-label">Deliverables</p>
                     <ul class="deliverables-list">
                         <li>User research report - interviews, surveys, behavioural analysis</li>
                         <li>User journey maps - per role and device context</li>
@@ -842,7 +634,7 @@
                 </div>
             </div>
             <div class="service-faq">
-                <p class="faq-header">// FREQUENTLY ASKED - UX RESEARCH &amp; DESIGN</p>
+                <p class="faq-header">Common questions</p>
 
                 <div class="faq-item">
                     <button class="faq-trigger" aria-expanded="false">What specific metrics or KPIs do you look for when assessing an existing product's UX?</button>
@@ -865,22 +657,22 @@
                     <div class="faq-answer"><p>We establish a lightweight feedback loop: analytics review every four to six weeks, a short usability session with three to five users each quarter, and a prioritised backlog of UX improvements. This isn't a retainer model - it's a defined process you can run with or without us. We document it in a Continuous Iteration Framework that your team can operate independently.</p></div>
                 </div>
             </div>
-        </div>
+        </article>
 
         <!-- ─── 3. UI DESIGN ──────────────────────────────────── -->
-        <div class="service-block reveal">
-            <div class="service-block-header">
-                <div class="service-block-left">
-                    <span class="service-num">03 // UI_DESIGN</span>
-                    <h3>UI Design<br>&amp; Component Systems</h3>
+        <article class="service-row" data-reveal>
+            <div class="service-row__grid">
+                <div>
+                    <span class="service-num">03</span>
+                    <h3>UI Design &amp; Component Systems</h3>
                     <p class="service-tagline">
                         Aesthetic precision and developer-ready systems. Every component
                         documented, every state covered, every handoff clean.
                     </p>
                     <p class="service-goal">Increase development speed. Eliminate design debt.</p>
                 </div>
-                <div class="service-block-right">
-                    <p class="deliverables-label">// DELIVERABLES</p>
+                <div>
+                    <p class="deliverables-label">Deliverables</p>
                     <ul class="deliverables-list">
                         <li>High-fidelity screen designs - all key flows</li>
                         <li>UI Kit in Figma - atomic, developer-ready</li>
@@ -893,7 +685,7 @@
                 </div>
             </div>
             <div class="service-faq">
-                <p class="faq-header">// FREQUENTLY ASKED - UI DESIGN</p>
+                <p class="faq-header">Common questions</p>
 
                 <div class="faq-item">
                     <button class="faq-trigger" aria-expanded="false">Do you use Atomic Design methodology to ensure UI components are modular and scalable?</button>
@@ -916,22 +708,22 @@
                     <div class="faq-answer"><p>Best practices govern structure and behaviour - where to place navigation, how to handle form errors, what a primary CTA should look like. Visual style governs everything else. We apply conventions where breaking them costs users time (e.g., navigation placement) and break conventions where following them makes a product forgettable (e.g., colour, typography, layout rhythm). The output is a product that users can navigate immediately but remember distinctly.</p></div>
                 </div>
             </div>
-        </div>
+        </article>
 
         <!-- ─── 4. DIGITAL STRATEGY ───────────────────────────── -->
-        <div class="service-block reveal">
-            <div class="service-block-header">
-                <div class="service-block-left">
-                    <span class="service-num">04 // STRATEGY</span>
-                    <h3>Digital Strategy<br>&amp; Product Planning</h3>
+        <article class="service-row" data-reveal>
+            <div class="service-row__grid">
+                <div>
+                    <span class="service-num">04</span>
+                    <h3>Digital Strategy &amp; Product Planning</h3>
                     <p class="service-tagline">
                         The technical roadmap for long-term success. Turning rough concepts
                         into sequenced, fundable, buildable product plans.
                     </p>
                     <p class="service-goal">Build the right thing in the right order.</p>
                 </div>
-                <div class="service-block-right">
-                    <p class="deliverables-label">// DELIVERABLES</p>
+                <div>
+                    <p class="deliverables-label">Deliverables</p>
                     <ul class="deliverables-list">
                         <li>Product Strategy Document - goals, constraints, success metrics</li>
                         <li>MVP feature prioritisation matrix</li>
@@ -943,7 +735,7 @@
                 </div>
             </div>
             <div class="service-faq">
-                <p class="faq-header">// FREQUENTLY ASKED - DIGITAL STRATEGY</p>
+                <p class="faq-header">Common questions</p>
 
                 <div class="faq-item">
                     <button class="faq-trigger" aria-expanded="false">What does the "Strategy" phase look like for a startup that only has a rough concept?</button>
@@ -966,10 +758,10 @@
                     <div class="faq-answer"><p>The Discovery Session is a structured conversation - not a sales call. We ask about the problem, the user, the constraints, and what you've already tried. You should expect to leave with a clearer articulation of your own problem than when you arrived. If there's alignment on scope and approach, we produce a fixed-price proposal within 48 hours. If there isn't, you've still got a clearer brief at zero cost.</p></div>
                 </div>
             </div>
-        </div>
+        </article>
 
         <!-- ─── EDGE CASES ────────────────────────────────────── -->
-        <div class="edge-block reveal">
+        <div class="edge-block" data-reveal>
             <div>
                 <p class="edge-label">// CUSTOM SCOPE</p>
                 <h3>What if my need isn't listed?</h3>
@@ -982,18 +774,22 @@
             </div>
         </div>
 
+        </div>
     </section>
 
-    <!-- CTA -->
-    <section class="cta-section reveal">
-        <h2>Ready to build<br>something that<br><span class="highlight-box">actually</span> works?</h2>
-        <p>No aggressive pitch. Just a technical conversation about your goals, with the people who will actually build it.</p>
-        <p class="pro-tip">
-            <strong>Pro tip:</strong> When reaching out, include a brief overview of your current pain point. It lets us skip the preamble and get straight to the solution in our first conversation.
-        </p>
-        <div class="cta-row">
-            <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">MESSAGE ON WHATSAPP ↗</a>
-            <a href="mailto:hello.beben.design@gmail.com" class="cta-link">SEND AN EMAIL ↗</a>
+    <!-- CTA - soft -->
+    <section class="cta-section section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Next step</span>
+            <h2 data-reveal style="--i:1">Ready to build something that <em class="highlight-box">actually</em> works?</h2>
+            <p data-reveal style="--i:2">No aggressive pitch. Just a technical conversation about your goals, with the people who will actually build it.</p>
+            <p class="pro-tip" data-reveal style="--i:3">
+                <strong>Pro tip:</strong> When reaching out, include a brief overview of your current pain point. It lets us skip the preamble and get straight to the solution in our first conversation.
+            </p>
+            <div class="cta-row" data-reveal style="--i:4">
+                <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">Message on WhatsApp ↗</a>
+                <a href="mailto:hello.beben.design@gmail.com" class="cta-link">Send an email ↗</a>
+            </div>
         </div>
     </section>
 
@@ -1027,38 +823,6 @@
 </footer>
 
 <script src="../assets/JS/index.js"></script>
-<script>
-(function () {
-    'use strict';
-
-    // Reveal for .reveal elements (services page uses this class instead of data-reveal)
-    var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); }
-        });
-    }, { threshold: 0.05 });
-    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
-
-    // FAQ Accordion - scoped per service block
-    document.querySelectorAll('.service-faq').forEach(function (faqBlock) {
-        faqBlock.querySelectorAll('.faq-trigger').forEach(function (trigger) {
-            trigger.addEventListener('click', function () {
-                var answer = trigger.nextElementSibling;
-                var isOpen = trigger.getAttribute('aria-expanded') === 'true';
-                faqBlock.querySelectorAll('.faq-trigger').forEach(function (other) {
-                    if (other !== trigger) {
-                        other.setAttribute('aria-expanded', 'false');
-                        var otherAnswer = other.nextElementSibling;
-                        if (otherAnswer) otherAnswer.classList.remove('open');
-                    }
-                });
-                trigger.setAttribute('aria-expanded', String(!isOpen));
-                if (answer) answer.classList.toggle('open', !isOpen);
-            });
-        });
-    });
-})();
-</script>
-
+<script src="../assets/JS/sprite.js?v=3.2"></script>
 </body>
 </html>

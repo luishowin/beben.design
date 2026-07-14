@@ -1,7 +1,30 @@
 /* ══════════════════════════════════════════════
-   Sprite — AI Site Guide Widget
+   Sprite — AI Site Guide Widget  (v3)
    Drop-in JS module. No dependencies.
+
+   NOTE: this file runs in the browser on the website.
+   It is NOT the Cloudflare Worker. The file to paste into
+   the Cloudflare editor is cloudflare-worker/sprite-proxy.js.
+
+   v3 changes:
+     - Injects its own DOM: pages only need sprite.css + sprite.js,
+       no widget markup to copy around.
+     - Optional live LLM brain via SPRITE_CONFIG.apiUrl (a proxy
+       that holds the API key — never put the key in this file).
+       Falls back to the built-in pattern engine when unset or down.
+     - Conversation history persists in sessionStorage, so the chat
+       follows the visitor from page to page.
+     - LLM replies may contain markdown links; only site-internal,
+       wa.me, mailto and tel links are rendered as anchors.
 ═══════════════════════════════════════════════ */
+
+const SPRITE_CONFIG = {
+  /* The deployed proxy that holds the Fireworks key (see
+     cloudflare-worker/README.md). Set to '' to run fully offline on
+     the built-in pattern engine; any proxy failure also falls back. */
+  apiUrl: 'https://sprite-proxy.howin329.workers.dev',
+  maxHistory: 12,
+};
 
 const SpriteChat = (() => {
   let isOpen = false;
@@ -11,6 +34,9 @@ const SpriteChat = (() => {
   let blinkInterval = null;
   let pillRevealed = false;
   let conversationMood = 0;
+  let apiWarned = false;
+
+  const HISTORY_KEY = 'sprite-history-v1';
 
   const pillTexts = [
     "Hey, need help?",
@@ -19,6 +45,91 @@ const SpriteChat = (() => {
     "Curious? Click me!",
     "Need directions?",
   ];
+
+  // ── Widget DOM ──
+  // Injected once per page so no page has to carry the markup.
+
+  const WIDGET_HTML =
+    '<div class="sprite-pill" id="spritePill" onclick="SpriteChat.open()">' +
+      '<div class="sprite-character" data-emotion="happy">' +
+        '<div class="sprite-body">' +
+          '<div class="sprite-eyes">' +
+            '<div class="sprite-eye"><div class="sprite-brow"></div></div>' +
+            '<div class="sprite-eye"><div class="sprite-brow"></div></div>' +
+          '</div>' +
+          '<div class="sprite-mouth"></div>' +
+        '</div>' +
+      '</div>' +
+      '<span class="pill-text">Hey, need help?</span>' +
+    '</div>' +
+    '<div class="sprite-panel" id="spritePanel">' +
+      '<div class="panel-header">' +
+        '<div class="panel-banner" id="panelBanner"></div>' +
+        '<button class="panel-close" onclick="SpriteChat.close()" aria-label="Minimize">&minus;</button>' +
+        '<div class="panel-identity">' +
+          '<div class="sprite-character large" id="panelSprite" data-emotion="happy">' +
+            '<div class="sprite-body">' +
+              '<div class="sprite-eyes">' +
+                '<div class="sprite-eye"><div class="sprite-brow"></div></div>' +
+                '<div class="sprite-eye"><div class="sprite-brow"></div></div>' +
+              '</div>' +
+              '<div class="sprite-mouth"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="panel-identity-info">' +
+            '<span class="sprite-name">Sprite</span>' +
+            '<div class="sprite-status" id="spriteStatus" data-status="online">' +
+              '<span class="status-dot"></span>' +
+              '<span class="status-text">online</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="chat-area" id="chatArea"></div>' +
+      '<div class="quick-chips" id="quickChips"></div>' +
+      '<div class="chat-input-area">' +
+        '<input class="chat-input" id="chatInput" type="text" placeholder="Ask me anything..." autocomplete="off">' +
+        '<button class="input-btn" id="ttsToggle" onclick="SpriteChat.toggleTTS()" title="Toggle voice output">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>' +
+        '</button>' +
+        '<button class="input-btn" id="micBtn" onclick="SpriteChat.toggleMic()" title="Voice input">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
+        '</button>' +
+        '<button class="input-btn send-btn" onclick="SpriteChat.send()" title="Send">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+
+  function injectWidget() {
+    if (document.getElementById('sprite-widget')) return;
+    var root = document.createElement('div');
+    root.id = 'sprite-widget';
+    root.innerHTML = WIDGET_HTML;
+    document.body.appendChild(root);
+  }
+
+  // ── Conversation history (survives page navigation) ──
+
+  function loadHistory() {
+    try {
+      var raw = sessionStorage.getItem(HISTORY_KEY);
+      var h = raw ? JSON.parse(raw) : [];
+      return Array.isArray(h) ? h : [];
+    } catch (e) { return []; }
+  }
+
+  function saveHistory(history) {
+    try {
+      sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-SPRITE_CONFIG.maxHistory)));
+    } catch (e) { /* storage unavailable: chat still works, just not across pages */ }
+  }
+
+  function pushHistory(role, content) {
+    var h = loadHistory();
+    h.push({ role: role, content: String(content).slice(0, 1000) });
+    saveHistory(h);
+  }
 
   // ── Sentiment Engine ──
 
@@ -60,20 +171,21 @@ const SpriteChat = (() => {
   }
 
   // ── Seasonal Banner ──
+  // Absolute paths: the widget renders on every page depth.
 
   const seasonalBanners = {
     holidays: [
-      { name: 'new-year',    month: 1,  dayStart: 1,  dayEnd: 3,   image: 'assets/images/banners/new-year.jpg' },
-      { name: 'valentines',  month: 2,  dayStart: 12, dayEnd: 15,  image: 'assets/images/banners/valentines.jpg' },
-      { name: 'easter',      month: 3,  dayStart: 20, dayEnd: 31,  image: 'assets/images/banners/easter.jpg' },
-      { name: 'halloween',   month: 10, dayStart: 25, dayEnd: 31,  image: 'assets/images/banners/halloween.jpg' },
-      { name: 'christmas',   month: 12, dayStart: 15, dayEnd: 31,  image: 'assets/images/banners/christmas.jpg' },
+      { name: 'new-year',    month: 1,  dayStart: 1,  dayEnd: 3,   image: '/assets/images/banners/new-year.jpg' },
+      { name: 'valentines',  month: 2,  dayStart: 12, dayEnd: 15,  image: '/assets/images/banners/valentines.jpg' },
+      { name: 'easter',      month: 3,  dayStart: 20, dayEnd: 31,  image: '/assets/images/banners/easter.jpg' },
+      { name: 'halloween',   month: 10, dayStart: 25, dayEnd: 31,  image: '/assets/images/banners/halloween.jpg' },
+      { name: 'christmas',   month: 12, dayStart: 15, dayEnd: 31,  image: '/assets/images/banners/christmas.jpg' },
     ],
     seasons: {
-      spring: 'assets/images/banners/spring.jpg',
-      summer: 'assets/images/sprite-profile-banner.jpg',
-      autumn: 'assets/images/banners/autumn.jpg',
-      winter: 'assets/images/banners/winter.jpg',
+      spring: '/assets/images/banners/spring.jpg',
+      summer: '/assets/images/sprite-profile-banner.jpg',
+      autumn: '/assets/images/banners/autumn.jpg',
+      winter: '/assets/images/banners/winter.jpg',
     }
   };
 
@@ -96,7 +208,7 @@ const SpriteChat = (() => {
     banner.style.backgroundImage = 'url(' + getSeasonalBanner() + ')';
   }
 
-  // ── Dialogues ──
+  // ── Dialogues (offline fallback engine) ──
 
   const dialogues = {
     greetings: {
@@ -111,8 +223,8 @@ const SpriteChat = (() => {
     services: {
       patterns: [/\b(services?|what do you (do|offer)|capabilities|help with)\b/i],
       responses: [
-        { text: "We do a bunch of cool stuff! Websites, Mobile UI, UX Research, AI Integration, HMI, Desktop Apps, and Rebranding. Want me to take you to the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services section</span>?", emotion: "excited" },
-        { text: "Great question! The studio covers everything from web design to AI integration. Check out the full list at <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span> -- I'll scroll you there!", emotion: "happy" },
+        { text: "We do a bunch of cool stuff! Websites, Mobile UI, UX Research, AI Integration, HMI, Desktop Apps, and Rebranding. Want me to take you to the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services page</span>?", emotion: "excited" },
+        { text: "Great question! The studio covers everything from web design to AI integration. Check out the full list at <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span>!", emotion: "happy" },
       ]
     },
     work: {
@@ -126,7 +238,7 @@ const SpriteChat = (() => {
       patterns: [/\b(contact|reach|email|talk|hire|get in touch|start|project)\b/i],
       responses: [
         { text: "Love the enthusiasm! Head to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact</span> or just email hello.beben.design@gmail.com. No aggressive sales pitch -- just a real conversation.", emotion: "happy" },
-        { text: "Ready to chat? Drop a line at the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact section</span>. The team is super approachable!", emotion: "waving" },
+        { text: "Ready to chat? There's a project form on the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact page</span>. The team is super approachable!", emotion: "waving" },
       ]
     },
     pricing: {
@@ -152,7 +264,13 @@ const SpriteChat = (() => {
     tools: {
       patterns: [/\b(tools?|framework|tech|stack|react|html|css|framer|wordpress)\b/i],
       responses: [
-        { text: "The studio works with HTML/CSS, React JS, Framer, and WordPress -- each picked for the right job. Technology serves design decisions here. Check the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('frameworks')\">Frameworks section</span>!", emotion: "happy" },
+        { text: "Two answers! The studio builds with HTML/CSS, React JS, Framer, and WordPress. And there's also a page of free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('tools')\">Tools</span> you can use right now -- like the QR code generator.", emotion: "happy" },
+      ]
+    },
+    shop: {
+      patterns: [/\b(shop|store|buy|products?|templates?|ui kits?)\b/i],
+      responses: [
+        { text: "The <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('shop')\">Shop</span> is launching in 2026 -- UI kits, templates, icon sets, and print assets. You can join the waitlist to get first access!", emotion: "excited" },
       ]
     },
     faq: {
@@ -257,9 +375,32 @@ const SpriteChat = (() => {
     { text: "I wish I knew! I'm best at navigating this site and answering questions about the studio. Want to try one of these?", emotion: "guessing", chips: ["Services", "Portfolio", "Pricing", "Contact"] },
   ];
 
+  // ── Page awareness ──
+
+  function currentPage() {
+    return {
+      path: window.location.pathname,
+      title: (document.title || '').slice(0, 120),
+    };
+  }
+
+  function pageChips() {
+    var p = window.location.pathname;
+    if (p.indexOf('/services') === 0) return ["What's the process?", "Pricing", "Start a project"];
+    if (p.indexOf('/shop') === 0)     return ["When does the shop open?", "What's coming?", "Services"];
+    if (p.indexOf('/tools') === 0)    return ["What can the tools do?", "Services", "Tell me a joke"];
+    if (p.indexOf('/contact') === 0)  return ["Pricing", "How long do projects take?", "Show me work"];
+    if (p.indexOf('/work') === 0 || p.indexOf('/sprite') === 0 || p.indexOf('/kilimo-pal') === 0 ||
+        p.indexOf('/trek-watch') === 0 || p.indexOf('/rev-log') === 0)
+      return ["Tell me about the projects", "Services", "Start a project"];
+    return ["Services", "Work", "Pricing", "Tell me a joke"];
+  }
+
   // ── Init ──
 
   function init() {
+    injectWidget();
+
     const input = document.getElementById('chatInput');
     if (!input) return;
     input.addEventListener('keydown', e => {
@@ -345,9 +486,19 @@ const SpriteChat = (() => {
     document.getElementById('spritePill').classList.add('hidden');
     document.getElementById('spritePanel').classList.add('open');
     if (document.getElementById('chatArea').children.length === 0) {
-      setEmotion('waving', 2500);
-      addMessage("Hey there! I'm Sprite -- your little guide around this site. Ask me anything or pick a topic below!", 'sprite');
-      showChips(["Services", "Work", "Pricing", "Tell me a joke"]);
+      var history = loadHistory();
+      if (history.length > 0) {
+        // The conversation followed the visitor from another page.
+        history.forEach(function(m) {
+          if (m.role === 'user') addMessage(escapeHtml(m.content), 'user', true);
+          else addMessage(renderSpriteText(m.content), 'sprite', true);
+        });
+        setEmotion('happy', 2000);
+      } else {
+        setEmotion('waving', 2500);
+        addMessage("Hey there! I'm Sprite -- your little guide around this site. Ask me anything or pick a topic below!", 'sprite', true);
+        showChips(pageChips());
+      }
     }
     setTimeout(function() { document.getElementById('chatInput').focus(); }, 350);
   }
@@ -364,7 +515,9 @@ const SpriteChat = (() => {
 
   // ── Messages ──
 
-  function addMessage(text, sender) {
+  // isHtml: sprite messages arrive pre-rendered (trusted local strings
+  // or LLM output already sanitised through renderSpriteText).
+  function addMessage(text, sender, isHtml) {
     var area = document.getElementById('chatArea');
     var msg = document.createElement('div');
     msg.className = 'chat-msg ' + sender;
@@ -373,7 +526,7 @@ const SpriteChat = (() => {
         '<div class="msg-avatar"><div class="mini-eyes"><div class="mini-eye"></div><div class="mini-eye"></div></div></div>' +
         '<div class="msg-bubble">' + text + '</div>';
     } else {
-      msg.innerHTML = '<div class="msg-bubble">' + escapeHtml(text) + '</div>';
+      msg.innerHTML = '<div class="msg-bubble">' + (isHtml ? text : escapeHtml(text)) + '</div>';
     }
     area.appendChild(msg);
     area.scrollTop = area.scrollHeight;
@@ -383,6 +536,32 @@ const SpriteChat = (() => {
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  // Render an LLM reply: escape everything, then turn allowlisted
+  // markdown links into real anchors. Live links, no script injection.
+  function isAllowedUrl(url) {
+    if (/^\//.test(url)) return true;                                  // site-relative
+    if (/^https:\/\/(www\.)?beben\.design(\/|$)/i.test(url)) return true;
+    if (/^https:\/\/wa\.me\/\d+$/i.test(url)) return true;
+    if (/^mailto:[^\s"<>]+$/i.test(url)) return true;
+    if (/^tel:\+?[\d\s]+$/i.test(url)) return true;
+    return false;
+  }
+
+  function renderSpriteText(raw) {
+    var text = escapeHtml(String(raw));
+    // markdown links: [label](url)
+    text = text.replace(/\[([^\]]{1,80})\]\(([^)\s]{1,200})\)/g, function(m, label, url) {
+      if (!isAllowedUrl(url)) return label;
+      var external = /^https:\/\/wa\.me/i.test(url);
+      return '<a class="nav-link-inline" href="' + url + '"' +
+             (external ? ' target="_blank" rel="noopener"' : '') + '>' + label + '</a>';
+    });
+    // bare site paths the model may emit without markdown, e.g. /services/
+    text = text.replace(/(^|\s)(\/(?:services|tools|shop|work|contact|sprite|kilimo-pal|trek-watch|rev-log|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
+      '$1<a class="nav-link-inline" href="$2">$2</a>');
+    return text.replace(/\n/g, '<br>');
   }
 
   function showTyping() {
@@ -421,7 +600,7 @@ const SpriteChat = (() => {
     });
   }
 
-  // ── Response Engine ──
+  // ── Response Engine (offline fallback) ──
 
   function getResponse(input) {
     var lower = input.toLowerCase().trim();
@@ -436,16 +615,15 @@ const SpriteChat = (() => {
     return fallbacks[Math.floor(Math.random() * fallbacks.length)];
   }
 
-  function processInput(text) {
-    analyzeSentiment(text);
-    showTyping();
+  function respondLocally(text) {
     var delay = 800 + Math.random() * 700;
     setTimeout(function() {
       hideTyping();
       var response = getResponse(text);
       var dur = (response.emotion === 'dancing' || response.emotion === 'excited') ? 3000 : 2000;
       setEmotion(response.emotion, dur);
-      addMessage(response.text, 'sprite');
+      addMessage(response.text, 'sprite', true);
+      pushHistory('assistant', response.text.replace(/<[^>]*>/g, ''));
       if (response.chips) {
         showChips(response.chips);
       } else {
@@ -453,6 +631,52 @@ const SpriteChat = (() => {
       }
       if (ttsEnabled) speak(response.text);
     }, delay);
+  }
+
+  // ── Response Engine (live LLM via proxy) ──
+
+  function respondViaApi(text) {
+    var payload = {
+      messages: loadHistory(),
+      page: currentPage(),
+    };
+    fetch(SPRITE_CONFIG.apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(function(r) {
+        if (!r.ok) throw new Error('proxy returned ' + r.status);
+        return r.json();
+      })
+      .then(function(data) {
+        var reply = (data && data.reply) ? String(data.reply).trim() : '';
+        if (!reply) throw new Error('empty reply');
+        hideTyping();
+        setEmotion('talking', 2000);
+        addMessage(renderSpriteText(reply), 'sprite', true);
+        pushHistory('assistant', reply);
+        document.getElementById('quickChips').innerHTML = '';
+        if (ttsEnabled) speak(reply);
+      })
+      .catch(function(err) {
+        if (!apiWarned) {
+          apiWarned = true;
+          console.warn('[Sprite] Live brain unreachable, using built-in answers:', err.message);
+        }
+        respondLocally(text);
+      });
+  }
+
+  function processInput(text) {
+    analyzeSentiment(text);
+    pushHistory('user', text);
+    showTyping();
+    if (SPRITE_CONFIG.apiUrl) {
+      respondViaApi(text);
+    } else {
+      respondLocally(text);
+    }
   }
 
   function send() {
@@ -517,6 +741,13 @@ const SpriteChat = (() => {
   }
 
   // ── Navigation ──
+  // Scrolls when the target section exists on this page; otherwise
+  // jumps to the right page (homepage sections get a /#hash).
+
+  const sectionUrls = {
+    services: '/services/', tools: '/tools/', shop: '/shop/',
+    work: '/work/', contact: '/contact/',
+  };
 
   function navigateTo(sectionId) {
     var el = document.getElementById(sectionId);
@@ -524,12 +755,19 @@ const SpriteChat = (() => {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setEmotion('happy');
       setTimeout(function() {
-        addMessage("Here you go! Take a look around.", 'sprite');
+        addMessage("Here you go! Take a look around.", 'sprite', true);
       }, 600);
+      return;
     }
+    window.location.href = sectionUrls[sectionId] || ('/#' + sectionId);
   }
 
   document.addEventListener('DOMContentLoaded', init);
 
   return { open: open, close: close, send: send, toggleTTS: toggleTTS, toggleMic: toggleMic, navigateTo: navigateTo, setStatus: setStatus };
 })();
+
+/* Explicit global: the injected widget's inline onclick handlers and
+   external tooling reach SpriteChat via window, which a top-level
+   `const` alone does not guarantee. */
+window.SpriteChat = SpriteChat;

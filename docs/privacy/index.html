@@ -1,147 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#141414">
+
     <title>Privacy Policy | Beben Design</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="description" content="How Beben Design collects, uses, and protects personal information, in accordance with Kenya's Data Protection Act.">
+    <link rel="canonical" href="https://beben.design/privacy/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/privacy/">
+    <meta property="og:title" content="Privacy Policy | Beben Design">
+    <meta property="og:description" content="How Beben Design collects, uses, and protects personal information.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.2">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
     <style>
-        :root {
-            --primary: #000000;
-            --bg: #ffffff;
-            --accent: #FFC917;
-            --border: #000000;
+        /* ─────────────────────────────────────────────────────────
+           PRIVACY PAGE — scoped additions only, mirroring the
+           legal page. Tokens, nav, footer, page-hero from index.css.
+        ───────────────────────────────────────────────────────── */
+        .legal-meta {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            margin-top: 1.2rem;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: var(--bg);
-            color: var(--primary);
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
+        .legal-section { max-width: 720px; }
+        .legal-section h2 { margin-bottom: 1rem; }
+        .legal-section h3 {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--headers);
+            margin-top: 1.6rem;
+            margin-bottom: 0.5rem;
         }
-
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            padding: 60px 20px;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 60px;
+        .legal-section p,
+        .legal-section li {
+            font-size: clamp(0.88rem, 1.2vw, 0.95rem);
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
         }
-
-        /* Sidebar Navigation */
-        aside { position: sticky; top: 60px; height: fit-content; }
-        aside h2 { font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 20px; color: #888; }
-        .nav-link { display: block; text-decoration: none; color: var(--primary); font-size: 0.75rem; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; }
-        .nav-link:hover { color: var(--accent); }
-
-        /* Content Area */
-        header { margin-bottom: 60px; border-left: 8px solid var(--accent); padding-left: 20px; }
-        h1 { font-size: 3rem; text-transform: uppercase; line-height: 0.9; margin-bottom: 10px; }
-        .meta { font-size: 0.8rem; font-weight: 700; }
-
-        section { margin-bottom: 80px; scroll-margin-top: 60px; }
-        h2.section-title { font-size: 1.4rem; background: var(--primary); color: #fff; padding: 5px 15px; display: inline-block; margin-bottom: 25px; }
-        h3 { font-size: 1rem; margin: 20px 0 10px 0; border-bottom: 1px solid #ddd; }
-        
-        p, li { font-size: 0.9rem; color: #333; margin-bottom: 15px; }
-        ul { list-style: none; }
-        li::before { content: "> "; color: var(--accent); font-weight: bold; }
-
-        .highlight-box { border: 2px solid var(--primary); padding: 20px; position: relative; }
-        .highlight-box::after { content: ""; position: absolute; top: 5px; left: 5px; width: 100%; height: 100%; background: var(--accent); z-index: -1; }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; padding: 40px 20px; }
-            aside { display: none; }
+        .legal-section strong { color: var(--text); }
+        .legal-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .legal-section li {
+            padding-left: 1.4rem;
+            position: relative;
+        }
+        .legal-section li::before {
+            content: "//";
+            position: absolute;
+            left: 0;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        .note-box {
+            border-left: 2px solid var(--yellow);
+            padding-left: 1rem;
+            margin-top: 1.2rem;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <aside>
-        <h2>INDEX // 2026</h2>
-        <a href="#intro" class="nav-link">01 Introduction</a>
-        <a href="#collection" class="nav-link">02 Collection</a>
-        <a href="#usage" class="nav-link">03 Usage</a>
-        <a href="#cookies" class="nav-link">04 Cookies</a>
-        <a href="#rights" class="nav-link">05 User Rights</a>
-        <a href="#contact" class="nav-link">06 Contact</a>
-    </aside>
+<a class="skip-link" href="#main-content" style="position:absolute;left:-999px;top:0;background:#141414;color:#F7F4F3;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;z-index:999;">Skip to content</a>
+<style>.skip-link:focus{left:12px;top:12px;}</style>
 
-    <main>
-        <header>
-            <h1>PRIVACY <br>POLICY</h1>
-            <p class="meta">EFFECTIVE DATE: FEBRUARY 09, 2026</p>
-            <p class="meta">LOCATION: NAIROBI, KENYA</p>
-        </header>
+<!-- NAVBAR -->
+<nav>
+    <a href="/" class="logo" aria-label="Beben Design - home">
+        <svg class="logo__mark" viewBox="0 0 768 255" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M637.641 117.198L555.832 117.198V63.9144C555.832 61.7615 554.086 60.0162 551.933 60.0162C549.781 60.0162 548.035 61.7615 548.035 63.9144V117.198H520.446V0.000212398L561.832 0.000212398L603.684 72.487C604.761 74.3512 607.144 74.9895 609.008 73.9132C610.873 72.8367 611.511 70.4533 610.435 68.5888L570.836 0.000212398L637.641 0.000212398V117.198Z" fill="#FFC710"/>
+            <path d="M767.754 254.489H685.944V201.206C685.944 199.053 684.199 197.308 682.046 197.308C679.893 197.308 678.148 199.053 678.148 201.206V254.489H650.559V137.292H691.944L733.797 209.779C734.873 211.643 737.257 212.281 739.121 211.205C740.986 210.128 741.624 207.745 740.547 205.881L700.948 137.292H767.754V254.489Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M106.005 14.6494L106.005 117.197L0 117.197L0 0L92.7541 0L106.005 14.6494ZM36.3094 78.5656C34.1564 78.5656 32.4111 80.3129 32.4111 82.4658C32.4117 84.6183 34.1568 86.3621 36.3094 86.3621L69.6956 86.3621C71.8485 86.3621 73.5938 84.6168 73.5938 82.4639C73.5933 80.3114 71.8482 78.5656 69.6956 78.5656L36.3094 78.5656ZM36.3094 30.8333C34.1564 30.8333 32.4111 32.5786 32.4111 34.7316C32.4111 36.8845 34.1564 38.6298 36.3094 38.6298L69.6956 38.6298C71.8485 38.6298 73.5938 36.8845 73.5938 34.7316C73.5938 32.5786 71.8485 30.8333 69.6956 30.8333L36.3094 30.8333Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M366.228 14.6495V117.198L260.223 117.198V0.000106199L352.977 0.000106199L366.228 14.6495ZM296.532 78.5657C294.379 78.5657 292.634 80.313 292.634 82.4659C292.635 84.6184 294.38 86.3622 296.532 86.3622L329.919 86.3622C332.072 86.3622 333.817 84.6169 333.817 82.464C333.816 80.3115 332.071 78.5657 329.919 78.5657L296.532 78.5657ZM296.532 30.8334C294.379 30.8334 292.634 32.5787 292.634 34.7317C292.634 36.8846 294.379 38.6299 296.532 38.6299H329.919C332.072 38.6299 333.817 36.8846 333.817 34.7317C333.817 32.5787 332.072 30.8334 329.919 30.8334L296.532 30.8334Z" fill="#FFC710"/>
+            <path d="M236.117 73.4432L217.934 41.95C216.855 40.0804 214.464 39.4398 212.594 40.5193C210.725 41.5988 210.084 43.9896 211.163 45.8592L236.117 89.0793L172.607 89.0824C170.448 89.0824 168.698 90.8325 168.698 92.9914C168.698 95.1502 170.448 96.9006 172.607 96.9006L236.117 96.9006V117.196L130.112 117.196L130.112 0.000106199L236.117 0.000106199V73.4432Z" fill="#FFC710"/>
+            <path d="M496.34 73.4451L478.157 41.9519C477.078 40.0822 474.687 39.4415 472.817 40.521C470.948 41.6004 470.307 43.9912 471.387 45.8609L496.34 89.081L432.83 89.0841C430.671 89.0841 428.921 90.8343 428.921 92.9933C428.921 95.1522 430.671 96.9025 432.83 96.9025L496.34 96.9025V117.198L390.335 117.198V0.00201779L496.34 0.00201779V73.4451Z" fill="#FFC710"/>
+            <path d="M236.119 210.741L217.936 179.248C216.857 177.378 214.466 176.737 212.597 177.817C210.727 178.896 210.086 181.287 211.166 183.157L236.119 226.377L172.609 226.38C170.451 226.38 168.701 228.13 168.701 230.289C168.701 232.448 170.451 234.198 172.609 234.198H236.119V254.493H130.114V137.298H236.119V210.741Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M106.007 151.943L106.007 254.491L0.00229732 254.491L0.00229732 137.294L92.7563 137.294L106.007 151.943ZM36.0552 175.3C33.9283 175.3 32.204 177.024 32.204 179.151L32.204 212.634C32.204 214.761 33.9283 216.486 36.0552 216.486C38.1823 216.486 39.9068 214.761 39.9068 212.634L39.9068 179.151C39.9068 177.024 38.1823 175.3 36.0552 175.3Z" fill="#FFC710"/>
+            <path d="M366.231 192.243L329.434 173.024C327.536 172.033 325.194 172.768 324.203 174.666C323.212 176.564 323.946 178.906 325.844 179.897L366.231 200.99V254.489L260.225 254.489V234.156L288.297 234.156C290.438 234.156 292.174 232.42 292.174 230.279C292.174 228.138 290.438 226.402 288.297 226.402L260.225 226.402L260.225 137.294L366.231 137.294L366.231 192.243Z" fill="#FFC710"/>
+            <path d="M496.342 254.489L390.337 254.489L390.337 163.095L496.342 163.095L496.342 254.489Z" fill="#FFC710"/>
+            <path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/>
+            <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
+        </svg>
+    </a>
+    <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+            <span class="theme-toggle__label">LIGHT</span>
+            <span class="theme-toggle__dial">
+                <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <line x1="12" y1="2" x2="12" y2="4.3"></line><line x1="12" y1="19.7" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="4.3" y2="12"></line><line x1="19.7" y1="12" x2="22" y2="12"></line>
+                    <line x1="4.93" y1="4.93" x2="6.55" y2="6.55"></line><line x1="17.45" y1="17.45" x2="19.07" y2="19.07"></line>
+                    <line x1="4.93" y1="19.07" x2="6.55" y2="17.45"></line><line x1="17.45" y1="6.55" x2="19.07" y2="4.93"></line>
+                </svg>
+                <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+                </svg>
+            </span>
+        </button>
+        <ul class="menu desktop-only">
+            <li><a href="../services/">SERVICES</a></li>
+            <li><a href="../tools/">TOOLS</a></li>
+            <li><a href="../shop/">SHOP</a></li>
+            <li><a href="../work/">WORK</a></li>
+            <li><a href="../contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
 
-        <section id="intro">
-            <h2 class="section-title">01. Introduction</h2>
-            <p>This Privacy Policy explains how <strong>Beben Design</strong> collects, uses, and protects personal information obtained through our website and related communications. By using this website, you agree to the practices described in this policy in accordance with <strong>Kenya’s Data Protection Act</strong>.</p>
-        </section>
-
-        <section id="collection">
-            <h2 class="section-title">02. Information Collected</h2>
-            <h3>Direct Collection</h3>
-            <ul>
-                <li>Contact form submissions (Name, Email, Phone)</li>
-                <li>Project briefings and voluntary business data</li>
-                <li>Direct email communications</li>
-            </ul>
-            <h3>Automated Collection</h3>
-            <p>To optimize UX, we automatically log technical data: IP address, browser type, device type, and interaction patterns.</p>
-        </section>
-
-        <section id="usage">
-            <h2 class="section-title">03. How Information Is Used</h2>
-            <p>Personal information is strictly used for operational excellence:</p>
-            <ul>
-                <li>Project inquiry response and quotation</li>
-                <li>Ongoing service communication</li>
-                <li>Analytics to improve technical performance</li>
-            </ul>
-            <p><strong>Beben Design does not sell, rent, or trade your data to third parties.</strong></p>
-        </section>
-
-        <section id="cookies">
-            <h2 class="section-title">04. Cookies & Analytics</h2>
-            <p>We use cookies to understand site performance. You may disable these via your browser settings, though it may impact certain site functionalities.</p>
-            <div class="highlight-box">
-                <p><strong>Note:</strong> We utilize Google Analytics and secure hosting providers who process limited data necessary for infrastructure performance.</p>
-            </div>
-        </section>
-
-        <section id="rights">
-            <h2 class="section-title">05. User Rights</h2>
-            <p>Under the Data Protection Act, you have the right to:</p>
-            <ul>
-                <li>Access your personal data held by us</li>
-                <li>Correct inaccurate information</li>
-                <li>Request total deletion of your data records</li>
-            </ul>
-        </section>
-
-        <section id="contact">
-            <h2 class="section-title">06. Contact Information</h2>
-            <p>For data-related inquiries or to exercise your rights:</p>
-            <p><strong>BEBEN DESIGN</strong><br>
-            Email: hello.beben.design@gmail.com<br>
-            Phone: +254 114 728233<br>
-            Location: Nairobi, Kenya</p>
-        </section>
-
-        <footer style="margin-top: 100px; font-size: 0.7rem; opacity: 0.6;">
-            [ END OF DOCUMENT ]
-        </footer>
-    </main>
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="../services/">Services</a></li>
+        <li><a href="../tools/">Tools</a></li>
+        <li><a href="../shop/">Shop</a></li>
+        <li><a href="../work/">Work</a></li>
+        <li><a href="../contact/">Contact</a></li>
+    </ul>
 </div>
 
+<!-- MAIN -->
+<main id="main-content">
+
+    <!-- Hero - plain -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Privacy</span>
+            <h1 data-reveal style="--i:1">Privacy <em class="highlight-box">policy</em></h1>
+            <p data-reveal style="--i:2">How Beben Design collects, uses, and protects personal information obtained
+                through this website and related communications.</p>
+            <p class="legal-meta" data-reveal style="--i:3">Effective 9 February 2026 &middot; Nairobi, Kenya</p>
+        </div>
+    </section>
+
+    <!-- 01 - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">01</span>
+                <h2 data-reveal style="--i:1">Introduction</h2>
+                <p data-reveal style="--i:2">This Privacy Policy explains how <strong>Beben Design</strong> collects, uses,
+                    and protects personal information obtained through our website and related communications. By using
+                    this website, you agree to the practices described in this policy in accordance with
+                    <strong>Kenya's Data Protection Act</strong>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02 - plain -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">02</span>
+                <h2 data-reveal style="--i:1">Information collected</h2>
+                <h3 data-reveal style="--i:2">Direct collection</h3>
+                <ul data-reveal style="--i:2">
+                    <li>Contact form submissions (name, email, phone)</li>
+                    <li>Project briefings and voluntary business data</li>
+                    <li>Direct email communications</li>
+                </ul>
+                <h3 data-reveal style="--i:3">Automated collection</h3>
+                <p data-reveal style="--i:3">To optimize UX, we automatically log technical data: IP address, browser
+                    type, device type, and interaction patterns.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03 - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">03</span>
+                <h2 data-reveal style="--i:1">How information is used</h2>
+                <p data-reveal style="--i:2">Personal information is strictly used for operational excellence:</p>
+                <ul data-reveal style="--i:2">
+                    <li>Project inquiry response and quotation</li>
+                    <li>Ongoing service communication</li>
+                    <li>Analytics to improve technical performance</li>
+                </ul>
+                <p data-reveal style="--i:3"><strong>Beben Design does not sell, rent, or trade your data to third parties.</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 04 - plain -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">04</span>
+                <h2 data-reveal style="--i:1">Cookies &amp; analytics</h2>
+                <p data-reveal style="--i:2">We use cookies to understand site performance. You may disable these via
+                    your browser settings, though it may impact certain site functionalities.</p>
+                <p class="note-box" data-reveal style="--i:3"><strong>Note:</strong> We utilize Google Analytics and
+                    secure hosting providers who process limited data necessary for infrastructure performance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05 - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">05</span>
+                <h2 data-reveal style="--i:1">User rights</h2>
+                <p data-reveal style="--i:2">Under the Data Protection Act, you have the right to:</p>
+                <ul data-reveal style="--i:2">
+                    <li>Access your personal data held by us</li>
+                    <li>Correct inaccurate information</li>
+                    <li>Request total deletion of your data records</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 06 - plain -->
+    <section>
+        <div class="container">
+            <div class="legal-section">
+                <span class="eyebrow" data-reveal style="--i:0">06</span>
+                <h2 data-reveal style="--i:1">Contact information</h2>
+                <p data-reveal style="--i:2">For data-related inquiries or to exercise your rights:</p>
+                <p data-reveal style="--i:3"><strong>Beben Design</strong><br>
+                    Email: <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a><br>
+                    Phone: +254 114 728233<br>
+                    Location: Nairobi, Kenya</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">&copy; Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="../contact/">CONTACT</a></li>
+                <li><a href="../legal/">LEGAL</a></li>
+                <li><a href="../privacy/">PRIVACY POLICY</a></li>
+                <li><a href="../credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
+        </div>
+    </div>
+    <div class="footer-meta">
+        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>&copy; 2026 Beben Design. All rights reserved.</span>
+    </div>
+</footer>
+
+<script src="../assets/JS/index.js"></script>
+<script src="../assets/JS/sprite.js?v=3.2"></script>
 </body>
 </html>

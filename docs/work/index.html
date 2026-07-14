@@ -17,32 +17,16 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=League+Gothic&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.2">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 
     <style>
-        .work-hero {
-            padding-top: clamp(130px, 16vw, 180px);
-            padding-bottom: 40px;
-        }
-        .work-hero h1 {
-            font-size: clamp(2.2rem, 5.5vw, 3.8rem);
-            line-height: 1.08;
-            margin-bottom: 1rem;
-        }
-        .work-hero p {
-            font-family: var(--font-body);
-            font-size: clamp(1rem, 1.4vw, 1.1rem);
-            max-width: 48ch;
-            line-height: 1.7;
-            color: var(--text-muted);
-        }
-
         /* ── Project Cards ── */
         .projects-grid {
             display: flex;
@@ -308,7 +292,7 @@
 <main id="main-content">
 
     <!-- Hero -->
-    <section class="work-hero">
+    <section class="page-hero">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Case studies</span>
             <h1 data-reveal style="--i:1">Thinking in <em class="highlight-box">pixels</em></h1>
@@ -339,7 +323,7 @@
                     <div class="project-info">
                         <span class="eyebrow">AI &middot; UI Component</span>
                         <h2>Sprite</h2>
-                        <p>A character-driven AI site guide that replaces the generic chatbox with an animated mascot. Built with plain HTML, CSS, and JS &mdash; no frameworks, no dependencies.</p>
+                        <p>A character-driven AI site guide that replaces the generic chatbox with an animated mascot. Built with plain HTML, CSS, and JS. No frameworks, no dependencies.</p>
                         <p>Pattern-matching conversation engine, sentiment-aware expressions, seasonal banners, TTS, and voice input. The MVP is live.</p>
                         <div class="project-tags">
                             <span class="project-tag">HTML / CSS / JS</span>
@@ -371,7 +355,7 @@
                             <span class="project-tag">Embedded Software</span>
                             <span class="project-tag">HMI</span>
                         </div>
-                        <span class="project-cta">Coming soon &rarr;</span>
+                        <span class="project-cta">Project preview &rarr;</span>
                     </div>
                 </a>
 
@@ -396,7 +380,7 @@
                             <span class="project-tag">AI Analytics</span>
                             <span class="project-tag">Mobile App</span>
                         </div>
-                        <span class="project-cta">Visit Website &rarr;</span>
+                        <span class="project-cta">Project preview &rarr;</span>
                     </div>
                 </a>
 
@@ -413,7 +397,7 @@
                     <div class="project-info">
                         <span class="eyebrow">AgriTech &amp; AI &middot; Platform</span>
                         <h2>Kilimo Pal</h2>
-                        <p>An AI-powered agriculture platform that meets farmers where they are &mdash; from the absolute basics of what manure is, to managing large-scale onion plantations with sensor data and weather forecasts.</p>
+                        <p>An AI-powered agriculture platform that meets farmers where they are: from the absolute basics of what manure is, to managing large-scale onion plantations with sensor data and weather forecasts.</p>
                         <p>Modular hardware and software: start with just the app and AI guidance, add soil sensors, weather stations, and irrigation controllers as you grow. Regular soil test reminders, localised planting calendars, and yield predictions.</p>
                         <div class="project-tags">
                             <span class="project-tag">AI Guidance</span>
@@ -421,7 +405,7 @@
                             <span class="project-tag">Weather API</span>
                             <span class="project-tag">Modular Hardware</span>
                         </div>
-                        <span class="project-cta">Coming soon &rarr;</span>
+                        <span class="project-cta">Project preview &rarr;</span>
                     </div>
                 </a>
 
@@ -500,5 +484,6 @@
 <div id="copy-toast">Email copied to clipboard.</div>
 
 <script src="../assets/JS/index.js"></script>
+<script src="../assets/JS/sprite.js?v=3.2"></script>
 </body>
 </html>
