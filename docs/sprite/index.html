@@ -125,6 +125,13 @@
         [data-theme="light"] .roadmap-label--planned {
             background: rgba(20, 20, 20, 0.06);
         }
+        .roadmap-label--done {
+            background: rgba(37, 211, 102, 0.15);
+            color: var(--whatsapp);
+        }
+        [data-theme="light"] .roadmap-label--done {
+            color: #128C46;
+        }
         .roadmap-item h3 {
             font-family: var(--font-body);
             font-size: 1rem;
@@ -313,9 +320,9 @@
 
                 <div class="roadmap" data-reveal style="--i:3">
                     <div class="roadmap-item">
-                        <span class="roadmap-label roadmap-label--next">Next</span>
+                        <span class="roadmap-label roadmap-label--done">Done</span>
                         <h3>AI-powered live chat</h3>
-                        <p>Replacing the pattern-matching engine with a real AI backend. Sprite will understand context, remember conversation history, and answer questions it's never been explicitly programmed for, while keeping its personality intact.</p>
+                        <p>Shipped. Sprite now runs on a real AI backend: it understands context, remembers the conversation as you move between pages, and answers questions it was never explicitly programmed for, personality intact. The pattern engine stays on as an offline fallback.</p>
                     </div>
                     <div class="roadmap-item">
                         <span class="roadmap-label roadmap-label--next">Next</span>
