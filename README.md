@@ -88,8 +88,8 @@ Upgrade ladder, when the team grows into it (design intent, not built yet):
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=3.2">
-<script src="../assets/JS/sprite.js?v=3.2"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=3.6">
+<script src="../assets/JS/sprite.js?v=3.6"></script>
 ```
 
 Bump the `?v=` on both whenever either file changes, or returning visitors

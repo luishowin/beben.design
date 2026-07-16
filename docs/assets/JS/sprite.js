@@ -508,7 +508,10 @@ const SpriteChat = (() => {
         showChips(pageChips());
       }
     }
-    setTimeout(function() { document.getElementById('chatInput').focus(); }, 350);
+    // No autofocus on touch devices: the keyboard would cover the fresh panel.
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      setTimeout(function() { document.getElementById('chatInput').focus(); }, 350);
+    }
   }
 
   function close() {
