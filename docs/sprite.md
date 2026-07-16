@@ -60,6 +60,16 @@ Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
 - Neopolaris: a full website design and build for a Nairobi startup, live
   at neopolaris.ai.
 
+## The blog
+
+- The studio writes essays and build logs at /blog/: design decisions,
+  engineering trade-offs, and tools, all from real projects. The index
+  leads with an article of the day, then featured articles.
+- Launch articles: how Sprite was built (/blog/building-sprite/), why
+  Rev Log publishes its data format before hardware
+  (/blog/rev-log-format-first/), and the case for tools you can
+  download and own (/blog/tools-you-can-own/).
+
 ## Extras worth knowing
 
 - The free tools at /tools/ run entirely in the browser: no accounts, no

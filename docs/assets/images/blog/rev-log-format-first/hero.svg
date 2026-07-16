@@ -1,0 +1,39 @@
+<svg viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Telemetry traces for throttle, brake and revs over a faint grid">
+  <defs>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', Consolas, monospace; letter-spacing: 0.08em; }
+      .gray { fill: #8A8A8A; }
+      .gray-stroke { stroke: #8A8A8A; }
+      .yellow-stroke { stroke: #FFC710; }
+    </style>
+  </defs>
+
+  <!-- faint grid -->
+  <g class="gray-stroke" stroke-width="1" opacity="0.14">
+    <path d="M0 90 H1200 M0 180 H1200 M0 270 H1200 M0 360 H1200 M0 450 H1200 M0 540 H1200"/>
+    <path d="M120 0 V630 M240 0 V630 M360 0 V630 M480 0 V630 M600 0 V630 M720 0 V630 M840 0 V630 M960 0 V630 M1080 0 V630"/>
+  </g>
+
+  <!-- throttle trace: smooth, yellow -->
+  <text x="90" y="150" class="mono" font-size="18" fill="#FFC710">throttle</text>
+  <path d="M90 220 C 200 220, 240 140, 360 140 S 520 230, 640 210 S 860 120, 980 130 S 1090 170, 1110 165"
+        class="yellow-stroke" stroke-width="3" fill="none"/>
+
+  <!-- brake trace: spiky, gray -->
+  <text x="90" y="330" class="mono gray" font-size="18">brake</text>
+  <path d="M90 420 H 240 L 280 350 L 320 420 H 560 L 600 365 L 630 420 H 830 L 870 340 L 910 420 H 1110"
+        class="gray-stroke" stroke-width="2.5" fill="none" opacity="0.85"/>
+
+  <!-- rpm trace: stepped, gray dashed -->
+  <text x="90" y="500" class="mono gray" font-size="18" opacity="0.8">revs</text>
+  <path d="M90 560 L 200 545 L 300 555 L 420 505 L 540 540 L 660 520 L 780 550 L 900 500 L 1020 530 L 1110 515"
+        class="gray-stroke" stroke-width="2" fill="none" opacity="0.6" stroke-dasharray="8 5"/>
+
+  <!-- annotation: the format bracket -->
+  <g class="gray-stroke" stroke-width="1.5" opacity="0.7">
+    <path d="M1140 130 H1155 V560 H1140"/>
+  </g>
+  <text x="1163" y="330" class="mono gray" font-size="16" opacity="0.8" transform="rotate(90 1163 330)">ride format v0.1</text>
+
+  <text x="90" y="70" class="mono gray" font-size="17" opacity="0.7">month over month &#183; smoother is the win</text>
+</svg>

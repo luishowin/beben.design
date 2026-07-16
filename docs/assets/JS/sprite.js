@@ -400,6 +400,7 @@ const SpriteChat = (() => {
     if (p.indexOf('/work') === 0 || p.indexOf('/sprite') === 0 || p.indexOf('/kilimo-pal') === 0 ||
         p.indexOf('/trek-watch') === 0 || p.indexOf('/rev-log') === 0)
       return ["Tell me about the projects", "Services", "Start a project"];
+    if (p.indexOf('/blog') === 0)     return ["What does the studio do?", "Show me work", "Start a project"];
     return ["Services", "Work", "Pricing", "Tell me a joke"];
   }
 
@@ -566,7 +567,7 @@ const SpriteChat = (() => {
              (external ? ' target="_blank" rel="noopener"' : '') + '>' + label + '</a>';
     });
     // bare site paths the model may emit without markdown, e.g. /services/
-    text = text.replace(/(^|\s)(\/(?:services|tools|shop|work|contact|sprite|kilimo-pal|trek-watch|rev-log|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
+    text = text.replace(/(^|\s)(\/(?:services|tools|shop|work|contact|sprite|kilimo-pal|trek-watch|rev-log|blog|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
       '$1<a class="nav-link-inline" href="$2">$2</a>');
     // bare WhatsApp URLs become tappable too
     text = text.replace(/(^|\s)(https:\/\/wa\.me\/\d+)(?=[\s.,!?)]|$)/g,

@@ -12,12 +12,15 @@ docs/                  the published site
   services/ tools/ shop/ work/ contact/    main pages
   sprite/              Sprite case study
   kilimo-pal/ trek-watch/ rev-log/         project previews (noindex until real case studies ship)
+  blog/                GENERATED blog pages + feed.xml (never hand-edit; see The blog)
   legal/ privacy/ credits/ 404.html        support pages
   qr-code-generator/   standalone downloadable tool (intentionally self-contained)
   redoubt/ kemmy-spa-concierge-preview/    client previews (intentionally standalone)
   assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid, FAQ)
   assets/css/sprite.css + assets/JS/sprite.js   the Sprite chat widget
   assets/JS/index.js   theme, mobile menu, reveal animation, FAQ accordion
+content/blog/          blog posts as markdown (the SOURCE; not published)
+scripts/build_blog.py  renders content/blog/ into docs/blog/ (+ templates in scripts/templates/)
 cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of the site)
 ```
 
@@ -38,6 +41,47 @@ cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of th
 - Page-specific styles live in a scoped `<style>` block in each page's head;
   shared patterns live in `index.css`. New pages copy the nav/footer markup
   verbatim from an existing page.
+
+## The blog
+
+Posts are markdown files in `content/blog/`, rendered to real static HTML in
+`docs/blog/` by a small generator. The generated pages are committed like any
+other page, so hosting, SEO, and local preview work exactly as the rest of
+the site.
+
+**To publish a post:**
+
+1. Write `content/blog/YYYY-MM-DD-your-slug.md` with front matter between
+   `---` fences: `title`, `description`, `date` (required); `author`, `tags`
+   (comma-separated), `hero_image`, `hero_alt`, `featured`, `pinned`, `draft`
+   (optional). Images go in `docs/assets/images/blog/your-slug/` and are
+   referenced with root-absolute paths (`/assets/images/blog/your-slug/...`).
+2. Run `py scripts/build_blog.py` (one dependency: `py -m pip install markdown`).
+   It regenerates every post page, the blog index, `docs/blog/feed.xml`, and
+   the blog block of `docs/sitemap.xml`, and warns about em dashes and
+   orphaned output folders.
+3. Review, commit, push. Done.
+
+The index leads with the `pinned: true` post as the article of the day
+(falling back to the newest), then up to three `featured: true` articles,
+then the rest as archive rows.
+
+A teammate without the toolchain can add or edit a markdown file through the
+GitHub web UI; whoever merges runs the build. Two rules keep the system
+honest: **never hand-edit anything in `docs/blog/`** (the next build
+overwrites it), and **any nav/footer/sprite-version change to the site must
+be mirrored in `scripts/templates/post.html` and `blog-index.html`**, then
+rebuilt.
+
+Upgrade ladder, when the team grows into it (design intent, not built yet):
+
+1. **Auto-build:** a GitHub Action runs `build_blog.py` on push and commits
+   the output, so writers never touch Python.
+2. **Web CMS:** Decap CMS at `/admin/` committing markdown via GitHub OAuth,
+   using a small Cloudflare Worker as the OAuth gateway (same pattern as the
+   Sprite proxy). Accounts stay internal: they are just repo collaborators.
+3. **Community/network features** would be a separate app on a subdomain;
+   GitHub Pages stays the publishing layer.
 
 ## Sprite (the chat widget)
 

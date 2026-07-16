@@ -16,6 +16,10 @@ Capabilities span brand identity and visual design, UX research, UI design for w
 - [Free Web Tools](https://beben.design/tools/): A growing collection of single-purpose, browser-native utilities — no accounts, no server calls, no data collection. Downloadable as standalone HTML files that run offline.
 - [QR Code Generator](https://beben.design/qr-code-generator/): Free, watermark-free SVG QR code generator. Runs entirely client-side; exportable as SVG or downloadable as a self-contained HTML file.
 
+## Blog
+
+- [Blog](https://beben.design/blog/): Essays and build logs from inside real projects: design decisions, engineering trade-offs, and shipped tools. RSS feed at https://beben.design/blog/feed.xml.
+
 ## Company
 
 - [Contact](https://beben.design/contact/): Direct WhatsApp and email contact. Studio hours Mon–Fri, 08:00–18:00 EAT. Discovery call → fixed-price proposal → 50% deposit to start.

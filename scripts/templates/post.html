@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{{GENERATED_COMMENT}}
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -6,16 +7,32 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>404 - Page Not Found | Beben Design</title>
-    <meta name="robots" content="noindex, nofollow">
+    <title>{{TITLE}} | Beben Design Blog</title>
+    <meta name="description" content="{{DESCRIPTION}}">
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:title" content="{{TITLE}} | Beben Design Blog">
+    <meta property="og:description" content="{{DESCRIPTION}}">
+    <meta property="og:site_name" content="Beben Design">
+    <meta property="article:published_time" content="{{DATE_ISO}}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{TITLE}} | Beben Design Blog">
+    <meta name="twitter:description" content="{{DESCRIPTION}}">
+
+    <script type="application/ld+json">
+{{JSON_LD}}
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Absolute paths — this page is served from any URL depth. -->
+    <!-- Absolute paths — posts live two levels deep. -->
     <link rel="stylesheet" href="/assets/css/index.css">
     <link rel="stylesheet" href="/assets/css/sprite.css?v=3.5">
+    <link rel="alternate" type="application/rss+xml" title="Beben Design Blog" href="/blog/feed.xml">
 
     <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
@@ -23,33 +40,194 @@
 
     <style>
         /* ─────────────────────────────────────────────────────────
-           404 PAGE — scoped additions only.
+           BLOG POST — scoped additions only, emitted per-post by
+           scripts/build_blog.py from scripts/templates/post.html.
            Tokens, nav, footer, page-hero, reveal from index.css.
         ───────────────────────────────────────────────────────── */
 
-        .error-number {
-            display: block;
+        .post-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.9rem;
+            margin-top: 1.6rem;
             font-family: var(--font-mono);
-            font-size: clamp(6rem, 20vw, 11rem);
+            font-size: 0.78rem;
             font-weight: 500;
-            line-height: 0.9;
-            letter-spacing: -0.04em;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .post-figure {
+            max-width: 760px;
+            margin: 0 0 3rem;
+        }
+        .post-figure img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--border);
+        }
+
+        .post-body {
+            max-width: 680px;
+        }
+        .post-body h2 {
+            margin: 2.6rem 0 1rem;
+        }
+        .post-body h3 {
+            font-family: var(--font-body);
+            font-size: 1.05rem;
+            font-weight: 600;
             color: var(--headers);
-            margin-bottom: 2rem;
-            user-select: none;
-            animation: glitch 3.5s infinite;
+            margin: 2rem 0 0.7rem;
+        }
+        .post-body p {
+            font-size: clamp(0.98rem, 1.3vw, 1.06rem);
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 1.4rem;
+        }
+        .post-body ul,
+        .post-body ol {
+            margin: 0 0 1.4rem;
+            padding-left: 1.3rem;
+        }
+        .post-body li {
+            font-size: clamp(0.98rem, 1.3vw, 1.06rem);
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .post-body a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: var(--border-strong);
+            text-underline-offset: 3px;
+            transition: color var(--dur-fast) ease;
+        }
+        .post-body a:hover { color: var(--highlight); }
+        .post-body strong { font-weight: 600; color: var(--headers); }
+        .post-body blockquote {
+            border-left: 2px solid var(--yellow);
+            padding-left: 1.2rem;
+            margin: 0 0 1.4rem;
+        }
+        .post-body blockquote p {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .post-body code {
+            font-family: var(--font-mono);
+            font-size: 0.86em;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 0.1em 0.35em;
+        }
+        .post-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 1.2rem 1.4rem;
+            margin: 0 0 1.4rem;
+            overflow-x: auto;
+        }
+        .post-body pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 0.84rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        .post-body img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--border);
+        }
+        .post-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 0 1.4rem;
+            font-size: 0.92rem;
+        }
+        .post-body th,
+        .post-body td {
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border-top: 1px solid var(--border);
+            line-height: 1.6;
+        }
+        .post-body th {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .post-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2.4rem 0;
         }
 
-        @keyframes glitch {
-            0%,  89%  { text-shadow: none; }
-            90%        { text-shadow:  3px 0 0 var(--highlight), -3px 0 0 var(--yellow); }
-            91%        { text-shadow: -3px 0 0 var(--highlight),  3px 0 0 var(--yellow); }
-            92%        { text-shadow:  3px 0 0 var(--highlight), -3px 0 0 var(--yellow); }
-            93%, 100%  { text-shadow: none; }
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 3rem;
+            padding-top: 1.6rem;
+            border-top: 1px solid var(--border);
+            max-width: 680px;
+        }
+        .post-tags span {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.7rem;
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .error-number { animation: none; }
+        .post-nav {
+            max-width: 760px;
+        }
+        .post-nav-row {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 1.2rem;
+            padding: 1.4rem 0;
+            border-top: 1px solid var(--border);
+        }
+        .post-nav-row .dir {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding-top: 0.2rem;
+        }
+        .post-nav-row a {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--headers);
+            transition: color var(--dur-fast) ease;
+        }
+        .post-nav-row a:hover { color: var(--highlight); }
+
+        .cta-row {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+        }
+
+        @media (max-width: 480px) {
+            .post-nav-row { grid-template-columns: 1fr; gap: 0.3rem; }
         }
     </style>
 </head>
@@ -97,7 +275,7 @@
             <li><a href="/tools/">TOOLS</a></li>
             <li><a href="/shop/">SHOP</a></li>
             <li><a href="/work/">WORK</a></li>
-            <li><a href="/blog/">BLOG</a></li>
+            <li><a href="/blog/" class="active">BLOG</a></li>
             <li><a href="/contact/">CONTACT</a></li>
         </ul>
         <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
@@ -113,25 +291,53 @@
         <li><a href="/tools/">Tools</a></li>
         <li><a href="/shop/">Shop</a></li>
         <li><a href="/work/">Work</a></li>
-        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/blog/" class="active">Blog</a></li>
         <li><a href="/contact/">Contact</a></li>
     </ul>
 </div>
 
 <!-- MAIN -->
 <main id="main-content">
-    <section class="page-hero" style="border-bottom: none; min-height: 60vh;">
+
+    <!-- Post hero - plain -->
+    <section class="page-hero">
         <div class="container">
-            <span class="error-number" data-reveal style="--i:0" aria-hidden="true">404</span>
-            <span class="eyebrow" data-reveal style="--i:1">[ Error 404 ] · path not found</span>
-            <h1 data-reveal style="--i:2">This page <em class="highlight-box">doesn't</em> exist<br>in the system.</h1>
-            <p data-reveal style="--i:3">The coordinate you're looking for has been decommissioned, moved, or never
-                existed. Design logic dictates we stop here rather than guess.</p>
-            <div class="cta-wrapper" data-reveal style="--i:4">
-                <a href="/" class="cta-link">← Return to root</a>
+            <span class="eyebrow" data-reveal style="--i:0">Blog &middot; {{DATE_HUMAN}}</span>
+            <h1 data-reveal style="--i:1">{{TITLE}}</h1>
+            <p data-reveal style="--i:2">{{DESCRIPTION}}</p>
+            <div class="post-meta" data-reveal style="--i:3">
+                <span>{{AUTHOR}}</span>
+                <span>&middot;</span>
+                <span>{{READING_TIME}} min read</span>
             </div>
         </div>
     </section>
+
+    <!-- Article - soft -->
+    <section class="section--soft">
+        <div class="container">
+{{HERO_FIGURE}}
+            <article class="post-body" data-reveal>
+{{BODY_HTML}}
+            </article>
+{{TAGS_HTML}}
+        </div>
+    </section>
+
+    <!-- Keep reading - plain -->
+    <section>
+        <div class="container">
+            <div class="post-nav">
+                <span class="eyebrow" data-reveal style="--i:0">Keep reading</span>
+{{POST_NAV_HTML}}
+            </div>
+            <div class="cta-row" data-reveal>
+                <a href="/blog/" class="cta-link">&larr; All articles</a>
+                <a href="/contact/" class="cta-link">Start a project &#8599;</a>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <!-- FOOTER -->
@@ -155,7 +361,7 @@
     </div>
     <div class="footer-meta">
         <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
-        <span>REF // 0xFD404 &middot; &copy; 2026 Beben Design. All rights reserved.</span>
+        <span>&copy; 2026 Beben Design. All rights reserved.</span>
     </div>
 </footer>
 

@@ -1,0 +1,62 @@
+<svg viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A QR code pattern with a download arrow beside it">
+  <defs>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', Consolas, monospace; letter-spacing: 0.08em; }
+      .gray { fill: #8A8A8A; }
+      .gray-stroke { stroke: #8A8A8A; }
+      .yellow { fill: #FFC710; }
+      .yellow-stroke { stroke: #FFC710; }
+    </style>
+  </defs>
+
+  <!-- faint grid -->
+  <g class="gray-stroke" stroke-width="1" opacity="0.14">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200"/>
+    <path d="M150 0 V630 M300 0 V630 M450 0 V630 M600 0 V630 M750 0 V630 M900 0 V630 M1050 0 V630"/>
+  </g>
+
+  <!-- stylised QR block, gray modules with yellow finder squares -->
+  <g transform="translate(180,135)">
+    <!-- finder patterns -->
+    <g class="yellow-stroke" stroke-width="10">
+      <rect x="10" y="10" width="80" height="80"/>
+      <rect x="270" y="10" width="80" height="80"/>
+      <rect x="10" y="270" width="80" height="80"/>
+    </g>
+    <g class="yellow">
+      <rect x="35" y="35" width="30" height="30"/>
+      <rect x="295" y="35" width="30" height="30"/>
+      <rect x="35" y="295" width="30" height="30"/>
+    </g>
+    <!-- data modules -->
+    <g class="gray" opacity="0.85">
+      <rect x="130" y="10" width="25" height="25"/><rect x="180" y="10" width="25" height="25"/><rect x="230" y="35" width="25" height="25"/>
+      <rect x="130" y="60" width="25" height="25"/><rect x="205" y="60" width="25" height="25"/>
+      <rect x="10" y="130" width="25" height="25"/><rect x="60" y="130" width="25" height="25"/><rect x="110" y="130" width="25" height="25"/>
+      <rect x="160" y="155" width="25" height="25"/><rect x="235" y="130" width="25" height="25"/><rect x="310" y="130" width="25" height="25"/>
+      <rect x="35" y="180" width="25" height="25"/><rect x="110" y="180" width="25" height="25"/><rect x="210" y="180" width="25" height="25"/>
+      <rect x="285" y="180" width="25" height="25"/><rect x="335" y="155" width="25" height="25"/>
+      <rect x="10" y="230" width="25" height="25"/><rect x="85" y="230" width="25" height="25"/><rect x="160" y="230" width="25" height="25"/>
+      <rect x="235" y="230" width="25" height="25"/><rect x="310" y="230" width="25" height="25"/>
+      <rect x="130" y="280" width="25" height="25"/><rect x="180" y="305" width="25" height="25"/><rect x="255" y="280" width="25" height="25"/>
+      <rect x="130" y="330" width="25" height="25"/><rect x="230" y="330" width="25" height="25"/><rect x="305" y="330" width="25" height="25"/>
+    </g>
+  </g>
+
+  <!-- download arrow -->
+  <g class="yellow-stroke" stroke-width="8" stroke-linecap="square">
+    <path d="M760 200 V400" />
+    <path d="M690 340 L760 410 L830 340" fill="none"/>
+    <path d="M670 460 H850" />
+  </g>
+
+  <!-- captions -->
+  <g class="mono gray" font-size="19" opacity="0.85">
+    <text x="920" y="270">one file</text>
+    <text x="920" y="310">no server</text>
+    <text x="920" y="350">no watermark</text>
+    <text x="920" y="390" fill="#FFC710">yours</text>
+  </g>
+
+  <text x="180" y="560" class="mono gray" font-size="17" opacity="0.7">svg out &#183; works offline &#183; keeps working</text>
+</svg>

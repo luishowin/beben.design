@@ -283,6 +283,8 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(3) { transition-delay: 0.15s; }
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(4) { transition-delay: 0.20s; }
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(5) { transition-delay: 0.25s; }
+#mobile-menu-overlay.is-active .mobile-menu li:nth-child(6) { transition-delay: 0.30s; }
+#mobile-menu-overlay.is-active .mobile-menu li:nth-child(7) { transition-delay: 0.35s; }
 
 .mobile-menu li a {
     font-family: var(--font-title);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Beben Design Blog</title>
+    <link>https://beben.design/blog/</link>
+    <atom:link href="https://beben.design/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Essays and build logs from Beben Design: design decisions, engineering trade-offs, and tools we shipped, written from inside real projects.</description>
+    <language>en</language>
+    <lastBuildDate>Thu, 16 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Building Sprite - a chat widget with two brains</title>
+      <link>https://beben.design/blog/building-sprite/</link>
+      <guid>https://beben.design/blog/building-sprite/</guid>
+      <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
+      <description>How we built a zero-dependency site guide that answers from an LLM when it can and from a pattern engine when it can&#x27;t, on a static site with no backend and no keys in the repo.</description>
+    </item>
+    <item>
+      <title>Rev Log - why the data format is the product</title>
+      <link>https://beben.design/blog/rev-log-format-first/</link>
+      <guid>https://beben.design/blog/rev-log-format-first/</guid>
+      <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
+      <description>Our open source motorcycle telemetry project ships a ride-data format before it ships hardware. The reasoning behind that order, and what it changes about everything else.</description>
+    </item>
+    <item>
+      <title>A tool you can download and own</title>
+      <link>https://beben.design/blog/tools-you-can-own/</link>
+      <guid>https://beben.design/blog/tools-you-can-own/</guid>
+      <pubDate>Tue, 14 Jul 2026 00:00:00 +0000</pubDate>
+      <description>Our QR code generator is one HTML file that works offline forever. The engineering and the ethics of building tools people can take with them.</description>
+    </item>
+  </channel>
+</rss>
