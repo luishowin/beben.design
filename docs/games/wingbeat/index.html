@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Wingbeat — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.66, maxW: 420 });
+
+    var GRAVITY = 1500, FLAP = -430, MAX_FALL = 720;
+
+    var bird, gates, score, running, dead, t;
+
+    function reset() {
+        bird = { x: 0, y: 0, vy: 0, r: 0, wing: 0 };
+        gates = [];
+        score = 0;
+        running = false;   // waiting for first tap
+        dead = false;
+        t = 0;
+        Arcade.ui.setScore('0');
+    }
+
+    function metrics() {
+        bird.x = view.w * 0.3;
+        bird.r = Math.max(10, view.w * 0.035);
+        return {
+            gap: Math.max(view.h * 0.26, view.h * 0.32 - score * view.h * 0.002),
+            spacing: view.w * 0.55,
+            speed: (150 + Math.min(score * 2.2, 110)) * (view.w / 375),
+            gateW: Math.max(34, view.w * 0.11),
+            ground: view.h - Math.max(16, view.h * 0.03)
+        };
+    }
+
+    function spawnGate(m, x) {
+        var margin = view.h * 0.14;
+        var cy = margin + Math.random() * (m.ground - margin * 2);
+        gates.push({ x: x, cy: cy, passed: false });
+    }
+
+    function flap() {
+        if (dead) return;
+        if (!running) {
+            running = true;
+            bird.y = view.h * 0.45;
+            var m0 = metrics();
+            for (var i = 0; i < 3; i++) spawnGate(m0, view.w + i * m0.spacing);
+        }
+        bird.vy = FLAP * (view.h / 600);
+        bird.wing = 0.18;
+        Arcade.audio.play('flap');
+        Arcade.haptics.buzz('light');
+    }
+
+    document.body.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.arc-bar, .arc-overlay')) return;
+        flap();
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); flap(); }
+    });
+
+    function die() {
+        dead = true;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        loop.pause();
+        var res = Arcade.scores.submit('wingbeat', score);
+        Arcade.ui.gameOver({
+            score: score, best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function update(dt) {
+        t += dt;
+        if (bird.wing > 0) bird.wing -= dt;
+
+        if (!running) {
+            // idle bob on the start screen
+            bird.y = view.h * 0.45 + Math.sin(t * 3) * view.h * 0.012;
+            return;
+        }
+
+        var m = metrics();
+        var g = GRAVITY * (view.h / 600);
+        bird.vy = Math.min(bird.vy + g * dt, MAX_FALL * (view.h / 600));
+        bird.y += bird.vy * dt;
+
+        // ceiling + ground
+        if (bird.y - bird.r < 0) { bird.y = bird.r; bird.vy = 0; }
+        if (bird.y + bird.r > m.ground) { die(); return; }
+
+        // move gates
+        for (var i = gates.length - 1; i >= 0; i--) {
+            var gt = gates[i];
+            gt.x -= m.speed * dt;
+
+            if (!gt.passed && gt.x + m.gateW < bird.x) {
+                gt.passed = true;
+                score++;
+                Arcade.ui.setScore(String(score));
+                Arcade.audio.play('coin');
+            }
+            if (gt.x + m.gateW < -10) {
+                gates.splice(i, 1);
+                spawnGate(m, gates[gates.length - 1].x + m.spacing);
+            }
+        }
+
+        // collision — hitbox forgiven by 20%
+        var r = bird.r * 0.8;
+        for (var j = 0; j < gates.length; j++) {
+            var ga = gates[j];
+            if (bird.x + r < ga.x || bird.x - r > ga.x + m.gateW) continue;
+            var top = ga.cy - m.gap / 2, bot = ga.cy + m.gap / 2;
+            if (bird.y - r < top || bird.y + r > bot) { die(); return; }
+        }
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var m = metrics();
+
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // sun disc
+        ctx.fillStyle = p.gridLine;
+        ctx.beginPath();
+        ctx.arc(view.w * 0.78, view.h * 0.2, view.w * 0.14, 0, Math.PI * 2);
+        ctx.fill();
+
+        // gates: alternate red / yellow
+        gates.forEach(function (g, i) {
+            ctx.fillStyle = i % 2 ? p.yellow : p.red;
+            var top = g.cy - m.gap / 2, bot = g.cy + m.gap / 2;
+            ctx.fillRect(g.x, 0, m.gateW, top);
+            ctx.fillRect(g.x, bot, m.gateW, m.ground - bot);
+            // lips
+            ctx.fillRect(g.x - 4, top - 12, m.gateW + 8, 12);
+            ctx.fillRect(g.x - 4, bot, m.gateW + 8, 12);
+        });
+
+        // ground
+        ctx.fillStyle = p.headers;
+        ctx.fillRect(0, m.ground, view.w, view.h - m.ground);
+
+        // bird: yellow body, red wing, header eye
+        var b = bird;
+        var tilt = running ? Math.max(-0.5, Math.min(0.9, b.vy / 700)) : 0;
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(tilt);
+        ctx.fillStyle = p.yellow;
+        ctx.fillRect(-b.r, -b.r * 0.75, b.r * 2, b.r * 1.5);
+        ctx.fillStyle = p.red;
+        var wingUp = b.wing > 0;
+        ctx.fillRect(-b.r * 0.7, wingUp ? -b.r * 0.9 : 0, b.r, b.r * 0.6);
+        ctx.fillStyle = p.headers;
+        ctx.fillRect(b.r * 0.25, -b.r * 0.45, b.r * 0.3, b.r * 0.3);
+        ctx.fillStyle = p.red;
+        ctx.fillRect(b.r * 0.75, -b.r * 0.15, b.r * 0.5, b.r * 0.3);   // beak
+        ctx.restore();
+
+        if (!running && !dead) {
+            ctx.fillStyle = p.muted;
+            ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(Arcade.env.touch ? 'TAP TO FLY' : 'SPACE TO FLY', view.w / 2, view.h * 0.62);
+        }
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'wingbeat',
+        title: 'Wingbeat',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    view.refit();
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

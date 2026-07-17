@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>2048 — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+
+    <style>
+        .wrap { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; }
+
+        .board {
+            position: relative;
+            background: var(--bg-soft);
+            border: 1px solid var(--border-strong);
+            touch-action: none;
+        }
+
+        .cell-bg { position: absolute; background: var(--grid-line); }
+
+        .tile {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--headers);
+            transition: transform 110ms cubic-bezier(0.22, 0.9, 0.32, 1);
+            will-change: transform;
+        }
+
+        .tile.pop { animation: pop 140ms cubic-bezier(0.22, 0.9, 0.32, 1); }
+        .tile.spawn { animation: spawn 140ms ease-out; }
+
+        @keyframes pop   { 0% { scale: 1; } 50% { scale: 1.18; } 100% { scale: 1; } }
+        @keyframes spawn { 0% { scale: 0.4; opacity: 0; } 100% { scale: 1; opacity: 1; } }
+
+        .t8    { background: color-mix(in srgb, var(--yellow) 35%, var(--bg)); }
+        .t16   { background: color-mix(in srgb, var(--yellow) 60%, var(--bg)); color: #141414; }
+        .t32   { background: var(--yellow); color: #141414; }
+        .t64   { background: color-mix(in srgb, var(--highlight) 55%, var(--yellow)); color: #141414; }
+        .t128  { background: var(--highlight); color: #F7F4F3; }
+        .t256  { background: color-mix(in srgb, var(--highlight) 80%, #141414); color: #F7F4F3; }
+        .t512  { background: color-mix(in srgb, var(--highlight) 60%, #141414); color: #FFC710; }
+        .t1024 { background: #141414; color: #FFC710; border-color: var(--yellow); }
+        .t2048 { background: #141414; color: #FFC710; border-color: var(--highlight); box-shadow: 0 0 18px rgba(231, 29, 54, 0.55); }
+
+        .restart {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+            padding: 0.5rem 0.9rem;
+            border: 1px solid var(--border);
+        }
+        .restart:active { color: var(--highlight); }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage">
+    <div class="wrap">
+        <div class="board" id="board"></div>
+        <button class="restart" id="restart">&#8635; NEW GAME</button>
+    </div>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    var N = 4, GAP = 8;
+    var board = document.getElementById('board');
+
+    var grid, score, busy, won, nextId, cellPx;
+
+    function boardSize() {
+        var stage = document.querySelector('.arc-stage');
+        var s = Math.min(stage.clientWidth - 24, stage.clientHeight - 90, 380);
+        return Math.max(240, s);
+    }
+
+    function layoutBoard() {
+        var s = boardSize();
+        board.style.width = s + 'px';
+        board.style.height = s + 'px';
+        cellPx = (s - GAP * (N + 1)) / N;
+
+        board.querySelectorAll('.cell-bg').forEach(function (e) { e.remove(); });
+        for (var r = 0; r < N; r++) {
+            for (var c = 0; c < N; c++) {
+                var bg = document.createElement('div');
+                bg.className = 'cell-bg';
+                place(bg, r, c);
+                board.appendChild(bg);
+            }
+        }
+        eachTile(function (t) { style(t); place(t.el, t.r, t.c); });
+    }
+
+    function place(el, r, c) {
+        el.style.width = cellPx + 'px';
+        el.style.height = cellPx + 'px';
+        el.style.transform = 'translate(' + (GAP + c * (cellPx + GAP)) + 'px,' + (GAP + r * (cellPx + GAP)) + 'px)';
+    }
+
+    function style(t) {
+        t.el.textContent = t.val;
+        t.el.className = 'tile t' + Math.min(t.val, 2048);
+        var digits = String(t.val).length;
+        t.el.style.fontSize = (cellPx * (digits > 3 ? 0.3 : digits > 2 ? 0.36 : 0.44)) + 'px';
+    }
+
+    function eachTile(fn) {
+        for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) if (grid[r][c]) fn(grid[r][c]);
+    }
+
+    function spawnTile() {
+        var free = [];
+        for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) if (!grid[r][c]) free.push([r, c]);
+        if (!free.length) return;
+        var rc = free[Math.floor(Math.random() * free.length)];
+        var t = { id: nextId++, val: Math.random() < 0.9 ? 2 : 4, r: rc[0], c: rc[1] };
+        t.el = document.createElement('div');
+        grid[t.r][t.c] = t;
+        style(t);
+        t.el.classList.add('spawn');
+        place(t.el, t.r, t.c);
+        board.appendChild(t.el);
+    }
+
+    function reset() {
+        grid = [];
+        for (var r = 0; r < N; r++) { grid.push([null, null, null, null]); }
+        board.querySelectorAll('.tile').forEach(function (e) { e.remove(); });
+        score = 0; busy = false; won = false; nextId = 1;
+        layoutBoard();
+        spawnTile(); spawnTile();
+        Arcade.ui.setScore('0');
+    }
+
+    var VECT = { up: [-1, 0], down: [1, 0], left: [0, -1], right: [0, 1] };
+
+    function move(dir) {
+        if (busy) return;
+        var v = VECT[dir];
+        var moved = false, gained = 0;
+        var merges = [];   // [{survivor, absorbed}]
+
+        // traversal order: from the far side toward the near side
+        var rs = [], cs = [];
+        for (var i = 0; i < N; i++) { rs.push(v[0] === 1 ? N - 1 - i : i); cs.push(v[1] === 1 ? N - 1 - i : i); }
+
+        rs.forEach(function (r) {
+            cs.forEach(function (c) {
+                var t = grid[r][c];
+                if (!t) return;
+                var nr = r, nc = c;
+                while (true) {
+                    var tr = nr + v[0], tc = nc + v[1];
+                    if (tr < 0 || tc < 0 || tr >= N || tc >= N) break;
+                    var occ = grid[tr][tc];
+                    if (!occ) { nr = tr; nc = tc; continue; }
+                    if (occ.val === t.val && !occ.merging) { nr = tr; nc = tc; }
+                    break;
+                }
+                if (nr === t.r && nc === t.c) return;
+                var target = grid[nr][nc];
+                grid[t.r][t.c] = null;
+                if (target) {
+                    // merge: t slides onto target
+                    target.merging = true;
+                    target.val *= 2;
+                    gained += target.val;
+                    merges.push({ survivor: target, absorbed: t });
+                    t.r = nr; t.c = nc;
+                    place(t.el, nr, nc);
+                    t.el.style.zIndex = 1;
+                } else {
+                    grid[nr][nc] = t;
+                    t.r = nr; t.c = nc;
+                    place(t.el, nr, nc);
+                }
+                moved = true;
+            });
+        });
+
+        if (!moved) return;
+
+        busy = true;
+        Arcade.audio.play(merges.length ? 'merge' : 'move');
+        if (merges.length) Arcade.haptics.buzz('light');
+
+        setTimeout(function () {
+            merges.forEach(function (m) {
+                m.absorbed.el.remove();
+                m.survivor.merging = false;
+                style(m.survivor);
+                m.survivor.el.classList.add('pop');
+                if (m.survivor.val === 2048 && !won) {
+                    won = true;
+                    Arcade.audio.play('fanfare');
+                    Arcade.haptics.buzz('success');
+                    Arcade.ui.toast('2048! Keep going — the board is yours.');
+                }
+            });
+            if (gained) {
+                score += gained;
+                Arcade.ui.setScore(String(score));
+            }
+            spawnTile();
+            busy = false;
+            if (isStuck()) endGame();
+        }, 120);
+    }
+
+    function isStuck() {
+        for (var r = 0; r < N; r++) {
+            for (var c = 0; c < N; c++) {
+                var t = grid[r][c];
+                if (!t) return false;
+                if (r + 1 < N && grid[r + 1][c] && grid[r + 1][c].val === t.val) return false;
+                if (c + 1 < N && grid[r][c + 1] && grid[r][c + 1].val === t.val) return false;
+            }
+        }
+        return true;
+    }
+
+    function endGame() {
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        var res = Arcade.scores.submit('2048', score);
+        Arcade.ui.gameOver({
+            score: score, best: res.best, isNew: res.isNew,
+            onReplay: reset
+        });
+    }
+
+    Arcade.swipe(board, function (d) { move(d); });
+    document.addEventListener('keydown', function (e) {
+        var map = {
+            ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+            w: 'up', s: 'down', a: 'left', d: 'right',
+            W: 'up', S: 'down', A: 'left', D: 'right'
+        };
+        if (map[e.key]) { e.preventDefault(); move(map[e.key]); }
+    });
+
+    document.getElementById('restart').addEventListener('click', function () {
+        Arcade.audio.play('tap');
+        reset();
+    });
+
+    window.addEventListener('resize', layoutBoard);
+
+    Arcade.init({
+        slug: '2048',
+        title: '2048'
+        // turn-based: nothing to pause
+    });
+
+    reset();
+})();
+</script>
+
+</body>
+</html>

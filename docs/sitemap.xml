@@ -64,6 +64,12 @@
     <priority>0.6</priority>
   </url>
 
+  <url>
+    <loc>https://beben.design/games/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- blog:start (managed by scripts/build_blog.py) -->
 
   <url>

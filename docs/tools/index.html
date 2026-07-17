@@ -160,6 +160,23 @@
         .tool-card--soon { opacity: 0.55; }
         .tool-card--soon .card-open { color: var(--text-muted); }
 
+        /* Visual card — banner image variant (used by the Arcade card).
+           Banner pattern adapted from .project-visual-inner on the work page. */
+        .tool-card--visual .card-banner { display: block; padding: 1.75rem 1.75rem 0; }
+
+        .tool-card--visual .card-banner-inner {
+            display: block;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            background: url("../games/assets/cover.webp") center / cover no-repeat;
+            transition: transform var(--dur-fast) var(--ease-snap);
+        }
+
+        .tool-card--visual:hover .card-banner-inner { transform: scale(1.02); }
+        .tool-card--visual .card-banner + .card-body { padding-top: 1.25rem; }
+
         .tools-note {
             font-family: var(--font-mono);
             font-size: 0.82rem;
@@ -280,6 +297,20 @@
             <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Available tools</h2>
 
             <div class="tools-grid">
+
+                <article class="tool-card tool-card--visual" data-reveal style="--i:2">
+                    <a href="../games/" class="card-banner" aria-label="Open the Beben Arcade">
+                        <span class="card-banner-inner"></span>
+                    </a>
+                    <a href="../games/" class="card-body">
+                        <span class="card-tag">// Arcade</span>
+                        <h3>Beben Arcade</h3>
+                        <p>Eight tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.</p>
+                    </a>
+                    <div class="card-footer">
+                        <a href="../games/" class="card-open">Insert coin →</a>
+                    </div>
+                </article>
 
                 <article class="tool-card" data-reveal style="--i:2">
                     <a href="../qr-code-generator/" class="card-body">

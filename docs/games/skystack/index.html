@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Skystack — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.66, maxW: 420 });
+
+    var PERFECT_PX = 4;
+
+    var stack, current, score, t, dead, camY, hue;
+
+    function slabH() { return Math.max(22, view.h * 0.045); }
+    function baseW() { return view.w * 0.55; }
+
+    function reset() {
+        score = 0;
+        t = 0;
+        dead = false;
+        camY = 0;
+        hue = 8;   // start near brand red
+        var h = slabH();
+        stack = [{ x: view.w / 2, w: baseW(), y: 0, hue: hue }];
+        newSlab();
+        Arcade.ui.setScore('0');
+    }
+
+    function newSlab() {
+        hue = (hue + 16) % 360;
+        var top = stack[stack.length - 1];
+        current = {
+            w: top.w,
+            y: stack.length,
+            hue: hue,
+            // oscillation params — evaluated from elapsed time, frame-rate-proof
+            amp: (view.w - top.w) / 2 + top.w * 0.35,
+            speed: 1.6 + Math.min(score * 0.07, 2.6),
+            t0: t
+        };
+    }
+
+    function currentX() {
+        return view.w / 2 + Math.sin((t - current.t0) * current.speed) * current.amp;
+    }
+
+    function drop() {
+        if (dead || !current) return;
+        var x = currentX();
+        var top = stack[stack.length - 1];
+        var delta = x - top.x;
+
+        if (Math.abs(delta) <= PERFECT_PX) {
+            // perfect: keep width, small regrow bonus
+            var w = Math.min(top.w + 6, baseW());
+            stack.push({ x: top.x, w: w, y: current.y, hue: current.hue, flash: 0.35 });
+            score++;
+            Arcade.audio.play('merge');
+            Arcade.haptics.buzz('success');
+        } else {
+            var overlap = top.w - Math.abs(delta);
+            if (overlap <= 0) { miss(); return; }
+            var nx = (Math.max(x - current.w / 2, top.x - top.w / 2) +
+                      Math.min(x + current.w / 2, top.x + top.w / 2)) / 2;
+            stack.push({ x: nx, w: overlap, y: current.y, hue: current.hue });
+            score++;
+            Arcade.audio.play('drop');
+            Arcade.haptics.buzz('light');
+        }
+        Arcade.ui.setScore(String(score));
+        newSlab();
+    }
+
+    function miss() {
+        dead = true;
+        current = null;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        loop.pause();
+        var res = Arcade.scores.submit('skystack', score);
+        Arcade.ui.gameOver({
+            score: score, best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    document.body.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.arc-bar, .arc-overlay')) return;
+        drop();
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === ' ') { e.preventDefault(); drop(); }
+    });
+
+    function slabScreenY(level) {
+        var h = slabH();
+        return view.h - (level + 1) * h + camY;
+    }
+
+    function update(dt) {
+        t += dt;
+        stack.forEach(function (s) { if (s.flash) s.flash = Math.max(0, s.flash - dt); });
+
+        // camera follows the stack top up
+        var targetCam = Math.max(0, (stack.length + 1) * slabH() - view.h * 0.55);
+        camY += (targetCam - camY) * Math.min(1, dt * 6);
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // faint altitude lines
+        ctx.strokeStyle = p.gridLine;
+        ctx.lineWidth = 1;
+        var h = slabH();
+        for (var y = (camY % (h * 2)); y < view.h; y += h * 2) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(view.w, y); ctx.stroke();
+        }
+
+        function drawSlab(s, x) {
+            var sy = slabScreenY(s.y);
+            if (sy > view.h + h || sy < -h) return;
+            ctx.fillStyle = 'hsl(' + s.hue + ', 72%, ' + (s.flash ? 72 : 55) + '%)';
+            ctx.fillRect(x - s.w / 2, sy, s.w, h - 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.fillRect(x - s.w / 2, sy + h - 6, s.w, 4);
+        }
+
+        stack.forEach(function (s) { drawSlab(s, s.x); });
+        if (current) drawSlab(current, currentX());
+
+        if (score === 0 && !dead) {
+            ctx.fillStyle = p.muted;
+            ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(Arcade.env.touch ? 'TAP TO DROP' : 'SPACE TO DROP', view.w / 2, view.h * 0.3);
+        }
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'skystack',
+        title: 'Skystack',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    view.refit();
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

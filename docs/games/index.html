@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Beben Arcade — tiny games, no ads, works offline</title>
+    <meta name="description" content="Eight tiny 8-bit games by beben.design. Install it on your phone, play offline, beat your best. No ads, ever.">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="canonical" href="https://beben.design/games/">
+
+    <link rel="stylesheet" href="./arcade.css">
+    <script src="./arcade.js"></script>
+
+    <style>
+        /* ─────────────────────────────────────────────────────────
+           ARCADE HUB — scoped additions only.
+           Tokens + shared chrome come from arcade.css.
+        ───────────────────────────────────────────────────────── */
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* faint CRT scanlines over everything */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0 2px,
+                rgba(20, 20, 20, 0.025) 2px 4px
+            );
+        }
+
+        :root[data-theme="dark"] body::after {
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0 2px,
+                rgba(0, 0, 0, 0.14) 2px 4px
+            );
+        }
+
+        /* ── Marquee ── */
+        .hub-marquee {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: calc(0.6rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.6rem calc(1rem + env(safe-area-inset-left));
+            background: var(--bezel);
+            color: var(--bezel-text);
+            border-bottom: 2px solid var(--highlight);
+        }
+
+        .hub-logo {
+            flex: 1;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .hub-logo .red { color: var(--highlight); }
+        .hub-logo .yellow { color: var(--yellow); }
+
+        .hub-gear {
+            min-width: 42px;
+            min-height: 42px;
+            font-size: 1.05rem;
+            color: var(--bezel-text);
+            opacity: 0.85;
+        }
+
+        .hub-gear:active { opacity: 0.5; }
+
+        /* ── Content column ── */
+        .hub-main {
+            flex: 1;
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 1.25rem 1rem calc(2rem + env(safe-area-inset-bottom));
+        }
+
+        /* ── Hero ── */
+        .hub-hero {
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hub-hero img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .hub-tagline {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            margin-top: 0.7rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .hub-tagline .free { color: var(--highlight); font-weight: 600; }
+
+        /* ── Section labels ── */
+        .hub-section {
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .hub-section .tick { color: var(--yellow); }
+
+        /* ── Game grid ── */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.7rem;
+        }
+
+        @media (min-width: 560px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 720px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .game-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 1.1rem 0.6rem 0.9rem;
+            background: var(--bg-soft);
+            border: 1px solid var(--border);
+            transition: transform var(--dur-fast) var(--ease-snap), border-color var(--dur-fast) ease;
+        }
+
+        .game-card:hover,
+        .game-card:active {
+            transform: translateY(-3px);
+            border-color: var(--highlight);
+        }
+
+        .game-icon { width: 48px; height: 48px; }
+        .game-icon svg { display: block; width: 100%; height: 100%; }
+
+        .game-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--headers);
+            text-align: center;
+        }
+
+        .game-best {
+            min-height: 1em;
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            color: var(--yellow);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .game-card--soon {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .game-card--soon .game-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border: 1px dashed var(--border-strong);
+        }
+
+        .soon-tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+        }
+
+        /* ── Footer ── */
+        .hub-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        .hub-footer a { color: var(--headers); }
+        .hub-footer a:hover { color: var(--highlight); }
+
+        .hub-status { font-variant-numeric: tabular-nums; }
+        .hub-status.ready { color: var(--yellow); }
+    </style>
+</head>
+<body>
+
+<header class="hub-marquee">
+    <span class="hub-logo"><span class="red">BEBEN</span> <span class="yellow">ARCADE</span></span>
+    <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
+</header>
+
+<main class="hub-main">
+
+    <section class="hub-hero">
+        <img src="./assets/cover.webp" alt="Beben Arcade — pixel-art game covers" width="1200" height="849">
+    </section>
+    <p class="hub-tagline">
+        <span>8 games &middot; offline &middot; <span class="free">no ads, ever</span></span>
+        <span>v1</span>
+    </p>
+
+    <div id="installSlot"></div>
+
+    <h2 class="hub-section"><span class="tick">&#9646;</span> Now playing</h2>
+    <div class="game-grid" id="liveGrid">
+        <a class="game-card" href="./snake/">
+            <span class="game-icon" data-icon="snake"></span>
+            <span class="game-name">Snake</span>
+            <span class="game-best" data-best="snake"></span>
+        </a>
+        <a class="game-card" href="./2048/">
+            <span class="game-icon" data-icon="g2048"></span>
+            <span class="game-name">2048</span>
+            <span class="game-best" data-best="2048"></span>
+        </a>
+        <a class="game-card" href="./blockfall/">
+            <span class="game-icon" data-icon="blockfall"></span>
+            <span class="game-name">Blockfall</span>
+            <span class="game-best" data-best="blockfall"></span>
+        </a>
+        <a class="game-card" href="./brick-bash/">
+            <span class="game-icon" data-icon="brickbash"></span>
+            <span class="game-name">Brick Bash</span>
+            <span class="game-best" data-best="brick-bash"></span>
+        </a>
+        <a class="game-card" href="./wingbeat/">
+            <span class="game-icon" data-icon="wingbeat"></span>
+            <span class="game-name">Wingbeat</span>
+            <span class="game-best" data-best="wingbeat"></span>
+        </a>
+        <a class="game-card" href="./mines/">
+            <span class="game-icon" data-icon="mines"></span>
+            <span class="game-name">Mines</span>
+            <span class="game-best" data-best="mines-easy" data-suffix="s"></span>
+        </a>
+        <a class="game-card" href="./pixel-dash/">
+            <span class="game-icon" data-icon="pixeldash"></span>
+            <span class="game-name">Pixel Dash</span>
+            <span class="game-best" data-best="pixel-dash"></span>
+        </a>
+        <a class="game-card" href="./skystack/">
+            <span class="game-icon" data-icon="skystack"></span>
+            <span class="game-name">Skystack</span>
+            <span class="game-best" data-best="skystack"></span>
+        </a>
+    </div>
+
+    <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon</h2>
+    <div class="game-grid">
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Paddle Duel</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Star Swarm</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Rockfield</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Void Dodger</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Maze Muncher</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Hop Across</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Wave Rider</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Sudoku</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Solitaire</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Four in a Row</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Checkers</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Chess</span><span class="soon-tag">SOON</span></span>
+    </div>
+
+    <footer class="hub-footer">
+        <a href="https://beben.design/">&larr; beben.design</a>
+        <span class="hub-status" id="hubStatus">&nbsp;</span>
+    </footer>
+
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ── pixel icons: 12×12 maps, r=red y=yellow t=text m=muted ── */
+    var COLORS = { r: '#E71D36', y: '#FFC710', t: 'var(--headers)', m: 'var(--text-muted)' };
+    var ICONS = {
+        snake: [
+            '............',
+            '..yyyyyyy...',
+            '..y.....y...',
+            '..y.yyy.y...',
+            '..y.y.y.y...',
+            '..y.y.y.y...',
+            '..y.y...y...',
+            '..y.yyyyy...',
+            '..y.........',
+            '..yy....rr..',
+            '.........rr.',
+            '............'
+        ],
+        g2048: [
+            '............',
+            '.tttt.yyyy..',
+            '.tttt.yyyy..',
+            '.tttt.yyyy..',
+            '.tttt.yyyy..',
+            '............',
+            '.yyyy.rrrr..',
+            '.yyyy.rrrr..',
+            '.yyyy.rrrr..',
+            '.yyyy.rrrr..',
+            '............',
+            '............'
+        ],
+        blockfall: [
+            '.....rr.....',
+            '.....rr.....',
+            '.....rrrr...',
+            '............',
+            '............',
+            '.yy.........',
+            '.yy....tt...',
+            '.yyyy..tt...',
+            '.yyyy..tttt.',
+            'tttttt.tttt.',
+            'tttttttttttt',
+            '............'
+        ],
+        brickbash: [
+            'rrr.rrr.rrr.',
+            'rrr.rrr.rrr.',
+            '............',
+            'yyy.yyy.yyy.',
+            'yyy.yyy.yyy.',
+            '............',
+            '............',
+            '......tt....',
+            '......tt....',
+            '............',
+            '...tttttt...',
+            '............'
+        ],
+        wingbeat: [
+            '..........yy',
+            'r.........yy',
+            'r...........',
+            'r..yyy......',
+            'r.yyyyy.....',
+            'r.yyyyty....',
+            '..yyyyyy....',
+            'r..yyy.r....',
+            'r......r....',
+            'r......r....',
+            'r......r....',
+            '.......r....'
+        ],
+        mines: [
+            '............',
+            '.....t......',
+            '..t..t..t...',
+            '...ttttt....',
+            '..tttttttt..',
+            'ttttttttt...',
+            '..ttyttt....',
+            '...ttttt....',
+            '..t..t..t...',
+            '.....t......',
+            '............',
+            '............'
+        ],
+        pixeldash: [
+            '............',
+            '.....yyy....',
+            '.....yyyt...',
+            '.....yyyy...',
+            '..r..yy.....',
+            '..r.yyyy....',
+            '..r.yyyy....',
+            '..r..yy.....',
+            '..r..y.y....',
+            '..r.y...y...',
+            'tttttttttttt',
+            '............'
+        ],
+        skystack: [
+            '............',
+            '....rrrr....',
+            '............',
+            '...yyyyyy...',
+            '............',
+            '..rrrrrrrr..',
+            '............',
+            '.yyyyyyyyyy.',
+            '............',
+            'rrrrrrrrrrrr',
+            '............',
+            '............'
+        ]
+    };
+
+    function renderIcon(map) {
+        var rects = '';
+        for (var y = 0; y < map.length; y++) {
+            for (var x = 0; x < map[y].length; x++) {
+                var color = COLORS[map[y][x]];
+                if (!color) continue;
+                rects += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + color + '"/>';
+            }
+        }
+        return '<svg viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>';
+    }
+
+    document.querySelectorAll('.game-icon[data-icon]').forEach(function (el) {
+        var map = ICONS[el.dataset.icon];
+        if (map) el.innerHTML = renderIcon(map);
+    });
+
+    /* ── best-score chips ── */
+    document.querySelectorAll('.game-best[data-best]').forEach(function (el) {
+        var best = Arcade.scores.best(el.dataset.best);
+        if (best !== null) el.textContent = 'BEST ' + best + (el.dataset.suffix || '');
+    });
+
+    /* ── chrome wiring ── */
+    document.getElementById('hubGear').addEventListener('click', function () {
+        Arcade.audio.play('tap');
+        Arcade.openSettings();
+    });
+
+    Arcade.installHint(document.getElementById('installSlot'));
+    Arcade.registerSW();
+
+    /* ── offline-ready status line ── */
+    var status = document.getElementById('hubStatus');
+    function paintStatus() {
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            status.textContent = 'offline ready ✓';
+            status.classList.add('ready');
+        }
+    }
+    paintStatus();
+    if (navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener('controllerchange', paintStatus);
+    }
+})();
+</script>
+
+</body>
+</html>

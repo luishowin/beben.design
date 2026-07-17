@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Blockfall — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+
+    <style>
+        .arc-stage { flex-direction: column; gap: 0.6rem; }
+
+        .bf-hud {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+        }
+
+        .bf-hud b { color: var(--headers); font-variant-numeric: tabular-nums; }
+        .bf-hud canvas { display: block; background: var(--bg-soft); border: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage">
+    <div class="bf-hud">
+        <span>NEXT</span>
+        <canvas id="next" width="72" height="48"></canvas>
+        <span>LV <b id="lv">0</b></span>
+        <span>LINES <b id="ln">0</b></span>
+    </div>
+    <canvas id="game" class="arc-surface"></canvas>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    var COLS = 10, ROWS = 20, HIDDEN = 2, ALL = ROWS + HIDDEN;
+    var GRAVITY = [800, 650, 500, 400, 320, 250, 200, 160, 120, 100, 80, 60];
+    var LINE_SCORE = [0, 40, 100, 300, 1200];
+    var LOCK_MS = 400, DAS_MS = 170, ARR_MS = 50, CLEAR_MS = 180;
+
+    var SHAPES = {
+        I: { size: 4, cells: [[0, 1], [1, 1], [2, 1], [3, 1]], color: '#2EC4B6' },
+        O: { size: 2, cells: [[0, 0], [1, 0], [0, 1], [1, 1]], color: '#FFC710' },
+        T: { size: 3, cells: [[1, 0], [0, 1], [1, 1], [2, 1]], color: '#B5179E' },
+        S: { size: 3, cells: [[1, 0], [2, 0], [0, 1], [1, 1]], color: '#2DC653' },
+        Z: { size: 3, cells: [[0, 0], [1, 0], [1, 1], [2, 1]], color: '#E71D36' },
+        J: { size: 3, cells: [[0, 0], [0, 1], [1, 1], [2, 1]], color: '#4895EF' },
+        L: { size: 3, cells: [[2, 0], [0, 1], [1, 1], [2, 1]], color: '#FF9F1C' }
+    };
+
+    function rotCells(type, rot) {
+        var s = SHAPES[type];
+        var cells = s.cells;
+        for (var r = 0; r < rot; r++) {
+            cells = cells.map(function (c) { return [s.size - 1 - c[1], c[0]]; });
+        }
+        return cells;
+    }
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: COLS / ROWS, maxW: 300 });
+    var nextCanvas = document.getElementById('next');
+    var nextCtx = nextCanvas.getContext('2d');
+    var lvEl = document.getElementById('lv'), lnEl = document.getElementById('ln');
+
+    var board, bag, cur, nextType, score, lines, level, over;
+    var dropAcc, lockAcc, grounded, softDrop, clearing, clearAcc, clearRows;
+
+    function bagNext() {
+        if (!bag || !bag.length) {
+            bag = Object.keys(SHAPES);
+            for (var i = bag.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = bag[i]; bag[i] = bag[j]; bag[j] = t;
+            }
+        }
+        return bag.pop();
+    }
+
+    function reset() {
+        board = [];
+        for (var y = 0; y < ALL; y++) board.push(new Array(COLS).fill(null));
+        bag = null;
+        score = 0; lines = 0; level = 0; over = false;
+        dropAcc = 0; lockAcc = 0; grounded = false; softDrop = false;
+        clearing = false; clearAcc = 0; clearRows = [];
+        nextType = bagNext();
+        spawn();
+        Arcade.ui.setScore('0');
+        lvEl.textContent = '0';
+        lnEl.textContent = '0';
+        drawNext();
+    }
+
+    function spawn() {
+        cur = { type: nextType, rot: 0, x: 3, y: 0 };
+        if (cur.type === 'O') cur.x = 4;
+        nextType = bagNext();
+        drawNext();
+        dropAcc = 0; lockAcc = 0; grounded = false;
+        if (collides(cur.x, cur.y, cur.rot)) {
+            over = true;
+            gameOver();
+        }
+    }
+
+    function collides(x, y, rot) {
+        var cells = rotCells(cur.type, rot);
+        for (var i = 0; i < 4; i++) {
+            var cx = x + cells[i][0], cy = y + cells[i][1];
+            if (cx < 0 || cx >= COLS || cy >= ALL) return true;
+            if (cy >= 0 && board[cy][cx]) return true;
+        }
+        return false;
+    }
+
+    function tryMove(dx, dy) {
+        if (over || clearing) return false;
+        if (collides(cur.x + dx, cur.y + dy, cur.rot)) return false;
+        cur.x += dx; cur.y += dy;
+        if (dx) { lockAcc = 0; Arcade.audio.play('move'); }
+        return true;
+    }
+
+    function tryRotate() {
+        if (over || clearing) return;
+        var nr = (cur.rot + 1) % 4;
+        var kicks = cur.type === 'I' ? [0, -1, 1, -2, 2] : [0, -1, 1];
+        for (var i = 0; i < kicks.length; i++) {
+            if (!collides(cur.x + kicks[i], cur.y, nr)) {
+                cur.x += kicks[i];
+                cur.rot = nr;
+                lockAcc = 0;
+                Arcade.audio.play('tap');
+                return;
+            }
+            // one upward kick helps floor rotations
+            if (!collides(cur.x + kicks[i], cur.y - 1, nr)) {
+                cur.x += kicks[i]; cur.y -= 1;
+                cur.rot = nr;
+                lockAcc = 0;
+                Arcade.audio.play('tap');
+                return;
+            }
+        }
+    }
+
+    function ghostY() {
+        var y = cur.y;
+        while (!collides(cur.x, y + 1, cur.rot)) y++;
+        return y;
+    }
+
+    function hardDrop() {
+        if (over || clearing) return;
+        var gy = ghostY();
+        score += (gy - cur.y) * 2;
+        cur.y = gy;
+        lock();
+        Arcade.haptics.buzz('medium');
+    }
+
+    function lock() {
+        var cells = rotCells(cur.type, cur.rot);
+        for (var i = 0; i < 4; i++) {
+            var cy = cur.y + cells[i][1];
+            if (cy < 0) continue;
+            board[cy][cur.x + cells[i][0]] = SHAPES[cur.type].color;
+        }
+        Arcade.audio.play('drop');
+
+        clearRows = [];
+        for (var y = 0; y < ALL; y++) {
+            if (board[y].every(Boolean)) clearRows.push(y);
+        }
+        if (clearRows.length) {
+            clearing = true;
+            clearAcc = 0;
+            Arcade.audio.play(clearRows.length === 4 ? 'fanfare' : 'clear');
+            Arcade.haptics.buzz(clearRows.length === 4 ? 'success' : 'light');
+        } else {
+            finishLock();
+        }
+        updateHud();
+    }
+
+    function finishLock() {
+        if (clearRows.length) {
+            clearRows.forEach(function (y) { board.splice(y, 1); board.unshift(new Array(COLS).fill(null)); });
+            score += LINE_SCORE[clearRows.length] * (level + 1);
+            lines += clearRows.length;
+            level = Math.floor(lines / 10);
+            clearRows = [];
+        }
+        clearing = false;
+        updateHud();
+        if (!over) spawn();
+    }
+
+    function updateHud() {
+        Arcade.ui.setScore(String(score));
+        lvEl.textContent = level;
+        lnEl.textContent = lines;
+    }
+
+    function gameOver() {
+        loop.pause();
+        var res = Arcade.scores.submit('blockfall', score);
+        Arcade.ui.gameOver({
+            score: score, best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    /* ── keyboard with DAS ── */
+    var held = {};
+    document.addEventListener('keydown', function (e) {
+        var k = e.key;
+        if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' ', 'z', 'x', 'Z', 'X'].indexOf(k) !== -1) e.preventDefault();
+        if (e.repeat) return;
+        if (k === 'ArrowLeft') { tryMove(-1, 0); held.left = { t: 0, das: false }; }
+        if (k === 'ArrowRight') { tryMove(1, 0); held.right = { t: 0, das: false }; }
+        if (k === 'ArrowDown') softDrop = true;
+        if (k === 'ArrowUp' || k === 'z' || k === 'Z' || k === 'x' || k === 'X') tryRotate();
+        if (k === ' ') hardDrop();
+    });
+    document.addEventListener('keyup', function (e) {
+        if (e.key === 'ArrowLeft') delete held.left;
+        if (e.key === 'ArrowRight') delete held.right;
+        if (e.key === 'ArrowDown') softDrop = false;
+    });
+
+    /* ── touch: drag to move / drag down to soft drop / tap rotate / flick down hard drop ── */
+    var touch = null;
+    canvas.addEventListener('pointerdown', function (e) {
+        touch = {
+            x0: e.clientX, y0: e.clientY, t0: performance.now(),
+            px: cur ? cur.x : 0, moved: false, dropped: 0
+        };
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (!touch || over || clearing) return;
+        var cell = view.w / COLS;
+        var dxc = Math.round((e.clientX - touch.x0) / cell);
+        var target = touch.px + dxc;
+        while (cur.x < target && tryMove(1, 0)) { touch.moved = true; }
+        while (cur.x > target && tryMove(-1, 0)) { touch.moved = true; }
+        var dyc = Math.floor((e.clientY - touch.y0) / cell) - touch.dropped;
+        while (dyc > 0) {
+            if (tryMove(0, 1)) { score += 1; touch.dropped++; dyc--; touch.moved = true; updateHud(); }
+            else break;
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (!touch) return;
+        var dt = performance.now() - touch.t0;
+        var dx = e.clientX - touch.x0, dy = e.clientY - touch.y0;
+        if (!touch.moved && dt < 250 && Math.hypot(dx, dy) < 10) {
+            tryRotate();
+        } else if (dy > 70 && dt < 300 && Math.abs(dx) < Math.abs(dy)) {
+            hardDrop();
+        }
+        touch = null;
+    });
+    canvas.addEventListener('pointercancel', function () { touch = null; });
+
+    function update(dt) {
+        if (over) return;
+        var ms = dt * 1000;
+
+        if (clearing) {
+            clearAcc += ms;
+            if (clearAcc >= CLEAR_MS) finishLock();
+            return;
+        }
+
+        // DAS auto-repeat
+        ['left', 'right'].forEach(function (d) {
+            var h = held[d];
+            if (!h) return;
+            h.t += ms;
+            var wait = h.das ? ARR_MS : DAS_MS;
+            while (h.t >= wait) {
+                h.t -= wait;
+                h.das = true;
+                tryMove(d === 'left' ? -1 : 1, 0);
+                wait = ARR_MS;
+            }
+        });
+
+        // gravity
+        var g = GRAVITY[Math.min(level, GRAVITY.length - 1)];
+        if (softDrop) g = Math.min(g, 40);
+        dropAcc += ms;
+        while (dropAcc >= g) {
+            dropAcc -= g;
+            if (!collides(cur.x, cur.y + 1, cur.rot)) {
+                cur.y++;
+                if (softDrop) { score += 1; updateHud(); }
+                grounded = false;
+                lockAcc = 0;
+            } else {
+                grounded = true;
+            }
+        }
+
+        // lock delay
+        if (grounded) {
+            lockAcc += ms;
+            if (lockAcc >= LOCK_MS) {
+                if (collides(cur.x, cur.y + 1, cur.rot)) lock();
+                else grounded = false;
+            }
+        }
+    }
+
+    function drawCell(ctx, x, y, size, color, ghost) {
+        var px = x * size, py = y * size;
+        if (ghost) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(px + 1.5, py + 1.5, size - 3, size - 3);
+            return;
+        }
+        ctx.fillStyle = color;
+        ctx.fillRect(px, py, size, size);
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillRect(px, py, size, 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.fillRect(px, py + size - 2, size, 2);
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var cell = view.w / COLS;
+
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        ctx.strokeStyle = p.gridLine;
+        ctx.lineWidth = 1;
+        for (var gx = 1; gx < COLS; gx++) {
+            ctx.beginPath(); ctx.moveTo(gx * cell, 0); ctx.lineTo(gx * cell, view.h); ctx.stroke();
+        }
+
+        // stack
+        for (var y = HIDDEN; y < ALL; y++) {
+            for (var x = 0; x < COLS; x++) {
+                if (board[y][x]) drawCell(ctx, x, y - HIDDEN, cell, board[y][x]);
+            }
+        }
+
+        // flash clearing rows
+        if (clearing) {
+            ctx.fillStyle = clearAcc % 90 < 45 ? p.headers : p.yellow;
+            clearRows.forEach(function (y) {
+                if (y >= HIDDEN) ctx.fillRect(0, (y - HIDDEN) * cell, view.w, cell);
+            });
+        }
+
+        // ghost + current piece
+        if (!over && !clearing) {
+            var cells = rotCells(cur.type, cur.rot);
+            var gy = ghostY();
+            var color = SHAPES[cur.type].color;
+            cells.forEach(function (c) {
+                var yy = gy + c[1] - HIDDEN;
+                if (yy >= 0) drawCell(ctx, cur.x + c[0], yy, cell, color, true);
+            });
+            cells.forEach(function (c) {
+                var yy = cur.y + c[1] - HIDDEN;
+                if (yy >= 0) drawCell(ctx, cur.x + c[0], yy, cell, color);
+            });
+        }
+    }
+
+    function drawNext() {
+        var p = Arcade.palette();
+        nextCtx.fillStyle = p.bgSoft;
+        nextCtx.clearRect(0, 0, 72, 48);
+        var s = SHAPES[nextType];
+        var cells = rotCells(nextType, 0);
+        var size = 12;
+        var offX = (72 - s.size * size) / 2;
+        var offY = nextType === 'I' ? 6 : (48 - 2 * size) / 2 - (nextType === 'O' ? 0 : size / 2);
+        cells.forEach(function (c) {
+            nextCtx.fillStyle = s.color;
+            nextCtx.fillRect(offX + c[0] * size + 1, offY + c[1] * size + 1, size - 2, size - 2);
+        });
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'blockfall',
+        title: 'Blockfall',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    view.refit();
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

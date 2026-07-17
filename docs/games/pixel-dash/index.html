@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Pixel Dash — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 1.5, maxW: 640 });
+
+    var runner, obstacles, score, speed, running, dead, t, holdTime, holding, distToNext;
+
+    function groundY() { return view.h - Math.max(20, view.h * 0.09); }
+    function unit() { return view.h / 240; }   // scale factor
+
+    function reset() {
+        var u = unit();
+        runner = { x: view.w * 0.18, y: groundY(), w: 14 * u, h: 20 * u, vy: 0, duck: 0, leg: 0 };
+        obstacles = [];
+        score = 0;
+        speed = 190 * (view.w / 500);
+        running = false;
+        dead = false;
+        t = 0;
+        holdTime = 0;
+        holding = false;
+        distToNext = view.w * 0.9;
+        Arcade.ui.setScore('0');
+    }
+
+    function onGround() { return runner.y >= groundY() - 0.5; }
+
+    function jump() {
+        if (dead) return;
+        if (!running) { running = true; return; }
+        if (onGround()) {
+            runner.vy = -560 * (view.h / 500);
+            runner.duck = 0;
+            holdTime = 0.18;
+            Arcade.audio.play('flap');
+            Arcade.haptics.buzz('light');
+        }
+    }
+
+    function duck(on) {
+        if (dead) return;
+        runner.duck = on ? 1 : 0;
+        if (on && !onGround()) runner.vy = Math.max(runner.vy, 700 * (view.h / 500));   // slam down
+    }
+
+    document.body.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.arc-bar, .arc-overlay')) return;
+        holding = true;
+        jump();
+    });
+    document.body.addEventListener('pointerup', function () { holding = false; });
+    Arcade.swipe(document.body, function (d) {
+        if (d === 'down') { duck(true); setTimeout(function () { duck(false); }, 600); }
+    });
+
+    var keyDuck = false;
+    document.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); holding = true; jump(); }
+        if (e.key === 'ArrowDown') { e.preventDefault(); keyDuck = true; duck(true); }
+    });
+    document.addEventListener('keyup', function (e) {
+        if (e.key === ' ' || e.key === 'ArrowUp') holding = false;
+        if (e.key === 'ArrowDown') { keyDuck = false; duck(false); }
+    });
+
+    function spawnObstacle() {
+        var u = unit();
+        var kind;
+        var r = Math.random();
+        if (score > 12 && r < 0.3) kind = 'bar';        // overhead bar — duck under it
+        else if (r < 0.65) kind = 'block';               // ground block — jump it
+        else kind = 'tall';                              // tall pillar — jump it
+        var g = groundY();
+        if (kind === 'block') obstacles.push({ kind: kind, x: view.w + 20, y: g - 12 * u, w: 12 * u, h: 12 * u });
+        if (kind === 'tall') obstacles.push({ kind: kind, x: view.w + 20, y: g - 26 * u, w: 9 * u, h: 26 * u });
+        if (kind === 'bar') obstacles.push({ kind: kind, x: view.w + 20, y: g - 34 * u, w: 26 * u, h: 8 * u });
+
+        // gap scales with speed so high speed stays winnable
+        var minGap = speed * 0.55 + 90 * u;
+        distToNext = minGap + Math.random() * speed * 0.7;
+    }
+
+    function die() {
+        dead = true;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        loop.pause();
+        var final = Math.floor(score);
+        var res = Arcade.scores.submit('pixel-dash', final);
+        Arcade.ui.gameOver({
+            score: final, best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function update(dt) {
+        t += dt;
+        if (!running || dead) return;
+
+        var u = unit();
+        var g = groundY();
+
+        // speed ramp
+        speed = Math.min(speed + 5.5 * dt * (view.w / 500), 560 * (view.w / 500));
+
+        // physics: variable jump height while held
+        var grav = 1750 * (view.h / 500);
+        if (holding && holdTime > 0 && runner.vy < 0) { grav *= 0.45; holdTime -= dt; }
+        runner.vy += grav * dt;
+        runner.y = Math.min(g, runner.y + runner.vy * dt);
+        if (onGround()) runner.vy = 0;
+
+        runner.leg += dt * (8 + speed / 40);
+
+        // score = distance
+        var prev = Math.floor(score);
+        score += speed * dt / 40;
+        if (Math.floor(score) !== prev) {
+            Arcade.ui.setScore(String(Math.floor(score)));
+            if (Math.floor(score) % 100 === 0) Arcade.audio.play('coin');
+        }
+
+        // obstacles
+        distToNext -= speed * dt;
+        if (distToNext <= 0) spawnObstacle();
+
+        var rh = runner.h * (runner.duck ? 0.55 : 1);
+        var rw = runner.w;
+        var rx = runner.x - rw / 2 + rw * 0.1;
+        var ry = runner.y - rh;
+        var pad = 2 * u;   // forgiveness
+
+        for (var i = obstacles.length - 1; i >= 0; i--) {
+            var o = obstacles[i];
+            o.x -= speed * dt;
+            if (o.x + o.w < -30) { obstacles.splice(i, 1); continue; }
+            if (rx + rw * 0.8 - pad > o.x && rx + pad < o.x + o.w &&
+                ry + pad < o.y + o.h && ry + rh - pad > o.y) {
+                die();
+                return;
+            }
+        }
+    }
+
+    function hills(ctx, p, off, amp, base, color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(0, view.h);
+        for (var x = 0; x <= view.w; x += 8) {
+            var y = base - Math.abs(Math.sin((x + off) * 0.008)) * amp;
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(view.w, view.h);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var u = unit();
+        var g = groundY();
+        var dist = score * 40;
+
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // sun
+        ctx.fillStyle = p.yellow;
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.arc(view.w * 0.82, view.h * 0.22, 16 * u, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // parallax hills
+        hills(ctx, p, dist * 0.25, 26 * u, g, 'hsl(348, 60%, 38%)');
+        hills(ctx, p, dist * 0.55 + 400, 16 * u, g, 'hsl(43, 70%, 45%)');
+
+        // ground
+        ctx.fillStyle = p.headers;
+        ctx.fillRect(0, g, view.w, view.h - g);
+        ctx.fillStyle = p.bg;
+        for (var x = -((dist * 1) % (26 * u)); x < view.w; x += 26 * u) {
+            ctx.fillRect(x, g + 6 * u, 12 * u, 2);
+        }
+
+        // obstacles
+        obstacles.forEach(function (o) {
+            ctx.fillStyle = o.kind === 'bar' ? p.yellow : p.red;
+            ctx.fillRect(o.x, o.y, o.w, o.h);
+            if (o.kind === 'tall') {
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(o.x, o.y, o.w, 4 * u);
+            }
+        });
+
+        // runner: yellow body, red cap, animated legs
+        var rh = runner.h * (runner.duck ? 0.55 : 1);
+        var rx = runner.x - runner.w / 2;
+        var ry = runner.y - rh;
+        ctx.fillStyle = p.yellow;
+        ctx.fillRect(rx, ry, runner.w, rh * 0.78);
+        ctx.fillStyle = p.red;
+        ctx.fillRect(rx - 1 * u, ry - 3 * u, runner.w + 2 * u, 4 * u);   // cap
+        ctx.fillStyle = p.headers;
+        ctx.fillRect(rx + runner.w * 0.62, ry + rh * 0.18, 3 * u, 3 * u); // eye
+        // legs
+        var legA = onGround() && running ? Math.sin(runner.leg * 4) : 0.6;
+        ctx.fillStyle = p.headers;
+        ctx.fillRect(rx + runner.w * 0.15, ry + rh * 0.78, 3 * u, rh * 0.22 * (0.6 + 0.4 * legA));
+        ctx.fillRect(rx + runner.w * 0.65, ry + rh * 0.78, 3 * u, rh * 0.22 * (0.6 - 0.4 * legA));
+
+        if (!running && !dead) {
+            ctx.fillStyle = p.muted;
+            ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(Arcade.env.touch ? 'TAP TO RUN  ·  SWIPE DOWN TO DUCK' : 'SPACE TO RUN  ·  DOWN TO DUCK', view.w / 2, view.h * 0.4);
+        }
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'pixel-dash',
+        title: 'Pixel Dash',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    view.refit();
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

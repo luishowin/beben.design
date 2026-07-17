@@ -1,0 +1,16 @@
+{
+    "name": "Beben Arcade",
+    "short_name": "Arcade",
+    "id": "/games/",
+    "start_url": "/games/",
+    "scope": "/games/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#141414",
+    "theme_color": "#141414",
+    "description": "Tiny 8-bit games by beben.design. Works offline, no ads, ever.",
+    "icons": [
+        { "src": "/games/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+        { "src": "/games/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    ]
+}

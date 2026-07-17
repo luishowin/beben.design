@@ -1,0 +1,361 @@
+/* ═══════════════════════════════════════════════════════════════
+   BEBEN ARCADE — arcade.css
+   Shared chrome for the /games/ PWA scope. Standalone by design:
+   tokens mirrored from ../assets/css/index.css, system fonts only,
+   zero references outside /games/.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root[data-theme="light"] {
+    --bg:            #f5f5f5;
+    --bg-soft:       #efefef;
+    --headers:       #141414;
+    --highlight:     #E71D36;
+    --yellow:        #FFC710;
+    --text:          #141414;
+    --text-muted:    rgba(20, 20, 20, 0.62);
+    --border:        rgba(20, 20, 20, 0.18);
+    --border-strong: rgba(20, 20, 20, 0.34);
+    --grid-line:     rgba(20, 20, 20, 0.04);
+    --overlay:       rgba(245, 245, 245, 0.92);
+}
+
+:root[data-theme="dark"] {
+    --bg:            #141414;
+    --bg-soft:       #1C1C1C;
+    --headers:       #F7F4F3;
+    --highlight:     #E71D36;
+    --yellow:        #FFC710;
+    --text:          #F7F4F3;
+    --text-muted:    rgba(247, 244, 243, 0.62);
+    --border:        rgba(247, 244, 243, 0.16);
+    --border-strong: rgba(247, 244, 243, 0.32);
+    --grid-line:     rgba(247, 244, 243, 0.04);
+    --overlay:       rgba(20, 20, 20, 0.92);
+}
+
+:root {
+    --bezel:      #141414;
+    --bezel-text: #F7F4F3;
+    --font-mono:  ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --bar-h:      52px;
+    --ease-snap:  cubic-bezier(0.22, 0.9, 0.32, 1);
+    --dur-fast:   180ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Game pages lock the viewport; the hub scrolls normally. */
+body.arc-playing {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    display: flex;
+    flex-direction: column;
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+button, a { touch-action: manipulation; }
+canvas, .arc-surface { touch-action: none; display: block; }
+
+/* ── Top bar — always-dark arcade bezel in both themes ────────── */
+.arc-bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: calc(var(--bar-h) + env(safe-area-inset-top));
+    padding: calc(0.35rem + env(safe-area-inset-top)) calc(0.5rem + env(safe-area-inset-right)) 0.35rem calc(0.5rem + env(safe-area-inset-left));
+    background: var(--bezel);
+    color: var(--bezel-text);
+    border-bottom: 2px solid var(--highlight);
+}
+
+.arc-bar .arc-btn,
+.arc-bar .arc-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    min-height: 42px;
+    font-size: 1rem;
+    color: var(--bezel-text);
+    opacity: 0.85;
+    transition: opacity var(--dur-fast) ease;
+}
+
+.arc-bar .arc-btn:active,
+.arc-bar .arc-back:active { opacity: 0.5; }
+
+.arc-title {
+    flex: 1;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.arc-score-slot {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--yellow);
+    padding: 0 0.4rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Stage — the area a game owns below the bar ───────────────── */
+.arc-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Overlays (settings / pause / game over) ──────────────────── */
+.arc-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: var(--overlay);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.arc-panel {
+    width: min(360px, 100%);
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    box-shadow: 6px 6px 0 rgba(20, 20, 20, 0.25);
+    padding: 1.5rem;
+}
+
+.arc-panel-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--highlight);
+    margin-bottom: 1.25rem;
+}
+
+.arc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Toggle pill */
+.arc-toggle {
+    min-width: 58px;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--border-strong);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+}
+
+.arc-toggle[aria-pressed="true"] {
+    background: var(--highlight);
+    border-color: var(--highlight);
+    color: #F7F4F3;
+}
+
+/* Segmented control (theme) */
+.arc-seg { display: flex; border: 1px solid var(--border-strong); }
+
+.arc-seg button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border-left: 1px solid var(--border-strong);
+}
+
+.arc-seg button:first-child { border-left: none; }
+
+.arc-seg button[aria-pressed="true"] {
+    background: var(--headers);
+    color: var(--bg);
+}
+
+/* Primary / secondary action buttons */
+.arc-actions { display: flex; gap: 0.6rem; margin-top: 1.4rem; }
+
+.arc-action {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-strong);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    transition: transform var(--dur-fast) var(--ease-snap);
+}
+
+.arc-action:active { transform: translateY(2px); }
+
+.arc-action--primary {
+    background: var(--highlight);
+    border-color: var(--highlight);
+    color: #F7F4F3;
+}
+
+/* ── Game over panel bits ─────────────────────────────────────── */
+.arc-over-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--headers);
+    margin-bottom: 1.1rem;
+}
+
+.arc-over-score {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--headers);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+
+.arc-over-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.arc-best-chip {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 0.3rem 0.65rem;
+    background: var(--yellow);
+    color: #141414;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+}
+
+.arc-newbest {
+    display: inline-block;
+    margin-top: 0.8rem;
+    margin-left: 0.4rem;
+    padding: 0.3rem 0.65rem;
+    background: var(--highlight);
+    color: #F7F4F3;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    animation: arc-blink 0.9s steps(2, start) infinite;
+}
+
+@keyframes arc-blink { 50% { opacity: 0.35; } }
+
+/* Pause overlay is just a tappable message */
+.arc-pause-msg {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--headers);
+    text-align: center;
+}
+
+.arc-pause-sub {
+    display: block;
+    margin-top: 0.7rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+.arc-toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    transform: translateX(-50%) translateY(8px);
+    z-index: 80;
+    max-width: min(90vw, 420px);
+    padding: 0.7rem 1.1rem;
+    background: var(--bezel);
+    color: var(--bezel-text);
+    border: 1px solid var(--highlight);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-snap);
+}
+
+.arc-toast.arc-toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Install hint banner (hub) ────────────────────────────────── */
+.arc-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px dashed var(--border-strong);
+    font-size: 0.72rem;
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+}
+
+.arc-hint strong { color: var(--headers); font-weight: 600; }
+
+.arc-hint .arc-hint-close {
+    margin-left: auto;
+    min-width: 36px;
+    min-height: 36px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.arc-hint .arc-action { flex: 0 0 auto; padding: 0.5rem 0.9rem; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -15,6 +15,7 @@ Capabilities span brand identity and visual design, UX research, UI design for w
 
 - [Free Web Tools](https://beben.design/tools/): A growing collection of single-purpose, browser-native utilities — no accounts, no server calls, no data collection. Downloadable as standalone HTML files that run offline.
 - [QR Code Generator](https://beben.design/qr-code-generator/): Free, watermark-free SVG QR code generator. Runs entirely client-side; exportable as SVG or downloadable as a self-contained HTML file.
+- [Beben Arcade](https://beben.design/games/): Installable, offline-capable PWA mini-game arcade — eight vanilla-JS 8-bit games (Snake, 2048, Blockfall, Brick Bash, Wingbeat, Mines, Pixel Dash, Skystack). No ads, no tracking.
 
 ## Blog
 

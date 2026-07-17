@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Brick Bash — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var COLS = 8, ROWS = 6;
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.72, maxW: 420, onResize: function () { if (bricks) layout(); } });
+
+    var paddle, ball, bricks, score, lives, level, stuck, brickW, brickH, brickTop;
+
+    function layout() {
+        brickW = view.w / COLS;
+        brickH = Math.max(14, view.h * 0.035);
+        brickTop = view.h * 0.1;
+    }
+
+    function buildBricks() {
+        layout();
+        bricks = [];
+        for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+                bricks.push({ c: c, r: r, alive: true });
+            }
+        }
+    }
+
+    function resetBall() {
+        stuck = true;
+        ball = {
+            x: paddle.x, y: 0, r: Math.max(5, view.w * 0.016),
+            vx: 0, vy: 0,
+            speed: (240 + level * 30) * (view.w / 400)
+        };
+    }
+
+    function reset() {
+        score = 0; lives = 3; level = 1;
+        paddle = { x: view.w / 2, w: view.w * 0.22, h: 12 };
+        buildBricks();
+        resetBall();
+        Arcade.ui.setScore('000');
+    }
+
+    function launch() {
+        if (!stuck) return;
+        stuck = false;
+        var a = (Math.random() * 0.6 - 0.3) - Math.PI / 2;   // near-vertical up
+        ball.vx = Math.cos(a) * ball.speed;
+        ball.vy = Math.sin(a) * ball.speed;
+        Arcade.audio.play('flap');
+    }
+
+    /* input: pointer drags paddle anywhere, tap launches */
+    document.body.addEventListener('pointermove', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left);
+        paddle.x = Math.max(paddle.w / 2, Math.min(view.w - paddle.w / 2, x));
+        if (stuck) ball.x = paddle.x;
+    });
+    document.body.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.arc-bar, .arc-overlay')) return;
+        launch();
+    });
+
+    var keys = {};
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { keys[e.key] = true; e.preventDefault(); }
+        if (e.key === ' ') { launch(); e.preventDefault(); }
+    });
+    document.addEventListener('keyup', function (e) { keys[e.key] = false; });
+
+    function paddleY() { return view.h - Math.max(28, view.h * 0.06); }
+
+    function brickRect(b) {
+        return { x: b.c * brickW + 2, y: brickTop + b.r * (brickH + 3), w: brickW - 4, h: brickH };
+    }
+
+    function update(dt) {
+        // keyboard paddle
+        var kv = (keys.ArrowRight ? 1 : 0) - (keys.ArrowLeft ? 1 : 0);
+        if (kv) {
+            paddle.x = Math.max(paddle.w / 2, Math.min(view.w - paddle.w / 2, paddle.x + kv * 480 * dt));
+            if (stuck) ball.x = paddle.x;
+        }
+
+        if (stuck) { ball.y = paddleY() - paddle.h / 2 - ball.r - 1; return; }
+
+        // sub-step so a fast ball can't tunnel through bricks
+        var dist = Math.hypot(ball.vx, ball.vy) * dt;
+        var steps = Math.max(1, Math.ceil(dist / 4));
+        for (var i = 0; i < steps; i++) step(dt / steps);
+    }
+
+    function step(dt) {
+        ball.x += ball.vx * dt;
+        ball.y += ball.vy * dt;
+
+        // walls
+        if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx = Math.abs(ball.vx); Arcade.audio.play('bounce'); }
+        if (ball.x + ball.r > view.w) { ball.x = view.w - ball.r; ball.vx = -Math.abs(ball.vx); Arcade.audio.play('bounce'); }
+        if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy = Math.abs(ball.vy); Arcade.audio.play('bounce'); }
+
+        // paddle
+        var py = paddleY();
+        if (ball.vy > 0 &&
+            ball.y + ball.r >= py - paddle.h / 2 && ball.y + ball.r <= py + paddle.h &&
+            ball.x >= paddle.x - paddle.w / 2 - ball.r && ball.x <= paddle.x + paddle.w / 2 + ball.r) {
+            var off = (ball.x - paddle.x) / (paddle.w / 2);   // -1 .. 1
+            off = Math.max(-1, Math.min(1, off));
+            var angle = off * (Math.PI / 3) - Math.PI / 2;    // ±60° around straight up
+            ball.vx = Math.cos(angle) * ball.speed;
+            ball.vy = Math.sin(angle) * ball.speed;
+            ball.y = py - paddle.h / 2 - ball.r;
+            Arcade.audio.play('bounce');
+            Arcade.haptics.buzz('light');
+        }
+
+        // bricks
+        for (var i = 0; i < bricks.length; i++) {
+            var b = bricks[i];
+            if (!b.alive) continue;
+            var rc = brickRect(b);
+            var nx = Math.max(rc.x, Math.min(ball.x, rc.x + rc.w));
+            var ny = Math.max(rc.y, Math.min(ball.y, rc.y + rc.h));
+            var dx = ball.x - nx, dy = ball.y - ny;
+            if (dx * dx + dy * dy > ball.r * ball.r) continue;
+
+            b.alive = false;
+            score += 10;
+            Arcade.ui.setScore(String(score).padStart(3, '0'));
+            Arcade.audio.play('coin');
+
+            // bounce off the side with least penetration
+            var penX = ball.r - Math.abs(dx), penY = ball.r - Math.abs(dy);
+            if (Math.abs(dx) > Math.abs(dy) || penX < penY) ball.vx = dx >= 0 ? Math.abs(ball.vx) : -Math.abs(ball.vx);
+            else ball.vy = dy >= 0 ? Math.abs(ball.vy) : -Math.abs(ball.vy);
+
+            if (bricks.every(function (bb) { return !bb.alive; })) {
+                level++;
+                Arcade.audio.play('clear');
+                Arcade.haptics.buzz('success');
+                buildBricks();
+                resetBall();
+            }
+            break;
+        }
+
+        // lost ball
+        if (ball.y - ball.r > view.h) {
+            lives--;
+            Arcade.audio.play('boom');
+            Arcade.haptics.buzz('error');
+            if (lives <= 0) { gameOver(); return; }
+            resetBall();
+        }
+    }
+
+    function gameOver() {
+        loop.pause();
+        var res = Arcade.scores.submit('brick-bash', score);
+        Arcade.ui.gameOver({
+            score: score, best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // bricks: rows cycle red / yellow / headers
+        var rowColors = [p.red, p.yellow, p.headers];
+        bricks.forEach(function (b) {
+            if (!b.alive) return;
+            var rc = brickRect(b);
+            ctx.fillStyle = rowColors[b.r % 3];
+            ctx.fillRect(rc.x, rc.y, rc.w, rc.h);
+        });
+
+        // paddle
+        var py = paddleY();
+        ctx.fillStyle = p.headers;
+        ctx.fillRect(paddle.x - paddle.w / 2, py - paddle.h / 2, paddle.w, paddle.h);
+        ctx.fillStyle = p.red;
+        ctx.fillRect(paddle.x - 4, py - paddle.h / 2, 8, paddle.h);
+
+        // ball
+        ctx.fillStyle = p.yellow;
+        ctx.fillRect(ball.x - ball.r, ball.y - ball.r, ball.r * 2, ball.r * 2);
+
+        // HUD: lives + level
+        ctx.fillStyle = p.muted;
+        ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('LV ' + level, 8, 18);
+        ctx.fillStyle = p.red;
+        for (var i = 0; i < lives; i++) {
+            ctx.fillRect(view.w - 16 - i * 16, 10, 10, 10);
+        }
+
+        if (stuck) {
+            ctx.fillStyle = p.muted;
+            ctx.textAlign = 'center';
+            ctx.fillText(Arcade.env.touch ? 'TAP TO LAUNCH' : 'SPACE TO LAUNCH', view.w / 2, view.h * 0.6);
+        }
+    }
+
+    var loop = Arcade.loop({
+        update: update,
+        render: render
+    });
+
+    Arcade.init({
+        slug: 'brick-bash',
+        title: 'Brick Bash',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    view.refit();
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

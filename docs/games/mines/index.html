@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Mines — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+
+    <style>
+        .arc-stage { flex-direction: column; gap: 0.8rem; }
+
+        .mines-hud {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .mines-hud .count { color: var(--highlight); min-width: 3ch; }
+
+        .flag-toggle {
+            padding: 0.45rem 0.8rem;
+            border: 1px solid var(--border-strong);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .flag-toggle[aria-pressed="true"] {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #141414;
+        }
+
+        .mines-grid {
+            display: grid;
+            gap: 2px;
+            touch-action: none;
+            border: 1px solid var(--border-strong);
+            padding: 2px;
+            background: var(--bg-soft);
+        }
+
+        .cell {
+            width: var(--cell);
+            height: var(--cell);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            font-size: calc(var(--cell) * 0.44);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--headers);
+            padding: 0;
+        }
+
+        .cell.hidden { background: var(--bg-soft); border-color: var(--border-strong); }
+        .cell.hidden:active { background: var(--grid-line); }
+        .cell.flag { color: var(--highlight); }
+        .cell.mine { background: var(--highlight); color: #F7F4F3; }
+        .cell.n1 { color: var(--yellow); }
+        .cell.n2 { color: var(--highlight); }
+        .cell.n3 { color: var(--headers); }
+        .cell.n4, .cell.n5, .cell.n6, .cell.n7, .cell.n8 { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage">
+    <div class="mines-hud">
+        <div class="arc-seg" id="diff">
+            <button data-d="easy" aria-pressed="true">9&#215;9</button>
+            <button data-d="med" aria-pressed="false">12&#215;12</button>
+        </div>
+        <span>&#9670; <span class="count" id="mineCount">10</span></span>
+        <button class="flag-toggle" id="flagMode" aria-pressed="false">&#9873; FLAG</button>
+    </div>
+    <div class="mines-grid" id="grid"></div>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    var PRESETS = {
+        easy: { cols: 9, rows: 9, mines: 10, slug: 'mines-easy' },
+        med: { cols: 12, rows: 12, mines: 24, slug: 'mines-med' }
+    };
+
+    var gridEl = document.getElementById('grid');
+    var countEl = document.getElementById('mineCount');
+    var flagBtn = document.getElementById('flagMode');
+
+    var diff, cells, started, ended, flags, revealed, time, timer, flagMode;
+
+    function preset() { return PRESETS[diff]; }
+
+    function sizeCells() {
+        var p = preset();
+        var stage = document.querySelector('.arc-stage');
+        var avail = Math.min(stage.clientWidth - 20, 460);
+        var availH = stage.clientHeight - 90;
+        var cell = Math.floor(Math.min(avail / p.cols, availH / p.rows, 40)) - 2;
+        gridEl.style.setProperty('--cell', cell + 'px');
+        gridEl.style.gridTemplateColumns = 'repeat(' + p.cols + ', var(--cell))';
+    }
+
+    function reset() {
+        var p = preset();
+        cells = [];
+        started = false; ended = false; flags = 0; revealed = 0; time = 0;
+        stopTimer();
+        flagMode = false;
+        flagBtn.setAttribute('aria-pressed', 'false');
+        countEl.textContent = p.mines;
+        Arcade.ui.setScore('0s');
+
+        gridEl.innerHTML = '';
+        sizeCells();
+        for (var i = 0; i < p.cols * p.rows; i++) {
+            var b = document.createElement('button');
+            b.className = 'cell hidden';
+            b.dataset.i = i;
+            gridEl.appendChild(b);
+            cells.push({ mine: false, adj: 0, open: false, flag: false, el: b });
+        }
+    }
+
+    function neighbors(i) {
+        var p = preset();
+        var r = Math.floor(i / p.cols), c = i % p.cols, out = [];
+        for (var dr = -1; dr <= 1; dr++) {
+            for (var dc = -1; dc <= 1; dc++) {
+                if (!dr && !dc) continue;
+                var nr = r + dr, nc = c + dc;
+                if (nr < 0 || nc < 0 || nr >= p.rows || nc >= p.cols) continue;
+                out.push(nr * p.cols + nc);
+            }
+        }
+        return out;
+    }
+
+    function plant(safe) {
+        var p = preset();
+        var forbidden = neighbors(safe).concat([safe]);
+        var spots = [];
+        for (var i = 0; i < cells.length; i++) if (forbidden.indexOf(i) === -1) spots.push(i);
+        for (var m = 0; m < p.mines; m++) {
+            var k = Math.floor(Math.random() * spots.length);
+            cells[spots[k]].mine = true;
+            spots.splice(k, 1);
+        }
+        cells.forEach(function (cell, idx) {
+            cell.adj = neighbors(idx).filter(function (n) { return cells[n].mine; }).length;
+        });
+    }
+
+    function startTimer() {
+        stopTimer();
+        timer = setInterval(function () {
+            time++;
+            Arcade.ui.setScore(time + 's');
+        }, 1000);
+    }
+    function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+
+    function paint(i) {
+        var c = cells[i];
+        var el = c.el;
+        el.className = 'cell';
+        if (!c.open) {
+            el.classList.add('hidden');
+            if (c.flag) { el.classList.add('flag'); el.textContent = '⚑'; }
+            else el.textContent = '';
+        } else if (c.mine) {
+            el.classList.add('mine');
+            el.textContent = '◆';
+        } else {
+            if (c.adj) { el.classList.add('n' + c.adj); el.textContent = c.adj; }
+            else el.textContent = '';
+        }
+    }
+
+    function reveal(i) {
+        var c = cells[i];
+        if (ended || c.open || c.flag) return;
+
+        if (!started) {
+            started = true;
+            plant(i);
+            startTimer();
+        }
+
+        if (c.mine) { lose(i); return; }
+
+        // iterative flood fill
+        var queue = [i];
+        while (queue.length) {
+            var k = queue.pop();
+            var cc = cells[k];
+            if (cc.open || cc.flag || cc.mine) continue;
+            cc.open = true;
+            revealed++;
+            paint(k);
+            if (cc.adj === 0) neighbors(k).forEach(function (n) { if (!cells[n].open) queue.push(n); });
+        }
+        Arcade.audio.play('move');
+
+        checkWin();
+    }
+
+    function chord(i) {
+        var c = cells[i];
+        if (!c.open || !c.adj) return;
+        var ns = neighbors(i);
+        var flagged = ns.filter(function (n) { return cells[n].flag; }).length;
+        if (flagged !== c.adj) return;
+        ns.forEach(function (n) { if (!cells[n].flag && !cells[n].open) reveal(n); });
+    }
+
+    function toggleFlag(i) {
+        var c = cells[i];
+        if (ended || c.open) return;
+        if (!started) return;   // flags before first reveal are pointless
+        c.flag = !c.flag;
+        flags += c.flag ? 1 : -1;
+        countEl.textContent = preset().mines - flags;
+        paint(i);
+        Arcade.audio.play('tap');
+        Arcade.haptics.buzz('light');
+    }
+
+    function lose(hit) {
+        ended = true;
+        stopTimer();
+        cells.forEach(function (c, idx) { if (c.mine) { c.open = true; paint(idx); } });
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        var best = Arcade.scores.best(preset().slug);
+        setTimeout(function () {
+            Arcade.ui.gameOver({
+                title: 'Boom', label: 'Time', score: time + 's',
+                best: best !== null ? best + 's' : null, isNew: false,
+                onReplay: reset
+            });
+        }, 650);
+    }
+
+    function checkWin() {
+        var p = preset();
+        if (revealed !== p.cols * p.rows - p.mines) return;
+        ended = true;
+        stopTimer();
+        Arcade.audio.play('clear');
+        var res = Arcade.scores.submit(p.slug, time, { lowerIsBetter: true });
+        setTimeout(function () {
+            Arcade.ui.gameOver({
+                title: 'Cleared!', label: 'Time', score: time + 's',
+                best: res.best + 's', isNew: res.isNew,
+                onReplay: reset
+            });
+        }, 400);
+    }
+
+    /* ── input: tap reveal / long-press flag / flag mode / right-click ── */
+    var pressTimer = null, pressTarget = -1, longFired = false, px = 0, py = 0;
+
+    gridEl.addEventListener('pointerdown', function (e) {
+        var t = e.target.closest('.cell');
+        if (!t) return;
+        pressTarget = +t.dataset.i;
+        longFired = false;
+        px = e.clientX; py = e.clientY;
+        pressTimer = setTimeout(function () {
+            longFired = true;
+            toggleFlag(pressTarget);
+        }, 450);
+    });
+
+    gridEl.addEventListener('pointermove', function (e) {
+        if (pressTimer && Math.hypot(e.clientX - px, e.clientY - py) > 10) {
+            clearTimeout(pressTimer); pressTimer = null;
+        }
+    });
+
+    gridEl.addEventListener('pointerup', function (e) {
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+        if (longFired) { longFired = false; return; }   // flag already handled
+        var t = e.target.closest('.cell');
+        if (!t) return;
+        var i = +t.dataset.i;
+        if (cells[i].open) chord(i);
+        else if (flagMode) toggleFlag(i);
+        else reveal(i);
+    });
+
+    gridEl.addEventListener('pointercancel', function () {
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+    });
+
+    gridEl.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        var t = e.target.closest('.cell');
+        if (t) toggleFlag(+t.dataset.i);
+    });
+
+    flagBtn.addEventListener('click', function () {
+        flagMode = !flagMode;
+        flagBtn.setAttribute('aria-pressed', flagMode ? 'true' : 'false');
+        Arcade.audio.play('tap');
+    });
+
+    document.getElementById('diff').addEventListener('click', function (e) {
+        var b = e.target.closest('button');
+        if (!b || b.dataset.d === diff) return;
+        diff = b.dataset.d;
+        Array.prototype.forEach.call(this.children, function (c) {
+            c.setAttribute('aria-pressed', c === b ? 'true' : 'false');
+        });
+        Arcade.audio.play('tap');
+        reset();
+    });
+
+    window.addEventListener('resize', sizeCells);
+
+    Arcade.init({
+        slug: 'mines',
+        title: 'Mines',
+        onPause: function () { stopTimer(); },
+        onResume: function () { if (started && !ended) startTimer(); }
+    });
+
+    diff = 'easy';
+    reset();
+})();
+</script>
+
+</body>
+</html>
