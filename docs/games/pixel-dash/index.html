@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-pink); --accent-glow: rgba(255,45,170,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Pixel Dash — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -192,16 +192,16 @@
         ctx.fillRect(0, 0, view.w, view.h);
 
         // sun
-        ctx.fillStyle = p.yellow;
+        ctx.fillStyle = p.neon.orange;
         ctx.globalAlpha = 0.85;
         ctx.beginPath();
         ctx.arc(view.w * 0.82, view.h * 0.22, 16 * u, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
 
-        // parallax hills
-        hills(ctx, p, dist * 0.25, 26 * u, g, 'hsl(348, 60%, 38%)');
-        hills(ctx, p, dist * 0.55 + 400, 16 * u, g, 'hsl(43, 70%, 45%)');
+        // parallax hills: purple far, pink near
+        hills(ctx, p, dist * 0.25, 26 * u, g, 'hsl(258, 55%, 30%)');
+        hills(ctx, p, dist * 0.55 + 400, 16 * u, g, 'hsl(324, 65%, 38%)');
 
         // ground
         ctx.fillStyle = p.headers;
@@ -213,7 +213,7 @@
 
         // obstacles
         obstacles.forEach(function (o) {
-            ctx.fillStyle = o.kind === 'bar' ? p.yellow : p.red;
+            ctx.fillStyle = o.kind === 'bar' ? p.neon.yellow : p.neon.blue;
             ctx.fillRect(o.x, o.y, o.w, o.h);
             if (o.kind === 'tall') {
                 ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -221,13 +221,13 @@
             }
         });
 
-        // runner: yellow body, red cap, animated legs
+        // runner: pink body, accent cap, animated legs
         var rh = runner.h * (runner.duck ? 0.55 : 1);
         var rx = runner.x - runner.w / 2;
         var ry = runner.y - rh;
-        ctx.fillStyle = p.yellow;
+        ctx.fillStyle = p.accent;
         ctx.fillRect(rx, ry, runner.w, rh * 0.78);
-        ctx.fillStyle = p.red;
+        ctx.fillStyle = p.neon.lime;
         ctx.fillRect(rx - 1 * u, ry - 3 * u, runner.w + 2 * u, 4 * u);   // cap
         ctx.fillStyle = p.headers;
         ctx.fillRect(rx + runner.w * 0.62, ry + rh * 0.18, 3 * u, 3 * u); // eye
@@ -250,6 +250,11 @@
     Arcade.init({
         slug: 'pixel-dash',
         title: 'Pixel Dash',
+        accent: 'pink',
+        jingles: {
+            best: [[587, 0.07], [740, 0.07], [880, 0.07], [1175, 0.07], [1480, 0.18]],
+            over: [[440, 0.1], [349, 0.1], [277, 0.2]]
+        },
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }
     });

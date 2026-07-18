@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-red); --accent-glow: rgba(255,75,92,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Mines — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -31,11 +31,28 @@
             color: var(--text-muted);
         }
 
-        .mines-hud .count { color: var(--highlight); min-width: 3ch; }
+        .mines-hud .count { color: var(--accent); min-width: 3ch; }
+
+        /* difficulty segmented control (scoped; only Mines uses it) */
+        .arc-seg { display: flex; border: 1px solid var(--border-strong); border-radius: 4px; overflow: hidden; }
+        .arc-seg button {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            border-left: 1px solid var(--border-strong);
+        }
+        .arc-seg button:first-child { border-left: none; }
+        .arc-seg button[aria-pressed="true"] {
+            background: var(--accent);
+            color: #080813;
+        }
 
         .flag-toggle {
             padding: 0.45rem 0.8rem;
             border: 1px solid var(--border-strong);
+            border-radius: 4px;
             font-size: 0.72rem;
             font-weight: 600;
             letter-spacing: 0.1em;
@@ -43,9 +60,9 @@
         }
 
         .flag-toggle[aria-pressed="true"] {
-            background: var(--yellow);
-            border-color: var(--yellow);
-            color: #141414;
+            background: var(--neon-yellow);
+            border-color: var(--neon-yellow);
+            color: #080813;
         }
 
         .mines-grid {
@@ -53,8 +70,10 @@
             gap: 2px;
             touch-action: none;
             border: 1px solid var(--border-strong);
+            border-radius: 4px;
             padding: 2px;
             background: var(--bg-soft);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
         .cell {
@@ -72,14 +91,15 @@
             padding: 0;
         }
 
-        .cell.hidden { background: var(--bg-soft); border-color: var(--border-strong); }
+        .cell.hidden { background: var(--bg-card); border-color: var(--border-strong); }
         .cell.hidden:active { background: var(--grid-line); }
-        .cell.flag { color: var(--highlight); }
-        .cell.mine { background: var(--highlight); color: #F7F4F3; }
-        .cell.n1 { color: var(--yellow); }
-        .cell.n2 { color: var(--highlight); }
-        .cell.n3 { color: var(--headers); }
-        .cell.n4, .cell.n5, .cell.n6, .cell.n7, .cell.n8 { color: var(--text-muted); }
+        .cell.flag { color: var(--accent); }
+        .cell.mine { background: var(--accent); color: #080813; }
+        .cell.n1 { color: var(--neon-blue); }
+        .cell.n2 { color: var(--neon-lime); }
+        .cell.n3 { color: var(--neon-yellow); }
+        .cell.n4 { color: var(--neon-purple); }
+        .cell.n5, .cell.n6, .cell.n7, .cell.n8 { color: var(--neon-orange); }
     </style>
 </head>
 <body>
@@ -344,6 +364,11 @@
     Arcade.init({
         slug: 'mines',
         title: 'Mines',
+        accent: 'red',
+        jingles: {
+            best: [[523, 0.08], [659, 0.08], [784, 0.08], [1046, 0.22]]
+            // loss keeps its boom; no over jingle
+        },
         onPause: function () { stopTimer(); },
         onResume: function () { if (started && !ended) startTimer(); }
     });

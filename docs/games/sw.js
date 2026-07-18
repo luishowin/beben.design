@@ -2,7 +2,7 @@
    RULE: bump CACHE on EVERY commit that touches docs/games/** —
    cache-first serves stale files forever otherwise. */
 
-const CACHE = 'beben-arcade-v2';
+const CACHE = 'beben-arcade-v3';
 
 const PRECACHE = [
     './',

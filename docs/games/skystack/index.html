@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-blue); --accent-glow: rgba(25,198,255,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Skystack — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -41,7 +41,7 @@
         t = 0;
         dead = false;
         camY = 0;
-        hue = 8;   // start near brand red
+        hue = 190;   // dusk ramp: cyan through purple
         var h = slabH();
         stack = [{ x: view.w / 2, w: baseW(), y: 0, hue: hue }];
         newSlab();
@@ -49,7 +49,7 @@
     }
 
     function newSlab() {
-        hue = (hue + 16) % 360;
+        hue = 190 + ((hue - 190 + 14) % 95);
         var top = stack[stack.length - 1];
         current = {
             w: top.w,
@@ -134,6 +134,23 @@
         ctx.fillStyle = p.bgSoft;
         ctx.fillRect(0, 0, view.w, view.h);
 
+        // dusk glow toward the horizon
+        var dusk = ctx.createLinearGradient(0, 0, 0, view.h);
+        dusk.addColorStop(0, 'rgba(139,92,255,0)');
+        dusk.addColorStop(1, 'rgba(139,92,255,0.1)');
+        ctx.fillStyle = dusk;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // static stars (far parallax — they don't ride the camera)
+        ctx.globalAlpha = 0.1;
+        ctx.fillStyle = p.headers;
+        for (var si = 0; si < 28; si++) {
+            var sx = ((si * 89) % 97) / 97 * view.w;
+            var sy = ((si * 41) % 83) / 83 * view.h * 0.7;
+            ctx.fillRect(sx, sy, 2, 2);
+        }
+        ctx.globalAlpha = 1;
+
         // faint altitude lines
         ctx.strokeStyle = p.gridLine;
         ctx.lineWidth = 1;
@@ -145,7 +162,7 @@
         function drawSlab(s, x) {
             var sy = slabScreenY(s.y);
             if (sy > view.h + h || sy < -h) return;
-            ctx.fillStyle = 'hsl(' + s.hue + ', 72%, ' + (s.flash ? 72 : 55) + '%)';
+            ctx.fillStyle = 'hsl(' + s.hue + ', 85%, ' + (s.flash ? 74 : 60) + '%)';
             ctx.fillRect(x - s.w / 2, sy, s.w, h - 2);
             ctx.fillStyle = 'rgba(0,0,0,0.18)';
             ctx.fillRect(x - s.w / 2, sy + h - 6, s.w, 4);
@@ -167,6 +184,11 @@
     Arcade.init({
         slug: 'skystack',
         title: 'Skystack',
+        accent: 'blue',
+        jingles: {
+            best: [[440, 0.07], [554, 0.07], [659, 0.07], [880, 0.07], [1109, 0.18]],
+            over: [[349, 0.1], [294, 0.1], [247, 0.2]]
+        },
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }
     });

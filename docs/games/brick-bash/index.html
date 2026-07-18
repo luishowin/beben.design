@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-orange); --accent-glow: rgba(255,155,33,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Brick Bash — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -194,8 +194,18 @@
         ctx.fillStyle = p.bgSoft;
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // bricks: rows cycle red / yellow / headers
-        var rowColors = [p.red, p.yellow, p.headers];
+        // static pixel starfield
+        ctx.globalAlpha = 0.09;
+        ctx.fillStyle = p.headers;
+        for (var si = 0; si < 40; si++) {
+            var sx = ((si * 97) % 101) / 101 * view.w;
+            var sy = ((si * 53) % 89) / 89 * view.h;
+            ctx.fillRect(sx, sy, 2, 2);
+        }
+        ctx.globalAlpha = 1;
+
+        // bricks: warm rows cycle orange / yellow / red
+        var rowColors = [p.accent, p.yellow, p.red];
         bricks.forEach(function (b) {
             if (!b.alive) return;
             var rc = brickRect(b);
@@ -207,11 +217,11 @@
         var py = paddleY();
         ctx.fillStyle = p.headers;
         ctx.fillRect(paddle.x - paddle.w / 2, py - paddle.h / 2, paddle.w, paddle.h);
-        ctx.fillStyle = p.red;
+        ctx.fillStyle = p.accent;
         ctx.fillRect(paddle.x - 4, py - paddle.h / 2, 8, paddle.h);
 
         // ball
-        ctx.fillStyle = p.yellow;
+        ctx.fillStyle = p.headers;
         ctx.fillRect(ball.x - ball.r, ball.y - ball.r, ball.r * 2, ball.r * 2);
 
         // HUD: lives + level
@@ -219,7 +229,7 @@
         ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
         ctx.textAlign = 'left';
         ctx.fillText('LV ' + level, 8, 18);
-        ctx.fillStyle = p.red;
+        ctx.fillStyle = p.accent;
         for (var i = 0; i < lives; i++) {
             ctx.fillRect(view.w - 16 - i * 16, 10, 10, 10);
         }
@@ -239,6 +249,11 @@
     Arcade.init({
         slug: 'brick-bash',
         title: 'Brick Bash',
+        accent: 'orange',
+        jingles: {
+            best: [[392, 0.08], [523, 0.08], [659, 0.08], [784, 0.18]],
+            over: [[262, 0.12], [196, 0.22]]
+        },
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }
     });

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-purple); --accent-glow: rgba(139,92,255,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Blockfall — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -56,14 +56,15 @@
     var LINE_SCORE = [0, 40, 100, 300, 1200];
     var LOCK_MS = 400, DAS_MS = 170, ARR_MS = 50, CLEAR_MS = 180;
 
+    // one neon per tetromino
     var SHAPES = {
-        I: { size: 4, cells: [[0, 1], [1, 1], [2, 1], [3, 1]], color: '#2EC4B6' },
-        O: { size: 2, cells: [[0, 0], [1, 0], [0, 1], [1, 1]], color: '#FFC710' },
-        T: { size: 3, cells: [[1, 0], [0, 1], [1, 1], [2, 1]], color: '#B5179E' },
-        S: { size: 3, cells: [[1, 0], [2, 0], [0, 1], [1, 1]], color: '#2DC653' },
-        Z: { size: 3, cells: [[0, 0], [1, 0], [1, 1], [2, 1]], color: '#E71D36' },
-        J: { size: 3, cells: [[0, 0], [0, 1], [1, 1], [2, 1]], color: '#4895EF' },
-        L: { size: 3, cells: [[2, 0], [0, 1], [1, 1], [2, 1]], color: '#FF9F1C' }
+        I: { size: 4, cells: [[0, 1], [1, 1], [2, 1], [3, 1]], color: '#19C6FF' },
+        O: { size: 2, cells: [[0, 0], [1, 0], [0, 1], [1, 1]], color: '#FFD533' },
+        T: { size: 3, cells: [[1, 0], [0, 1], [1, 1], [2, 1]], color: '#8B5CFF' },
+        S: { size: 3, cells: [[1, 0], [2, 0], [0, 1], [1, 1]], color: '#8EFF2A' },
+        Z: { size: 3, cells: [[0, 0], [1, 0], [1, 1], [2, 1]], color: '#FF4B5C' },
+        J: { size: 3, cells: [[0, 0], [0, 1], [1, 1], [2, 1]], color: '#FF2DAA' },
+        L: { size: 3, cells: [[2, 0], [0, 1], [1, 1], [2, 1]], color: '#FF9B21' }
     };
 
     function rotCells(type, rot) {
@@ -362,6 +363,14 @@
             ctx.beginPath(); ctx.moveTo(gx * cell, 0); ctx.lineTo(gx * cell, view.h); ctx.stroke();
         }
 
+        // accent well guides down each side
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = p.accent;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(1, 0); ctx.lineTo(1, view.h);
+        ctx.moveTo(view.w - 1, 0); ctx.lineTo(view.w - 1, view.h); ctx.stroke();
+        ctx.globalAlpha = 1;
+
         // stack
         for (var y = HIDDEN; y < ALL; y++) {
             for (var x = 0; x < COLS; x++) {
@@ -371,7 +380,7 @@
 
         // flash clearing rows
         if (clearing) {
-            ctx.fillStyle = clearAcc % 90 < 45 ? p.headers : p.yellow;
+            ctx.fillStyle = clearAcc % 90 < 45 ? p.headers : p.accent;
             clearRows.forEach(function (y) {
                 if (y >= HIDDEN) ctx.fillRect(0, (y - HIDDEN) * cell, view.w, cell);
             });
@@ -413,6 +422,11 @@
     Arcade.init({
         slug: 'blockfall',
         title: 'Blockfall',
+        accent: 'purple',
+        jingles: {
+            best: [[440, 0.08], [587, 0.08], [740, 0.08], [880, 0.08], [1175, 0.2]],
+            over: [[392, 0.1], [311, 0.1], [262, 0.22]]
+        },
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }
     });

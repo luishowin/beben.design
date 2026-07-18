@@ -202,11 +202,26 @@
         coinup:  function () { tone(660, 0.05, 'square'); tone(880, 0.08, 'square', { when: 0.05 }); tone(1320, 0.12, 'square', { when: 0.13 }); }
     };
 
+    /* jingle: data-driven note sequence for per-game flourishes.
+       Each step is [freq, dur, wave?]; freq 0 = rest. */
+    function playJingle(seq) {
+        var when = 0;
+        for (var i = 0; i < seq.length; i++) {
+            var s = seq[i];
+            if (s[0] > 0) tone(s[0], s[1], s[2] || 'square', { when: when });
+            when += s[1];
+        }
+    }
+
     var audio = {
         play: function (name) {
             if (!settingsData.sound) return;
             var fn = SFX[name];
             if (fn) { try { fn(); } catch (e) { /* ignore */ } }
+        },
+        jingle: function (seq) {
+            if (!settingsData.sound || !seq) return;
+            try { playJingle(seq); } catch (e) { /* ignore */ }
         }
     };
 
@@ -374,9 +389,13 @@
         overEl.appendChild(panel);
         document.body.appendChild(overEl);
 
+        var jingles = (state.opts && state.opts.jingles) || {};
         if (o.isNew) {
-            audio.play('fanfare');
+            if (jingles.best) audio.jingle(jingles.best);
+            else audio.play('fanfare');
             haptics.buzz('success');
+        } else if (jingles.over) {
+            audio.jingle(jingles.over);
         }
     }
 
@@ -386,10 +405,21 @@
     }
 
     /* ── game init: bar + lifecycle wiring ────────────────────── */
+    var ACCENTS = {
+        blue: '--neon-blue', pink: '--neon-pink', lime: '--neon-lime',
+        yellow: '--neon-yellow', purple: '--neon-purple',
+        orange: '--neon-orange', red: '--neon-red'
+    };
+
     function init(opts) {
         state.opts = opts || {};
         document.body.classList.add('arc-playing');
         if (opts && opts.slug) settings.set('lastPlayed', opts.slug);
+        if (opts && opts.accent) {
+            var val = ACCENTS[opts.accent] ? 'var(' + ACCENTS[opts.accent] + ')' : opts.accent;
+            document.documentElement.style.setProperty('--accent', val);
+            paletteCache = null;
+        }
 
         var bar = document.createElement('header');
         bar.className = 'arc-bar';

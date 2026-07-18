@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-blue); --accent-glow: rgba(25,198,255,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Wingbeat — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -150,14 +150,26 @@
         ctx.fillRect(0, 0, view.w, view.h);
 
         // sun disc
-        ctx.fillStyle = p.gridLine;
+        ctx.globalAlpha = 0.08;
+        ctx.fillStyle = p.yellow;
         ctx.beginPath();
         ctx.arc(view.w * 0.78, view.h * 0.2, view.w * 0.14, 0, Math.PI * 2);
         ctx.fill();
 
-        // gates: alternate red / yellow
+        // parallax pixel clouds
+        ctx.fillStyle = p.headers;
+        for (var ci = 0; ci < 3; ci++) {
+            var cw = view.w * 0.18;
+            var cx = view.w - (((t * (14 + ci * 8)) + ci * view.w * 0.42) % (view.w + cw));
+            var cy = view.h * (0.12 + ci * 0.14);
+            ctx.fillRect(cx, cy, cw, view.h * 0.02);
+            ctx.fillRect(cx + cw * 0.18, cy - view.h * 0.018, cw * 0.55, view.h * 0.018);
+        }
+        ctx.globalAlpha = 1;
+
+        // gates: lime pipes
         gates.forEach(function (g, i) {
-            ctx.fillStyle = i % 2 ? p.yellow : p.red;
+            ctx.fillStyle = i % 2 ? p.neon.lime : p.accent;
             var top = g.cy - m.gap / 2, bot = g.cy + m.gap / 2;
             ctx.fillRect(g.x, 0, m.gateW, top);
             ctx.fillRect(g.x, bot, m.gateW, m.ground - bot);
@@ -170,20 +182,20 @@
         ctx.fillStyle = p.headers;
         ctx.fillRect(0, m.ground, view.w, view.h - m.ground);
 
-        // bird: yellow body, red wing, header eye
+        // bird: blue body, white wing, yellow beak
         var b = bird;
         var tilt = running ? Math.max(-0.5, Math.min(0.9, b.vy / 700)) : 0;
         ctx.save();
         ctx.translate(b.x, b.y);
         ctx.rotate(tilt);
-        ctx.fillStyle = p.yellow;
+        ctx.fillStyle = p.accent;
         ctx.fillRect(-b.r, -b.r * 0.75, b.r * 2, b.r * 1.5);
-        ctx.fillStyle = p.red;
+        ctx.fillStyle = p.headers;
         var wingUp = b.wing > 0;
         ctx.fillRect(-b.r * 0.7, wingUp ? -b.r * 0.9 : 0, b.r, b.r * 0.6);
-        ctx.fillStyle = p.headers;
+        ctx.fillStyle = p.bg;
         ctx.fillRect(b.r * 0.25, -b.r * 0.45, b.r * 0.3, b.r * 0.3);
-        ctx.fillStyle = p.red;
+        ctx.fillStyle = p.yellow;
         ctx.fillRect(b.r * 0.75, -b.r * 0.15, b.r * 0.5, b.r * 0.3);   // beak
         ctx.restore();
 
@@ -200,6 +212,11 @@
     Arcade.init({
         slug: 'wingbeat',
         title: 'Wingbeat',
+        accent: 'blue',
+        jingles: {
+            best: [[659, 0.07, 'triangle'], [784, 0.07, 'triangle'], [988, 0.07, 'triangle'], [659, 0.07, 'triangle'], [784, 0.07, 'triangle'], [988, 0.16, 'triangle']],
+            over: [[494, 0.09, 'triangle'], [392, 0.09, 'triangle'], [330, 0.18, 'triangle']]
+        },
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }
     });

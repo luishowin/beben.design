@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" style="--accent: var(--neon-lime); --accent-glow: rgba(142,255,42,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Snake — Beben Arcade</title>
     <meta name="robots" content="noindex">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -139,6 +139,20 @@
             }
         }
 
+        // garden: sparse deterministic grass tufts
+        ctx.globalAlpha = 0.08;
+        ctx.fillStyle = p.accent;
+        for (var gy = 0; gy < ROWS; gy++) {
+            for (var gx = 0; gx < COLS; gx++) {
+                if ((gx * 7 + gy * 13) % 29 !== 0) continue;
+                var tx = (gx + 0.5) * cell, ty = (gy + 0.72) * cell;
+                ctx.fillRect(tx - cell * 0.06, ty - cell * 0.22, cell * 0.12, cell * 0.22);
+                ctx.fillRect(tx - cell * 0.2, ty - cell * 0.12, cell * 0.12, cell * 0.12);
+                ctx.fillRect(tx + 0.08 * cell, ty - cell * 0.12, cell * 0.12, cell * 0.12);
+            }
+        }
+        ctx.globalAlpha = 1;
+
         // food
         var pad = cell * 0.18;
         ctx.fillStyle = p.red;
@@ -148,7 +162,7 @@
         for (var i = snake.length - 1; i >= 0; i--) {
             var s = snake[i];
             var g = cell * 0.06;
-            ctx.fillStyle = i === 0 ? p.headers : p.yellow;
+            ctx.fillStyle = i === 0 ? p.headers : p.accent;
             ctx.fillRect(s.x * cell + g, s.y * cell + g, cell - g * 2, cell - g * 2);
         }
         // eye on head
@@ -174,6 +188,11 @@
     Arcade.init({
         slug: 'snake',
         title: 'Snake',
+        accent: 'lime',
+        jingles: {
+            best: [[523, 0.09], [659, 0.09], [784, 0.09], [880, 0.09], [1046, 0.2]],
+            over: [[330, 0.1], [294, 0.1], [262, 0.2]]
+        },
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }
     });
