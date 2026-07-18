@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    BEBEN ARCADE — arcade.js
    Shared runtime for every game under /games/. Load in <head>
-   (no defer) so the theme applies before first paint.
+   (no defer).
 
    iOS standalone notes:
    - Installed-app storage is partitioned from the Safari tab, so
@@ -18,7 +18,7 @@
 
     var SETTINGS_KEY = 'beben-arcade-settings';
     var SCORES_KEY = 'beben-arcade-scores';
-    var DEFAULTS = { sound: true, haptics: true, theme: 'auto', hintDismissed: false };
+    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null };
 
     /* ── storage helpers (Safari private mode throws) ─────────── */
     function readJSON(key, fallback) {
@@ -34,6 +34,11 @@
 
     /* ── settings ─────────────────────────────────────────────── */
     var settingsData = readJSON(SETTINGS_KEY, DEFAULTS);
+    // dark-only since v2: drop the stale theme key from pre-neon installs
+    if ('theme' in settingsData) {
+        delete settingsData.theme;
+        writeJSON(SETTINGS_KEY, settingsData);
+    }
     var settingsListeners = [];
 
     var settings = {
@@ -41,46 +46,41 @@
         set: function (key, val) {
             settingsData[key] = val;
             writeJSON(SETTINGS_KEY, settingsData);
-            if (key === 'theme') applyTheme();
             settingsListeners.forEach(function (fn) { fn(key, val); });
         },
         onChange: function (fn) { settingsListeners.push(fn); }
     };
 
-    /* ── theme (reads the main site's beben-theme, never writes) ─ */
-    function applyTheme() {
-        var mode = settingsData.theme;
-        if (mode === 'auto') {
-            var site = null;
-            try { site = localStorage.getItem('beben-theme'); } catch (e) { /* ignore */ }
-            if (site === 'dark' || site === 'light') mode = site;
-            else mode = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        document.documentElement.dataset.theme = mode;
-    }
-    applyTheme();
-
-    /* ── palette for canvas games (cached; theme changes bust it) */
+    /* ── palette for canvas games (cached; accent set in init) ── */
     var paletteCache = null;
     function palette() {
         if (!paletteCache) {
             var cs = getComputedStyle(document.documentElement);
+            function v(name) { return cs.getPropertyValue(name).trim(); }
             paletteCache = {
-                bg: cs.getPropertyValue('--bg').trim(),
-                bgSoft: cs.getPropertyValue('--bg-soft').trim(),
-                headers: cs.getPropertyValue('--headers').trim(),
-                red: '#E71D36',
-                yellow: '#FFC710',
-                text: cs.getPropertyValue('--text').trim(),
-                muted: cs.getPropertyValue('--text-muted').trim(),
-                border: cs.getPropertyValue('--border').trim(),
-                gridLine: cs.getPropertyValue('--grid-line').trim()
+                bg: v('--bg'),
+                bgSoft: v('--bg-soft'),
+                headers: v('--headers'),
+                red: v('--neon-red'),
+                yellow: v('--neon-yellow'),
+                text: v('--text'),
+                muted: v('--text-muted'),
+                border: v('--border'),
+                gridLine: v('--grid-line'),
+                accent: v('--accent'),
+                neon: {
+                    blue: v('--neon-blue'),
+                    pink: v('--neon-pink'),
+                    lime: v('--neon-lime'),
+                    yellow: v('--neon-yellow'),
+                    purple: v('--neon-purple'),
+                    orange: v('--neon-orange'),
+                    red: v('--neon-red')
+                }
             };
         }
         return paletteCache;
     }
-    new MutationObserver(function () { paletteCache = null; })
-        .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     /* ── swipe/tap detector (2048, snake, blockfall soft drop) ── */
     function swipe(el, onSwipe, o) {
@@ -197,7 +197,9 @@
         flap:    function () { tone(400, 0.08, 'triangle', { slideTo: 700, vol: 0.45 }); },
         bounce:  function () { tone(880, 0.03, 'square', { vol: 0.3 }); },
         boom:    function () { noise(0.25); tone(90, 0.22, 'square', { slideTo: 40, vol: 0.5 }); },
-        fanfare: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone(f, 0.1, 'square', { when: i * 0.09 }); }); }
+        fanfare: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone(f, 0.1, 'square', { when: i * 0.09 }); }); },
+        select:  function () { tone(500, 0.04, 'square', { vol: 0.35 }); tone(750, 0.05, 'square', { when: 0.04, vol: 0.35 }); },
+        coinup:  function () { tone(660, 0.05, 'square'); tone(880, 0.08, 'square', { when: 0.05 }); tone(1320, 0.12, 'square', { when: 0.13 }); }
     };
 
     var audio = {
@@ -309,28 +311,6 @@
         panel.appendChild(buildToggleRow('Sound', 'sound'));
         panel.appendChild(buildToggleRow('Haptics', 'haptics'));
 
-        var themeRow = document.createElement('div');
-        themeRow.className = 'arc-row';
-        themeRow.appendChild(document.createTextNode('Theme'));
-        var seg = document.createElement('div');
-        seg.className = 'arc-seg';
-        ['auto', 'light', 'dark'].forEach(function (mode) {
-            var b = document.createElement('button');
-            b.textContent = mode.toUpperCase();
-            function paint() { b.setAttribute('aria-pressed', settingsData.theme === mode ? 'true' : 'false'); }
-            b.addEventListener('click', function () {
-                settings.set('theme', mode);
-                Array.prototype.forEach.call(seg.children, function (c) {
-                    c.setAttribute('aria-pressed', c === b ? 'true' : 'false');
-                });
-                audio.play('tap');
-            });
-            paint();
-            seg.appendChild(b);
-        });
-        themeRow.appendChild(seg);
-        panel.appendChild(themeRow);
-
         var actions = document.createElement('div');
         actions.className = 'arc-actions';
         var close = document.createElement('button');
@@ -409,6 +389,7 @@
     function init(opts) {
         state.opts = opts || {};
         document.body.classList.add('arc-playing');
+        if (opts && opts.slug) settings.set('lastPlayed', opts.slug);
 
         var bar = document.createElement('header');
         bar.className = 'arc-bar';

@@ -1,7 +1,7 @@
 """Generate the Beben Arcade PWA icons.
 
-Renders a 16x16 pixel-art joystick in brand colours onto #141414 and
-writes the three icons the arcade needs:
+Renders a 16x16 pixel-art joystick in the arcade's neon palette onto
+#080813 and writes the three icons the arcade needs:
 
     docs/games/icons/icon-192.png             (maskable + any)
     docs/games/icons/icon-512.png             (maskable + any)
@@ -15,12 +15,12 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-BG = (20, 20, 20, 255)        # #141414 onyx
-RED = (231, 29, 54, 255)      # #E71D36 punch red
-YELLOW = (255, 199, 16, 255)  # #FFC710 banana
-SMOKE = (247, 244, 243, 255)  # #F7F4F3 white smoke
+BG = (8, 8, 19, 255)         # #080813 arcade black
+STICK = (25, 198, 255, 255)  # #19C6FF neon blue (stick + base)
+BALL = (255, 45, 170, 255)   # #FF2DAA neon pink (ball)
+GLINT = (234, 242, 255, 255) # #EAF2FF glint
 
-# 16x16 joystick: yellow ball (white glint), red stick and base.
+# 16x16 joystick: pink ball (white glint), blue stick and base.
 ART = [
     "................",
     "......YYYY......",
@@ -39,7 +39,7 @@ ART = [
     "................",
     "................",
 ]
-PALETTE = {"R": RED, "Y": YELLOW, "W": SMOKE}
+PALETTE = {"R": STICK, "Y": BALL, "W": GLINT}
 
 
 def render(size: int, art_scale: int) -> Image.Image:

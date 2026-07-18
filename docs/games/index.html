@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Beben Arcade — tiny games, no ads, works offline</title>
     <meta name="description" content="Eight tiny 8-bit games by beben.design. Install it on your phone, play offline, beat your best. No ads, ever.">
 
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,6 +24,7 @@
         /* ─────────────────────────────────────────────────────────
            ARCADE HUB — scoped additions only.
            Tokens + shared chrome come from arcade.css.
+           Per-card accent rides on --ac (set inline per card).
         ───────────────────────────────────────────────────────── */
 
         body {
@@ -42,14 +43,6 @@
             background: repeating-linear-gradient(
                 to bottom,
                 transparent 0 2px,
-                rgba(20, 20, 20, 0.025) 2px 4px
-            );
-        }
-
-        :root[data-theme="dark"] body::after {
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent 0 2px,
                 rgba(0, 0, 0, 0.14) 2px 4px
             );
         }
@@ -63,22 +56,24 @@
             align-items: center;
             gap: 0.5rem;
             padding: calc(0.6rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.6rem calc(1rem + env(safe-area-inset-left));
-            background: var(--bezel);
             color: var(--bezel-text);
-            border-bottom: 2px solid var(--highlight);
+            border-bottom: 2px solid transparent;
+            background:
+                linear-gradient(var(--bezel), var(--bezel)) padding-box,
+                linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-lime), var(--neon-yellow), var(--neon-purple)) border-box;
         }
 
         .hub-logo {
             flex: 1;
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: 0.22em;
+            font-family: var(--font-pixel);
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             white-space: nowrap;
         }
 
-        .hub-logo .red { color: var(--highlight); }
-        .hub-logo .yellow { color: var(--yellow); }
+        .hub-logo .l1 { color: var(--neon-blue);  text-shadow: 0 0 10px rgba(25, 198, 255, 0.5); }
+        .hub-logo .l2 { color: var(--neon-pink);  text-shadow: 0 0 10px rgba(255, 45, 170, 0.5); }
 
         .hub-gear {
             min-width: 42px;
@@ -99,18 +94,93 @@
             padding: 1.25rem 1rem calc(2rem + env(safe-area-inset-bottom));
         }
 
-        /* ── Hero ── */
+        /* ── Hero: neon sign ── */
         .hub-hero {
-            border: 1px solid var(--border-strong);
-            border-radius: 12px;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
+            padding: 2.2rem 1rem 2rem;
+            text-align: center;
+            background: var(--bg-soft);
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(25, 198, 255, 0.08), inset 0 0 60px rgba(8, 8, 19, 0.6);
         }
 
-        .hub-hero img {
-            display: block;
-            width: 100%;
-            height: auto;
+        .hero-pixels span {
+            position: absolute;
+            bottom: -12%;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            opacity: 0.12;
+            animation: hero-drift 14s linear infinite;
+        }
+
+        @keyframes hero-drift {
+            to { transform: translateY(-64vh); }
+        }
+
+        .hero-title {
+            position: relative;
+            font-family: var(--font-pixel);
+            font-size: clamp(1.3rem, 6.5vw, 2rem);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        .hero-title .w1 { color: var(--neon-blue); text-shadow: 0 0 16px rgba(25, 198, 255, 0.55), 0 0 40px rgba(25, 198, 255, 0.25); }
+        .hero-title .w2 { color: var(--neon-pink); text-shadow: 0 0 16px rgba(255, 45, 170, 0.55), 0 0 40px rgba(255, 45, 170, 0.25); }
+
+        .hero-line {
+            width: min(240px, 60%);
+            height: 3px;
+            margin: 1rem auto 0.9rem;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-lime), var(--neon-yellow), var(--neon-purple), var(--neon-blue));
+            background-size: 200% 100%;
+            animation: hero-flow 6s linear infinite;
+        }
+
+        @keyframes hero-flow { to { background-position: 200% 0; } }
+
+        .hero-sub {
+            position: relative;
+            font-size: 0.68rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .hero-actions {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 1.4rem;
+        }
+
+        .hero-btn {
+            padding: 0.75rem 1.1rem;
+            font-family: var(--font-pixel);
+            font-size: 0.55rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #080813;
+            background: var(--neon-yellow);
+            border: 1px solid var(--neon-yellow);
+            border-radius: 4px;
+            box-shadow: 0 0 16px rgba(255, 213, 51, 0.3);
+            transition: transform var(--dur-fast) var(--ease-snap);
+        }
+
+        .hero-btn:active { transform: translateY(2px); }
+
+        .hero-btn--ghost {
+            color: var(--neon-blue);
+            background: transparent;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 16px rgba(25, 198, 255, 0.15);
         }
 
         .hub-tagline {
@@ -125,20 +195,20 @@
             color: var(--text-muted);
         }
 
-        .hub-tagline .free { color: var(--highlight); font-weight: 600; }
+        .hub-tagline .free { color: var(--neon-lime); font-weight: 600; }
 
         /* ── Section labels ── */
         .hub-section {
             margin-top: 2rem;
             margin-bottom: 0.8rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.2em;
+            font-family: var(--font-pixel);
+            font-size: 0.6rem;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--text-muted);
         }
 
-        .hub-section .tick { color: var(--yellow); }
+        .hub-section .tick { color: var(--accent); }
 
         /* ── Game grid ── */
         .game-grid {
@@ -151,23 +221,38 @@
         @media (min-width: 720px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
 
         .game-card {
+            --ac: var(--neon-yellow);
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.55rem;
             padding: 1.1rem 0.6rem 0.9rem;
-            background: var(--bg-soft);
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            transition: transform var(--dur-fast) var(--ease-snap), border-color var(--dur-fast) ease;
+            border-radius: 10px;
+            transition: transform var(--dur-fast) var(--ease-snap), border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
         }
 
-        .game-card:hover,
+        .game-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--ac);
+            box-shadow: 0 0 16px color-mix(in srgb, var(--ac) 28%, transparent);
+        }
+
         .game-card:active {
-            transform: translateY(-3px);
-            border-color: var(--highlight);
+            transform: translateY(2px);
+            border-color: var(--ac);
         }
 
-        .game-icon { width: 48px; height: 48px; }
+        .game-icon {
+            width: 56px;
+            height: 56px;
+            padding: 8px;
+            border-radius: 8px;
+            background: color-mix(in srgb, var(--ac) 10%, transparent);
+        }
+
         .game-icon svg { display: block; width: 100%; height: 100%; }
 
         .game-name {
@@ -183,12 +268,27 @@
             min-height: 1em;
             font-size: 0.62rem;
             letter-spacing: 0.08em;
-            color: var(--yellow);
+            color: var(--ac);
             font-variant-numeric: tabular-nums;
         }
 
+        /* tiny pixel badge (NEW / SOON) */
+        .pix-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.35rem;
+            font-family: var(--font-pixel);
+            font-size: 8px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-radius: 3px;
+            color: #080813;
+            background: var(--ac);
+        }
+
         .game-card--soon {
-            opacity: 0.5;
+            opacity: 0.45;
             pointer-events: none;
         }
 
@@ -199,13 +299,14 @@
             font-size: 1.4rem;
             font-weight: 700;
             color: var(--text-muted);
+            background: transparent;
             border: 1px dashed var(--border-strong);
         }
 
-        .soon-tag {
-            font-size: 0.6rem;
-            letter-spacing: 0.14em;
+        .game-card--soon .pix-badge {
             color: var(--text-muted);
+            background: transparent;
+            border: 1px solid var(--border-strong);
         }
 
         /* ── Footer ── */
@@ -223,69 +324,85 @@
         }
 
         .hub-footer a { color: var(--headers); }
-        .hub-footer a:hover { color: var(--highlight); }
+        .hub-footer a:hover { color: var(--neon-blue); }
 
         .hub-status { font-variant-numeric: tabular-nums; }
-        .hub-status.ready { color: var(--yellow); }
+        .hub-status.ready { color: var(--neon-lime); }
     </style>
 </head>
 <body>
 
 <header class="hub-marquee">
-    <span class="hub-logo"><span class="red">BEBEN</span> <span class="yellow">ARCADE</span></span>
+    <span class="hub-logo" id="hubLogo"><span class="l1">BEBEN</span> <span class="l2">ARCADE</span></span>
     <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
 </header>
 
 <main class="hub-main">
 
     <section class="hub-hero">
-        <img src="./assets/cover.webp" alt="Beben Arcade — pixel-art game covers" width="1200" height="849">
+        <div class="hero-pixels" aria-hidden="true">
+            <span style="left:6%;  color:var(--neon-blue);   animation-delay:-2s;">+</span>
+            <span style="left:18%; color:var(--neon-pink);   animation-delay:-9s;  font-size:0.6rem;">&#9651;</span>
+            <span style="left:31%; color:var(--neon-lime);   animation-delay:-5s;">&#9633;</span>
+            <span style="left:44%; color:var(--neon-yellow); animation-delay:-12s; font-size:0.6rem;">&times;</span>
+            <span style="left:58%; color:var(--neon-purple); animation-delay:-7s;">&#9675;</span>
+            <span style="left:70%; color:var(--neon-orange); animation-delay:-3s;  font-size:0.6rem;">+</span>
+            <span style="left:82%; color:var(--neon-blue);   animation-delay:-10s;">&#9671;</span>
+            <span style="left:92%; color:var(--neon-pink);   animation-delay:-6s;  font-size:0.6rem;">&#9633;</span>
+        </div>
+        <h1 class="hero-title"><span class="w1">BEBEN</span> <span class="w2">ARCADE</span></h1>
+        <div class="hero-line" aria-hidden="true"></div>
+        <p class="hero-sub">Tiny games &middot; big scores &middot; zero ads</p>
+        <div class="hero-actions">
+            <button class="hero-btn" id="randomBtn" type="button">&#9654; Random game</button>
+            <a class="hero-btn hero-btn--ghost" id="continueBtn" hidden></a>
+        </div>
     </section>
     <p class="hub-tagline">
         <span>8 games &middot; offline &middot; <span class="free">no ads, ever</span></span>
-        <span>v1</span>
+        <span>v2</span>
     </p>
 
     <div id="installSlot"></div>
 
     <h2 class="hub-section"><span class="tick">&#9646;</span> Now playing</h2>
     <div class="game-grid" id="liveGrid">
-        <a class="game-card" href="./snake/">
+        <a class="game-card" href="./snake/" style="--ac: var(--neon-lime)">
             <span class="game-icon" data-icon="snake"></span>
             <span class="game-name">Snake</span>
             <span class="game-best" data-best="snake"></span>
         </a>
-        <a class="game-card" href="./2048/">
+        <a class="game-card" href="./2048/" style="--ac: var(--neon-yellow)">
             <span class="game-icon" data-icon="g2048"></span>
             <span class="game-name">2048</span>
             <span class="game-best" data-best="2048"></span>
         </a>
-        <a class="game-card" href="./blockfall/">
+        <a class="game-card" href="./blockfall/" style="--ac: var(--neon-purple)">
             <span class="game-icon" data-icon="blockfall"></span>
             <span class="game-name">Blockfall</span>
             <span class="game-best" data-best="blockfall"></span>
         </a>
-        <a class="game-card" href="./brick-bash/">
+        <a class="game-card" href="./brick-bash/" style="--ac: var(--neon-orange)">
             <span class="game-icon" data-icon="brickbash"></span>
             <span class="game-name">Brick Bash</span>
             <span class="game-best" data-best="brick-bash"></span>
         </a>
-        <a class="game-card" href="./wingbeat/">
+        <a class="game-card" href="./wingbeat/" style="--ac: var(--neon-blue)">
             <span class="game-icon" data-icon="wingbeat"></span>
             <span class="game-name">Wingbeat</span>
             <span class="game-best" data-best="wingbeat"></span>
         </a>
-        <a class="game-card" href="./mines/">
+        <a class="game-card" href="./mines/" style="--ac: var(--neon-red)">
             <span class="game-icon" data-icon="mines"></span>
             <span class="game-name">Mines</span>
             <span class="game-best" data-best="mines-easy" data-suffix="s"></span>
         </a>
-        <a class="game-card" href="./pixel-dash/">
+        <a class="game-card" href="./pixel-dash/" style="--ac: var(--neon-pink)">
             <span class="game-icon" data-icon="pixeldash"></span>
             <span class="game-name">Pixel Dash</span>
             <span class="game-best" data-best="pixel-dash"></span>
         </a>
-        <a class="game-card" href="./skystack/">
+        <a class="game-card" href="./skystack/" style="--ac: var(--neon-blue)">
             <span class="game-icon" data-icon="skystack"></span>
             <span class="game-name">Skystack</span>
             <span class="game-best" data-best="skystack"></span>
@@ -294,18 +411,18 @@
 
     <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon</h2>
     <div class="game-grid">
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Paddle Duel</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Star Swarm</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Rockfield</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Void Dodger</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Maze Muncher</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Hop Across</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Wave Rider</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Sudoku</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Solitaire</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Four in a Row</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Checkers</span><span class="soon-tag">SOON</span></span>
-        <span class="game-card game-card--soon"><span class="game-icon">?</span><span class="game-name">Chess</span><span class="soon-tag">SOON</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Paddle Duel</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Star Swarm</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Rockfield</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Void Dodger</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Maze Muncher</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Hop Across</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Wave Rider</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Sudoku</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Solitaire</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Four in a Row</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Checkers</span></span>
+        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Chess</span></span>
     </div>
 
     <footer class="hub-footer">
@@ -319,20 +436,32 @@
 (function () {
     'use strict';
 
-    /* ── pixel icons: 12×12 maps, r=red y=yellow t=text m=muted ── */
-    var COLORS = { r: '#E71D36', y: '#FFC710', t: 'var(--headers)', m: 'var(--text-muted)' };
+    /* ── pixel icons: 12×12 maps ──────────────────────────────────
+       b blue · p pink · l lime · y yellow · u purple · o orange ·
+       r red · t headers · m muted                                  */
+    var COLORS = {
+        b: 'var(--neon-blue)',
+        p: 'var(--neon-pink)',
+        l: 'var(--neon-lime)',
+        y: 'var(--neon-yellow)',
+        u: 'var(--neon-purple)',
+        o: 'var(--neon-orange)',
+        r: 'var(--neon-red)',
+        t: 'var(--headers)',
+        m: 'var(--text-muted)'
+    };
     var ICONS = {
         snake: [
             '............',
-            '..yyyyyyy...',
-            '..y.....y...',
-            '..y.yyy.y...',
-            '..y.y.y.y...',
-            '..y.y.y.y...',
-            '..y.y...y...',
-            '..y.yyyyy...',
-            '..y.........',
-            '..yy....rr..',
+            '..lllllll...',
+            '..l.....l...',
+            '..l.lll.l...',
+            '..l.l.l.l...',
+            '..l.l.l.l...',
+            '..l.l...l...',
+            '..l.lllll...',
+            '..l.........',
+            '..ll....rr..',
             '.........rr.',
             '............'
         ],
@@ -343,30 +472,30 @@
             '.tttt.yyyy..',
             '.tttt.yyyy..',
             '............',
-            '.yyyy.rrrr..',
-            '.yyyy.rrrr..',
-            '.yyyy.rrrr..',
-            '.yyyy.rrrr..',
+            '.yyyy.oooo..',
+            '.yyyy.oooo..',
+            '.yyyy.oooo..',
+            '.yyyy.oooo..',
             '............',
             '............'
         ],
         blockfall: [
-            '.....rr.....',
-            '.....rr.....',
-            '.....rrrr...',
+            '.....uu.....',
+            '.....uu.....',
+            '.....uuuu...',
             '............',
             '............',
             '.yy.........',
-            '.yy....tt...',
-            '.yyyy..tt...',
-            '.yyyy..tttt.',
-            'tttttt.tttt.',
+            '.yy....bb...',
+            '.yyyy..bb...',
+            '.yyyy..bbbb.',
+            'tttttt.bbbb.',
             'tttttttttttt',
             '............'
         ],
         brickbash: [
-            'rrr.rrr.rrr.',
-            'rrr.rrr.rrr.',
+            'ooo.ooo.ooo.',
+            'ooo.ooo.ooo.',
             '............',
             'yyy.yyy.yyy.',
             'yyy.yyy.yyy.',
@@ -375,62 +504,62 @@
             '......tt....',
             '......tt....',
             '............',
-            '...tttttt...',
+            '...oooooo...',
             '............'
         ],
         wingbeat: [
             '..........yy',
-            'r.........yy',
-            'r...........',
-            'r..yyy......',
-            'r.yyyyy.....',
-            'r.yyyyty....',
-            '..yyyyyy....',
-            'r..yyy.r....',
-            'r......r....',
-            'r......r....',
-            'r......r....',
-            '.......r....'
+            'l.........yy',
+            'l...........',
+            'l..bbb......',
+            'l.bbbbb.....',
+            'l.bbbbtb....',
+            '..bbbbbb....',
+            'l..bbb.l....',
+            'l......l....',
+            'l......l....',
+            'l......l....',
+            '.......l....'
         ],
         mines: [
             '............',
-            '.....t......',
-            '..t..t..t...',
-            '...ttttt....',
-            '..tttttttt..',
-            'ttttttttt...',
-            '..ttyttt....',
-            '...ttttt....',
-            '..t..t..t...',
-            '.....t......',
+            '.....r......',
+            '..r..r..r...',
+            '...rrrrr....',
+            '..rrrrrrrr..',
+            'rrrrrrrrr...',
+            '..rryrrr....',
+            '...rrrrr....',
+            '..r..r..r...',
+            '.....r......',
             '............',
             '............'
         ],
         pixeldash: [
             '............',
-            '.....yyy....',
-            '.....yyyt...',
-            '.....yyyy...',
-            '..r..yy.....',
-            '..r.yyyy....',
-            '..r.yyyy....',
-            '..r..yy.....',
-            '..r..y.y....',
-            '..r.y...y...',
+            '.....ppp....',
+            '.....pppt...',
+            '.....pppp...',
+            '..l..pp.....',
+            '..l.pppp....',
+            '..l.pppp....',
+            '..l..pp.....',
+            '..l..p.p....',
+            '..l.p...p...',
             'tttttttttttt',
             '............'
         ],
         skystack: [
             '............',
-            '....rrrr....',
+            '....yyyy....',
             '............',
-            '...yyyyyy...',
+            '...bbbbbb...',
             '............',
-            '..rrrrrrrr..',
+            '..bbbbbbbb..',
             '............',
-            '.yyyyyyyyyy.',
+            '.bbbbbbbbbb.',
             '............',
-            'rrrrrrrrrrrr',
+            'bbbbbbbbbbbb',
             '............',
             '............'
         ]
@@ -458,6 +587,37 @@
         var best = Arcade.scores.best(el.dataset.best);
         if (best !== null) el.textContent = 'BEST ' + best + (el.dataset.suffix || '');
     });
+
+    /* ── card tap blip ── */
+    document.querySelectorAll('#liveGrid .game-card').forEach(function (card) {
+        card.addEventListener('pointerdown', function () {
+            Arcade.audio.play('select');
+        });
+    });
+
+    /* ── random game ── */
+    var liveCards = Array.prototype.slice.call(document.querySelectorAll('#liveGrid .game-card'));
+    document.getElementById('randomBtn').addEventListener('click', function () {
+        Arcade.audio.play('coinup');
+        Arcade.haptics.buzz('light');
+        var pick = liveCards[Math.floor(Math.random() * liveCards.length)];
+        location.href = pick.getAttribute('href');
+    });
+
+    /* ── continue playing ── */
+    var last = Arcade.settings.get('lastPlayed');
+    if (last) {
+        var lastCard = document.querySelector('#liveGrid .game-card[href="./' + last + '/"]');
+        if (lastCard) {
+            var btn = document.getElementById('continueBtn');
+            btn.href = lastCard.getAttribute('href');
+            btn.innerHTML = 'Continue &#9656; ' + lastCard.querySelector('.game-name').textContent;
+            btn.hidden = false;
+            btn.addEventListener('pointerdown', function () {
+                Arcade.audio.play('select');
+            });
+        }
+    }
 
     /* ── chrome wiring ── */
     document.getElementById('hubGear').addEventListener('click', function () {

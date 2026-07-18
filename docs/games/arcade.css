@@ -1,42 +1,52 @@
 /* ═══════════════════════════════════════════════════════════════
    BEBEN ARCADE — arcade.css
    Shared chrome for the /games/ PWA scope. Standalone by design:
-   tokens mirrored from ../assets/css/index.css, system fonts only,
-   zero references outside /games/.
+   dark-only neon identity, self-hosted pixel font, zero references
+   outside /games/.
+
+   --accent is the per-game personality hook: each game page sets it
+   inline on <html> (and via Arcade.init({accent})); everything here
+   that should carry the game's color reads var(--accent).
    ═══════════════════════════════════════════════════════════════ */
 
-:root[data-theme="light"] {
-    --bg:            #f5f5f5;
-    --bg-soft:       #efefef;
-    --headers:       #141414;
-    --highlight:     #E71D36;
-    --yellow:        #FFC710;
-    --text:          #141414;
-    --text-muted:    rgba(20, 20, 20, 0.62);
-    --border:        rgba(20, 20, 20, 0.18);
-    --border-strong: rgba(20, 20, 20, 0.34);
-    --grid-line:     rgba(20, 20, 20, 0.04);
-    --overlay:       rgba(245, 245, 245, 0.92);
-}
-
-:root[data-theme="dark"] {
-    --bg:            #141414;
-    --bg-soft:       #1C1C1C;
-    --headers:       #F7F4F3;
-    --highlight:     #E71D36;
-    --yellow:        #FFC710;
-    --text:          #F7F4F3;
-    --text-muted:    rgba(247, 244, 243, 0.62);
-    --border:        rgba(247, 244, 243, 0.16);
-    --border-strong: rgba(247, 244, 243, 0.32);
-    --grid-line:     rgba(247, 244, 243, 0.04);
-    --overlay:       rgba(20, 20, 20, 0.92);
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('./fonts/press-start-2p.woff2') format('woff2');
+    font-display: swap;
 }
 
 :root {
-    --bezel:      #141414;
-    --bezel-text: #F7F4F3;
+    --bg:            #080813;
+    --bg-soft:       #12162A;
+    --bg-card:       #1B2038;
+    --headers:       #EAF2FF;
+    --text:          #C5C7D0;
+    --text-muted:    rgba(197, 199, 208, 0.62);
+    --border:        rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --grid-line:     rgba(255, 255, 255, 0.04);
+    --overlay:       rgba(8, 8, 19, 0.9);
+
+    --neon-blue:   #19C6FF;
+    --neon-pink:   #FF2DAA;
+    --neon-lime:   #8EFF2A;
+    --neon-yellow: #FFD533;
+    --neon-purple: #8B5CFF;
+    --neon-orange: #FF9B21;
+    --neon-red:    #FF4B5C;
+
+    /* per-game personality; games override on <html> */
+    --accent:      var(--neon-yellow);
+    --accent-glow: rgba(255, 213, 51, 0.3);
+
+    /* legacy aliases — pre-neon games consume these */
+    --highlight:   var(--neon-red);
+    --yellow:      var(--neon-yellow);
+
+    --bezel:      #0B0E1E;
+    --bezel-text: #EAF2FF;
     --font-mono:  ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --font-pixel: 'Press Start 2P', ui-monospace, monospace;
     --bar-h:      52px;
     --ease-snap:  cubic-bezier(0.22, 0.9, 0.32, 1);
     --dur-fast:   180ms;
@@ -74,7 +84,7 @@ a { color: inherit; text-decoration: none; }
 button, a { touch-action: manipulation; }
 canvas, .arc-surface { touch-action: none; display: block; }
 
-/* ── Top bar — always-dark arcade bezel in both themes ────────── */
+/* ── Top bar — the cabinet bezel; accent trim = game color ────── */
 .arc-bar {
     flex: 0 0 auto;
     display: flex;
@@ -84,7 +94,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
     padding: calc(0.35rem + env(safe-area-inset-top)) calc(0.5rem + env(safe-area-inset-right)) 0.35rem calc(0.5rem + env(safe-area-inset-left));
     background: var(--bezel);
     color: var(--bezel-text);
-    border-bottom: 2px solid var(--highlight);
+    border-bottom: 2px solid var(--accent);
 }
 
 .arc-bar .arc-btn,
@@ -105,9 +115,9 @@ canvas, .arc-surface { touch-action: none; display: block; }
 
 .arc-title {
     flex: 1;
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-family: var(--font-pixel);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
@@ -118,7 +128,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.08em;
-    color: var(--yellow);
+    color: var(--accent);
     padding: 0 0.4rem;
     font-variant-numeric: tabular-nums;
 }
@@ -152,18 +162,19 @@ canvas, .arc-surface { touch-action: none; display: block; }
 
 .arc-panel {
     width: min(360px, 100%);
-    background: var(--bg);
+    background: var(--bg-soft);
     border: 1px solid var(--border-strong);
-    box-shadow: 6px 6px 0 rgba(20, 20, 20, 0.25);
+    border-radius: 6px;
+    box-shadow: 0 0 24px var(--accent-glow);
     padding: 1.5rem;
 }
 
 .arc-panel-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-family: var(--font-pixel);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--highlight);
+    color: var(--accent);
     margin-bottom: 1.25rem;
 }
 
@@ -184,6 +195,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
     min-width: 58px;
     padding: 0.4rem 0.7rem;
     border: 1px solid var(--border-strong);
+    border-radius: 4px;
     font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -191,28 +203,10 @@ canvas, .arc-surface { touch-action: none; display: block; }
 }
 
 .arc-toggle[aria-pressed="true"] {
-    background: var(--highlight);
-    border-color: var(--highlight);
-    color: #F7F4F3;
-}
-
-/* Segmented control (theme) */
-.arc-seg { display: flex; border: 1px solid var(--border-strong); }
-
-.arc-seg button {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    border-left: 1px solid var(--border-strong);
-}
-
-.arc-seg button:first-child { border-left: none; }
-
-.arc-seg button[aria-pressed="true"] {
-    background: var(--headers);
-    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #080813;
+    box-shadow: 0 0 12px var(--accent-glow);
 }
 
 /* Primary / secondary action buttons */
@@ -222,6 +216,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
     flex: 1;
     padding: 0.8rem 1rem;
     border: 1px solid var(--border-strong);
+    border-radius: 4px;
     font-size: 0.74rem;
     font-weight: 600;
     letter-spacing: 0.12em;
@@ -233,27 +228,29 @@ canvas, .arc-surface { touch-action: none; display: block; }
 .arc-action:active { transform: translateY(2px); }
 
 .arc-action--primary {
-    background: var(--highlight);
-    border-color: var(--highlight);
-    color: #F7F4F3;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #080813;
+    box-shadow: 0 0 16px var(--accent-glow);
 }
 
 /* ── Game over panel bits ─────────────────────────────────────── */
 .arc-over-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
+    font-family: var(--font-pixel);
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--headers);
     margin-bottom: 1.1rem;
 }
 
 .arc-over-score {
-    font-size: 2.4rem;
-    font-weight: 700;
+    font-family: var(--font-pixel);
+    font-size: 1.8rem;
     color: var(--headers);
     font-variant-numeric: tabular-nums;
-    line-height: 1.1;
+    line-height: 1.2;
+    text-shadow: 0 0 18px var(--accent-glow);
 }
 
 .arc-over-label {
@@ -267,12 +264,14 @@ canvas, .arc-surface { touch-action: none; display: block; }
 .arc-best-chip {
     display: inline-block;
     margin-top: 0.8rem;
-    padding: 0.3rem 0.65rem;
-    background: var(--yellow);
-    color: #141414;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    padding: 0.35rem 0.65rem;
+    background: var(--accent);
+    border-radius: 3px;
+    color: #080813;
+    font-family: var(--font-pixel);
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     font-variant-numeric: tabular-nums;
 }
 
@@ -280,12 +279,14 @@ canvas, .arc-surface { touch-action: none; display: block; }
     display: inline-block;
     margin-top: 0.8rem;
     margin-left: 0.4rem;
-    padding: 0.3rem 0.65rem;
-    background: var(--highlight);
-    color: #F7F4F3;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    padding: 0.35rem 0.65rem;
+    background: var(--neon-pink);
+    border-radius: 3px;
+    color: #080813;
+    font-family: var(--font-pixel);
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     animation: arc-blink 0.9s steps(2, start) infinite;
 }
 
@@ -293,9 +294,9 @@ canvas, .arc-surface { touch-action: none; display: block; }
 
 /* Pause overlay is just a tappable message */
 .arc-pause-msg {
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
+    font-family: var(--font-pixel);
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--headers);
     text-align: center;
@@ -303,7 +304,8 @@ canvas, .arc-surface { touch-action: none; display: block; }
 
 .arc-pause-sub {
     display: block;
-    margin-top: 0.7rem;
+    margin-top: 0.9rem;
+    font-family: var(--font-mono);
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     color: var(--text-muted);
@@ -320,7 +322,9 @@ canvas, .arc-surface { touch-action: none; display: block; }
     padding: 0.7rem 1.1rem;
     background: var(--bezel);
     color: var(--bezel-text);
-    border: 1px solid var(--highlight);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    box-shadow: 0 0 16px var(--accent-glow);
     font-size: 0.72rem;
     letter-spacing: 0.06em;
     opacity: 0;
@@ -338,6 +342,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
     margin-top: 1rem;
     padding: 0.85rem 1rem;
     border: 1px dashed var(--border-strong);
+    border-radius: 6px;
     font-size: 0.72rem;
     line-height: 1.6;
     letter-spacing: 0.03em;

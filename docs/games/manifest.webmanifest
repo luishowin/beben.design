@@ -6,8 +6,8 @@
     "scope": "/games/",
     "display": "standalone",
     "orientation": "portrait",
-    "background_color": "#141414",
-    "theme_color": "#141414",
+    "background_color": "#080813",
+    "theme_color": "#080813",
     "description": "Tiny 8-bit games by beben.design. Works offline, no ads, ever.",
     "icons": [
         { "src": "/games/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
