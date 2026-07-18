@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Beben Arcade — tiny games, no ads, works offline</title>
-    <meta name="description" content="Eight tiny 8-bit games by beben.design. Install it on your phone, play offline, beat your best. No ads, ever.">
+    <meta name="description" content="Twelve tiny 8-bit games by beben.design. Install it on your phone, play offline, beat your best. No ads, ever.">
 
     <meta name="theme-color" content="#080813">
     <meta name="mobile-web-app-capable" content="yes">
@@ -359,8 +359,8 @@
         </div>
     </section>
     <p class="hub-tagline">
-        <span>10 games &middot; offline &middot; <span class="free">no ads, ever</span></span>
-        <span>v4</span>
+        <span>12 games &middot; offline &middot; <span class="free">no ads, ever</span></span>
+        <span>v5</span>
     </p>
 
     <div id="installSlot"></div>
@@ -419,6 +419,18 @@
             <span class="game-name">Star Swarm</span>
             <span class="game-best" data-best="star-swarm"></span>
         </a>
+        <a class="game-card" href="./sudoku/" style="--ac: var(--neon-yellow)">
+            <span class="pix-badge">New</span>
+            <span class="game-icon" data-icon="sudoku"></span>
+            <span class="game-name">Sudoku</span>
+            <span class="game-best" data-best="sudoku-easy" data-suffix="s"></span>
+        </a>
+        <a class="game-card" href="./four-in-a-row/" style="--ac: var(--neon-red)">
+            <span class="pix-badge">New</span>
+            <span class="game-icon" data-icon="fourrow"></span>
+            <span class="game-name">Four in a Row</span>
+            <span class="game-best" data-best="four-in-a-row"></span>
+        </a>
     </div>
 
     <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon</h2>
@@ -428,9 +440,7 @@
         <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Maze Muncher</span></span>
         <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Hop Across</span></span>
         <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Wave Rider</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Sudoku</span></span>
         <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Solitaire</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Four in a Row</span></span>
         <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Checkers</span></span>
         <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Chess</span></span>
     </div>
@@ -597,6 +607,34 @@
             '.u.uuuuu.u..',
             '.u.u...u.u..',
             '............',
+            '............',
+            '............',
+            '............'
+        ],
+        sudoku: [
+            'yy.yy.yy.yy.',
+            'y5.y3.y8.yt.',
+            '............',
+            'yy.yy.yy.yy.',
+            'y2.yt.y6.y1.',
+            '............',
+            'yy.yy.yy.yy.',
+            'yt.y9.y4.yt.',
+            '............',
+            'yy.yy.yy.yy.',
+            'y7.yt.y2.y5.',
+            '............'
+        ],
+        fourrow: [
+            '.tttttttttt.',
+            '.t.r.t.r.t..',
+            '.trr.ty.rt..',
+            '.t.r.tyyrt..',
+            '.trrytyyrt..',
+            '.tryrtryyt..',
+            '.tttttttttt.',
+            '...t....t...',
+            '..t......t..',
             '............',
             '............',
             '............'

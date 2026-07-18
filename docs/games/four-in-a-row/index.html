@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-red); --accent-glow: rgba(255,75,92,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Four in a Row — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#080813">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var ROWS = 6, COLS = 7, DEPTH = 5;
+    var ORDER = [3, 2, 4, 1, 5, 0, 6];   // center-first move ordering
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: COLS / (ROWS + 1), maxW: 460 });
+
+    var cells, turn, mode, phase, anim, streak, winLine;
+
+    // cells[r][c]: 0 empty, 1 = P1/you (accent), 2 = P2/CPU (yellow)
+    function newBoard() {
+        cells = [];
+        for (var r = 0; r < ROWS; r++) cells.push(new Array(COLS).fill(0));
+    }
+
+    function reset() {
+        newBoard();
+        turn = 1; phase = 'play'; anim = null; winLine = null;
+        Arcade.ui.setScore('');
+    }
+
+    function dropRow(board, c) {
+        for (var r = ROWS - 1; r >= 0; r--) if (board[r][c] === 0) return r;
+        return -1;
+    }
+
+    function wins(board, r, c, pl) {
+        var dirs = [[0, 1], [1, 0], [1, 1], [1, -1]];
+        for (var d = 0; d < 4; d++) {
+            var line = [[r, c]];
+            for (var s = -1; s <= 1; s += 2) {
+                var rr = r + dirs[d][0] * s, cc = c + dirs[d][1] * s;
+                while (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS && board[rr][cc] === pl) {
+                    line.push([rr, cc]);
+                    rr += dirs[d][0] * s; cc += dirs[d][1] * s;
+                }
+            }
+            if (line.length >= 4) return line;
+        }
+        return null;
+    }
+
+    function full(board) {
+        for (var c = 0; c < COLS; c++) if (board[0][c] === 0) return false;
+        return true;
+    }
+
+    /* ── AI: minimax + alpha-beta ────────────────────────────────── */
+    function evaluate(board, me) {
+        var opp = me === 1 ? 2 : 1, score = 0;
+        // center preference
+        for (var r = 0; r < ROWS; r++) if (board[r][3] === me) score += 3;
+        // score every window of four
+        function windows(cellsList) {
+            var mine = 0, theirs = 0, empty = 0;
+            for (var i = 0; i < 4; i++) {
+                var v = cellsList[i];
+                if (v === me) mine++;
+                else if (v === opp) theirs++;
+                else empty++;
+            }
+            if (mine === 4) score += 1000;
+            else if (mine === 3 && empty === 1) score += 12;
+            else if (mine === 2 && empty === 2) score += 3;
+            if (theirs === 3 && empty === 1) score -= 60;
+            else if (theirs === 4) score -= 1000;
+        }
+        for (var rr = 0; rr < ROWS; rr++) {
+            for (var cc = 0; cc < COLS; cc++) {
+                if (cc + 3 < COLS) windows([board[rr][cc], board[rr][cc + 1], board[rr][cc + 2], board[rr][cc + 3]]);
+                if (rr + 3 < ROWS) windows([board[rr][cc], board[rr + 1][cc], board[rr + 2][cc], board[rr + 3][cc]]);
+                if (rr + 3 < ROWS && cc + 3 < COLS) windows([board[rr][cc], board[rr + 1][cc + 1], board[rr + 2][cc + 2], board[rr + 3][cc + 3]]);
+                if (rr + 3 < ROWS && cc - 3 >= 0) windows([board[rr][cc], board[rr + 1][cc - 1], board[rr + 2][cc - 2], board[rr + 3][cc - 3]]);
+            }
+        }
+        return score;
+    }
+
+    function minimax(board, depth, alpha, beta, maxing, me) {
+        var opp = me === 1 ? 2 : 1;
+        var mover = maxing ? me : opp;
+        for (var i = 0; i < COLS; i++) {
+            var c = ORDER[i], r = dropRow(board, c);
+            if (r < 0) continue;
+            board[r][c] = mover;
+            var win = wins(board, r, c, mover);
+            board[r][c] = 0;
+            if (win) return maxing ? 100000 + depth : -100000 - depth;
+        }
+        if (depth === 0 || full(board)) return evaluate(board, me);
+
+        if (maxing) {
+            var best = -Infinity;
+            for (var a = 0; a < COLS; a++) {
+                var ca = ORDER[a], ra = dropRow(board, ca);
+                if (ra < 0) continue;
+                board[ra][ca] = me;
+                best = Math.max(best, minimax(board, depth - 1, alpha, beta, false, me));
+                board[ra][ca] = 0;
+                alpha = Math.max(alpha, best);
+                if (alpha >= beta) break;
+            }
+            return best;
+        } else {
+            var worst = Infinity;
+            for (var b = 0; b < COLS; b++) {
+                var cb = ORDER[b], rb = dropRow(board, cb);
+                if (rb < 0) continue;
+                board[rb][cb] = opp;
+                worst = Math.min(worst, minimax(board, depth - 1, alpha, beta, true, me));
+                board[rb][cb] = 0;
+                beta = Math.min(beta, worst);
+                if (alpha >= beta) break;
+            }
+            return worst;
+        }
+    }
+
+    function bestMove(me) {
+        var best = -Infinity, ties = [];
+        for (var i = 0; i < COLS; i++) {
+            var c = ORDER[i], r = dropRow(cells, c);
+            if (r < 0) continue;
+            cells[r][c] = me;
+            // an immediate win must dominate any deeper forced win (minimax
+            // returns 100000+depth for those), so grab the instant win
+            var immediate = wins(cells, r, c, me);
+            var val = immediate ? 1000000 : minimax(cells, DEPTH - 1, -Infinity, Infinity, false, me);
+            cells[r][c] = 0;
+            if (val > best) { best = val; ties = [c]; }
+            else if (val === best) ties.push(c);
+        }
+        return ties[Math.floor(Math.random() * ties.length)];
+    }
+
+    /* ── moves ───────────────────────────────────────────────────── */
+    function tryDrop(c) {
+        if (phase !== 'play') return;
+        var r = dropRow(cells, c);
+        if (r < 0) { Arcade.audio.play('denied'); Arcade.haptics.buzz('error'); return; }
+        phase = 'anim';
+        var geo = geom();
+        anim = { c: c, r: r, pl: turn, y: geo.top - geo.cell * 0.5, vy: 0 };
+        Arcade.audio.play('drop');
+    }
+
+    function land() {
+        cells[anim.r][anim.c] = anim.pl;
+        var line = wins(cells, anim.r, anim.c, anim.pl);
+        var who = anim.pl;
+        anim = null;
+        if (line) { winLine = line; return finish(who); }
+        if (full(cells)) return finish(0);
+        turn = turn === 1 ? 2 : 1;
+        phase = 'play';
+        if (mode === 'cpu' && turn === 2) {
+            phase = 'think';
+            setTimeout(function () {
+                if (phase !== 'think') return;
+                phase = 'play';
+                tryDrop(bestMove(2));
+            }, 350);
+        }
+    }
+
+    function finish(who) {
+        phase = 'over';
+        var title, sub;
+        if (who === 0) { title = 'Draw'; sub = 'Board full'; }
+        else if (mode === '2p') { title = (who === 1 ? 'P1' : 'P2') + ' wins'; sub = 'Nice'; }
+        else { title = who === 1 ? 'You win' : 'CPU wins'; }
+
+        if (mode === 'cpu' && who === 1) {
+            streak++;
+            var res = Arcade.scores.submit('four-in-a-row', streak);
+            Arcade.ui.gameOver({ title: title, label: 'Win streak', score: streak, best: res.best, isNew: res.isNew, onReplay: showSelect });
+        } else {
+            if (mode === 'cpu' && who === 2) streak = 0;
+            if (who !== 0) Arcade.audio.play(who === 1 ? 'fanfare' : 'boom');
+            Arcade.haptics.buzz(who === 1 ? 'success' : 'medium');
+            Arcade.ui.gameOver({ title: title, label: sub || 'Result', score: who === 0 ? '—' : (who === 1 ? '1' : '2'), best: null, isNew: false, onReplay: showSelect });
+        }
+    }
+
+    /* ── mode select ─────────────────────────────────────────────── */
+    var selEl = null;
+    function showSelect() {
+        phase = 'select';
+        if (selEl) return;
+        selEl = document.createElement('div');
+        selEl.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        panel.style.textAlign = 'center';
+        panel.innerHTML = '<div class="arc-panel-title">Four in a Row</div>' +
+            '<div class="arc-over-label" style="margin-bottom:1rem">Line up four to win</div>';
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        actions.style.flexDirection = 'column';
+        var a1 = document.createElement('button');
+        a1.className = 'arc-action arc-action--primary';
+        a1.textContent = 'VS CPU';
+        a1.addEventListener('click', function () { choose('cpu'); });
+        var a2 = document.createElement('button');
+        a2.className = 'arc-action';
+        a2.textContent = '2 Player';
+        a2.addEventListener('click', function () { choose('2p'); });
+        actions.appendChild(a1); actions.appendChild(a2);
+        panel.appendChild(actions);
+        selEl.appendChild(panel);
+        document.body.appendChild(selEl);
+    }
+    function choose(m) {
+        mode = m;
+        Arcade.audio.play('select');
+        if (selEl) { selEl.remove(); selEl = null; }
+        reset();
+        loop.resume();
+    }
+
+    /* ── geometry + input ────────────────────────────────────────── */
+    function geom() {
+        var cell = view.w / COLS;
+        var boardH = cell * ROWS;
+        return { cell: cell, top: view.h - boardH - cell * 0.15, boardH: boardH };
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (phase !== 'play') return;
+        if (mode === 'cpu' && turn !== 1) return;
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left) * (view.w / rect.width);
+        tryDrop(Math.max(0, Math.min(COLS - 1, Math.floor(x / (view.w / COLS)))));
+    });
+    document.addEventListener('keydown', function (e) {
+        if (phase !== 'play') return;
+        var n = parseInt(e.key, 10);
+        if (n >= 1 && n <= COLS) tryDrop(n - 1);
+    });
+
+    function update(dt) {
+        if (phase !== 'anim' || !anim) return;
+        var g = geom();
+        var targetY = g.top + (anim.r + 0.5) * g.cell;
+        anim.vy += view.h * 4.5 * dt;
+        anim.y += anim.vy * dt;
+        if (anim.y >= targetY) { anim.y = targetY; land(); }
+    }
+
+    function disc(ctx, cx, cy, rad, pl, p) {
+        ctx.fillStyle = pl === 1 ? p.accent : p.neon.yellow;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var g = geom();
+        var cell = g.cell, rad = cell * 0.38;
+
+        ctx.fillStyle = p.bg;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // turn indicator strip above the board
+        if (phase === 'play' || phase === 'think' || phase === 'anim') {
+            var pl = phase === 'anim' && anim ? anim.pl : turn;
+            var label = mode === '2p' ? (pl === 1 ? 'P1' : 'P2') : (pl === 1 ? 'YOU' : 'CPU');
+            ctx.fillStyle = p.muted;
+            ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label + (phase === 'think' ? ' THINKING…' : ' TO PLAY'), view.w / 2, g.top * 0.5);
+            disc(ctx, view.w / 2 - cell * 0.9, g.top * 0.5, cell * 0.16, pl, p);
+        }
+
+        // board frame
+        ctx.fillStyle = p.bgSoft;
+        roundRect(ctx, 2, g.top, view.w - 4, g.boardH, 8);
+        ctx.fill();
+
+        // holes + discs
+        for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+                var cx = (c + 0.5) * cell, cy = g.top + (r + 0.5) * cell;
+                if (cells[r][c] === 0) {
+                    ctx.fillStyle = p.bg;
+                    ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.fill();
+                } else {
+                    disc(ctx, cx, cy, rad, cells[r][c], p);
+                }
+            }
+        }
+
+        // falling disc
+        if (phase === 'anim' && anim) {
+            disc(ctx, (anim.c + 0.5) * cell, anim.y, rad, anim.pl, p);
+        }
+
+        // winning line highlight
+        if (winLine) {
+            ctx.strokeStyle = p.headers;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            var a = winLine[0], b = winLine[winLine.length - 1];
+            ctx.moveTo((a[1] + 0.5) * cell, g.top + (a[0] + 0.5) * cell);
+            ctx.lineTo((b[1] + 0.5) * cell, g.top + (b[0] + 0.5) * cell);
+            ctx.stroke();
+        }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'four-in-a-row',
+        title: 'Four in a Row',
+        accent: 'red',
+        jingles: {
+            best: [[523, 0.1], [659, 0.1], [784, 0.1], [1046, 0.24]]
+        },
+        onPause: function () { loop.pause(); },
+        onResume: function () { if (phase !== 'select' && phase !== 'over') loop.resume(); }
+    });
+
+    view.refit();
+    newBoard();
+    streak = 0;
+    loop.start();
+    loop.pause();
+    showSelect();
+})();
+</script>
+
+</body>
+</html>

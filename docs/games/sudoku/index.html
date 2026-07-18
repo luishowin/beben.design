@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-yellow); --accent-glow: rgba(255,213,51,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Sudoku — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#080813">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+
+    <style>
+        .arc-stage { flex-direction: column; gap: 0.7rem; }
+        .board-wrap { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
+
+        .pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; width: 100%; max-width: 460px; }
+        .pad button {
+            min-height: 44px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--headers);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+        .pad button:active { background: var(--grid-line); }
+        .pad button.done { color: var(--text-muted); opacity: 0.4; }
+
+        .pad-ctrl { display: flex; gap: 6px; width: 100%; max-width: 460px; }
+        .pad-ctrl button {
+            flex: 1;
+            min-height: 42px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+        .pad-ctrl button[aria-pressed="true"] {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #080813;
+        }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage">
+    <div class="board-wrap"><canvas id="game" class="arc-surface"></canvas></div>
+    <div class="pad" id="pad"></div>
+    <div class="pad-ctrl">
+        <button id="pencilBtn" aria-pressed="false">&#9998; Pencil</button>
+        <button id="eraseBtn">&#9003; Erase</button>
+    </div>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    var STORE = 'beben-arcade-sudoku';
+    var CLUES = { easy: 40, medium: 32, hard: 27 };
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 460 });
+
+    var solution, given, grid, pencils, sel, pencilMode, diff, elapsed, timer, phase;
+
+    /* ── generator ───────────────────────────────────────────────── */
+    function shuffle(a) {
+        for (var i = a.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+    }
+
+    function solvedGrid() {
+        var g = new Array(81);
+        for (var r = 0; r < 9; r++)
+            for (var c = 0; c < 9; c++)
+                g[r * 9 + c] = (3 * (r % 3) + Math.floor(r / 3) + c) % 9 + 1;
+        // relabel digits
+        var map = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        for (var i = 0; i < 81; i++) g[i] = map[g[i] - 1];
+        // shuffle rows within each band, cols within each stack
+        for (var b = 0; b < 3; b++) {
+            var rows = shuffle([0, 1, 2]).map(function (x) { return b * 3 + x; });
+            var cols = shuffle([0, 1, 2]).map(function (x) { return b * 3 + x; });
+            applyRowOrder(g, b, rows);
+            applyColOrder(g, b, cols);
+        }
+        // shuffle bands and stacks
+        applyBandOrder(g, shuffle([0, 1, 2]));
+        applyStackOrder(g, shuffle([0, 1, 2]));
+        return g;
+    }
+    function applyRowOrder(g, band, order) {
+        var copy = g.slice();
+        for (var k = 0; k < 3; k++)
+            for (var c = 0; c < 9; c++)
+                g[(band * 3 + k) * 9 + c] = copy[order[k] * 9 + c];
+    }
+    function applyColOrder(g, stack, order) {
+        var copy = g.slice();
+        for (var k = 0; k < 3; k++)
+            for (var r = 0; r < 9; r++)
+                g[r * 9 + stack * 3 + k] = copy[r * 9 + order[k]];
+    }
+    function applyBandOrder(g, order) {
+        var copy = g.slice();
+        for (var b = 0; b < 3; b++)
+            for (var k = 0; k < 3; k++)
+                for (var c = 0; c < 9; c++)
+                    g[(b * 3 + k) * 9 + c] = copy[(order[b] * 3 + k) * 9 + c];
+    }
+    function applyStackOrder(g, order) {
+        var copy = g.slice();
+        for (var s = 0; s < 3; s++)
+            for (var k = 0; k < 3; k++)
+                for (var r = 0; r < 9; r++)
+                    g[r * 9 + s * 3 + k] = copy[r * 9 + order[s] * 3 + k];
+    }
+
+    function candidates(g, i) {
+        var r = Math.floor(i / 9), c = i % 9;
+        var used = 0;
+        for (var k = 0; k < 9; k++) {
+            if (g[r * 9 + k]) used |= 1 << g[r * 9 + k];
+            if (g[k * 9 + c]) used |= 1 << g[k * 9 + c];
+        }
+        var br = r - r % 3, bc = c - c % 3;
+        for (var dr = 0; dr < 3; dr++)
+            for (var dc = 0; dc < 3; dc++) {
+                var v = g[(br + dr) * 9 + bc + dc];
+                if (v) used |= 1 << v;
+            }
+        var out = [];
+        for (var d = 1; d <= 9; d++) if (!(used & (1 << d))) out.push(d);
+        return out;
+    }
+
+    // count solutions up to `limit`, MRV cell selection; restores grid
+    function countSolutions(g, limit) {
+        var bi = -1, bcand = null, bcount = 10;
+        for (var i = 0; i < 81; i++) {
+            if (g[i]) continue;
+            var cand = candidates(g, i);
+            if (cand.length < bcount) { bcount = cand.length; bi = i; bcand = cand; if (bcount <= 1) break; }
+        }
+        if (bi === -1) return 1;
+        if (bcount === 0) return 0;
+        var count = 0;
+        for (var k = 0; k < bcand.length; k++) {
+            g[bi] = bcand[k];
+            count += countSolutions(g, limit - count);
+            g[bi] = 0;
+            if (count >= limit) return count;
+        }
+        return count;
+    }
+
+    function makePuzzle(sol, targetClues) {
+        var puzzle = sol.slice();
+        var order = shuffle(Array.from({ length: 81 }, function (_, i) { return i; }));
+        var clues = 81;
+        for (var p = 0; p < order.length && clues > targetClues; p++) {
+            var idx = order[p];
+            var saved = puzzle[idx];
+            puzzle[idx] = 0;
+            var probe = puzzle.slice();
+            if (countSolutions(probe, 2) !== 1) puzzle[idx] = saved;   // must stay unique
+            else clues--;
+        }
+        return puzzle;
+    }
+
+    /* ── game state ──────────────────────────────────────────────── */
+    function startNew(d) {
+        diff = d;
+        solution = solvedGrid();
+        var puzzle = makePuzzle(solution, CLUES[d]);
+        given = puzzle.map(function (v) { return v !== 0; });
+        grid = puzzle.slice();
+        pencils = new Array(81).fill(0);
+        sel = -1; pencilMode = false; elapsed = 0;
+        phase = 'play';
+        pencilBtn.setAttribute('aria-pressed', 'false');
+        setTime();
+        startTimer();
+        save();
+        refreshPad();
+    }
+
+    function loadSaved(s) {
+        diff = s.diff; solution = s.solution; given = s.given;
+        grid = s.grid; pencils = s.pencils || new Array(81).fill(0);
+        sel = -1; pencilMode = false; elapsed = s.elapsed || 0;
+        phase = 'play';
+        setTime();
+        startTimer();
+        refreshPad();
+    }
+
+    function setTime() { Arcade.ui.setScore(elapsed + 's'); }
+    function startTimer() {
+        stopTimer();
+        timer = setInterval(function () { elapsed++; setTime(); if (elapsed % 5 === 0) save(); }, 1000);
+    }
+    function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+
+    function save() {
+        if (phase !== 'play') return;
+        try { localStorage.setItem(STORE, JSON.stringify({ diff: diff, solution: solution, given: given, grid: grid, pencils: pencils, elapsed: elapsed })); } catch (e) {}
+    }
+    function clearSave() { try { localStorage.removeItem(STORE); } catch (e) {} }
+    function readSave() { try { return JSON.parse(localStorage.getItem(STORE)); } catch (e) { return null; } }
+
+    /* ── moves ───────────────────────────────────────────────────── */
+    function conflictsAt(i) {
+        var v = grid[i];
+        if (!v) return false;
+        var r = Math.floor(i / 9), c = i % 9;
+        for (var k = 0; k < 9; k++) {
+            if (k !== c && grid[r * 9 + k] === v) return true;
+            if (k !== r && grid[k * 9 + c] === v) return true;
+        }
+        var br = r - r % 3, bc = c - c % 3;
+        for (var dr = 0; dr < 3; dr++)
+            for (var dc = 0; dc < 3; dc++) {
+                var j = (br + dr) * 9 + bc + dc;
+                if (j !== i && grid[j] === v) return true;
+            }
+        return false;
+    }
+
+    function inputDigit(d) {
+        if (phase !== 'play' || sel < 0 || given[sel]) return;
+        if (pencilMode) {
+            if (grid[sel]) return;
+            pencils[sel] ^= (1 << d);
+            Arcade.audio.play('tap');
+        } else {
+            grid[sel] = grid[sel] === d ? 0 : d;
+            pencils[sel] = 0;
+            if (grid[sel] && conflictsAt(sel)) { Arcade.audio.play('denied'); Arcade.haptics.buzz('error'); }
+            else Arcade.audio.play('move');
+            checkDone();
+        }
+        save();
+        refreshPad();
+    }
+
+    function erase() {
+        if (phase !== 'play' || sel < 0 || given[sel]) return;
+        grid[sel] = 0; pencils[sel] = 0;
+        Arcade.audio.play('tap');
+        save(); refreshPad();
+    }
+
+    function checkDone() {
+        for (var i = 0; i < 81; i++) if (grid[i] !== solution[i]) return;
+        phase = 'over';
+        stopTimer();
+        clearSave();
+        Arcade.audio.play('clear');
+        var res = Arcade.scores.submit('sudoku-' + diff, elapsed, { lowerIsBetter: true });
+        Arcade.ui.gameOver({
+            title: 'Solved!', label: 'Time', score: elapsed + 's',
+            best: res.best + 's', isNew: res.isNew,
+            onReplay: showSelect
+        });
+    }
+
+    function refreshPad() {
+        // grey out digits already placed nine times
+        var counts = new Array(10).fill(0);
+        for (var i = 0; i < 81; i++) if (grid[i]) counts[grid[i]]++;
+        Array.prototype.forEach.call(pad.children, function (btn, k) {
+            btn.classList.toggle('done', counts[k + 1] >= 9);
+        });
+    }
+
+    /* ── mode select ─────────────────────────────────────────────── */
+    var selEl = null;
+    function showSelect() {
+        phase = 'select';
+        stopTimer();
+        if (selEl) return;
+        var saved = readSave();
+        selEl = document.createElement('div');
+        selEl.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        panel.style.textAlign = 'center';
+        panel.innerHTML = '<div class="arc-panel-title">Sudoku</div>' +
+            '<div class="arc-over-label" style="margin-bottom:1rem">Pick a difficulty</div>';
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        actions.style.flexDirection = 'column';
+
+        if (saved && saved.grid) {
+            var res = document.createElement('button');
+            res.className = 'arc-action arc-action--primary';
+            res.textContent = 'Resume ' + saved.diff + ' · ' + (saved.elapsed || 0) + 's';
+            res.addEventListener('click', function () {
+                Arcade.audio.play('select');
+                closeSelect();
+                loadSaved(saved);
+                loop.resume();
+            });
+            actions.appendChild(res);
+        }
+        ['easy', 'medium', 'hard'].forEach(function (d) {
+            var b = document.createElement('button');
+            b.className = 'arc-action';
+            b.textContent = d;
+            b.addEventListener('click', function () {
+                Arcade.audio.play('select');
+                closeSelect();
+                showLoading();
+                // let the loading frame paint before the (brief) synchronous gen
+                setTimeout(function () { startNew(d); hideLoading(); loop.resume(); }, 30);
+            });
+            actions.appendChild(b);
+        });
+        panel.appendChild(actions);
+        selEl.appendChild(panel);
+        document.body.appendChild(selEl);
+    }
+    function closeSelect() { if (selEl) { selEl.remove(); selEl = null; } }
+
+    var loadEl = null;
+    function showLoading() {
+        loadEl = document.createElement('div');
+        loadEl.className = 'arc-overlay';
+        loadEl.innerHTML = '<div class="arc-pause-msg">Building<span class="arc-pause-sub">■ ■ ■ □ □ □ □</span></div>';
+        document.body.appendChild(loadEl);
+    }
+    function hideLoading() { if (loadEl) { loadEl.remove(); loadEl = null; } }
+
+    /* ── input ───────────────────────────────────────────────────── */
+    function geom() {
+        var s = Math.min(view.w, view.h);
+        return { size: s, cell: s / 9, ox: (view.w - s) / 2, oy: (view.h - s) / 2 };
+    }
+    canvas.addEventListener('pointerdown', function (e) {
+        if (phase !== 'play') return;
+        var rect = canvas.getBoundingClientRect();
+        var g = geom();
+        var x = (e.clientX - rect.left) * (view.w / rect.width) - g.ox;
+        var y = (e.clientY - rect.top) * (view.h / rect.height) - g.oy;
+        if (x < 0 || y < 0 || x >= g.size || y >= g.size) return;
+        sel = Math.floor(y / g.cell) * 9 + Math.floor(x / g.cell);
+        Arcade.audio.play('tap');
+    });
+    document.addEventListener('keydown', function (e) {
+        if (phase !== 'play') return;
+        if (e.key >= '1' && e.key <= '9') inputDigit(+e.key);
+        else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') erase();
+        else if (e.key === 'p' || e.key === 'P') togglePencil();
+    });
+
+    var pad = document.getElementById('pad');
+    for (var d = 1; d <= 9; d++) {
+        (function (n) {
+            var b = document.createElement('button');
+            b.textContent = n;
+            b.addEventListener('click', function () { inputDigit(n); });
+            pad.appendChild(b);
+        })(d);
+    }
+    var pencilBtn = document.getElementById('pencilBtn');
+    function togglePencil() {
+        pencilMode = !pencilMode;
+        pencilBtn.setAttribute('aria-pressed', pencilMode ? 'true' : 'false');
+        Arcade.audio.play('tap');
+    }
+    pencilBtn.addEventListener('click', togglePencil);
+    document.getElementById('eraseBtn').addEventListener('click', erase);
+
+    /* ── render ──────────────────────────────────────────────────── */
+    function hexA(hex, a) {
+        var h = hex.replace('#', '');
+        if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+        return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' + parseInt(h.slice(4, 6), 16) + ',' + a + ')';
+    }
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var g = geom();
+        ctx.clearRect(0, 0, view.w, view.h);
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(g.ox, g.oy, g.size, g.size);
+
+        var selV = sel >= 0 ? grid[sel] : 0;
+        var selR = sel >= 0 ? Math.floor(sel / 9) : -1, selC = sel >= 0 ? sel % 9 : -1;
+
+        // cell backgrounds: peers + selection + same-number
+        for (var i = 0; i < 81; i++) {
+            var r = Math.floor(i / 9), c = i % 9;
+            var x = g.ox + c * g.cell, y = g.oy + r * g.cell;
+            if (sel >= 0) {
+                var samePeer = r === selR || c === selC ||
+                    (Math.floor(r / 3) === Math.floor(selR / 3) && Math.floor(c / 3) === Math.floor(selC / 3));
+                if (i === sel) { ctx.fillStyle = hexA(p.accent, 0.26); ctx.fillRect(x, y, g.cell, g.cell); }
+                else if (selV && grid[i] === selV) { ctx.fillStyle = hexA(p.accent, 0.16); ctx.fillRect(x, y, g.cell, g.cell); }
+                else if (samePeer) { ctx.fillStyle = p.gridLine; ctx.fillRect(x, y, g.cell, g.cell); }
+            }
+        }
+
+        // digits + pencils
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (var j = 0; j < 81; j++) {
+            var rr = Math.floor(j / 9), cc = j % 9;
+            var cx = g.ox + (cc + 0.5) * g.cell, cy = g.oy + (rr + 0.5) * g.cell;
+            if (grid[j]) {
+                ctx.font = '600 ' + Math.round(g.cell * 0.56) + 'px ui-monospace, Menlo, Consolas, monospace';
+                ctx.fillStyle = given[j] ? p.headers : (conflictsAt(j) ? p.neon.red : p.accent);
+                ctx.fillText(grid[j], cx, cy + g.cell * 0.02);
+            } else if (pencils[j]) {
+                ctx.font = '600 ' + Math.round(g.cell * 0.2) + 'px ui-monospace, Menlo, Consolas, monospace';
+                ctx.fillStyle = p.muted;
+                for (var n = 1; n <= 9; n++) {
+                    if (!(pencils[j] & (1 << n))) continue;
+                    var pr = Math.floor((n - 1) / 3), pc = (n - 1) % 3;
+                    ctx.fillText(n, g.ox + cc * g.cell + (pc + 0.5) * g.cell / 3, g.oy + rr * g.cell + (pr + 0.5) * g.cell / 3);
+                }
+            }
+        }
+
+        // grid lines
+        for (var k = 0; k <= 9; k++) {
+            var bold = k % 3 === 0;
+            ctx.strokeStyle = bold ? p.border : p.gridLine;
+            ctx.lineWidth = bold ? 2 : 1;
+            ctx.beginPath();
+            ctx.moveTo(g.ox + k * g.cell, g.oy); ctx.lineTo(g.ox + k * g.cell, g.oy + g.size);
+            ctx.moveTo(g.ox, g.oy + k * g.cell); ctx.lineTo(g.ox + g.size, g.oy + k * g.cell);
+            ctx.stroke();
+        }
+        // accent frame
+        ctx.strokeStyle = p.accent;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(g.ox + 1, g.oy + 1, g.size - 2, g.size - 2);
+    }
+
+    var loop = Arcade.loop({ update: function () {}, render: render });
+
+    Arcade.init({
+        slug: 'sudoku',
+        title: 'Sudoku',
+        accent: 'yellow',
+        jingles: {
+            best: [[523, 0.12, 'triangle'], [659, 0.12, 'triangle'], [784, 0.12, 'triangle'], [1046, 0.26, 'triangle']],
+            over: [[523, 0.12, 'triangle'], [659, 0.12, 'triangle'], [784, 0.22, 'triangle']]
+        },
+        onPause: function () { stopTimer(); },
+        onResume: function () { if (phase === 'play') startTimer(); }
+    });
+
+    view.refit();
+    loop.start();
+    showSelect();
+})();
+</script>
+
+</body>
+</html>

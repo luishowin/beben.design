@@ -199,7 +199,8 @@
         boom:    function () { noise(0.25); tone(90, 0.22, 'square', { slideTo: 40, vol: 0.5 }); },
         fanfare: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone(f, 0.1, 'square', { when: i * 0.09 }); }); },
         select:  function () { tone(500, 0.04, 'square', { vol: 0.35 }); tone(750, 0.05, 'square', { when: 0.04, vol: 0.35 }); },
-        coinup:  function () { tone(660, 0.05, 'square'); tone(880, 0.08, 'square', { when: 0.05 }); tone(1320, 0.12, 'square', { when: 0.13 }); }
+        coinup:  function () { tone(660, 0.05, 'square'); tone(880, 0.08, 'square', { when: 0.05 }); tone(1320, 0.12, 'square', { when: 0.13 }); },
+        denied:  function () { tone(160, 0.09, 'square', { vol: 0.4 }); tone(160, 0.09, 'square', { when: 0.11, vol: 0.4 }); }
     };
 
     /* jingle: data-driven note sequence for per-game flourishes.
