@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-purple); --accent-glow: rgba(139,92,255,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Star Swarm — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#080813">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var COLS = 7, ROWS = 4;
+    var ROW_POINTS = [40, 30, 20, 10];
+
+    // original critters — two frames for the marching wiggle (8x6)
+    var CRIT_A = ['..1..1..', '.111111.', '11.11.11', '11111111', '.1.11.1.', '1.1..1.1'];
+    var CRIT_B = ['..1..1..', '.111111.', '11.11.11', '11111111', '.1.11.1.', '.11..11.'];
+    var SHIP    = ['...1...', '..111..', '.11111.', '1111111', '1111111'];
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.72, maxW: 460 });
+
+    var ship, aliens, pBullets, aBullets, score, lives, wave;
+    var dir, offX, offY, frame, stepAcc, fireAcc, alienFireAcc, invuln, over, started;
+
+    function cell() { return view.w / (COLS + 3); }
+    function originX() { return cell() * 1.5; }
+    function originY() { return Math.max(30, view.h * 0.1); }
+    function shipY() { return view.h - Math.max(26, view.h * 0.07); }
+
+    function reset() {
+        ship = { x: view.w / 2 };
+        pBullets = []; aBullets = [];
+        score = 0; lives = 3; wave = 1;
+        over = false; started = false; invuln = 0;
+        buildWave();
+        Arcade.ui.setScore('0');
+    }
+
+    function buildWave() {
+        aliens = [];
+        for (var r = 0; r < ROWS; r++)
+            for (var c = 0; c < COLS; c++)
+                aliens.push({ c: c, r: r, alive: true });
+        dir = 1; offX = 0; offY = 0; frame = 0;
+        stepAcc = 0; fireAcc = 0; alienFireAcc = 0;
+        pBullets = []; aBullets = [];
+    }
+
+    function aliveCount() {
+        var n = 0;
+        for (var i = 0; i < aliens.length; i++) if (aliens[i].alive) n++;
+        return n;
+    }
+
+    function alienX(a) { return originX() + a.c * cell() + offX; }
+    function alienY(a) { return originY() + a.r * cell() + offY; }
+
+    function bounds() {
+        var min = Infinity, max = -Infinity, low = -Infinity;
+        for (var i = 0; i < aliens.length; i++) {
+            if (!aliens[i].alive) continue;
+            var x = alienX(aliens[i]);
+            if (x < min) min = x;
+            if (x + cell() * 0.8 > max) max = x + cell() * 0.8;
+            var y = alienY(aliens[i]) + cell() * 0.6;
+            if (y > low) low = y;
+        }
+        return { min: min, max: max, low: low };
+    }
+
+    function step() {
+        var b = bounds();
+        var stepX = cell() * 0.34;
+        var margin = cell() * 0.6;
+        if (dir > 0 && b.max + stepX > view.w - margin) { offY += cell() * 0.5; dir = -1; }
+        else if (dir < 0 && b.min - stepX < margin) { offY += cell() * 0.5; dir = 1; }
+        else offX += dir * stepX;
+        frame ^= 1;
+        Arcade.audio.play('move');
+    }
+
+    function fireP() {
+        pBullets.push({ x: ship.x, y: shipY() - cell() * 0.4 });
+        Arcade.audio.play('tap');
+    }
+
+    function fireA() {
+        // a random alive alien that is the lowest in its column
+        var lowest = {};
+        for (var i = 0; i < aliens.length; i++) {
+            var a = aliens[i];
+            if (!a.alive) continue;
+            if (lowest[a.c] === undefined || a.r > aliens[lowest[a.c]].r) lowest[a.c] = i;
+        }
+        var idxs = Object.keys(lowest);
+        if (!idxs.length) return;
+        var a2 = aliens[lowest[idxs[Math.floor(Math.random() * idxs.length)]]];
+        aBullets.push({ x: alienX(a2) + cell() * 0.4, y: alienY(a2) + cell() * 0.6 });
+        Arcade.audio.play('flap');
+    }
+
+    function loseLife() {
+        lives--;
+        invuln = 1.4;
+        aBullets = [];
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        if (lives <= 0) endGame();
+    }
+
+    function endGame() {
+        over = true;
+        loop.pause();
+        var res = Arcade.scores.submit('star-swarm', score);
+        Arcade.ui.gameOver({
+            score: score, best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function addScore(n) {
+        score += n;
+        Arcade.ui.setScore(String(score));
+    }
+
+    /* ── input: drag to move, auto-fire ──────────────────────────── */
+    function relX(clientX) {
+        var rect = canvas.getBoundingClientRect();
+        return Math.max(0, Math.min(view.w, (clientX - rect.left) * (view.w / rect.width)));
+    }
+    var dragging = false;
+    canvas.addEventListener('pointerdown', function (e) { started = true; dragging = true; ship.x = relX(e.clientX); });
+    canvas.addEventListener('pointermove', function (e) { if (dragging) ship.x = relX(e.clientX); });
+    function endDrag() { dragging = false; }
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+
+    var keys = {};
+    document.addEventListener('keydown', function (e) {
+        if (['ArrowLeft', 'ArrowRight', 'a', 'd', 'A', 'D', ' '].indexOf(e.key) !== -1) { e.preventDefault(); started = true; }
+        keys[e.key] = true;
+    });
+    document.addEventListener('keyup', function (e) { keys[e.key] = false; });
+
+    function update(dt) {
+        if (over) return;
+
+        var kv = ((keys.ArrowRight || keys.d || keys.D) ? 1 : 0) - ((keys.ArrowLeft || keys.a || keys.A) ? 1 : 0);
+        if (kv) { started = true; ship.x = Math.max(cell() * 0.5, Math.min(view.w - cell() * 0.5, ship.x + kv * view.w * 1.4 * dt)); }
+
+        if (invuln > 0) invuln -= dt;
+        if (!started) return;
+
+        // swarm march — faster as it thins and as waves climb
+        var alive = aliveCount();
+        var interval = Math.max(90, (620 - wave * 40) * (alive / (COLS * ROWS)) + 60);
+        stepAcc += dt * 1000;
+        while (stepAcc >= interval) { stepAcc -= interval; step(); }
+
+        // auto-fire
+        fireAcc += dt * 1000;
+        if (fireAcc >= 320 && pBullets.length < 3) { fireAcc = 0; fireP(); }
+
+        // alien fire
+        alienFireAcc += dt * 1000;
+        var fireEvery = Math.max(500, 1500 - wave * 120);
+        if (alienFireAcc >= fireEvery && aBullets.length < 3) { alienFireAcc = 0; fireA(); }
+
+        // player bullets up
+        var bSpeed = view.h * 1.1;
+        for (var i = pBullets.length - 1; i >= 0; i--) {
+            var pb = pBullets[i];
+            pb.y -= bSpeed * dt;
+            if (pb.y < -10) { pBullets.splice(i, 1); continue; }
+            for (var j = 0; j < aliens.length; j++) {
+                var a = aliens[j];
+                if (!a.alive) continue;
+                var ax = alienX(a), ay = alienY(a), s = cell() * 0.8;
+                if (pb.x >= ax && pb.x <= ax + s && pb.y >= ay && pb.y <= ay + s) {
+                    a.alive = false;
+                    pBullets.splice(i, 1);
+                    addScore(ROW_POINTS[a.r]);
+                    Arcade.audio.play('coin');
+                    Arcade.haptics.buzz('light');
+                    if (aliveCount() === 0) { wave++; addScore(wave * 50); Arcade.audio.play('clear'); buildWave(); }
+                    break;
+                }
+            }
+        }
+
+        // alien bullets down
+        var ab = view.h * 0.7;
+        for (var k = aBullets.length - 1; k >= 0; k--) {
+            var abt = aBullets[k];
+            abt.y += ab * dt;
+            if (abt.y > view.h + 10) { aBullets.splice(k, 1); continue; }
+            if (invuln <= 0) {
+                var sx = ship.x, sy = shipY(), sw = cell() * 0.8;
+                if (abt.x >= sx - sw / 2 && abt.x <= sx + sw / 2 && abt.y >= sy - sw * 0.5 && abt.y <= sy + sw * 0.5) {
+                    aBullets.splice(k, 1);
+                    loseLife();
+                    return;
+                }
+            }
+        }
+
+        // swarm reached the player line
+        if (bounds().low >= shipY() - cell() * 0.4) { lives = 1; loseLife(); }
+    }
+
+    function drawSprite(ctx, map, x, y, px, color) {
+        ctx.fillStyle = color;
+        for (var r = 0; r < map.length; r++)
+            for (var c = 0; c < map[r].length; c++)
+                if (map[r][c] === '1') ctx.fillRect(x + c * px, y + r * px, px, px);
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // starfield backdrop
+        ctx.globalAlpha = 0.1;
+        ctx.fillStyle = p.headers;
+        for (var si = 0; si < 34; si++) {
+            var sx = ((si * 89) % 97) / 97 * view.w;
+            var sy = ((si * 47) % 79) / 79 * view.h;
+            ctx.fillRect(sx, sy, 2, 2);
+        }
+        ctx.globalAlpha = 1;
+
+        var rowColors = [p.neon.pink, p.neon.purple, p.neon.blue, p.neon.lime];
+        var px = cell() * 0.8 / 8;
+        var map = frame ? CRIT_B : CRIT_A;
+        for (var i = 0; i < aliens.length; i++) {
+            var a = aliens[i];
+            if (!a.alive) continue;
+            drawSprite(ctx, map, alienX(a), alienY(a), px, rowColors[a.r]);
+        }
+
+        // bullets
+        ctx.fillStyle = p.accent;
+        pBullets.forEach(function (b) { ctx.fillRect(b.x - 1.5, b.y - cell() * 0.3, 3, cell() * 0.3); });
+        ctx.fillStyle = p.neon.red;
+        aBullets.forEach(function (b) { ctx.fillRect(b.x - 1.5, b.y, 3, cell() * 0.3); });
+
+        // ship (blinks while invulnerable)
+        if (invuln <= 0 || Math.floor(invuln * 12) % 2 === 0) {
+            var spx = cell() * 0.8 / 7;
+            drawSprite(ctx, SHIP, ship.x - cell() * 0.4, shipY() - cell() * 0.35, spx, p.accent);
+        }
+
+        // lives + wave HUD
+        ctx.fillStyle = p.muted;
+        ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('WAVE ' + wave, 8, 18);
+        ctx.fillStyle = p.accent;
+        for (var l = 0; l < lives; l++) ctx.fillRect(view.w - 14 - l * 14, 10, 9, 9);
+
+        if (!started && !over) {
+            ctx.fillStyle = p.muted;
+            ctx.textAlign = 'center';
+            ctx.fillText(Arcade.env.touch ? 'DRAG TO MOVE  ·  AUTO-FIRE' : 'ARROWS TO MOVE  ·  AUTO-FIRE', view.w / 2, view.h * 0.62);
+        }
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'star-swarm',
+        title: 'Star Swarm',
+        accent: 'purple',
+        jingles: {
+            best: [[440, 0.08], [554, 0.08], [659, 0.08], [880, 0.08], [1109, 0.2]],
+            over: [[330, 0.12], [262, 0.12], [196, 0.24]]
+        },
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    view.refit();
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

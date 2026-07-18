@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-lime); --accent-glow: rgba(142,255,42,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Paddle Duel — Beben Arcade</title>
+    <meta name="robots" content="noindex">
+
+    <meta name="theme-color" content="#080813">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas></main>
+
+<script>
+(function () {
+    'use strict';
+
+    var WIN = 7;
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.62, maxW: 420 });
+
+    // phase: 'select' | 'serve' | 'play' | 'over'
+    var phase = 'select';
+    var mode = 'cpu';            // 'cpu' | '2p'
+    var streak = 0;              // consecutive CPU-match wins (persisted best)
+    var pScore, cScore;          // bottom (player/P1), top (cpu/P2)
+    var ball, serveTimer, serveDir, rally;
+    var pPaddle, cPaddle;        // {x}
+    var pointers = {};           // pointerId -> 'bottom' | 'top'
+
+    function paddleW() { return view.w * 0.28; }
+    function paddleH() { return Math.max(9, view.h * 0.018); }
+    function ballR() { return Math.max(5, view.w * 0.02); }
+    function bottomY() { return view.h - Math.max(24, view.h * 0.06); }
+    function topY() { return Math.max(24, view.h * 0.06); }
+
+    function centerBall(dir) {
+        ball = {
+            x: view.w / 2, y: view.h / 2,
+            vx: 0, vy: 0,
+            speed: (view.h * 0.62)
+        };
+        serveDir = dir;
+        serveTimer = 0.8;
+        rally = 0;
+    }
+
+    function newMatch() {
+        pScore = 0; cScore = 0;
+        pPaddle = { x: view.w / 2 };
+        cPaddle = { x: view.w / 2 };
+        centerBall(Math.random() < 0.5 ? 1 : -1);
+        phase = 'serve';
+        setHud();
+    }
+
+    function setHud() { Arcade.ui.setScore(pScore + ' : ' + cScore); }
+
+    function serve() {
+        var ang = (Math.random() * 0.5 - 0.25);      // small horizontal spread
+        ball.vx = Math.sin(ang) * ball.speed;
+        ball.vy = serveDir * Math.cos(ang) * ball.speed;
+        phase = 'play';
+        Arcade.audio.play('bounce');
+    }
+
+    /* ── mode select overlay ─────────────────────────────────────── */
+    var selEl = null;
+    function showSelect() {
+        phase = 'select';
+        if (selEl) return;
+        selEl = document.createElement('div');
+        selEl.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        panel.style.textAlign = 'center';
+        panel.innerHTML = '<div class="arc-panel-title">Paddle Duel</div>' +
+            '<div class="arc-over-label" style="margin-bottom:1rem">First to ' + WIN + ' wins</div>';
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        actions.style.flexDirection = 'column';
+
+        var vsCpu = document.createElement('button');
+        vsCpu.className = 'arc-action arc-action--primary';
+        vsCpu.textContent = 'VS CPU';
+        vsCpu.addEventListener('click', function () { chooseMode('cpu'); });
+
+        var vs2p = document.createElement('button');
+        vs2p.className = 'arc-action';
+        vs2p.textContent = '2 Player';
+        vs2p.addEventListener('click', function () { chooseMode('2p'); });
+
+        actions.appendChild(vsCpu);
+        actions.appendChild(vs2p);
+        panel.appendChild(actions);
+        selEl.appendChild(panel);
+        document.body.appendChild(selEl);
+    }
+    function chooseMode(m) {
+        mode = m;
+        Arcade.audio.play('select');
+        if (selEl) { selEl.remove(); selEl = null; }
+        newMatch();
+        loop.resume();
+    }
+
+    /* ── match result ────────────────────────────────────────────── */
+    function endMatch(playerWon) {
+        phase = 'over';
+        loop.pause();
+        var winner;
+        if (mode === '2p') winner = playerWon ? 'P1 wins' : 'P2 wins';
+        else winner = playerWon ? 'You win' : 'CPU wins';
+
+        if (mode === 'cpu' && playerWon) {
+            streak++;
+            var res = Arcade.scores.submit('paddle-duel', streak);
+            Arcade.ui.gameOver({
+                title: winner, label: 'Win streak', score: streak,
+                best: res.best, isNew: res.isNew,
+                onReplay: function () { showSelect(); }
+            });
+        } else {
+            if (mode === 'cpu') streak = 0;
+            Arcade.audio.play('boom');
+            Arcade.haptics.buzz(playerWon ? 'success' : 'error');
+            Arcade.ui.gameOver({
+                title: winner, label: 'Final', score: pScore + ' - ' + cScore,
+                best: null, isNew: false,
+                onReplay: function () { showSelect(); }
+            });
+        }
+    }
+
+    function point(toPlayer) {
+        if (toPlayer) pScore++; else cScore++;
+        setHud();
+        Arcade.audio.play('coin');
+        Arcade.haptics.buzz('light');
+        if (pScore >= WIN) { endMatch(true); return; }
+        if (cScore >= WIN) { endMatch(false); return; }
+        centerBall(toPlayer ? -1 : 1);   // serve toward the loser of the point
+        phase = 'serve';
+    }
+
+    /* ── input: pointer per half ─────────────────────────────────── */
+    function relX(clientX) {
+        var rect = canvas.getBoundingClientRect();
+        return Math.max(0, Math.min(view.w, (clientX - rect.left) * (view.w / rect.width)));
+    }
+    function whichHalf(clientY) {
+        var rect = canvas.getBoundingClientRect();
+        return (clientY - rect.top) < rect.height / 2 ? 'top' : 'bottom';
+    }
+    function assign(half, x) {
+        if (half === 'bottom') pPaddle.x = x;
+        else if (mode === '2p') cPaddle.x = x;   // top paddle only human in 2P
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (phase === 'select' || phase === 'over') return;
+        var half = whichHalf(e.clientY);
+        if (mode === 'cpu' && half === 'top') return;   // CPU owns the top
+        pointers[e.pointerId] = half;
+        assign(half, relX(e.clientX));
+        if (phase === 'serve') serve();
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        var half = pointers[e.pointerId];
+        if (!half) return;
+        assign(half, relX(e.clientX));
+    });
+    function drop(e) { delete pointers[e.pointerId]; }
+    canvas.addEventListener('pointerup', drop);
+    canvas.addEventListener('pointercancel', drop);
+
+    var keys = {};
+    document.addEventListener('keydown', function (e) {
+        if (['ArrowLeft', 'ArrowRight', 'a', 'd', 'A', 'D', ' '].indexOf(e.key) !== -1) e.preventDefault();
+        if (e.key === ' ' && phase === 'serve') serve();
+        keys[e.key] = true;
+    });
+    document.addEventListener('keyup', function (e) { keys[e.key] = false; });
+
+    function keyboardPaddle(dt) {
+        var kv = ((keys.ArrowRight || keys.d || keys.D) ? 1 : 0) - ((keys.ArrowLeft || keys.a || keys.A) ? 1 : 0);
+        if (kv) pPaddle.x = clampX(pPaddle.x + kv * view.w * 1.6 * dt);
+    }
+
+    function clampX(x) {
+        var hw = paddleW() / 2;
+        return Math.max(hw, Math.min(view.w - hw, x));
+    }
+
+    /* ── CPU: track the ball with capped speed + reaction slack ──── */
+    function cpuThink(dt) {
+        var target;
+        if (ball.vy < 0) {
+            // ball approaching — aim, with error that grows as the ball speeds up
+            var err = (rally % 3 - 1) * paddleW() * 0.22;
+            target = ball.x + err;
+        } else {
+            target = view.w / 2;                    // drift home
+        }
+        var maxStep = view.w * 1.25 * dt;
+        var dead = paddleW() * 0.12;
+        var d = target - cPaddle.x;
+        if (Math.abs(d) > dead) cPaddle.x = clampX(cPaddle.x + Math.max(-maxStep, Math.min(maxStep, d)));
+    }
+
+    function bouncePaddle(px) {
+        var off = Math.max(-1, Math.min(1, (ball.x - px) / (paddleW() / 2)));
+        var speed = Math.min(ball.speed * 1.04, view.h * 1.15);
+        ball.speed = speed;
+        var ang = off * (Math.PI / 3.2);            // ±56°
+        ball.vx = Math.sin(ang) * speed;
+        ball.vy = (ball.vy < 0 ? 1 : -1) * Math.abs(Math.cos(ang) * speed);
+        rally++;
+        Arcade.audio.play('bounce');
+        Arcade.haptics.buzz('light');
+    }
+
+    function update(dt) {
+        if (phase === 'select' || phase === 'over') return;
+
+        keyboardPaddle(dt);
+        pPaddle.x = clampX(pPaddle.x);
+        if (mode === 'cpu') cpuThink(dt);
+        else cPaddle.x = clampX(cPaddle.x);
+
+        if (phase === 'serve') {
+            ball.x = view.w / 2;
+            serveTimer -= dt;
+            if (serveTimer <= 0) serve();
+            return;
+        }
+
+        var r = ballR();
+        // sub-step to avoid tunnelling through paddles
+        var dist = Math.hypot(ball.vx, ball.vy) * dt;
+        var steps = Math.max(1, Math.ceil(dist / (r * 0.8)));
+        for (var i = 0; i < steps; i++) {
+            ball.x += ball.vx * dt / steps;
+            ball.y += ball.vy * dt / steps;
+
+            if (ball.x - r < 0) { ball.x = r; ball.vx = Math.abs(ball.vx); Arcade.audio.play('bounce'); }
+            if (ball.x + r > view.w) { ball.x = view.w - r; ball.vx = -Math.abs(ball.vx); Arcade.audio.play('bounce'); }
+
+            var by = bottomY(), ty = topY(), hw = paddleW() / 2, ph = paddleH();
+            if (ball.vy > 0 && ball.y + r >= by - ph && ball.y + r <= by + ph &&
+                ball.x >= pPaddle.x - hw - r && ball.x <= pPaddle.x + hw + r) {
+                ball.y = by - ph - r; bouncePaddle(pPaddle.x); break;
+            }
+            if (ball.vy < 0 && ball.y - r <= ty + ph && ball.y - r >= ty - ph &&
+                ball.x >= cPaddle.x - hw - r && ball.x <= cPaddle.x + hw + r) {
+                ball.y = ty + ph + r; bouncePaddle(cPaddle.x); break;
+            }
+
+            if (ball.y - r > view.h) { point(false); return; }   // past player
+            if (ball.y + r < 0) { point(true); return; }         // past opponent
+        }
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // center net
+        ctx.fillStyle = p.gridLine;
+        var seg = view.h * 0.02;
+        for (var y = 0; y < view.w; y += seg * 2) {
+            ctx.fillRect(y, view.h / 2 - 1, seg, 2);
+        }
+
+        // big translucent scores
+        ctx.fillStyle = p.gridLine;
+        ctx.font = '700 ' + Math.round(view.h * 0.16) + 'px ui-monospace, Menlo, Consolas, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(cScore, view.w / 2, view.h * 0.3);
+        ctx.fillText(pScore, view.w / 2, view.h * 0.7);
+
+        // paddles
+        var hw = paddleW() / 2, ph = paddleH();
+        var p2 = mode === '2p' ? p.neon.blue : p.neon.red;
+        ctx.fillStyle = p2;
+        ctx.fillRect(cPaddle.x - hw, topY() - ph, hw * 2, ph * 2);
+        ctx.fillStyle = p.accent;
+        ctx.fillRect(pPaddle.x - hw, bottomY() - ph, hw * 2, ph * 2);
+
+        // ball
+        if (phase === 'serve' || phase === 'play') {
+            var r = ballR();
+            ctx.fillStyle = p.headers;
+            ctx.fillRect(ball.x - r, ball.y - r, r * 2, r * 2);
+        }
+
+        if (phase === 'serve') {
+            ctx.fillStyle = p.muted;
+            ctx.font = '600 12px ui-monospace, Menlo, Consolas, monospace';
+            ctx.fillText(Arcade.env.touch ? 'TAP TO SERVE' : 'SPACE TO SERVE', view.w / 2, view.h / 2);
+        }
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'paddle-duel',
+        title: 'Paddle Duel',
+        accent: 'lime',
+        jingles: {
+            best: [[523, 0.08], [659, 0.08], [784, 0.08], [1046, 0.2]],
+            over: [[392, 0.1], [330, 0.1], [262, 0.2]]
+        },
+        onPause: function () { loop.pause(); },
+        onResume: function () { if (phase !== 'select' && phase !== 'over') loop.resume(); }
+    });
+
+    view.refit();
+    loop.start();
+    loop.pause();
+    showSelect();
+})();
+</script>
+
+</body>
+</html>

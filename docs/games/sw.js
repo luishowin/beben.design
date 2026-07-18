@@ -2,7 +2,7 @@
    RULE: bump CACHE on EVERY commit that touches docs/games/** —
    cache-first serves stale files forever otherwise. */
 
-const CACHE = 'beben-arcade-v3';
+const CACHE = 'beben-arcade-v4';
 
 const PRECACHE = [
     './',
@@ -20,7 +20,9 @@ const PRECACHE = [
     './wingbeat/',
     './mines/',
     './pixel-dash/',
-    './skystack/'
+    './skystack/',
+    './paddle-duel/',
+    './star-swarm/'
 ];
 
 self.addEventListener('install', (event) => {
