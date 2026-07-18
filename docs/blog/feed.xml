@@ -6,7 +6,14 @@
     <atom:link href="https://beben.design/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Essays and build logs from Beben Design: design decisions, engineering trade-offs, and tools we shipped, written from inside real projects.</description>
     <language>en</language>
-    <lastBuildDate>Thu, 16 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Beben Arcade - twelve games that work with the wifi off</title>
+      <link>https://beben.design/blog/beben-arcade-offline/</link>
+      <guid>https://beben.design/blog/beben-arcade-offline/</guid>
+      <pubDate>Sat, 18 Jul 2026 00:00:00 +0000</pubDate>
+      <description>An installable arcade of twelve tiny games, shipped as 222KB of static files with no engine, no build step, and no network after the first visit. What offline-first costs and what it buys.</description>
+    </item>
     <item>
       <title>Building Sprite - a chat widget with two brains</title>
       <link>https://beben.design/blog/building-sprite/</link>

@@ -6,7 +6,6 @@ author: Luis
 tags: engineering, javascript, ai
 hero_image: /assets/images/blog/building-sprite/hero.svg
 hero_alt: Diagram of Sprite's two brains, an offline pattern engine and a Cloudflare Worker proxy, both feeding one chat bubble
-pinned: true
 featured: true
 ---
 

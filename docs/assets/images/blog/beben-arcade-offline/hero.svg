@@ -1,0 +1,92 @@
+<svg viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="An arcade cabinet screen holding a neon grid of twelve games, wired to a service worker cache">
+  <defs>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', Consolas, monospace; letter-spacing: 0.08em; }
+      .gray { fill: #8A8A8A; }
+      .gray-stroke { stroke: #8A8A8A; }
+      .yellow { fill: #FFC710; }
+      .yellow-stroke { stroke: #FFC710; }
+    </style>
+  </defs>
+
+  <!-- faint grid -->
+  <g class="gray-stroke" stroke-width="1" opacity="0.14">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200"/>
+    <path d="M150 0 V630 M300 0 V630 M450 0 V630 M600 0 V630 M750 0 V630 M900 0 V630 M1050 0 V630"/>
+  </g>
+
+  <!-- cabinet screen -->
+  <g>
+    <rect x="120" y="105" width="620" height="420" rx="8" fill="#080813"/>
+    <rect x="120" y="105" width="620" height="420" rx="8" class="gray-stroke" stroke-width="2.5" opacity="0.9"/>
+
+    <text x="152" y="160" class="mono yellow" font-size="19">BEBEN ARCADE</text>
+    <text x="640" y="160" class="mono gray" font-size="17" opacity="0.75" text-anchor="end">v6</text>
+
+    <!-- twelve game tiles, one neon each -->
+    <g stroke-width="2">
+      <rect x="152" y="190" width="132" height="72" stroke="#FFE600" opacity="0.95"/>
+      <rect x="300" y="190" width="132" height="72" stroke="#00E5FF" opacity="0.95"/>
+      <rect x="448" y="190" width="132" height="72" stroke="#FF3DDA" opacity="0.95"/>
+      <rect x="596" y="190" width="112" height="72" stroke="#7CFF3D" opacity="0.95"/>
+
+      <rect x="152" y="278" width="132" height="72" stroke="#FF6B2C" opacity="0.95"/>
+      <rect x="300" y="278" width="132" height="72" stroke="#7C5CFF" opacity="0.95"/>
+      <rect x="448" y="278" width="132" height="72" stroke="#00FFB2" opacity="0.95"/>
+      <rect x="596" y="278" width="112" height="72" stroke="#FFE600" opacity="0.95"/>
+
+      <rect x="152" y="366" width="132" height="72" stroke="#00E5FF" opacity="0.95"/>
+      <rect x="300" y="366" width="132" height="72" stroke="#FF3DDA" opacity="0.95"/>
+      <rect x="448" y="366" width="132" height="72" stroke="#7CFF3D" opacity="0.95"/>
+      <rect x="596" y="366" width="112" height="72" stroke="#FF6B2C" opacity="0.95"/>
+    </g>
+
+    <!-- pixel snake in the first tile -->
+    <g fill="#FFE600">
+      <rect x="176" y="214" width="14" height="14"/>
+      <rect x="190" y="214" width="14" height="14"/>
+      <rect x="204" y="214" width="14" height="14"/>
+      <rect x="204" y="228" width="14" height="14"/>
+      <rect x="246" y="228" width="14" height="14"/>
+    </g>
+
+    <!-- scanlines -->
+    <g stroke="#8A8A8A" stroke-width="1" opacity="0.12">
+      <path d="M120 200 H740 M120 224 H740 M120 248 H740 M120 272 H740 M120 296 H740 M120 320 H740 M120 344 H740 M120 368 H740 M120 392 H740 M120 416 H740 M120 440 H740"/>
+    </g>
+
+    <text x="152" y="486" class="mono gray" font-size="16" opacity="0.75">12 GAMES &#183; 222KB &#183; NO BUILD STEP</text>
+  </g>
+
+  <!-- boundary line: nothing crosses out of /games/ -->
+  <g class="yellow-stroke" stroke-width="2" opacity="0.85" stroke-dasharray="10 8">
+    <path d="M790 105 V525"/>
+  </g>
+  <text x="806" y="315" class="mono yellow" font-size="16" opacity="0.9" transform="rotate(90 806 315)">scope: /games/</text>
+
+  <!-- service worker cache -->
+  <g>
+    <rect x="880" y="150" width="200" height="110" class="gray-stroke" stroke-width="2" opacity="0.85"/>
+    <text x="906" y="192" class="mono gray" font-size="18">SERVICE WORKER</text>
+    <text x="906" y="224" class="mono gray" font-size="17" opacity="0.85">cache-first</text>
+    <text x="906" y="248" class="mono yellow" font-size="15">beben-arcade-v6</text>
+  </g>
+
+  <!-- network, crossed out -->
+  <g>
+    <rect x="880" y="370" width="200" height="110" class="gray-stroke" stroke-width="2" opacity="0.45"/>
+    <text x="906" y="412" class="mono gray" font-size="18" opacity="0.55">NETWORK</text>
+    <text x="906" y="444" class="mono gray" font-size="17" opacity="0.5">not required</text>
+    <path d="M880 370 L1080 480" class="gray-stroke" stroke-width="2" opacity="0.4"/>
+  </g>
+
+  <!-- wiring from screen to worker -->
+  <g class="gray-stroke" stroke-width="2" opacity="0.7">
+    <path d="M740 205 H830 V205 H880"/>
+  </g>
+  <g class="gray-stroke" stroke-width="1.5" opacity="0.4" stroke-dasharray="6 6">
+    <path d="M740 425 H880"/>
+  </g>
+
+  <text x="880" y="530" class="mono gray" font-size="17" opacity="0.7">installed &#183; offline &#183; nothing to phone home</text>
+</svg>
