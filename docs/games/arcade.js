@@ -18,7 +18,10 @@
 
     var SETTINGS_KEY = 'beben-arcade-settings';
     var SCORES_KEY = 'beben-arcade-scores';
-    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null };
+    var ACH_KEY = 'beben-arcade-achievements';
+    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: false };
+    var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat', 'mines',
+        'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row'];
 
     /* ── storage helpers (Safari private mode throws) ─────────── */
     function readJSON(key, fallback) {
@@ -50,6 +53,9 @@
         },
         onChange: function (fn) { settingsListeners.push(fn); }
     };
+
+    // CRT scanline mode — applied before first paint (arcade.js is in <head>)
+    if (settingsData.crt) document.documentElement.classList.add('arc-crt');
 
     /* ── palette for canvas games (cached; accent set in init) ── */
     var paletteCache = null;
@@ -117,7 +123,7 @@
             var all = readJSON(SCORES_KEY, {});
             var prev = typeof all[slug] === 'number' ? all[slug] : null;
             var isNew = prev === null || (lower ? value < prev : value > prev);
-            if (isNew) { all[slug] = value; writeJSON(SCORES_KEY, all); }
+            if (isNew) { all[slug] = value; writeJSON(SCORES_KEY, all); achRecordBest(); }
             return { best: isNew ? value : prev, isNew: isNew };
         }
     };
@@ -200,7 +206,8 @@
         fanfare: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone(f, 0.1, 'square', { when: i * 0.09 }); }); },
         select:  function () { tone(500, 0.04, 'square', { vol: 0.35 }); tone(750, 0.05, 'square', { when: 0.04, vol: 0.35 }); },
         coinup:  function () { tone(660, 0.05, 'square'); tone(880, 0.08, 'square', { when: 0.05 }); tone(1320, 0.12, 'square', { when: 0.13 }); },
-        denied:  function () { tone(160, 0.09, 'square', { vol: 0.4 }); tone(160, 0.09, 'square', { when: 0.11, vol: 0.4 }); }
+        denied:  function () { tone(160, 0.09, 'square', { vol: 0.4 }); tone(160, 0.09, 'square', { when: 0.11, vol: 0.4 }); },
+        achieve: function () { [659, 784, 988, 1319].forEach(function (f, i) { tone(f, 0.09, 'triangle', { when: i * 0.07 }); }); }
     };
 
     /* jingle: data-driven note sequence for per-game flourishes.
@@ -234,6 +241,109 @@
             if (!('vibrate' in navigator)) return;
             try { navigator.vibrate(BUZZ[kind] || 10); } catch (e) { /* ignore */ }
         }
+    };
+
+    /* ── achievements (entirely offline) ──────────────────────── */
+    var ACH_DEFS = [
+        { id: 'first-play',     name: 'First Play',    check: function (s) { return s.stats.totalPlays >= 1; } },
+        { id: 'regular',        name: 'Regular',       check: function (s) { return s.stats.totalPlays >= 25; } },
+        { id: 'tourist',        name: 'Tourist',       check: function (s) { return Object.keys(s.stats.plays).length >= SLUGS.length; } },
+        { id: 'record-breaker', name: 'Record Breaker', check: function (s) { return s.stats.newBests >= 5; } },
+        { id: 'installed',      name: 'Installed',     check: function () { return env.standalone; } },
+        { id: 'streak-3',       name: '3-Day Streak',  check: function (s) { return maxStreak(s.stats.daysPlayed) >= 3; } },
+        { id: 'night-owl',      name: 'Night Owl',     check: function () { var h = new Date().getHours(); return h < 5; } },
+        { id: 'crt-head',       name: 'CRT Head',      check: function () { return !!settingsData.crt; } }
+    ];
+
+    var achStore = normalizeAch(readJSON(ACH_KEY, {}));
+    function normalizeAch(s) {
+        s.unlocked = s.unlocked || {};
+        s.stats = s.stats || {};
+        s.stats.plays = s.stats.plays || {};
+        s.stats.totalPlays = s.stats.totalPlays || 0;
+        s.stats.newBests = s.stats.newBests || 0;
+        s.stats.daysPlayed = s.stats.daysPlayed || {};
+        return s;
+    }
+    function saveAch() { writeJSON(ACH_KEY, achStore); }
+
+    function today() {
+        var d = new Date();
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+    function maxStreak(days) {
+        var keys = Object.keys(days);
+        if (!keys.length) return 0;
+        var set = {}, best = 0;
+        keys.forEach(function (k) { set[k] = true; });
+        keys.forEach(function (k) {
+            var parts = k.split('-').map(Number);
+            var prev = new Date(parts[0], parts[1] - 1, parts[2] - 1);
+            var pk = prev.getFullYear() + '-' + (prev.getMonth() + 1) + '-' + prev.getDate();
+            if (set[pk]) return;                 // not the start of a run
+            var run = 1, cur = new Date(parts[0], parts[1] - 1, parts[2]);
+            while (true) {
+                cur.setDate(cur.getDate() + 1);
+                var ck = cur.getFullYear() + '-' + (cur.getMonth() + 1) + '-' + cur.getDate();
+                if (set[ck]) run++; else break;
+            }
+            if (run > best) best = run;
+        });
+        return best;
+    }
+
+    function achUnlock(id) {
+        if (achStore.unlocked[id]) return;
+        var def = null;
+        for (var i = 0; i < ACH_DEFS.length; i++) if (ACH_DEFS[i].id === id) def = ACH_DEFS[i];
+        if (!def) return;
+        achStore.unlocked[id] = Date.now();
+        saveAch();
+        toast('Achievement — ' + def.name);
+        audio.play('achieve');
+        haptics.buzz('success');
+    }
+    function achCheckAll() {
+        ACH_DEFS.forEach(function (def) {
+            if (!achStore.unlocked[def.id] && def.check(achStore)) achUnlock(def.id);
+        });
+    }
+    function achRecordPlay(slug) {
+        if (slug) achStore.stats.plays[slug] = (achStore.stats.plays[slug] || 0) + 1;
+        achStore.stats.totalPlays++;
+        var t = today();
+        achStore.stats.daysPlayed[t] = true;
+        pruneDays();
+        saveAch();
+        achCheckAll();
+    }
+    function achRecordBest() {
+        achStore.stats.newBests++;
+        saveAch();
+        achCheckAll();
+    }
+    function pruneDays() {
+        var keys = Object.keys(achStore.stats.daysPlayed);
+        if (keys.length <= 45) return;
+        keys.map(function (k) {
+            var p = k.split('-').map(Number);
+            return { k: k, t: new Date(p[0], p[1] - 1, p[2]).getTime() };
+        }).sort(function (a, b) { return a.t - b.t; })
+          .slice(0, keys.length - 45)
+          .forEach(function (o) { delete achStore.stats.daysPlayed[o.k]; });
+    }
+
+    var achievements = {
+        all: function () {
+            return ACH_DEFS.map(function (d) {
+                return { id: d.id, name: d.name, unlocked: !!achStore.unlocked[d.id] };
+            });
+        },
+        count: function () {
+            return { unlocked: Object.keys(achStore.unlocked).length, total: ACH_DEFS.length };
+        },
+        check: achCheckAll,
+        openPanel: openAchPanel
     };
 
     /* ── wake lock ────────────────────────────────────────────── */
@@ -314,6 +424,82 @@
         return row;
     }
 
+    /* CRT toggle — its own row so it can call setCRT (class + achievement) */
+    function buildCrtRow() {
+        var row = document.createElement('div');
+        row.className = 'arc-row';
+        var btn = document.createElement('button');
+        btn.className = 'arc-toggle';
+        function paint() {
+            btn.setAttribute('aria-pressed', settingsData.crt ? 'true' : 'false');
+            btn.textContent = settingsData.crt ? 'ON' : 'OFF';
+        }
+        btn.addEventListener('click', function () { setCRT(!settingsData.crt); paint(); audio.play('tap'); });
+        paint();
+        row.appendChild(document.createTextNode('CRT Mode'));
+        row.appendChild(btn);
+        return row;
+    }
+    function setCRT(on) {
+        settings.set('crt', on);
+        document.documentElement.classList.toggle('arc-crt', on);
+        if (on) achCheckAll();
+    }
+    function toggleCRT() {
+        setCRT(!settingsData.crt);
+        toast('CRT mode ' + (settingsData.crt ? 'on' : 'off'));
+        audio.play('coinup');
+    }
+
+    /* INSERT COIN — a rare launch flourish; never traps input */
+    function maybeInsertCoin() {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (Math.random() >= 1 / 7) return;
+        var el = document.createElement('div');
+        el.className = 'arc-overlay arc-coin';
+        el.style.pointerEvents = 'none';
+        el.innerHTML = '<div class="arc-coin-text">Insert Coin</div>';
+        document.body.appendChild(el);
+        audio.play('coinup');
+        setTimeout(function () { if (el.parentNode) el.remove(); }, 650);
+    }
+
+    /* Konami code — desktop CRT easter egg */
+    var KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    var konamiPos = 0;
+    document.addEventListener('keydown', function (e) {
+        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        konamiPos = (k === KONAMI[konamiPos]) ? konamiPos + 1 : (k === KONAMI[0] ? 1 : 0);
+        if (konamiPos === KONAMI.length) { konamiPos = 0; toggleCRT(); }
+    });
+
+    /* achievements panel */
+    function openAchPanel() {
+        var el = document.createElement('div');
+        el.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        var c = achievements.count();
+        var html = '<div class="arc-panel-title">Achievements ' + c.unlocked + '/' + c.total + '</div>';
+        achievements.all().forEach(function (a) {
+            html += '<div class="arc-row" style="text-transform:none">' +
+                '<span>' + (a.unlocked ? a.name : '???') + '</span>' +
+                '<span style="color:' + (a.unlocked ? 'var(--accent)' : 'var(--text-muted)') + '">' +
+                (a.unlocked ? '★' : '☆') + '</span></div>';
+        });
+        panel.innerHTML = html;
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        var close = document.createElement('button');
+        close.className = 'arc-action arc-action--primary';
+        close.textContent = 'Close';
+        close.addEventListener('click', function () { el.remove(); audio.play('tap'); });
+        actions.appendChild(close);
+        panel.appendChild(actions);
+        el.appendChild(panel);
+        document.body.appendChild(el);
+    }
+
     function openSettings() {
         if (settingsEl) return;
         var wasPaused = state.paused;
@@ -326,6 +512,7 @@
         panel.innerHTML = '<div class="arc-panel-title">Settings</div>';
         panel.appendChild(buildToggleRow('Sound', 'sound'));
         panel.appendChild(buildToggleRow('Haptics', 'haptics'));
+        panel.appendChild(buildCrtRow());
 
         var actions = document.createElement('div');
         actions.className = 'arc-actions';
@@ -421,6 +608,8 @@
             document.documentElement.style.setProperty('--accent', val);
             paletteCache = null;
         }
+        achRecordPlay(opts && opts.slug);
+        maybeInsertCoin();
 
         var bar = document.createElement('header');
         bar.className = 'arc-bar';
@@ -628,6 +817,8 @@
         installHint: installHint,
         registerSW: registerSW,
         openSettings: openSettings,
+        achievements: achievements,
+        toggleCRT: toggleCRT,
         ui: {
             gameOver: gameOver,
             pauseOverlay: pauseOverlay,

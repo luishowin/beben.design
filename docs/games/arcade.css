@@ -361,6 +361,36 @@ canvas, .arc-surface { touch-action: none; display: block; }
 
 .arc-hint .arc-action { flex: 0 0 auto; padding: 0.5rem 0.9rem; }
 
+/* ── CRT mode (easter egg): stronger scanlines + flicker ──────── */
+html.arc-crt::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 95;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 2px,
+        rgba(0, 0, 0, 0.22) 2px 4px
+    );
+    animation: arc-crt-flicker 0.13s steps(2) infinite;
+}
+
+@keyframes arc-crt-flicker { 50% { opacity: 0.82; } }
+
+/* ── INSERT COIN launch flourish ──────────────────────────────── */
+.arc-coin { z-index: 85; background: rgba(8, 8, 19, 0.72); }
+
+.arc-coin-text {
+    font-family: var(--font-pixel);
+    font-size: clamp(1rem, 5vw, 1.6rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 18px rgba(255, 213, 51, 0.55);
+    animation: arc-blink 0.32s steps(2, start) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
