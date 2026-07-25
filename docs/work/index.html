@@ -196,6 +196,7 @@
         }
         .work-sprite-pill .sprite-face {
             width: 36px; height: 36px;
+            display: grid; place-items: center;
         }
         .work-sprite-pill span {
             font-family: var(--font-body);
@@ -312,12 +313,18 @@
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="work-sprite-pill">
-                                <svg class="sprite-face" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <circle cx="22" cy="22" r="20" fill="#FFC710"/>
-                                    <circle cx="15.5" cy="20" r="2.4" fill="#141414"/>
-                                    <circle cx="28.5" cy="20" r="2.4" fill="#141414"/>
-                                    <path d="M14 27c2.4 3 5.2 4.5 8 4.5s5.6-1.5 8-4.5" stroke="#141414" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-                                </svg>
+                                <!-- The real Sprite, same CSS art as the widget (sprite.css). -->
+                                <div class="sprite-face" aria-hidden="true">
+                                    <div class="sprite-character" data-emotion="happy">
+                                        <div class="sprite-body">
+                                            <div class="sprite-eyes">
+                                                <div class="sprite-eye"><div class="sprite-brow"></div></div>
+                                                <div class="sprite-eye"><div class="sprite-brow"></div></div>
+                                            </div>
+                                            <div class="sprite-mouth"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <span>Hey, need help?</span>
                             </div>
                         </div>

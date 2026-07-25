@@ -82,6 +82,10 @@
     <link rel="stylesheet" href="./assets/css/index.css">
     <link rel="stylesheet" href="./assets/css/sprite.css?v=3.6">
 
+    <!-- The hero photo is a CSS background, so the preload scanner never
+         finds it. Without this the hero paints flat #141414 for a beat. -->
+    <link rel="preload" as="image" href="./assets/images/nrb%20skyline%20hero%20image.webp" fetchpriority="high">
+
 
     <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
@@ -238,12 +242,19 @@
 
             <a href="./sprite/" class="sprite-preview" data-reveal style="--i:3">
                 <div class="sprite-preview__pill">
-                    <svg class="sprite-preview__figure" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <circle cx="22" cy="22" r="20" fill="#FFC710"/>
-                        <circle cx="15.5" cy="20" r="2.4" fill="#141414"/>
-                        <circle cx="28.5" cy="20" r="2.4" fill="#141414"/>
-                        <path d="M14 27c2.4 3 5.2 4.5 8 4.5s5.6-1.5 8-4.5" stroke="#141414" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-                    </svg>
+                    <!-- The real Sprite, same CSS art as the widget (sprite.css),
+                         so this never drifts from the actual character. -->
+                    <div class="sprite-preview__figure" aria-hidden="true">
+                        <div class="sprite-character" data-emotion="happy">
+                            <div class="sprite-body">
+                                <div class="sprite-eyes">
+                                    <div class="sprite-eye"><div class="sprite-brow"></div></div>
+                                    <div class="sprite-eye"><div class="sprite-brow"></div></div>
+                                </div>
+                                <div class="sprite-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
                     <span class="sprite-preview__text">Hey, I'm Sprite - need help finding something?</span>
                 </div>
                 <span class="sprite-preview__tag">A little AI guide for the site &middot; see how it works &rarr;</span>

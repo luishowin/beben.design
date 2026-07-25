@@ -62,6 +62,19 @@
     --ease-snap:  cubic-bezier(0.22, 0.9, 0.32, 1);
     --dur-fast:   180ms;
     --dur-base:   600ms;
+
+    /* Hero photo panel. Not themed — the hero is a dark surface in
+       both modes, so one value each. --hero-grid-line is far stronger
+       than the body's --grid-line, which is invisible over a photo.
+       --hero-scrim is the tuning knob for the whole effect: a
+       left-weighted ramp, heaviest where the copy sits, lightest on
+       the right so the tree and the sunset keep their colour. */
+    --hero-grid-line: rgba(255, 255, 255, 0.06);
+    --hero-focus:     50% 50%;
+    --hero-scrim:     linear-gradient(95deg,
+                          rgba(9, 11, 14, 0.88) 0%,
+                          rgba(9, 11, 14, 0.72) 48%,
+                          rgba(9, 11, 14, 0.38) 100%);
 }
 
 /* ── 2. RESET & BASE ──────────────────────────────────────────── */
@@ -147,10 +160,14 @@ nav {
 .theme-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     border: 1.5px solid var(--headers);
     border-radius: 999px;
-    padding: 5px 6px 5px 16px;
+    padding: 4px 5px 4px 12px;
+    /* Without this the label inherits body's 1.6 and its line box —
+       not the dial — sets the pill height, so the resize below would
+       silently do nothing. */
+    line-height: 1;
     background: transparent;
     color: var(--headers);
     cursor: pointer;
@@ -165,26 +182,32 @@ nav {
 
 .theme-toggle__label {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    /* The label swaps LIGHT ⇄ DARK, so reserve the wider string's
+       width or the pill's left edge jumps ~9px on every toggle.
+       6ch ≈ 45px clears LIGHT's 43.7px including its letter-spacing. */
+    display: inline-block;
+    min-width: 6ch;
+    text-align: center;
 }
 
 .theme-toggle__dial {
     position: relative;
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    border: 1.5px solid currentColor;
+    border: 1.25px solid currentColor;
     display: grid;
     place-items: center;
 }
 
 .theme-toggle__icon {
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 11px;
+    height: 11px;
     transition: opacity var(--dur-base) ease, transform var(--dur-base) var(--ease-snap);
 }
 
@@ -200,6 +223,15 @@ nav {
     gap: 2rem;
 }
 
+/* The <li> inherits body's 27.2px font-size, so its line box is 43.5px
+   while the link inside is only 23px — the text rides low on that
+   oversized baseline and stops sharing a centre line with the theme
+   toggle. Letting the <li> hug its link fixes it at the source. */
+.menu li {
+    display: flex;
+    align-items: center;
+}
+
 .menu li a {
     font-family: var(--font-mono);
     font-size: 0.9rem;
@@ -208,6 +240,10 @@ nav {
     text-transform: uppercase;
     color: var(--text);
     border-bottom: 2px solid transparent;
+    /* mirrors the 3px padding + 2px hover underline reserved below, so
+       the text sits centred in its own box — then centring the boxes
+       centres the text */
+    padding-top: 5px;
     padding-bottom: 3px;
     transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
 }
@@ -367,9 +403,47 @@ h2 {
 }
 
 /* ── 7. HERO ──────────────────────────────────────────────────── */
+/* A photographic panel: the skyline at the bottom, a black scrim
+   over it for legibility, then the same 48px grid the rest of the
+   site uses, then the copy. All of it rides on .hero's own
+   background — in a multi-layer background the FIRST layer listed
+   paints topmost, and element content always paints above every
+   background layer, so the stack falls out for free. No
+   pseudo-elements, no z-index, nothing to tangle with the fixed nav.
+
+   The grid layers are shifted up by --nav-height so their 48px tiles
+   stay in step with the body grid above and below: main's padding-top
+   puts this box at exactly --nav-height from the document top, and
+   everything above <main> is out of flow. */
 .hero {
+    /* A dark surface in both themes: re-point the tokens locally and
+       every inherited rule follows — h1 (--headers), .eyebrow and
+       .hero p (--text-muted), the CTA tooltip (--headers on --bg). */
+    --headers:    #F7F4F3;
+    --text:       #F7F4F3;
+    --text-muted: rgba(247, 244, 243, 0.88);
+    --bg:         #141414;
+    /* The brand red is unusable on a dark surface — #E71D36 lands at
+       2.9:1 on the CTA. The brand yellow clears it comfortably:
+       8.4:1 on the CTA, 6.5:1 on the italic "logic", measured against
+       the actual photo pixels under the scrim. */
+    --highlight:  var(--yellow);
+
     padding-top: clamp(110px, 14vw, 150px);
     padding-bottom: 80px;
+
+    background-color: #141414;   /* holds the panel while the photo loads */
+    background-image:
+        linear-gradient(to right,  var(--hero-grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--hero-grid-line) 1px, transparent 1px),
+        var(--hero-scrim),
+        url("../images/nrb%20skyline%20hero%20image.webp");
+    background-size:     48px 48px, 48px 48px, 100% 100%, cover;
+    background-position: 0 calc(-1 * var(--nav-height)),
+                         0 calc(-1 * var(--nav-height)),
+                         0 0,
+                         var(--hero-focus);
+    background-repeat:   repeat, repeat, no-repeat, no-repeat;
 }
 
 .hero h1 {
@@ -391,6 +465,11 @@ h2 {
     color: var(--text-muted);
     margin-bottom: 2rem;
 }
+
+/* Insurance over the brighter cloud areas of the photo. */
+.hero .eyebrow,
+.hero h1,
+.hero p { text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5); }
 
 /* Subpage hero — every inner page (work, contact, legal, shop,
    tools, services, …) opens with this so the whole site shares one
@@ -541,7 +620,14 @@ h2 {
     width: 44px;
     height: 44px;
     flex-shrink: 0;
+    display: grid;
+    place-items: center;
 }
+
+/* The Sprite's eyes and mouth are sized in absolute px, so scale the
+   whole character — resizing the box alone would leave a 34px face
+   floating inside a 44px circle. */
+.sprite-preview__figure .sprite-character { transform: scale(1.29); }
 
 .sprite-preview__text {
     font-family: var(--font-body);
@@ -934,7 +1020,18 @@ footer {
     #hamburger { display: flex; }
 
     nav { padding: 0 1.2rem; }
-    .hero { padding-top: clamp(96px, 18vw, 130px); }
+
+    .hero {
+        padding-top: clamp(96px, 18vw, 130px);
+        /* Copy runs full width down here (see the 900px rule), so the
+           left-weighted ramp would leave the line ends under-scrimmed.
+           Go vertical and flatten it out instead. Swapping the token is
+           the whole override — the four-layer background is written once. */
+        --hero-scrim: linear-gradient(180deg,
+                          rgba(9, 11, 14, 0.84) 0%,
+                          rgba(9, 11, 14, 0.76) 55%,
+                          rgba(9, 11, 14, 0.88) 100%);
+    }
 
     .grid { grid-template-columns: 1fr; }
     .service-card { border-right: none; border-bottom: 1px solid var(--border); }
