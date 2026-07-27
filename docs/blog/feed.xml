@@ -6,7 +6,14 @@
     <atom:link href="https://beben.design/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Essays and build logs from Beben Design: design decisions, engineering trade-offs, and tools we shipped, written from inside real projects.</description>
     <language>en</language>
-    <lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 27 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Codex - an offline library that answers in milliseconds</title>
+      <link>https://beben.design/blog/codex-offline-library/</link>
+      <guid>https://beben.design/blog/codex-offline-library/</guid>
+      <pubDate>Mon, 27 Jul 2026 00:00:00 +0000</pubDate>
+      <description>We had 180GB of offline archives that worked and were almost unusable. Codex rebuilds them into plain SQLite, 25x smaller, searchable in single-digit milliseconds, readable by any language. What it is, why it exists, and how it was built.</description>
+    </item>
     <item>
       <title>Beben Arcade - twelve games that work with the wifi off</title>
       <link>https://beben.design/blog/beben-arcade-offline/</link>

@@ -1,0 +1,99 @@
+<svg viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A stack of offline archives narrowing into a single SQLite file, with a search box returning ranked results">
+  <defs>
+    <style>
+      .mono { font-family: 'IBM Plex Mono', Consolas, monospace; letter-spacing: 0.08em; }
+      .gray { fill: #8A8A8A; }
+      .gray-stroke { stroke: #8A8A8A; }
+      .red { fill: #D62828; }
+      .red-stroke { stroke: #D62828; }
+    </style>
+  </defs>
+
+  <!-- faint grid -->
+  <g class="gray-stroke" stroke-width="1" opacity="0.14">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200"/>
+    <path d="M150 0 V630 M300 0 V630 M450 0 V630 M600 0 V630 M750 0 V630 M900 0 V630 M1050 0 V630"/>
+  </g>
+
+  <!-- source archives: heavy stack -->
+  <text x="80" y="132" class="mono gray" font-size="17" opacity="0.75">SOURCE ARCHIVES</text>
+  <g class="gray-stroke" stroke-width="2" opacity="0.55">
+    <rect x="80" y="158" width="230" height="46"/>
+    <rect x="80" y="212" width="230" height="46"/>
+    <rect x="80" y="266" width="230" height="46"/>
+    <rect x="80" y="320" width="230" height="46"/>
+    <rect x="80" y="374" width="230" height="46"/>
+  </g>
+  <g class="mono gray" font-size="15" opacity="0.7">
+    <text x="100" y="187">wikipedia.zim</text>
+    <text x="100" y="241">ifixit.zim</text>
+    <text x="100" y="295">.zim</text>
+    <text x="100" y="349">.zim</text>
+    <text x="100" y="403">.zim</text>
+  </g>
+  <text x="80" y="452" class="mono gray" font-size="17" opacity="0.85">180GB &#183; READ-ONLY</text>
+
+  <!-- pipeline: four passes narrowing -->
+  <g class="gray-stroke" stroke-width="2" opacity="0.7">
+    <path d="M310 288 H370"/>
+  </g>
+  <g>
+    <rect x="370" y="196" width="200" height="188" class="gray-stroke" stroke-width="2.5" opacity="0.9"/>
+    <text x="392" y="232" class="mono red" font-size="17">BUILD</text>
+    <g class="mono gray" font-size="15" opacity="0.8">
+      <text x="392" y="266">0 &#183; train dict</text>
+      <text x="392" y="292">1 &#183; extract</text>
+      <text x="392" y="318">2 &#183; pagerank</text>
+      <text x="392" y="344">3 &#183; index</text>
+    </g>
+    <text x="392" y="372" class="mono gray" font-size="14" opacity="0.6">10 workers</text>
+  </g>
+
+  <!-- funnel to one file -->
+  <g class="red-stroke" stroke-width="2" opacity="0.85">
+    <path d="M570 288 H640"/>
+    <path d="M626 280 L640 288 L626 296"/>
+  </g>
+
+  <!-- the codex file -->
+  <g>
+    <rect x="640" y="212" width="220" height="156" class="gray-stroke" stroke-width="2.5" opacity="0.9"/>
+    <text x="662" y="248" class="mono red" font-size="17">codex.db</text>
+    <g class="mono gray" font-size="14" opacity="0.75">
+      <text x="662" y="278">doc &#183; redirect</text>
+      <text x="662" y="300">related &#183; zdict</text>
+      <text x="662" y="322">fts_quick</text>
+    </g>
+    <text x="662" y="352" class="mono gray" font-size="15" opacity="0.9">plain SQLite</text>
+  </g>
+  <text x="640" y="400" class="mono gray" font-size="16" opacity="0.85">133MB &#183; 25.6x SMALLER</text>
+
+  <!-- ranking formula -->
+  <text x="640" y="440" class="mono gray" font-size="15" opacity="0.65">rank = bm25 &#215; importance</text>
+
+  <!-- query overlay -->
+  <g class="gray-stroke" stroke-width="2" opacity="0.9">
+    <rect x="900" y="150" width="230" height="48"/>
+  </g>
+  <text x="920" y="180" class="mono gray" font-size="16">iphone 12 battery</text>
+  <text x="900" y="132" class="mono red" font-size="16">ALT + SPACE</text>
+
+  <!-- ranked results -->
+  <g class="gray-stroke" stroke-width="1.5" opacity="0.45">
+    <path d="M900 232 H1130 M900 276 H1130 M900 320 H1130 M900 364 H1130"/>
+  </g>
+  <g class="mono gray" font-size="14" opacity="0.8">
+    <text x="900" y="256">iPhone 12 Battery</text>
+    <text x="900" y="300">Battery Replacement</text>
+    <text x="900" y="344">Recognizing Cables</text>
+  </g>
+  <text x="900" y="400" class="mono red" font-size="16">4&#8211;10 ms</text>
+
+  <!-- offline note -->
+  <g class="gray-stroke" stroke-width="1.5" opacity="0.4" stroke-dasharray="6 6">
+    <path d="M880 105 V470"/>
+  </g>
+  <text x="900" y="452" class="mono gray" font-size="15" opacity="0.6">local daemon &#183; no network</text>
+
+  <text x="80" y="530" class="mono gray" font-size="17" opacity="0.7">no images &#183; no telemetry &#183; readable by any SQLite binding</text>
+</svg>

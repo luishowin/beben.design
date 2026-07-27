@@ -7,7 +7,6 @@ tags: engineering, games, offline
 hero_image: /assets/images/blog/beben-arcade-offline/hero.svg
 hero_alt: An arcade cabinet screen with a neon game grid inside, wired to a service worker cache
 featured: true
-pinned: true
 ---
 
 [Beben Arcade](/games/) is twelve small games living at one address: snake, 2048, blockfall, brick bash, wingbeat, mines, pixel dash, skystack, paddle duel, star swarm, sudoku, four in a row. You can install it to a home screen, put the phone in airplane mode, and every one of them still opens.
