@@ -83,14 +83,25 @@ document.documentElement.classList.add('js');
     if (prefersReduced) {
         revealEls.forEach((el) => el.classList.add('is-visible'));
     } else {
+        // Two thresholds on purpose. An element taller than about 6.7
+        // viewports can never reach a 0.15 ratio, so a long blog post body
+        // would sit at opacity 0 forever. Those reveal on any intersection
+        // instead; everything that fits on screen keeps the 15% behaviour.
         const revealObserver = new IntersectionObserver((entries, obs) => {
             entries.forEach((entry) => {
-                if (entry.isIntersecting) {
+                // rootBounds is null in some embedded contexts, so measure the
+                // viewport directly rather than trusting it.
+                const viewport = window.innerHeight || document.documentElement.clientHeight;
+                const tallerThanViewport = entry.boundingClientRect.height > viewport;
+                const ready = tallerThanViewport
+                    ? entry.isIntersecting
+                    : entry.intersectionRatio >= 0.15;
+                if (ready) {
                     entry.target.classList.add('is-visible');
                     obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15 });
+        }, { threshold: [0, 0.15] });
         revealEls.forEach((el) => revealObserver.observe(el));
     }
 
