@@ -1,0 +1,235 @@
+{
+  "_comment": [
+    "Registry for beben.design/tools/. Read by scripts/build_tools.py.",
+    "",
+    "Every entry renders a card on /tools/. Entries with status 'live' and no",
+    "'external_url' are also rendered into docs/<slug>/index.html from",
+    "content/tools/<slug>/ (body.html, tool.css, tool.js, optional vendor/*.js)",
+    "wrapped in scripts/templates/tool.html.",
+    "",
+    "Fields:",
+    "  slug              output folder under docs/ and the URL",
+    "  name              card title",
+    "  tag               card tag: Utility, Generator, or Arcade",
+    "  pillar            featured | private | design | business (grid grouping)",
+    "  status            live | soon",
+    "  description       card copy, one or two sentences",
+    "  external_url      set for cards that link somewhere already built (the arcade)",
+    "  banner            optional CSS url() for the visual card variant",
+    "  number            the [ TOOLS.nn ] label on the tool page",
+    "  h1                tool page headline; '|' becomes a line break and the",
+    "                    last segment is wrapped in the red highlight box",
+    "  lead              tool page intro paragraph",
+    "  meta_title        <title> and og:title",
+    "  meta_description  meta description and og:description",
+    "  specs             [label, value] or [label, value, 'accent'] rows",
+    "  toast             initial text of the toast element",
+    "",
+    "Copy rule from the README: no em dashes anywhere."
+  ],
+
+  "tools": [
+    {
+      "slug": "games",
+      "name": "Beben Arcade",
+      "tag": "Arcade",
+      "pillar": "featured",
+      "status": "live",
+      "external_url": "../games/",
+      "banner": "../assets/images/arcade-cover.webp",
+      "description": "Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.",
+      "card_open": "Insert coin &rarr;"
+    },
+    {
+      "slug": "qr-code-generator",
+      "name": "QR Code Generator",
+      "tag": "Generator",
+      "pillar": "featured",
+      "status": "live",
+      "number": "01",
+      "description": "Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.",
+      "h1": "QR Code|Generator",
+      "lead": "Paste any URL, plain text, phone number, or contact info and get a clean, scannable QR code instantly. No watermarks, no limits, no data leaves your browser.",
+      "meta_title": "QR Code Generator - Beben Design Tools",
+      "meta_description": "Generate clean, watermark-free QR codes. Export as SVG at 1000x1000px. Free browser tool by Beben Design: no server, no sign-up, works offline.",
+      "specs": [
+        ["Format", "SVG (vector, infinitely scalable)"],
+        ["Export size", "1000 x 1000 px", "accent"],
+        ["Watermark", "None"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "SVG copied to clipboard."
+    },
+
+    {
+      "slug": "contrast-grid",
+      "name": "Contrast Grid",
+      "tag": "Utility",
+      "pillar": "design",
+      "status": "live",
+      "number": "02",
+      "description": "Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.",
+      "h1": "Contrast|Grid",
+      "lead": "Most checkers test one pair at a time. Paste your entire palette and this one scores every combination against WCAG AA and AAA in a single matrix, so you can see which pairs are actually safe to ship.",
+      "meta_title": "Contrast Grid - WCAG Palette Checker - Beben Design Tools",
+      "meta_description": "Check every colour pair in your palette against WCAG AA and AAA at once. Free contrast matrix tool that runs entirely in your browser, no sign-up, works offline.",
+      "specs": [
+        ["Standard", "WCAG 2.1 contrast ratio"],
+        ["Thresholds", "AA 4.5, AA Large 3.0, AAA 7.0", "accent"],
+        ["Input", "Hex, RGB, or named colours"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "Copied to clipboard."
+    },
+    {
+      "slug": "colour-blindness-simulator",
+      "name": "Colour Blindness Simulator",
+      "tag": "Utility",
+      "pillar": "design",
+      "status": "soon",
+      "description": "Push an image or a palette through protanopia, deuteranopia, tritanopia, and achromatopsia."
+    },
+    {
+      "slug": "svg-cleaner",
+      "name": "SVG Cleaner",
+      "tag": "Utility",
+      "pillar": "design",
+      "status": "soon",
+      "description": "Strip the cruft Figma and Illustrator leave behind, round the decimals, and see the bytes you saved."
+    },
+    {
+      "slug": "favicon-forge",
+      "name": "Favicon Forge",
+      "tag": "Generator",
+      "pillar": "design",
+      "status": "soon",
+      "description": "One image in, every favicon size out, plus the web manifest and the exact link tags to paste."
+    },
+    {
+      "slug": "fluid-type-scale",
+      "name": "Fluid Type Calculator",
+      "tag": "Utility",
+      "pillar": "design",
+      "status": "soon",
+      "description": "Min and max viewport, min and max size, out comes one clamp() line that scales cleanly between them."
+    },
+    {
+      "slug": "dither-machine",
+      "name": "Dither Machine",
+      "tag": "Generator",
+      "pillar": "design",
+      "status": "live",
+      "number": "04",
+      "description": "Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.",
+      "h1": "Dither|Machine",
+      "lead": "The 1-bit look that made early Macintosh screens legible, applied to any image you drop in. Pick an algorithm, set the pixel scale, export a PNG. Your image is read straight off the disk and never uploaded.",
+      "meta_title": "Dither Machine - 1-Bit Image Dithering - Beben Design Tools",
+      "meta_description": "Convert any image to 1-bit dithered art with Atkinson, Floyd-Steinberg, or Bayer algorithms. Free browser tool, nothing uploaded, works offline.",
+      "specs": [
+        ["Algorithms", "Atkinson, Floyd-Steinberg, Bayer 4x4"],
+        ["Export", "PNG at the source pixel size", "accent"],
+        ["Upload", "None, the file is read locally"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "PNG exported."
+    },
+
+    {
+      "slug": "exif-stripper",
+      "name": "EXIF Viewer and Stripper",
+      "tag": "Utility",
+      "pillar": "private",
+      "status": "soon",
+      "description": "See the GPS coordinates, camera serial, and timestamps hidden in a photo, then download a clean copy."
+    },
+    {
+      "slug": "jwt-decoder",
+      "name": "JWT Decoder",
+      "tag": "Utility",
+      "pillar": "private",
+      "status": "soon",
+      "description": "Read the header, payload, and expiry of a token without pasting it into somebody else's server."
+    },
+    {
+      "slug": "checksum-verifier",
+      "name": "Checksum Verifier",
+      "tag": "Utility",
+      "pillar": "private",
+      "status": "soon",
+      "description": "Hash a downloaded file with SHA-256 or SHA-512 and compare it to the published value."
+    },
+    {
+      "slug": "text-diff",
+      "name": "Text Diff",
+      "tag": "Utility",
+      "pillar": "private",
+      "status": "soon",
+      "description": "Compare two revisions of a contract or a copy deck side by side, without uploading either one."
+    },
+    {
+      "slug": "passphrase-generator",
+      "name": "Passphrase Generator",
+      "tag": "Generator",
+      "pillar": "private",
+      "status": "soon",
+      "description": "Diceware passphrases you can actually remember, drawn from your browser's cryptographic randomness."
+    },
+
+    {
+      "slug": "character-counter",
+      "name": "Does It Fit?",
+      "tag": "Utility",
+      "pillar": "business",
+      "status": "live",
+      "number": "03",
+      "description": "One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.",
+      "h1": "Does It|Fit?",
+      "lead": "Every platform truncates at a different place and none of them warn you first. Type once and watch the counts against title tags, meta descriptions, social posts, and subject lines all at the same time.",
+      "meta_title": "Does It Fit? Character Counter for Every Platform - Beben Design Tools",
+      "meta_description": "Count characters against title tag, meta description, X, LinkedIn, and email subject limits at once. Free browser tool, no sign-up, works offline.",
+      "specs": [
+        ["Tracks", "9 platform limits at once"],
+        ["Counts", "Characters, words, reading time", "accent"],
+        ["Warning", "At 90 percent of each limit"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "Copied to clipboard."
+    },
+    {
+      "slug": "invoice-builder",
+      "name": "Invoice Builder",
+      "tag": "Generator",
+      "pillar": "business",
+      "status": "soon",
+      "description": "Line items in, a properly typeset invoice out. Print it straight to PDF, no account and no watermark."
+    },
+    {
+      "slug": "freelance-rate-calculator",
+      "name": "Freelance Rate Calculator",
+      "tag": "Utility",
+      "pillar": "business",
+      "status": "soon",
+      "description": "Target income, overheads, holidays, and real billable days, worked back into the rate you should quote."
+    },
+    {
+      "slug": "screenshot-framer",
+      "name": "Screenshot Framer",
+      "tag": "Generator",
+      "pillar": "business",
+      "status": "soon",
+      "description": "Drop a screenshot, add padding, a backdrop, rounded corners, and a shadow. Export something worth posting."
+    },
+    {
+      "slug": "barcode-generator",
+      "name": "Barcode Generator",
+      "tag": "Generator",
+      "pillar": "business",
+      "status": "soon",
+      "description": "EAN-13 and Code 128 barcodes as clean vectors, for stock labels, shelf tags, and small inventories."
+    }
+  ]
+}

@@ -271,7 +271,7 @@ const SpriteChat = (() => {
     tools: {
       patterns: [/\b(tools?|framework|tech|stack|react|html|css|framer|wordpress)\b/i],
       responses: [
-        { text: "Two answers! The studio builds with HTML/CSS, React JS, Framer, and WordPress. And there's also a page of free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('tools')\">Tools</span> you can use right now -- like the QR code generator.", emotion: "happy" },
+        { text: "Two answers! The studio builds with HTML/CSS, React JS, Framer, and WordPress. And there's a whole page of free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('tools')\">Tools</span> you can use right now: a QR code generator, a contrast grid, a dither machine, and more. Every one of them downloads as a single file that works offline.", emotion: "happy" },
       ]
     },
     shop: {

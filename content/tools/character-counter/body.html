@@ -1,0 +1,50 @@
+<!-- Input -->
+<label class="field-label" for="textInput">// Input - Your Copy</label>
+<textarea
+    id="textInput"
+    class="tool-textarea"
+    rows="6"
+    spellcheck="true"
+    placeholder="Start typing and every limit below updates at once."
+></textarea>
+
+<!-- Stats -->
+<div class="stat-row" id="stats">
+    <div class="stat"><span class="stat-value" id="statChars">0</span><span class="stat-label">Chars</span></div>
+    <div class="stat"><span class="stat-value" id="statNoSpace">0</span><span class="stat-label">No spaces</span></div>
+    <div class="stat"><span class="stat-value" id="statWords">0</span><span class="stat-label">Words</span></div>
+    <div class="stat"><span class="stat-value" id="statSentences">0</span><span class="stat-label">Sentences</span></div>
+    <div class="stat"><span class="stat-value" id="statRead">0s</span><span class="stat-label">Read time</span></div>
+</div>
+
+<!-- Limits -->
+<div class="preview-label">
+    <span>// Against Every Limit</span>
+    <span class="preview-status" id="fitStatus">READY</span>
+</div>
+<div class="frame frame--flush">
+    <ul class="limit-list" id="limitList"></ul>
+</div>
+
+<!-- Truncation preview -->
+<div class="preview-label"><span>// What Gets Cut</span></div>
+<div class="frame" id="cutFrame">
+    <p class="cut-name" id="cutName">SEO title tag</p>
+    <p class="cut-note" id="cutNote"></p>
+    <p class="cut-preview" id="cutPreview"><span class="cut-empty">Nothing to show yet.</span></p>
+</div>
+
+<!-- Actions -->
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" id="trimBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Trimmed
+    </button>
+    <button type="button" class="btn btn-secondary" id="clearBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear
+    </button>
+</div>
+
+<p class="hint">Counts are characters, not bytes. An emoji reads as one character here,
+though some platforms bill it as two.</p>

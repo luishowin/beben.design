@@ -1,0 +1,24 @@
+/* The QR itself stays black on off-white in both themes: scanners need
+   the contrast, and inverted codes fail on a lot of phone cameras. */
+.qr-frame {
+    background: #F7F4F3;
+    padding: 2rem;
+    min-height: 220px;
+}
+
+.qr-frame svg {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+}
+
+.qr-frame svg rect { fill: #F7F4F3 !important; }
+.qr-frame svg path { fill: #141414 !important; }
+
+.qr-error {
+    font-size: 0.75rem;
+    color: #141414;
+    text-align: center;
+    line-height: 1.7;
+    max-width: 26ch;
+}

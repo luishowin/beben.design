@@ -1,0 +1,42 @@
+<!-- Input -->
+<label class="field-label" for="urlInput">// Input - URL or Text</label>
+<input
+    type="text"
+    id="urlInput"
+    class="tool-input"
+    placeholder="https://beben.design"
+    value="https://beben.design"
+    autocomplete="off"
+    spellcheck="false"
+>
+
+<!-- Error correction -->
+<div class="seg-group">
+    <span class="field-label" id="eccLabel">// Error Correction Level</span>
+    <div class="seg" id="eccControl" role="group" aria-labelledby="eccLabel">
+        <button type="button" class="seg-btn active" data-value="L" aria-pressed="true">L - 7%</button>
+        <button type="button" class="seg-btn" data-value="M" aria-pressed="false">M - 15%</button>
+        <button type="button" class="seg-btn" data-value="Q" aria-pressed="false">Q - 25%</button>
+        <button type="button" class="seg-btn" data-value="H" aria-pressed="false">H - 30%</button>
+    </div>
+    <p class="hint">Higher levels add redundancy. Use H if you plan to overlay a logo on the code.</p>
+</div>
+
+<!-- Preview -->
+<div class="preview-label">
+    <span>// Preview</span>
+    <span class="preview-status" id="previewStatus">READY</span>
+</div>
+<div class="frame frame--center qr-frame" id="qrFrame"></div>
+
+<!-- Actions -->
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" id="downloadBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export SVG
+    </button>
+    <button type="button" class="btn btn-secondary" id="copyBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy SVG Code
+    </button>
+</div>

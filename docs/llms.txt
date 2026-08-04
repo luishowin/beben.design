@@ -13,9 +13,13 @@ Capabilities span brand identity and visual design, UX research, UI design for w
 
 ## Tools
 
-- [Free Web Tools](https://beben.design/tools/): A growing collection of single-purpose, browser-native utilities — no accounts, no server calls, no data collection. Downloadable as standalone HTML files that run offline.
-- [QR Code Generator](https://beben.design/qr-code-generator/): Free, watermark-free SVG QR code generator. Runs entirely client-side; exportable as SVG or downloadable as a self-contained HTML file.
-- [Beben Arcade](https://beben.design/games/): Installable, offline-capable PWA mini-game arcade — eight vanilla-JS 8-bit games (Snake, 2048, Blockfall, Brick Bash, Wingbeat, Mines, Pixel Dash, Skystack). No ads, no tracking.
+- [Free Web Tools](https://beben.design/tools/): A growing collection of single-purpose, browser-native utilities: no accounts, no server calls, no data collection. Every tool is downloadable as a standalone HTML file that runs offline forever.
+- [Beben Arcade](https://beben.design/games/): Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.
+- [QR Code Generator](https://beben.design/qr-code-generator/): Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.
+- [Contrast Grid](https://beben.design/contrast-grid/): Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.
+- [Dither Machine](https://beben.design/dither-machine/): Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.
+- [Does It Fit?](https://beben.design/character-counter/): One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.
+- In development: Colour Blindness Simulator, SVG Cleaner, Favicon Forge, Fluid Type Calculator, EXIF Viewer and Stripper, JWT Decoder, Checksum Verifier, Text Diff, Passphrase Generator, Invoice Builder, Freelance Rate Calculator, Screenshot Framer, Barcode Generator.
 
 ## Blog
 

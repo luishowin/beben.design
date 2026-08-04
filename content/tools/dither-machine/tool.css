@@ -1,0 +1,20 @@
+#canvasFrame { padding: 1rem; min-height: 220px; }
+
+#outputCanvas {
+    max-width: 100%;
+    max-height: 460px;
+    height: auto;
+    display: block;
+    /* Keep the dither crisp: browsers must not smooth these pixels. */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.dropzone.has-file p { color: var(--text); }
+.dropzone .file-meta {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+}

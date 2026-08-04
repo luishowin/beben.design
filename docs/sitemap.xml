@@ -22,12 +22,6 @@
   </url>
 
   <url>
-    <loc>https://beben.design/tools/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
     <loc>https://beben.design/shop/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
@@ -58,10 +52,12 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- tools:start (managed by scripts/build_tools.py) -->
+
   <url>
-    <loc>https://beben.design/qr-code-generator/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://beben.design/tools/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
@@ -69,6 +65,32 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+
+  <url>
+    <loc>https://beben.design/qr-code-generator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/contrast-grid/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/dither-machine/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/character-counter/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- tools:end -->
 
   <!-- blog:start (managed by scripts/build_blog.py) -->
 

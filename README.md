@@ -14,14 +14,17 @@ docs/                  the published site
   kilimo-pal/ trek-watch/ rev-log/         project previews (noindex until real case studies ship)
   blog/                GENERATED blog pages + feed.xml (never hand-edit; see The blog)
   legal/ privacy/ credits/ 404.html        support pages
-  qr-code-generator/   standalone downloadable tool (intentionally self-contained)
+  qr-code-generator/ contrast-grid/ character-counter/ dither-machine/
+                       GENERATED tool pages (never hand-edit; see The tools)
   games/               Beben Arcade — standalone offline PWA, 12 games (see The arcade)
   redoubt/ kemmy-spa-concierge-preview/    client previews (intentionally standalone)
   assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid, FAQ)
   assets/css/sprite.css + assets/JS/sprite.js   the Sprite chat widget
   assets/JS/index.js   theme, mobile menu, reveal animation, FAQ accordion
 content/blog/          blog posts as markdown (the SOURCE; not published)
+content/tools.json + content/tools/    tool registry and per-tool sources (the SOURCE)
 scripts/build_blog.py  renders content/blog/ into docs/blog/ (+ templates in scripts/templates/)
+scripts/build_tools.py renders content/tools/ into docs/<slug>/ (see The tools)
 cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of the site)
 ```
 
@@ -84,13 +87,73 @@ Upgrade ladder, when the team grows into it (design intent, not built yet):
 3. **Community/network features** would be a separate app on a subdomain;
    GitHub Pages stays the publishing layer.
 
+## The tools
+
+[beben.design/tools](https://beben.design/tools) is a collection of small,
+single-purpose utilities grouped into three pillars: **private by default**
+(the offline guarantee is the product), **design toolkit**, and **run your
+business**. The promise on the page is exact and load-bearing: every tool is
+**one HTML file with zero external requests**, so a downloaded copy works
+offline forever. Nothing may load from a CDN, and no tool page may reference a
+relative path.
+
+Tool pages are generated, on the same model as the blog. **Never hand-edit
+`docs/<tool-slug>/index.html`** (the next build overwrites it).
+
+```
+content/tools.json              the registry: one entry per card
+content/tools/<slug>/
+  body.html                     inner markup of the tool column   (required)
+  tool.css                      scoped styles                     (optional)
+  tool.js                       the logic, an IIFE using Tool.*   (optional)
+  vendor/*.js + vendor/*.txt    third-party libs + their licence  (optional)
+scripts/templates/tool.html     the shared shell for every tool page
+scripts/build_tools.py          the generator
+```
+
+**To add a tool:**
+
+1. Add an entry to `content/tools.json`. `status: "soon"` is enough to put a
+   coming-soon card on the page; nothing else is needed yet.
+2. When you build it, flip it to `status: "live"`, fill in `number`, `h1`,
+   `lead`, `meta_title`, `meta_description`, and `specs`, then write
+   `content/tools/<slug>/body.html` plus its `tool.css` and `tool.js`.
+3. Run `py scripts/build_tools.py` (no dependencies). It renders the page and
+   refreshes all four places the tool list is mirrored: the grid in
+   `docs/tools/index.html`, the tools block of `docs/sitemap.xml`, the
+   `## Tools` section of `docs/llms.txt`, and `## The tools` in
+   `docs/sprite.md`. It warns about em dashes and stale folders.
+4. Review, commit, push.
+
+The shell provides the tokens (mirrored from `index.css`), nav, footer, theme
+toggle, and a set of primitives so `tool.css` stays small: `.field-label`,
+`.tool-input`, `.tool-textarea`, `.seg`/`.seg-btn`, `.frame`, `.btn-group`,
+`.dropzone`, `.range-row`, `.hint`. It also exposes a `Tool` runtime:
+`Tool.$`, `Tool.toast`, `Tool.copy`, `Tool.download`, `Tool.downloadBlob`,
+`Tool.segmented`.
+
+Three rules keep the offline promise honest:
+
+1. **No external requests.** Vendor third-party code into
+   `content/tools/<slug>/vendor/` with a `.txt` licence note beside it, which
+   the generator inlines as a comment. Google Fonts is the one exception: it is
+   progressive enhancement behind a full system fallback stack, so an offline
+   file is plainer but never broken.
+2. **Absolute URLs only** in nav, footer, and meta. A relative `href` resolves
+   against the user's Downloads folder once the file leaves the site.
+3. **Keep the `execCommand` clipboard fallback.** A file opened over `file://`
+   is not a secure context, so `navigator.clipboard` is unavailable there.
+
+Nav, footer, or token changes on the site must be mirrored in
+`scripts/templates/tool.html`, then rebuilt.
+
 ## Sprite (the chat widget)
 
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=3.6">
-<script src="../assets/JS/sprite.js?v=3.6"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=3.7">
+<script src="../assets/JS/sprite.js?v=3.7"></script>
 ```
 
 Bump the `?v=` on both whenever either file changes, or returning visitors

@@ -1,0 +1,76 @@
+<!-- Source -->
+<span class="field-label">// Input - Source Image</span>
+<div class="dropzone" id="dropzone" role="button" tabindex="0"
+     aria-label="Choose an image, or drop one here">
+    <p><strong>Drop an image here</strong><br>
+    or click to browse. You can paste one too.</p>
+</div>
+<input type="file" id="fileInput" accept="image/*" class="visually-hidden">
+
+<!-- Algorithm -->
+<div class="seg-group">
+    <span class="field-label" id="algoLabel">// Algorithm</span>
+    <div class="seg" id="algoControl" role="group" aria-labelledby="algoLabel">
+        <button type="button" class="seg-btn active" data-value="atkinson" aria-pressed="true">Atkinson</button>
+        <button type="button" class="seg-btn" data-value="floyd" aria-pressed="false">Floyd</button>
+        <button type="button" class="seg-btn" data-value="bayer" aria-pressed="false">Bayer</button>
+        <button type="button" class="seg-btn" data-value="threshold" aria-pressed="false">None</button>
+    </div>
+    <p class="hint" id="algoHint">Atkinson is the classic Macintosh look: high contrast,
+    lots of white, detail sacrificed for punch.</p>
+</div>
+
+<!-- Pixel scale -->
+<label class="field-label" for="scaleRange">// Pixel Size</label>
+<div class="range-row">
+    <input type="range" id="scaleRange" min="1" max="12" step="1" value="3">
+    <span class="range-value" id="scaleValue">3x</span>
+</div>
+
+<!-- Contrast -->
+<label class="field-label" for="contrastRange">// Contrast</label>
+<div class="range-row">
+    <input type="range" id="contrastRange" min="-100" max="100" step="1" value="0">
+    <span class="range-value" id="contrastValue">0</span>
+</div>
+
+<!-- Brightness -->
+<label class="field-label" for="brightRange">// Brightness</label>
+<div class="range-row">
+    <input type="range" id="brightRange" min="-100" max="100" step="1" value="0">
+    <span class="range-value" id="brightValue">0</span>
+</div>
+
+<div class="seg-group">
+    <span class="field-label" id="invertLabel">// Invert</span>
+    <div class="seg" id="invertControl" role="group" aria-labelledby="invertLabel">
+        <button type="button" class="seg-btn active" data-value="off" aria-pressed="true">Black on White</button>
+        <button type="button" class="seg-btn" data-value="on" aria-pressed="false">White on Black</button>
+    </div>
+</div>
+
+<!-- Preview -->
+<div class="preview-label">
+    <span>// Preview</span>
+    <span class="preview-status" id="ditherStatus">NO IMAGE</span>
+</div>
+<div class="frame frame--center" id="canvasFrame">
+    <p class="frame-empty" id="canvasEmpty">Drop an image above and it renders here.<br>
+    Nothing is uploaded: the file is read straight off your disk.</p>
+    <canvas id="outputCanvas" hidden></canvas>
+</div>
+
+<!-- Actions -->
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" id="exportBtn" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export PNG
+    </button>
+    <button type="button" class="btn btn-secondary" id="clearBtn" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear
+    </button>
+</div>
+
+<p class="hint" id="sizeNote">Images wider than 2000px are scaled down first, so the
+browser stays responsive on large photos.</p>

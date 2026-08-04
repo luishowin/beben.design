@@ -60,6 +60,19 @@ Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
 - Neopolaris: a full website design and build for a Nairobi startup, live
   at neopolaris.ai.
 
+## The tools
+
+- The free tools at /tools/ all run entirely in the browser: no accounts,
+  no uploads, no data collection. Each one can be downloaded as a single
+  HTML file that keeps working offline forever.
+- Live now:
+  - Beben Arcade (/games/): Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.
+  - QR Code Generator (/qr-code-generator/): Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.
+  - Contrast Grid (/contrast-grid/): Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.
+  - Dither Machine (/dither-machine/): Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.
+  - Does It Fit? (/character-counter/): One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.
+- In development: Colour Blindness Simulator, SVG Cleaner, Favicon Forge, Fluid Type Calculator, EXIF Viewer and Stripper, JWT Decoder, Checksum Verifier, Text Diff, Passphrase Generator, Invoice Builder, Freelance Rate Calculator, Screenshot Framer, Barcode Generator.
+
 ## The blog
 
 - The studio writes essays and build logs at /blog/: design decisions,
@@ -72,9 +85,6 @@ Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
 
 ## Extras worth knowing
 
-- The free tools at /tools/ run entirely in the browser: no accounts, no
-  data collection. Each can be downloaded as a single HTML file that works
-  offline forever.
 - The shop launches in 2026 with UI kits, templates, icon sets, and print
   assets. The waitlist gets access 48 hours before the public.
 - The footer coordinates 1°16'S 36°48'E point to Westlands, Nairobi, where

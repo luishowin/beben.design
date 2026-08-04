@@ -1,0 +1,11 @@
+qrcode-generator v1.4.4
+Copyright (c) 2009 Kazuhiko Arase
+Licensed under the MIT License.
+https://github.com/kazuhikoarase/qrcode-generator
+
+Vendored verbatim from
+https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js
+sha256 164fc2c1c9eaf0a03aa8dfdb855e82e41a5c6922fbad8bb3238116207e26bef7
+
+It used to load from that CDN at runtime, which quietly broke the promise
+that a downloaded copy of this tool works offline. It is inlined now.

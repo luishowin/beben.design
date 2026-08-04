@@ -1,0 +1,78 @@
+<!-- Palette input -->
+<label class="field-label" for="paletteInput">// Input - One colour per line</label>
+<textarea
+    id="paletteInput"
+    class="tool-textarea"
+    rows="7"
+    spellcheck="false"
+    autocomplete="off"
+    placeholder="#141414 Ink&#10;#f5f5f5 Paper&#10;#E71D36 Signal"
+></textarea>
+<p class="hint" style="margin-top:-1rem;margin-bottom:1.5rem;">
+    Hex, rgb(), hsl(), or a CSS colour name. Add a label after the value and it
+    shows up in the headers.
+</p>
+
+<!-- Text size -->
+<div class="seg-group">
+    <span class="field-label" id="sizeLabel">// Text Size Being Judged</span>
+    <div class="seg" id="sizeControl" role="group" aria-labelledby="sizeLabel">
+        <button type="button" class="seg-btn active" data-value="normal" aria-pressed="true">Normal</button>
+        <button type="button" class="seg-btn" data-value="large" aria-pressed="false">Large / Bold</button>
+    </div>
+    <p class="hint">Large means 24px and up, or 18.66px and up when bold. It gets an
+    easier ride: AA drops to 3.0 and AAA to 4.5.</p>
+</div>
+
+<!-- Matrix -->
+<div class="preview-label">
+    <span>// Matrix - Rows Are Text, Columns Are Background</span>
+    <span class="preview-status" id="gridStatus">READY</span>
+</div>
+<div class="frame frame--flush" id="gridFrame">
+    <div class="grid-scroll" id="gridScroll"></div>
+</div>
+
+<!-- Detail -->
+<div class="preview-label"><span>// Selected Pair</span></div>
+<div class="frame frame--center" id="detailFrame">
+    <p class="frame-empty" id="detailEmpty">Click any cell to preview that pair at real text sizes.</p>
+    <div class="detail" id="detail" hidden>
+        <div class="detail-swatch" id="detailSwatch">
+            <span class="detail-sample-lg">Large text, 24px</span>
+            <span class="detail-sample-sm">Normal body text at 16px, the size most copy actually ships at.</span>
+        </div>
+        <div class="detail-meta">
+            <div class="spec-row">
+                <span class="spec-label">Pair</span>
+                <span class="spec-value" id="detailPair">-</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Ratio</span>
+                <span class="spec-value accent" id="detailRatio">-</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">AA</span>
+                <span class="spec-value" id="detailAA">-</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">AAA</span>
+                <span class="spec-value" id="detailAAA">-</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" id="copyBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Markdown
+    </button>
+    <button type="button" class="btn btn-secondary" id="resetBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Reset Palette
+    </button>
+</div>
+
+<p class="hint" id="summary">Loading the sample palette.</p>

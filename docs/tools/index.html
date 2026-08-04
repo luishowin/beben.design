@@ -14,13 +14,13 @@
     <meta property="og:url" content="https://beben.design/tools/">
     <meta property="og:title" content="Tools | Beben Design - Free Web Tools">
     <meta property="og:description" content="Free, offline-capable browser tools. Run online or download and use locally.">
-    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+    <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://beben.design/tools/">
     <meta property="twitter:title" content="Tools | Beben Design - Free Web Tools">
     <meta property="twitter:description" content="Free, offline-capable browser tools. Run online or download and use locally.">
-    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
+    <meta property="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <script type="application/ld+json">
     {
@@ -42,7 +42,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/index.css">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.6">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.7">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -53,11 +53,10 @@
            TOOLS PAGE — scoped additions only.
            Tokens, nav, footer, page-hero, reveal from index.css.
 
-           To add a tool: duplicate an <article class="tool-card">
-           block, update the tag, title, description, and the two
-           footer links (open + download). The grid reflows.
-           For an unreleased tool use <article class="tool-card
-           tool-card--soon"> and a plain footer span.
+           The card grid between the tools:start / tools:end markers
+           below is GENERATED. To add a tool, add an entry to
+           content/tools.json and run  py scripts/build_tools.py
+           Hand edits inside those markers are overwritten.
         ───────────────────────────────────────────────────────── */
 
         .feedback-line {
@@ -73,6 +72,32 @@
         }
 
         .feedback-line a:hover { opacity: 0.7; }
+
+        /* ── Pillar groups — each answers a different question ── */
+        .tool-group + .tool-group { margin-top: 3.5rem; }
+
+        .group-head {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .group-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--headers);
+            margin-bottom: 0.4rem;
+        }
+
+        .group-note {
+            font-size: 0.85rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+            max-width: 62ch;
+        }
 
         /* ── Tool grid — same DNA as the homepage service grid ── */
         .tools-grid {
@@ -296,73 +321,260 @@
             <span class="eyebrow" data-reveal style="--i:0">The toolbox</span>
             <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Available tools</h2>
 
-            <div class="tools-grid">
+            <!-- tools:start (managed by scripts/build_tools.py) -->
 
-                <article class="tool-card tool-card--visual" data-reveal style="--i:2">
-                    <a href="../games/" class="card-banner" aria-label="Open the Beben Arcade">
-                        <span class="card-banner-inner"></span>
-                    </a>
-                    <a href="../games/" class="card-body">
-                        <span class="card-tag">// Arcade</span>
-                        <h3>Beben Arcade</h3>
-                        <p>Eight tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.</p>
-                    </a>
-                    <div class="card-footer">
-                        <a href="../games/" class="card-open">Insert coin →</a>
-                    </div>
-                </article>
+            <div class="tool-group">
+                <div class="group-head" data-reveal style="--i:0">
+                    <h3 class="group-title">Featured</h3>
+                    <p class="group-note">The two that get opened most.</p>
+                </div>
+                <div class="tools-grid">
+                    <article class="tool-card tool-card--visual" data-reveal style="--i:1">
+                        <a href="../games/" class="card-banner" aria-label="Open Beben Arcade">
+                            <span class="card-banner-inner"></span>
+                        </a>
+                        <a href="../games/" class="card-body">
+                            <span class="card-tag">// Arcade</span>
+                            <h3>Beben Arcade</h3>
+                            <p>Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.</p>
+                        </a>
+                        <div class="card-footer">
+                            <a href="../games/" class="card-open">Insert coin &rarr;</a>
+                        </div>
+                    </article>
 
-                <article class="tool-card" data-reveal style="--i:2">
-                    <a href="../qr-code-generator/" class="card-body">
-                        <span class="card-tag">// Generator</span>
-                        <h3>QR Code Generator</h3>
-                        <p>Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.</p>
-                    </a>
-                    <div class="card-footer">
-                        <a href="../qr-code-generator/" class="card-open">Open tool ↗</a>
-                        <a href="../qr-code-generator/index.html"
-                           class="card-download"
-                           download="beben-qr-generator.html"
-                           title="Download as standalone HTML file">↓ .HTML</a>
-                    </div>
-                </article>
-
-                <article class="tool-card tool-card--soon" data-reveal style="--i:2">
-                    <div class="card-body">
-                        <span class="card-tag">// Utility</span>
-                        <h3>Colour Contrast Checker</h3>
-                        <p>Paste two hex values, get an instant WCAG AA/AAA pass/fail with contrast ratio.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-open">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="tool-card tool-card--soon" data-reveal style="--i:3">
-                    <div class="card-body">
-                        <span class="card-tag">// Utility</span>
-                        <h3>CSS Unit Converter</h3>
-                        <p>px ↔ rem ↔ em ↔ vw. Set your base font size, convert any value in real time.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-open">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="tool-card tool-card--soon" data-reveal style="--i:3">
-                    <div class="card-body">
-                        <span class="card-tag">// Generator</span>
-                        <h3>Placeholder Image Generator</h3>
-                        <p>Generate sized placeholder images with custom colours and labels. No CDN dependency.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-open">Coming soon</span>
-                    </div>
-                </article>
-
+                    <article class="tool-card" data-reveal style="--i:2">
+                        <a href="../qr-code-generator/" class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>QR Code Generator</h3>
+                            <p>Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.</p>
+                        </a>
+                        <div class="card-footer">
+                            <a href="../qr-code-generator/" class="card-open">Open tool &nearr;</a>
+                            <a href="../qr-code-generator/index.html"
+                               class="card-download"
+                               download="beben-qr-code-generator.html"
+                               title="Download as a standalone HTML file">&darr; .HTML</a>
+                        </div>
+                    </article>
+                </div>
             </div>
 
-            <p class="tools-note" data-reveal style="--i:4"><em>More tools shipping soon. Each one built to solve a real workflow problem, not to pad the list.</em></p>
+            <div class="tool-group">
+                <div class="group-head" data-reveal style="--i:0">
+                    <h3 class="group-title">Private by default</h3>
+                    <p class="group-note">Nothing you paste, drop, or type into these ever leaves your device.</p>
+                </div>
+                <div class="tools-grid">
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:1">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>EXIF Viewer and Stripper</h3>
+                            <p>See the GPS coordinates, camera serial, and timestamps hidden in a photo, then download a clean copy.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:2">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>JWT Decoder</h3>
+                            <p>Read the header, payload, and expiry of a token without pasting it into somebody else&#x27;s server.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:3">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Checksum Verifier</h3>
+                            <p>Hash a downloaded file with SHA-256 or SHA-512 and compare it to the published value.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:4">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Text Diff</h3>
+                            <p>Compare two revisions of a contract or a copy deck side by side, without uploading either one.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:5">
+                        <div class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>Passphrase Generator</h3>
+                            <p>Diceware passphrases you can actually remember, drawn from your browser&#x27;s cryptographic randomness.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <div class="group-head" data-reveal style="--i:0">
+                    <h3 class="group-title">Design toolkit</h3>
+                    <p class="group-note">The utilities we reach for on client work, rebuilt without the sign-up wall.</p>
+                </div>
+                <div class="tools-grid">
+                    <article class="tool-card" data-reveal style="--i:1">
+                        <a href="../contrast-grid/" class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Contrast Grid</h3>
+                            <p>Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.</p>
+                        </a>
+                        <div class="card-footer">
+                            <a href="../contrast-grid/" class="card-open">Open tool &nearr;</a>
+                            <a href="../contrast-grid/index.html"
+                               class="card-download"
+                               download="beben-contrast-grid.html"
+                               title="Download as a standalone HTML file">&darr; .HTML</a>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:2">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Colour Blindness Simulator</h3>
+                            <p>Push an image or a palette through protanopia, deuteranopia, tritanopia, and achromatopsia.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:3">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>SVG Cleaner</h3>
+                            <p>Strip the cruft Figma and Illustrator leave behind, round the decimals, and see the bytes you saved.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:4">
+                        <div class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>Favicon Forge</h3>
+                            <p>One image in, every favicon size out, plus the web manifest and the exact link tags to paste.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:5">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Fluid Type Calculator</h3>
+                            <p>Min and max viewport, min and max size, out comes one clamp() line that scales cleanly between them.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card" data-reveal style="--i:6">
+                        <a href="../dither-machine/" class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>Dither Machine</h3>
+                            <p>Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.</p>
+                        </a>
+                        <div class="card-footer">
+                            <a href="../dither-machine/" class="card-open">Open tool &nearr;</a>
+                            <a href="../dither-machine/index.html"
+                               class="card-download"
+                               download="beben-dither-machine.html"
+                               title="Download as a standalone HTML file">&darr; .HTML</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <div class="group-head" data-reveal style="--i:0">
+                    <h3 class="group-title">Run your business</h3>
+                    <p class="group-note">Pricing, invoicing, and getting your own work out of the door.</p>
+                </div>
+                <div class="tools-grid">
+                    <article class="tool-card" data-reveal style="--i:1">
+                        <a href="../character-counter/" class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Does It Fit?</h3>
+                            <p>One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.</p>
+                        </a>
+                        <div class="card-footer">
+                            <a href="../character-counter/" class="card-open">Open tool &nearr;</a>
+                            <a href="../character-counter/index.html"
+                               class="card-download"
+                               download="beben-character-counter.html"
+                               title="Download as a standalone HTML file">&darr; .HTML</a>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:2">
+                        <div class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>Invoice Builder</h3>
+                            <p>Line items in, a properly typeset invoice out. Print it straight to PDF, no account and no watermark.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:3">
+                        <div class="card-body">
+                            <span class="card-tag">// Utility</span>
+                            <h3>Freelance Rate Calculator</h3>
+                            <p>Target income, overheads, holidays, and real billable days, worked back into the rate you should quote.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:4">
+                        <div class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>Screenshot Framer</h3>
+                            <p>Drop a screenshot, add padding, a backdrop, rounded corners, and a shadow. Export something worth posting.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card tool-card--soon" data-reveal style="--i:5">
+                        <div class="card-body">
+                            <span class="card-tag">// Generator</span>
+                            <h3>Barcode Generator</h3>
+                            <p>EAN-13 and Code 128 barcodes as clean vectors, for stock labels, shelf tags, and small inventories.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-open">Coming soon</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- tools:end -->
+
+            <p class="tools-note" data-reveal style="--i:4"><em>Every tool here is one HTML file with nothing loaded from anywhere else. Download it and it keeps working, offline, for as long as browsers exist.</em></p>
         </div>
     </section>
 
@@ -396,6 +608,6 @@
 </footer>
 
 <script src="../assets/JS/index.js"></script>
-<script src="../assets/JS/sprite.js?v=3.6"></script>
+<script src="../assets/JS/sprite.js?v=3.7"></script>
 </body>
 </html>

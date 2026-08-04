@@ -1,0 +1,764 @@
+{{GENERATED_COMMENT}}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#141414">
+
+    <title>{{META_TITLE}}</title>
+    <meta name="description" content="{{META_DESCRIPTION}}">
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{CANONICAL_URL}}">
+    <meta property="og:title" content="{{META_TITLE}}">
+    <meta property="og:description" content="{{META_DESCRIPTION}}">
+    <meta property="og:image" content="{{OG_IMAGE}}">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="{{META_TITLE}}">
+    <meta property="twitter:description" content="{{META_DESCRIPTION}}">
+    <meta property="twitter:image" content="{{OG_IMAGE}}">
+
+    <!-- Absolute so a downloaded copy still resolves them when online. -->
+    <link rel="icon" href="https://beben.design/assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="https://beben.design/assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="https://beben.design/assets/icons/apple-touch-icon.png">
+
+    <!-- Progressive enhancement only. Offline the system stack below takes over. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ════════════════════════════════════════════════════════════
+           SHARED TOOL SHELL - scripts/templates/tool.html
+           Tokens mirror docs/assets/css/index.css. Tool pages are
+           deliberately standalone: no index.css, no sprite, nothing
+           outside this file, so a downloaded copy runs forever.
+        ════════════════════════════════════════════════════════════ */
+        :root[data-theme="light"] {
+            --bg:           #f5f5f5;
+            --bg-soft:      #efefef;
+            --text:         #141414;
+            --accent:       #E71D36;
+            --yellow:       #FFC710;
+            --muted:        rgba(20, 20, 20, 0.62);
+            --border:       #141414;
+            --rule:         rgba(20, 20, 20, 0.18);
+            --dot:          rgba(20, 20, 20, 0.09);
+            --card-bg:      #f5f5f5;
+            --input-bg:     #ececec;
+            --input-border: rgba(20, 20, 20, 0.28);
+            --nav-bg:       rgba(20, 20, 20, 0.86);
+            --nav-text:     #F7F4F3;
+            --on-accent:    #F7F4F3;
+        }
+
+        :root[data-theme="dark"] {
+            --bg:           #141414;
+            --bg-soft:      #1C1C1C;
+            --text:         #F7F4F3;
+            --accent:       #E71D36;
+            --yellow:       #FFC710;
+            --muted:        rgba(247, 244, 243, 0.62);
+            --border:       #F7F4F3;
+            --rule:         rgba(247, 244, 243, 0.16);
+            --dot:          rgba(247, 244, 243, 0.07);
+            --card-bg:      #1C1C1C;
+            --input-bg:     #242424;
+            --input-border: rgba(247, 244, 243, 0.24);
+            --nav-bg:       rgba(20, 20, 20, 0.86);
+            --nav-text:     #F7F4F3;
+            --on-accent:    #F7F4F3;
+        }
+
+        :root {
+            --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', monospace;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* ── RESET ─────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: var(--font-mono);
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--dot) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        .skip-link {
+            position: absolute; left: -999px; top: 0;
+            background: #141414; color: #F7F4F3;
+            padding: 10px 16px;
+            font-family: var(--font-mono); font-size: 13px;
+            z-index: 999;
+        }
+        .skip-link:focus { left: 12px; top: 12px; }
+
+        .visually-hidden {
+            position: absolute; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+        }
+
+        /* ── NAVBAR ────────────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(247, 244, 243, 0.12);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--nav-text);
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        .nav-back {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--nav-text);
+            opacity: 0.6;
+            transition: opacity 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-back:hover { opacity: 1; color: var(--accent); }
+
+        #theme-toggle {
+            background: none;
+            border: 1px solid rgba(247, 244, 243, 0.45);
+            color: var(--nav-text);
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        #theme-toggle:hover { background: var(--nav-text); color: #141414; }
+
+        /* ── LAYOUT ────────────────────────────────────────────────── */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 100px 2rem 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            align-items: start;
+        }
+
+        /* ── LEFT COLUMN - info ────────────────────────────────────── */
+        .info-col {
+            padding: 3rem 3rem 3rem 0;
+            border-right: 1px solid var(--border);
+            position: sticky;
+            top: 80px;
+        }
+
+        .page-label {
+            font-size: 0.62rem;
+            color: var(--muted);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-col h1 {
+            font-family: var(--font-mono);
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-box {
+            background: var(--accent);
+            color: var(--on-accent);
+            padding: 0 0.12em;
+            display: inline-block;
+        }
+
+        .info-col .description {
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Output spec list */
+        .output-specs {
+            border-top: 1px solid var(--rule);
+            padding-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .output-specs h2 {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--rule);
+            font-size: 0.78rem;
+        }
+
+        .spec-row:last-child { border-bottom: none; }
+        .spec-label { color: var(--muted); }
+        .spec-value { font-weight: 600; color: var(--text); text-align: right; }
+        .spec-value.accent { color: var(--accent); }
+
+        /* CTA */
+        .cta-block { border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+
+        .cta-block p {
+            font-size: 0.75rem;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .cta-link {
+            display: inline;
+            position: relative;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .cta-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.25s ease;
+        }
+
+        .cta-link:hover::after { width: 100%; }
+
+        /* ── RIGHT COLUMN - tool ───────────────────────────────────── */
+        .tool-col { padding: 3rem 0 3rem 3rem; min-width: 0; }
+
+        /* ── SHARED TOOL PRIMITIVES ────────────────────────────────── */
+        .field-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .tool-input,
+        .tool-textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-textarea {
+            resize: vertical;
+            line-height: 1.7;
+            min-height: 140px;
+        }
+
+        .tool-input:focus,
+        .tool-textarea:focus { border-color: var(--accent); background: var(--bg); }
+
+        .tool-input::placeholder,
+        .tool-textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+        /* Segmented control */
+        .seg-group { margin-bottom: 1.5rem; }
+
+        .seg {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 1fr;
+            border: 1px solid var(--border);
+        }
+
+        .seg-btn {
+            background: none;
+            border: none;
+            border-right: 1px solid var(--border);
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.65rem 0.25rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .seg-btn:last-child { border-right: none; }
+        .seg-btn:hover { color: var(--text); }
+        .seg-btn.active { background: var(--text); color: var(--bg); }
+
+        .hint {
+            font-size: 0.62rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        /* Preview header */
+        .preview-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .preview-status { color: var(--accent); }
+
+        /* Framed output area */
+        .frame {
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            min-height: 180px;
+            position: relative;
+        }
+
+        .frame--center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .frame--flush { padding: 0; }
+
+        .frame-empty {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        /* Range row */
+        .range-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .range-row input[type="range"] {
+            flex: 1;
+            accent-color: var(--accent);
+            min-width: 0;
+        }
+
+        .range-value {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 4.5ch;
+            text-align: right;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 1fr;
+            border: 1px solid var(--border);
+            margin-bottom: 0.75rem;
+        }
+
+        .btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.9rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--text);
+            color: var(--bg);
+            border-right: 1px solid var(--bg);
+        }
+
+        .btn-primary:hover { background: var(--accent); color: var(--on-accent); }
+        .btn-secondary:hover { background: var(--text); color: var(--bg); }
+
+        .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+        .btn[disabled]:hover { background: none; color: var(--text); }
+        .btn-primary[disabled]:hover { background: var(--text); color: var(--bg); }
+
+        .btn svg {
+            width: 14px; height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        /* Drop zone */
+        .dropzone {
+            border: 1px dashed var(--input-border);
+            background: var(--input-bg);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .dropzone:hover,
+        .dropzone.is-over { border-color: var(--accent); background: var(--bg); }
+
+        .dropzone p { font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+        .dropzone strong { color: var(--text); font-weight: 600; }
+
+        /* ── TOAST ─────────────────────────────────────────────────── */
+        #copy-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            background: var(--text);
+            color: var(--bg);
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.6rem 1.4rem;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 999;
+            max-width: calc(100vw - 2rem);
+            text-align: center;
+        }
+
+        #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── FOOTER ────────────────────────────────────────────────── */
+        footer { border-top: 1px solid var(--rule); padding: 2rem; }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-brand { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+        .footer-brand a { color: var(--accent); transition: opacity 0.2s ease; }
+        .footer-brand a:hover { opacity: 0.7; }
+
+        .footer-right { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; }
+
+        /* ── RESPONSIVE ────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            main { grid-template-columns: 1fr; padding: 80px 1.2rem 3rem; }
+
+            .info-col {
+                padding: 2rem 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                position: static;
+            }
+
+            .tool-col { padding: 2rem 0 0; }
+
+            nav { padding: 1rem 1.2rem; }
+            footer { padding: 1.5rem 1.2rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════════════
+           TOOL-SPECIFIC STYLES
+        ════════════════════════════════════════════════════════════ */
+{{TOOL_CSS}}
+    </style>
+</head>
+<body>
+
+<a class="skip-link" href="#tool">Skip to the tool</a>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<nav>
+    <a href="https://beben.design" class="logo">Beben Design</a>
+    <div class="nav-right">
+        <a href="https://beben.design/tools/" class="nav-back">&larr; Tools</a>
+        <button id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">LIGHT/ DARK</button>
+    </div>
+</nav>
+
+<!-- ── MAIN ─────────────────────────────────────────────────────── -->
+<main>
+
+    <!-- LEFT: Info column -->
+    <div class="info-col">
+
+        <p class="page-label">{{PAGE_LABEL}}</p>
+
+        <h1>{{H1_HTML}}</h1>
+
+        <p class="description">{{LEAD}}</p>
+
+        <div class="output-specs">
+            <h2>// Expected Output</h2>
+{{SPECS_HTML}}
+        </div>
+
+        <div class="cta-block">
+            <p>
+                Part of a growing toolkit built with the same logic we apply
+                to every client project: fast, focused, and free.
+            </p>
+            <a href="https://beben.design/tools/" class="cta-link">
+                MORE TOOLS AT BEBEN.DESIGN &nearr;
+            </a>
+        </div>
+
+    </div>
+
+    <!-- RIGHT: Tool column -->
+    <div class="tool-col" id="tool">
+{{TOOL_HTML}}
+    </div>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer>
+    <div class="footer-container">
+        <p class="footer-brand">
+            A free tool by <a href="https://beben.design">Beben Design</a>,
+            Design &amp; Interface Studio, Nairobi KE.
+        </p>
+        <span class="footer-right">&copy; BEBEN DESIGN | ALL RIGHTS RESERVED</span>
+    </div>
+</footer>
+
+<div id="copy-toast" role="status" aria-live="polite">{{TOAST_TEXT}}</div>
+{{VENDOR_JS}}
+<script>
+/* ════════════════════════════════════════════════════════════════
+   SHARED TOOL RUNTIME
+   Theme, toast, clipboard, and downloads. Every helper works from
+   file:// too, which is not a secure context: navigator.clipboard
+   throws there, so the execCommand fallback is load-bearing.
+════════════════════════════════════════════════════════════════ */
+var Tool = (function () {
+    'use strict';
+
+    var root  = document.documentElement;
+    var toast = document.getElementById('copy-toast');
+    var toastTimer = null;
+
+    // ── THEME ─────────────────────────────────────────────────────
+    var toggle = document.getElementById('theme-toggle');
+
+    function applyTheme(mode) {
+        root.setAttribute('data-theme', mode);
+        toggle.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
+        toggle.setAttribute('aria-label',
+            mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    var stored = null;
+    try { stored = localStorage.getItem('beben-theme'); } catch (e) { /* private mode */ }
+    if (stored === 'dark' || stored === 'light') {
+        applyTheme(stored);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        applyTheme('dark');
+    }
+
+    toggle.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try { localStorage.setItem('beben-theme', next); } catch (e) { /* private mode */ }
+    });
+
+    // ── TOAST ─────────────────────────────────────────────────────
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    }
+
+    // ── CLIPBOARD ─────────────────────────────────────────────────
+    function fallbackCopy(text, msg) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        try {
+            if (document.execCommand('copy')) {
+                showToast(msg);
+            } else {
+                showToast('Copy failed, please copy manually.');
+            }
+        } catch (e) {
+            showToast('Copy failed, please copy manually.');
+        }
+        document.body.removeChild(ta);
+    }
+
+    function copy(text, msg) {
+        msg = msg || 'Copied to clipboard.';
+        if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function () {
+                showToast(msg);
+            }).catch(function () {
+                fallbackCopy(text, msg);
+            });
+        } else {
+            fallbackCopy(text, msg);
+        }
+    }
+
+    // ── DOWNLOAD ──────────────────────────────────────────────────
+    function downloadBlob(blob, filename, msg) {
+        var url  = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        if (msg) showToast(msg);
+    }
+
+    function download(data, filename, mime, msg) {
+        downloadBlob(new Blob([data], { type: mime }), filename, msg);
+    }
+
+    // ── SMALL HELPERS ─────────────────────────────────────────────
+    function $(id) { return document.getElementById(id); }
+
+    function segmented(container, onChange) {
+        var buttons = container.querySelectorAll('.seg-btn');
+        Array.prototype.forEach.call(buttons, function (btn) {
+            btn.addEventListener('click', function () {
+                Array.prototype.forEach.call(buttons, function (b) {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
+                onChange(btn.getAttribute('data-value'), btn);
+            });
+        });
+    }
+
+    return {
+        $: $,
+        toast: showToast,
+        copy: copy,
+        download: download,
+        downloadBlob: downloadBlob,
+        segmented: segmented
+    };
+})();
+</script>
+
+<script>
+{{TOOL_JS}}
+</script>
+
+</body>
+</html>
