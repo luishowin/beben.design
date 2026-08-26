@@ -161,7 +161,7 @@ nav {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: 1.5px solid var(--headers);
+    border: 2px solid var(--headers);
     border-radius: 999px;
     padding: 4px 5px 4px 12px;
     /* Without this the label inherits body's 1.6 and its line box —
@@ -199,7 +199,7 @@ nav {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    border: 1.25px solid currentColor;
+    border: 2px solid currentColor;
     display: grid;
     place-items: center;
 }
