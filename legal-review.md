@@ -77,3 +77,15 @@ Shown in the draft in a boxed monospace style. Current defaults, all changeable:
 Removed from the published site as factually untrue rather than legally risky: a claim of ODPC
 registration as a data controller (not registered), and five statements describing analytics,
 cookies and IP logging that this site does not do.
+
+---
+
+## Parked
+
+The drafted Terms of Engagement now live in `legal-draft/terms-of-engagement/`, outside `docs/`, so
+nothing unreviewed is served from the domain. `docs/legal/index.html` is back to being a single
+self-sufficient Terms of Service covering services, IP, liability and confidentiality, which is what
+the site had before and is adequate until the review happens.
+
+To resume: move the folder back under `docs/legal/`, re-add the pointers from `/legal/`, add the
+footer link and the sitemap entry.
