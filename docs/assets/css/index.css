@@ -18,6 +18,9 @@
 
 /* ── 1. DESIGN TOKENS ─────────────────────────────────────────── */
 :root[data-theme="light"] {
+    /* So native controls (select popups, scrollbars, form widgets) follow the
+       site theme rather than the OS setting the meta tag reports. */
+    color-scheme: light;
     --bg:            #f5f5f5;
     --bg-soft:       #efefef;
     --headers:       #141414;
@@ -39,6 +42,7 @@
 }
 
 :root[data-theme="dark"] {
+    color-scheme: dark;
     --bg:            #141414;
     --bg-soft:       #1C1C1C;
     --headers:       #F7F4F3;

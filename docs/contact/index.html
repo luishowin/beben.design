@@ -54,7 +54,7 @@
       "name": "How much does a website cost?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Static sites start at $99 USD. Complexity drives pricing. We provide transparent, line-item quotes after discovery. No guesswork."
+        "text": "Every project is quoted as a fixed-price, line-item proposal after a short discovery call, so you can see exactly what each part costs and remove anything you do not want. There is no hourly billing and no open-ended scope. The budget range on the form above is enough for us to say quickly whether we are the right fit."
       }
     },
     {
@@ -158,7 +158,8 @@
         }
 
         .form-field input,
-        .form-field textarea {
+        .form-field textarea,
+        .form-field select {
             font-family: var(--font-body);
             /* 16px floor — anything smaller triggers iOS auto-zoom on focus */
             font-size: 1rem;
@@ -218,6 +219,71 @@
             background: var(--headers);
             color: var(--bg);
         }
+
+
+        /* ── Selects. No select rule existed anywhere in the site CSS, so this
+           is the whole treatment: reset the native control, then rebuild the
+           affordance. The chevron is a token per theme, because a data URI
+           with a hardcoded stroke disappears against the other ground. ── */
+        .form-field select {
+            --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23141414' stroke-width='1.6'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: var(--chevron);
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px 8px;
+            /* room for the chevron so a long option never runs under it */
+            padding-right: 2rem;
+            cursor: pointer;
+        }
+        [data-theme="dark"] .form-field select {
+            --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23F7F4F3' stroke-width='1.6'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+        }
+        /* Until something is chosen the placeholder option keeps the control
+           looking empty, matching the text inputs beside it. */
+        .form-field select:invalid { color: var(--text-muted); }
+        .form-field select option { color: var(--text); }
+
+        .field-hint {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* ── Success state ──
+           .contact-form is display:flex, an author rule that beats the UA
+           sheet's [hidden]{display:none}, so setting .hidden on the form does
+           nothing without this. */
+        .contact-form[hidden] { display: none; }
+
+        .form-status {
+            max-width: 560px;
+            border-left: 2px solid var(--yellow);
+            padding: 1.2rem 0 1.2rem 1.4rem;
+        }
+        .form-status[hidden] { display: none; }
+        .form-status h3 {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .form-status p {
+            font-size: 0.9rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .form-status--error { border-left-color: var(--highlight); }
+        /* Focus is moved here programmatically so screen readers land on the
+           result. It is a tabindex="-1" container, not something a keyboard
+           user can tab to, so it takes no focus ring: a red outline around a
+           success message reads as an error. */
+        .form-status:focus { outline: none; }
 
         .form-note {
             font-family: var(--font-mono);
@@ -344,7 +410,7 @@
             <span class="eyebrow" data-reveal style="--i:0">Start a project</span>
             <h2 data-reveal style="--i:1">Tell us what you're building</h2>
             <p class="form-intro" data-reveal style="--i:2">A few lines is enough: the problem, not the solution.
-                We reply within one working day.</p>
+                We reply within one working day. All fields are required.</p>
 
             <form class="contact-form" action="https://formspree.io/f/mdaqkooo" method="POST" data-reveal style="--i:3">
                 <input type="hidden" name="_subject" value="New project brief from beben.design">
@@ -361,8 +427,34 @@
                     <label for="cf-message">What are you building?</label>
                     <textarea id="cf-message" name="message" rows="6" required></textarea>
                 </div>
+                <div class="form-field">
+                    <label for="cf-timeline">Timeline</label>
+                    <select id="cf-timeline" name="timeline" required>
+                        <option value="" disabled selected>Select a timeline</option>
+                        <option>As soon as possible</option>
+                        <option>Within a month</option>
+                        <option>One to three months</option>
+                        <option>Three months or more</option>
+                        <option>Just exploring</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="cf-budget">Budget</label>
+                    <select id="cf-budget" name="budget" required>
+                        <option value="" disabled selected>Select a range</option>
+                        <option>Under $1,000</option>
+                        <option>$1,000 to $3,000</option>
+                        <option>$3,000 to $7,500</option>
+                        <option>$7,500 to $15,000</option>
+                        <option>Over $15,000</option>
+                        <option>Not sure yet</option>
+                    </select>
+                    <span class="field-hint">A range is enough. It tells us quickly whether we are the right fit.</span>
+                </div>
                 <button type="submit" class="form-submit">Send project brief &rarr;</button>
             </form>
+
+            <div id="form-status" class="form-status" role="status" aria-live="polite" tabindex="-1" hidden></div>
 
             <p class="form-note" data-reveal style="--i:4">What you send reaches our inbox through Formspree. We use it
                 to reply to you and for nothing else: no marketing list, no resale, no analytics. See the
@@ -397,7 +489,7 @@
             <div class="faq-item" data-reveal style="--i:2">
                 <button class="faq-trigger" aria-expanded="false">How much does a website cost?</button>
                 <div class="faq-answer">
-                    <p>Static sites start at $99 USD. Complexity drives pricing. We provide transparent, line-item quotes after discovery. No guesswork.</p>
+                    <p>Every project is quoted as a fixed-price, line-item proposal after a short discovery call, so you can see exactly what each part costs and remove anything you do not want. There is no hourly billing and no open-ended scope. The budget range on the form above is enough for us to say quickly whether we are the right fit.</p>
                 </div>
             </div>
             <div class="faq-item" data-reveal style="--i:2">
@@ -456,5 +548,51 @@
 
 <script src="../assets/JS/index.js?v=3.8"></script>
 <script src="../assets/JS/sprite.js?v=3.8"></script>
+<script>
+    /* Submit without leaving the site. Without this the form is a plain POST
+       and a successful send lands the visitor on a formspree.io page, which is
+       the last thing they see of the studio. Falls back to the normal POST if
+       fetch is unavailable, so the form still works with this script dead. */
+    (function () {
+        var form = document.querySelector('.contact-form');
+        var status = document.getElementById('form-status');
+        if (!form || !status || !window.fetch) return;
+
+        function show(title, body, isError) {
+            status.className = 'form-status' + (isError ? ' form-status--error' : '');
+            status.innerHTML = '<h3></h3><p></p>';
+            status.querySelector('h3').textContent = title;
+            status.querySelector('p').textContent = body;
+            status.hidden = false;
+            status.focus();
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var btn = form.querySelector('.form-submit');
+            var label = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            }).then(function (res) {
+                if (!res.ok) throw new Error(res.status);
+                form.hidden = true;
+                show('Brief received.',
+                     'We reply within one working day, usually sooner. If it is urgent, WhatsApp is faster.',
+                     false);
+            }).catch(function () {
+                btn.disabled = false;
+                btn.textContent = label;
+                show('That did not send.',
+                     'Something went wrong on the way to our inbox. Email hello.beben.design@gmail.com directly and we will pick it up from there.',
+                     true);
+            });
+        });
+    })();
+</script>
 </body>
 </html>
