@@ -128,38 +128,6 @@
             color: var(--text-muted);
         }
 
-        .content-block {
-            max-width: 640px;
-        }
-        .content-block h2 {
-            margin-bottom: 1rem;
-        }
-        .content-block p {
-            font-size: clamp(0.95rem, 1.3vw, 1.05rem);
-            line-height: 1.75;
-            color: var(--text-muted);
-            margin-bottom: 1.4rem;
-        }
-        .content-block p:last-child { margin-bottom: 0; }
-
-        .tech-list {
-            list-style: none;
-            margin-top: 1.2rem;
-        }
-        .tech-list li {
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-            color: var(--text);
-            letter-spacing: 0.02em;
-            padding: 0.65rem 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        .tech-list li:last-child { border-bottom: none; }
-        .tech-list .tech-desc { color: var(--text-muted); text-align: right; }
-
         .roadmap {
             margin-top: 1.5rem;
         }
@@ -239,62 +207,6 @@
             color: var(--text-muted);
         }
 
-        /* Case study patterns. Open rows with top-border separators. */
-        .decisions { margin-top: 2.6rem; }
-        .decision { border-top: 1px solid var(--border); padding: 1.8rem 0; }
-        .decision:last-child { border-bottom: 1px solid var(--border); }
-        .decision h3 {
-            font-family: var(--font-body); font-weight: 600; font-size: 1.02rem;
-            line-height: 1.4; margin-bottom: 0.5rem; max-width: 56ch;
-        }
-        .decision h3::before {
-            content: 'Rejected'; display: block; font-family: var(--font-mono);
-            font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
-            text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.55rem;
-        }
-        .decision p {
-            font-size: 0.9rem; line-height: 1.8; color: var(--text-muted);
-            max-width: 68ch; margin: 0;
-        }
-
-        .metrics { margin-top: 2.4rem; }
-        .metric {
-            display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.4rem 2rem;
-            align-items: baseline; border-top: 1px solid var(--border); padding: 1.15rem 0;
-        }
-        .metric:last-child { border-bottom: 1px solid var(--border); }
-        .metric-value {
-            font-family: var(--font-mono); font-size: 1.02rem; font-weight: 500;
-            color: var(--headers); font-variant-numeric: tabular-nums;
-        }
-        .metric-body { min-width: 0; }
-        .metric-label {
-            font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.12em;
-            text-transform: uppercase; color: var(--text-muted); display: block;
-            margin-bottom: 0.3rem;
-        }
-        .metric-note {
-            font-size: 0.88rem; line-height: 1.75; color: var(--text-muted);
-            margin: 0; max-width: 64ch;
-        }
-
-        .honesty {
-            margin-top: 2.6rem; border-left: 2px solid var(--yellow);
-            padding: 1.1rem 0 1.1rem 1.4rem; max-width: 68ch;
-        }
-        .honesty .honesty-label {
-            font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.14em;
-            text-transform: uppercase; color: var(--text-muted); display: block;
-            margin-bottom: 0.6rem;
-        }
-        .honesty p {
-            font-size: 0.9rem; line-height: 1.8; color: var(--text-muted);
-            margin: 0; max-width: 66ch;
-        }
-
-        @media (max-width: 640px) {
-            .metric { grid-template-columns: 1fr; gap: 0.35rem; }
-        }
     </style>
 </head>
 <body>

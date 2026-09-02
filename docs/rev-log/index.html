@@ -80,20 +80,6 @@
             .status-badge .dot { animation: none; }
         }
 
-        .content-block {
-            max-width: 640px;
-        }
-        .content-block h2 {
-            margin-bottom: 1rem;
-        }
-        .content-block p {
-            font-size: clamp(0.95rem, 1.3vw, 1.05rem);
-            line-height: 1.75;
-            color: var(--text-muted);
-            margin-bottom: 1.4rem;
-        }
-        .content-block p:last-child { margin-bottom: 0; }
-
         .logbook-note {
             font-family: var(--font-mono);
             font-size: 0.78rem;
@@ -140,24 +126,6 @@
         @media (max-width: 560px) {
             .bearing { grid-template-columns: 1fr; gap: 0.4rem; }
         }
-
-        .tech-list {
-            list-style: none;
-            margin-top: 1.2rem;
-        }
-        .tech-list li {
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-            color: var(--text);
-            letter-spacing: 0.02em;
-            padding: 0.65rem 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        .tech-list li:last-child { border-bottom: none; }
-        .tech-list .tech-desc { color: var(--text-muted); text-align: right; }
 
         .roadmap {
             margin-top: 1.5rem;
@@ -209,13 +177,6 @@
             font-size: 0.9rem;
             line-height: 1.6;
             color: var(--text-muted);
-        }
-
-        .cta-row {
-            display: flex;
-            gap: 2.5rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
         }
     </style>
 </head>

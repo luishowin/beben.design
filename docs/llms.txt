@@ -6,10 +6,10 @@ Capabilities span brand identity and visual design, UX research, UI design for w
 
 ## Services
 
-- [Brand Identity & Visual Design](https://beben.design/services/): Logo systems (primary, secondary, monochrome, favicon-optimised), structured brand guides, WCAG-compliant colour systems, typography hierarchy, and optional motion branding.
-- [UX Research & Design](https://beben.design/services/): User interviews, journey mapping, information architecture, low-fidelity wireframes, clickable prototypes, and usability testing measured against SUS scores and task-completion data.
-- [UI Design & Component Systems](https://beben.design/services/): Atomic, developer-ready UI kits in Figma with full component states, WCAG AA accessibility annotations, and developer handoff specs.
-- [Digital Strategy & Product Planning](https://beben.design/services/): MVP feature prioritisation, phased technical roadmaps, competitor UX benchmarking, and discovery workshops for early-stage concepts.
+- [Brand Identity & Visual Design](https://beben.design/services/brand-identity/): Logo systems (primary, secondary, monochrome, favicon-optimised), structured brand guides, WCAG-compliant colour systems, typography hierarchy, and optional motion branding.
+- [UX Research & Design](https://beben.design/services/ux-research/): User interviews, journey mapping, information architecture, low-fidelity wireframes, clickable prototypes, and usability testing measured against SUS scores and task-completion data.
+- [UI Design & Component Systems](https://beben.design/services/ui-design/): Atomic, developer-ready UI kits in Figma with full component states, WCAG AA accessibility annotations, and developer handoff specs.
+- [Digital Strategy & Product Planning](https://beben.design/services/digital-strategy/): MVP feature prioritisation, phased technical roadmaps, competitor UX benchmarking, and discovery workshops for early-stage concepts.
 
 ## Tools
 
