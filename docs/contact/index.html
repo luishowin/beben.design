@@ -97,8 +97,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../assets/css/index.css">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.7">
+    <script>
+        /* Apply the stored or system theme before first paint. Every page ships
+           data-theme="light" hardcoded, and index.js runs at the end of body,
+           so without this a dark-mode visitor gets a white flash on every
+           navigation. Guarded: reading storage throws when site data is blocked. */
+        (function () {
+            try {
+                var t = localStorage.getItem('beben-theme');
+                if (t !== 'dark' && t !== 'light') {
+                    t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) { /* keep the default */ }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="../assets/css/index.css?v=3.8">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.8">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -160,10 +176,27 @@
             min-height: 150px;
         }
 
+        /* Focus. The border darkens for every focus, but the outline is only
+           suppressed for pointer focus: an unconditional outline:none here has
+           specificity (0,2,1) and silently beats the sitewide :focus-visible
+           rule, leaving keyboard users with no visible focus at all. */
         .form-field input:focus,
-        .form-field textarea:focus {
-            outline: none;
+        .form-field textarea:focus,
+        .form-field select:focus {
             border-color: var(--headers);
+        }
+
+        .form-field input:focus:not(:focus-visible),
+        .form-field textarea:focus:not(:focus-visible),
+        .form-field select:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .form-field input:focus-visible,
+        .form-field textarea:focus-visible,
+        .form-field select:focus-visible {
+            outline: 2px solid var(--highlight);
+            outline-offset: 2px;
         }
 
         .form-submit {
@@ -428,7 +461,7 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js"></script>
-<script src="../assets/JS/sprite.js?v=3.7"></script>
+<script src="../assets/JS/index.js?v=3.8"></script>
+<script src="../assets/JS/sprite.js?v=3.8"></script>
 </body>
 </html>

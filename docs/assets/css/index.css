@@ -22,6 +22,9 @@
     --bg-soft:       #efefef;
     --headers:       #141414;
     --highlight:     #E71D36;
+    /* Accessible variant, for --highlight applied to normal-size TEXT.
+       6.13:1 on --bg, 5.81:1 on --bg-soft. The brand red is 4.16 / 3.95. */
+    --highlight-text: #B81124;
     --yellow:        #FFC710;
     --text:          #141414;
 
@@ -40,6 +43,8 @@
     --bg-soft:       #1C1C1C;
     --headers:       #F7F4F3;
     --highlight:     #E71D36;
+    /* 4.98:1 on --bg, 4.60:1 on --bg-soft. The brand red is 4.06 / 3.75. */
+    --highlight-text: #F04458;
     --yellow:        #FFC710;
     --text:          #F7F4F3;
 
@@ -177,7 +182,7 @@ nav {
 
 .theme-toggle:hover {
     border-color: var(--highlight);
-    color: var(--highlight);
+    color: var(--highlight-text);
 }
 
 .theme-toggle__label {
@@ -250,7 +255,7 @@ nav {
 
 .menu li a:hover,
 .menu li a.active {
-    color: var(--highlight);
+    color: var(--highlight-text);
     border-bottom-color: var(--highlight);
 }
 
@@ -332,7 +337,7 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
 }
 
 .mobile-menu li a:hover,
-.mobile-menu li a.active { color: var(--highlight); }
+.mobile-menu li a.active { color: var(--highlight-text); }
 
 /* ── 5. LAYOUT — full-bleed sections, contained content ───────── */
 /* Sections span 100% of the viewport so their background (plain,
@@ -428,6 +433,9 @@ h2 {
        8.4:1 on the CTA, 6.5:1 on the italic "logic", measured against
        the actual photo pixels under the scrim. */
     --highlight:  var(--yellow);
+    /* Same remap for the text variant, or the CTA drops back to a red on the
+       photo and lands at the 2.9:1 this block exists to avoid. */
+    --highlight-text: var(--yellow);
 
     padding-top: clamp(110px, 14vw, 150px);
     padding-bottom: 80px;
@@ -501,11 +509,24 @@ h2 {
     font-family: var(--font-mono);
     font-size: 0.85rem;
     font-weight: 500;
-    color: var(--highlight);
+    color: var(--highlight-text);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     cursor: pointer;
     white-space: nowrap;
+}
+
+/* Touch target. The link stays display:inline so the underline geometry and
+   every surrounding layout are untouched; this invisible overlay gives the
+   anchor a 44px hit area, which 13.6px text alone cannot reach. */
+.cta-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 44px;
 }
 
 .cta-link::after {
@@ -515,7 +536,7 @@ h2 {
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--highlight);
+    background: var(--highlight-text);
     transition: width var(--dur-fast) var(--ease-snap);
 }
 
@@ -808,7 +829,7 @@ h2 {
     transition: color var(--dur-fast) ease;
 }
 
-#industries span:hover { color: var(--highlight); }
+#industries span:hover { color: var(--highlight-text); }
 
 /* ── 15. FAQ ACCORDION ────────────────────────────────────────── */
 #faq h2 { margin-bottom: 2rem; }
@@ -834,7 +855,7 @@ h2 {
     transition: color var(--dur-fast) ease;
 }
 
-.faq-trigger:hover { color: var(--highlight); }
+.faq-trigger:hover { color: var(--highlight-text); }
 
 .faq-trigger::after {
     content: "+";
@@ -876,7 +897,7 @@ h2 {
     transition: color var(--dur-fast) ease;
 }
 
-#contact a:hover { color: var(--highlight); }
+#contact a:hover { color: var(--highlight-text); }
 
 /* ── 17. FOOTER ───────────────────────────────────────────────── */
 footer {
@@ -899,7 +920,7 @@ footer {
 .footer-brand strong { font-family: var(--font-body); font-weight: 600; color: var(--headers); }
 
 .footer-brand a { color: var(--text); transition: color var(--dur-fast) ease; }
-.footer-brand a:hover { color: var(--highlight); }
+.footer-brand a:hover { color: var(--highlight-text); }
 
 .copyright { color: var(--text-muted) !important; margin-top: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem !important; }
 
@@ -917,7 +938,7 @@ footer {
     transition: color var(--dur-fast) ease;
 }
 
-.footer-nav li a:hover { color: var(--highlight); }
+.footer-nav li a:hover { color: var(--highlight-text); }
 
 .back-to-top {
     background: none;

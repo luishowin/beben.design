@@ -152,12 +152,24 @@ Nav, footer, or token changes on the site must be mirrored in
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=3.7">
-<script src="../assets/JS/sprite.js?v=3.7"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=3.8">
+<script src="../assets/JS/sprite.js?v=3.8"></script>
 ```
 
-Bump the `?v=` on both whenever either file changes, or returning visitors
-keep the cached old version.
+**All four shared assets carry the same `?v=`:** `index.css`, `index.js`,
+`sprite.css` and `sprite.js`, currently `3.8` across 24 files. Bump all four
+together whenever any one of them changes, or returning visitors keep a stale
+copy. `index.css` and `index.js` were previously unversioned, which meant a
+returning visitor could get new markup against an old stylesheet.
+
+To verify exactly one version string is in play:
+
+```
+grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html | sort -u
+```
+
+The six generated blog pages and the four generated tool pages are reached by
+editing `scripts/templates/` and rebuilding, never by hand.
 
 Sprite has two brains. Offline (default safety net): a built-in
 pattern-matching engine. Live: `SPRITE_CONFIG.apiUrl` at the top of

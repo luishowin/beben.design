@@ -50,8 +50,9 @@ const SpriteChat = (() => {
   // Injected once per page so no page has to carry the markup.
 
   const WIDGET_HTML =
-    '<div class="sprite-pill" id="spritePill" onclick="SpriteChat.open()">' +
-      '<div class="sprite-character" data-emotion="happy">' +
+    '<button type="button" class="sprite-pill" id="spritePill" onclick="SpriteChat.open()"' +
+      ' aria-label="Open the Sprite chat assistant" aria-expanded="false" aria-controls="spritePanel">' +
+      '<div class="sprite-character" data-emotion="happy" aria-hidden="true">' +
         '<div class="sprite-body">' +
           '<div class="sprite-eyes">' +
             '<div class="sprite-eye"><div class="sprite-brow"></div></div>' +
@@ -61,13 +62,13 @@ const SpriteChat = (() => {
         '</div>' +
       '</div>' +
       '<span class="pill-text">Hey, need help?</span>' +
-    '</div>' +
-    '<div class="sprite-panel" id="spritePanel">' +
+    '</button>' +
+    '<div class="sprite-panel" id="spritePanel" role="dialog" aria-label="Chat with Sprite">' +
       '<div class="panel-header">' +
         '<div class="panel-banner" id="panelBanner"></div>' +
-        '<button class="panel-close" onclick="SpriteChat.close()" aria-label="Minimize">&minus;</button>' +
+        '<button class="panel-close" onclick="SpriteChat.close()" aria-label="Close the chat">&minus;</button>' +
         '<div class="panel-identity">' +
-          '<div class="sprite-character large" id="panelSprite" data-emotion="happy">' +
+          '<div class="sprite-character large" id="panelSprite" data-emotion="happy" aria-hidden="true">' +
             '<div class="sprite-body">' +
               '<div class="sprite-eyes">' +
                 '<div class="sprite-eye"><div class="sprite-brow"></div></div>' +
@@ -88,15 +89,15 @@ const SpriteChat = (() => {
       '<div class="chat-area" id="chatArea"></div>' +
       '<div class="quick-chips" id="quickChips"></div>' +
       '<div class="chat-input-area">' +
-        '<input class="chat-input" id="chatInput" type="text" placeholder="Ask me anything..." autocomplete="off">' +
-        '<button class="input-btn" id="ttsToggle" onclick="SpriteChat.toggleTTS()" title="Toggle voice output">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>' +
+        '<input class="chat-input" id="chatInput" type="text" placeholder="Ask me anything..." autocomplete="off" aria-label="Ask Sprite a question">' +
+        '<button class="input-btn" id="ttsToggle" onclick="SpriteChat.toggleTTS()" title="Toggle voice output" aria-label="Toggle voice output">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>' +
         '</button>' +
-        '<button class="input-btn" id="micBtn" onclick="SpriteChat.toggleMic()" title="Voice input">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
+        '<button class="input-btn" id="micBtn" onclick="SpriteChat.toggleMic()" title="Voice input" aria-label="Voice input">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
         '</button>' +
-        '<button class="input-btn send-btn" onclick="SpriteChat.send()" title="Send">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>' +
+        '<button class="input-btn send-btn" onclick="SpriteChat.send()" title="Send" aria-label="Send message">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>' +
         '</button>' +
       '</div>' +
     '</div>';
@@ -491,7 +492,9 @@ const SpriteChat = (() => {
 
   function open() {
     isOpen = true;
-    document.getElementById('spritePill').classList.add('hidden');
+    var launcher = document.getElementById('spritePill');
+    launcher.setAttribute('aria-expanded', 'true');
+    launcher.classList.add('hidden');
     document.getElementById('spritePanel').classList.add('open');
     if (document.getElementById('chatArea').children.length === 0) {
       var history = loadHistory();
@@ -517,10 +520,14 @@ const SpriteChat = (() => {
   function close() {
     isOpen = false;
     document.getElementById('spritePanel').classList.remove('open');
+    var launcher = document.getElementById('spritePill');
+    launcher.setAttribute('aria-expanded', 'false');
     setTimeout(function() {
-      var pill = document.getElementById('spritePill');
-      pill.classList.remove('hidden');
-      pill.classList.add('visible');
+      launcher.classList.remove('hidden');
+      launcher.classList.add('visible');
+      // Return focus to the launcher, so a keyboard user is not dropped at the
+      // top of the document after closing the panel.
+      if (document.activeElement === document.body) launcher.focus();
     }, 300);
   }
 

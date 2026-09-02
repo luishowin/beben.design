@@ -45,6 +45,8 @@
 
 /* ── Pill (collapsed) ── */
 .sprite-pill {
+  /* A <button>, so reset the UA typography it would otherwise impose. */
+  font: inherit; color: inherit; text-align: left; margin: 0;
   display: flex; align-items: center; gap: 10px;
   height: 48px; padding: 0 18px 0 5px;
   background: var(--sw-bg);
@@ -217,8 +219,15 @@
   background: var(--sw-input-bg); border: 1px solid var(--sw-border);
   border-radius: 12px; padding: 10px 14px;
   color: var(--sw-text); font-size: 13.5px;
-  outline: none; font-family: inherit;
+  font-family: inherit;
   transition: border-color 0.2s;
+}
+/* Pointer focus only. An unconditional outline:none here left the chat input
+   with no visible keyboard focus on every page of the site. */
+.sprite-panel .chat-input:focus:not(:focus-visible) { outline: none; }
+.sprite-panel .chat-input:focus-visible {
+  outline: 2px solid var(--sw-accent, #E71D36);
+  outline-offset: 1px;
 }
 .sprite-panel .chat-input::placeholder { color: var(--sw-text-muted); }
 .sprite-panel .chat-input:focus { border-color: rgba(255,255,255,0.25); }

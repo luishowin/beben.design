@@ -12,7 +12,8 @@ document.documentElement.classList.add('js');
     // Restore saved preference before paint; fall back to system
     // preference on first visit rather than always defaulting light.
     const html = document.documentElement;
-    const savedTheme = localStorage.getItem('beben-theme');
+    let savedTheme = null;
+    try { savedTheme = localStorage.getItem('beben-theme'); } catch (e) { /* site data blocked */ }
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
     html.setAttribute('data-theme', initialTheme);
@@ -34,7 +35,7 @@ document.documentElement.classList.add('js');
             const current = html.getAttribute('data-theme') || 'light';
             const next = current === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', next);
-            localStorage.setItem('beben-theme', next);
+            try { localStorage.setItem('beben-theme', next); } catch (e) { /* site data blocked */ }
             reflectTheme(next);
         });
     }
@@ -80,7 +81,9 @@ document.documentElement.classList.add('js');
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const revealEls = document.querySelectorAll('[data-reveal]');
 
-    if (prefersReduced) {
+    if (prefersReduced || typeof IntersectionObserver === 'undefined') {
+        // No observer means no reveal trigger, and [data-reveal] starts at
+        // opacity 0, so show everything rather than showing nothing.
         revealEls.forEach((el) => el.classList.add('is-visible'));
     } else {
         // Two thresholds on purpose. An element taller than about 6.7

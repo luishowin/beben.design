@@ -52,8 +52,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Absolute paths — posts live two levels deep. -->
-    <link rel="stylesheet" href="/assets/css/index.css">
-    <link rel="stylesheet" href="/assets/css/sprite.css?v=3.7">
+    <script>
+        /* Apply the stored or system theme before first paint. Every page ships
+           data-theme="light" hardcoded, and index.js runs at the end of body,
+           so without this a dark-mode visitor gets a white flash on every
+           navigation. Guarded: reading storage throws when site data is blocked. */
+        (function () {
+            try {
+                var t = localStorage.getItem('beben-theme');
+                if (t !== 'dark' && t !== 'light') {
+                    t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) { /* keep the default */ }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/index.css?v=3.8">
+    <link rel="stylesheet" href="/assets/css/sprite.css?v=3.8">
     <link rel="alternate" type="application/rss+xml" title="Beben Design Blog" href="/blog/feed.xml">
 
     <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
@@ -426,7 +442,7 @@
     </div>
 </footer>
 
-<script src="/assets/JS/index.js"></script>
-<script src="/assets/JS/sprite.js?v=3.7"></script>
+<script src="/assets/JS/index.js?v=3.8"></script>
+<script src="/assets/JS/sprite.js?v=3.8"></script>
 </body>
 </html>
