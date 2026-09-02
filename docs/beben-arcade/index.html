@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#141414">
+
+    <title>Beben Arcade - twelve games that work offline | Beben Design</title>
+    <meta name="description" content="A case study in drawing a hard offline boundary and refusing every reference that crosses it. Twelve installable games, 222KB of static files, no engine and no build step.">
+    <link rel="canonical" href="https://beben.design/beben-arcade/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beben.design/beben-arcade/">
+    <meta property="og:title" content="Beben Arcade - twelve games that work offline | Beben Design">
+    <meta property="og:description" content="A case study in drawing a hard offline boundary and refusing every reference that crosses it. Twelve installable games, 222KB of static files, no engine and no build step.">
+    <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Beben Arcade - twelve games that work offline | Beben Design">
+    <meta name="twitter:description" content="A case study in drawing a hard offline boundary and refusing every reference that crosses it. Twelve installable games, 222KB of static files, no engine and no build step.">
+    <meta name="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.7">
+
+    <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Beben Arcade",
+    "headline": "Beben Arcade - twelve games that work offline",
+    "description": "A case study in drawing a hard offline boundary and refusing every reference that crosses it. Twelve installable games, 222KB of static files, no engine and no build step.",
+    "url": "https://beben.design/beben-arcade/",
+    "author": {
+        "@id": "https://beben.design/#organization"
+    },
+    "publisher": {
+        "@id": "https://beben.design/#organization"
+    },
+    "inLanguage": "en"
+}
+    </script>
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://beben.design/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Work",
+            "item": "https://beben.design/work/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Beben Arcade",
+            "item": "https://beben.design/beben-arcade/"
+        }
+    ]
+}
+    </script>
+
+    <style>
+        /* Case study layout. Open rows with top-border separators, per the
+           house rule that we prefer those over nested boxes. */
+        .content-block { max-width: 68ch; }
+        .content-block h2 { margin-bottom: 1.4rem; }
+        .content-block p {
+            font-size: 0.95rem;
+            line-height: 1.85;
+            color: var(--text-muted);
+            margin-bottom: 1.3rem;
+            max-width: 68ch;
+        }
+        .content-block p:last-child { margin-bottom: 0; }
+
+        /* The rejected options. This section carries the value of the page,
+           so it gets the most room and the clearest rank. */
+        .decisions { margin-top: 2.6rem; }
+        .decision {
+            border-top: 1px solid var(--border);
+            padding: 1.8rem 0;
+        }
+        .decision:last-child { border-bottom: 1px solid var(--border); }
+        .decision h3 {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.02rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+            max-width: 56ch;
+        }
+        .decision h3::before {
+            content: 'Rejected';
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.55rem;
+        }
+        .decision p {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            max-width: 68ch;
+            margin: 0;
+        }
+
+        /* Measured figures. Value leads, note explains, label orients. */
+        .metrics { margin-top: 2.4rem; }
+        .metric {
+            display: grid;
+            grid-template-columns: 8.5rem 1fr;
+            gap: 0.4rem 2rem;
+            align-items: baseline;
+            border-top: 1px solid var(--border);
+            padding: 1.15rem 0;
+        }
+        .metric:last-child { border-bottom: 1px solid var(--border); }
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 1.02rem;
+            font-weight: 500;
+            color: var(--headers);
+            font-variant-numeric: tabular-nums;
+        }
+        .metric-body { min-width: 0; }
+        .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.66rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .metric-note {
+            font-size: 0.88rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin: 0;
+            max-width: 64ch;
+        }
+
+        /* What could not be measured. Stated, not buried. */
+        .honesty {
+            margin-top: 2.6rem;
+            border-left: 2px solid var(--yellow);
+            padding: 1.1rem 0 1.1rem 1.4rem;
+            max-width: 68ch;
+        }
+        .honesty .honesty-label {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+        .honesty p {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin: 0;
+            max-width: 66ch;
+        }
+
+        .tech-list { list-style: none; margin-top: 1.6rem; }
+        .tech-list li {
+            border-top: 1px solid var(--border);
+            padding: 0.85rem 0;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 68ch;
+        }
+        .tech-list li:last-child { border-bottom: 1px solid var(--border); }
+
+        .cta-row { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 2.4rem; }
+
+        @media (max-width: 640px) {
+            .metric { grid-template-columns: 1fr; gap: 0.35rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+<a class="skip-link" href="#main-content" style="position:absolute;left:-999px;top:0;background:#141414;color:#F7F4F3;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;z-index:999;">Skip to content</a>
+<style>.skip-link:focus{left:12px;top:12px;}</style>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="/" class="logo" aria-label="Beben Design - home">
+        <svg class="logo__mark" viewBox="0 0 768 255" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M637.641 117.198L555.832 117.198V63.9144C555.832 61.7615 554.086 60.0162 551.933 60.0162C549.781 60.0162 548.035 61.7615 548.035 63.9144V117.198H520.446V0.000212398L561.832 0.000212398L603.684 72.487C604.761 74.3512 607.144 74.9895 609.008 73.9132C610.873 72.8367 611.511 70.4533 610.435 68.5888L570.836 0.000212398L637.641 0.000212398V117.198Z" fill="#FFC710"/>
+            <path d="M767.754 254.489H685.944V201.206C685.944 199.053 684.199 197.308 682.046 197.308C679.893 197.308 678.148 199.053 678.148 201.206V254.489H650.559V137.292H691.944L733.797 209.779C734.873 211.643 737.257 212.281 739.121 211.205C740.986 210.128 741.624 207.745 740.547 205.881L700.948 137.292H767.754V254.489Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M106.005 14.6494L106.005 117.197L0 117.197L0 0L92.7541 0L106.005 14.6494ZM36.3094 78.5656C34.1564 78.5656 32.4111 80.3129 32.4111 82.4658C32.4117 84.6183 34.1568 86.3621 36.3094 86.3621L69.6956 86.3621C71.8485 86.3621 73.5938 84.6168 73.5938 82.4639C73.5933 80.3114 71.8482 78.5656 69.6956 78.5656L36.3094 78.5656ZM36.3094 30.8333C34.1564 30.8333 32.4111 32.5786 32.4111 34.7316C32.4111 36.8845 34.1564 38.6298 36.3094 38.6298L69.6956 38.6298C71.8485 38.6298 73.5938 36.8845 73.5938 34.7316C73.5938 32.5786 71.8485 30.8333 69.6956 30.8333L36.3094 30.8333Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M366.228 14.6495V117.198L260.223 117.198V0.000106199L352.977 0.000106199L366.228 14.6495ZM296.532 78.5657C294.379 78.5657 292.634 80.313 292.634 82.4659C292.635 84.6184 294.38 86.3622 296.532 86.3622L329.919 86.3622C332.072 86.3622 333.817 84.6169 333.817 82.464C333.816 80.3115 332.071 78.5657 329.919 78.5657L296.532 78.5657ZM296.532 30.8334C294.379 30.8334 292.634 32.5787 292.634 34.7317C292.634 36.8846 294.379 38.6299 296.532 38.6299H329.919C332.072 38.6299 333.817 36.8846 333.817 34.7317C333.817 32.5787 332.072 30.8334 329.919 30.8334L296.532 30.8334Z" fill="#FFC710"/>
+            <path d="M236.117 73.4432L217.934 41.95C216.855 40.0804 214.464 39.4398 212.594 40.5193C210.725 41.5988 210.084 43.9896 211.163 45.8592L236.117 89.0793L172.607 89.0824C170.448 89.0824 168.698 90.8325 168.698 92.9914C168.698 95.1502 170.448 96.9006 172.607 96.9006L236.117 96.9006V117.196L130.112 117.196L130.112 0.000106199L236.117 0.000106199V73.4432Z" fill="#FFC710"/>
+            <path d="M496.34 73.4451L478.157 41.9519C477.078 40.0822 474.687 39.4415 472.817 40.521C470.948 41.6004 470.307 43.9912 471.387 45.8609L496.34 89.081L432.83 89.0841C430.671 89.0841 428.921 90.8343 428.921 92.9933C428.921 95.1522 430.671 96.9025 432.83 96.9025L496.34 96.9025V117.198L390.335 117.198V0.00201779L496.34 0.00201779V73.4451Z" fill="#FFC710"/>
+            <path d="M236.119 210.741L217.936 179.248C216.857 177.378 214.466 176.737 212.597 177.817C210.727 178.896 210.086 181.287 211.166 183.157L236.119 226.377L172.609 226.38C170.451 226.38 168.701 228.13 168.701 230.289C168.701 232.448 170.451 234.198 172.609 234.198H236.119V254.493H130.114V137.298H236.119V210.741Z" fill="#FFC710"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M106.007 151.943L106.007 254.491L0.00229732 254.491L0.00229732 137.294L92.7563 137.294L106.007 151.943ZM36.0552 175.3C33.9283 175.3 32.204 177.024 32.204 179.151L32.204 212.634C32.204 214.761 33.9283 216.486 36.0552 216.486C38.1823 216.486 39.9068 214.761 39.9068 212.634L39.9068 179.151C39.9068 177.024 38.1823 175.3 36.0552 175.3Z" fill="#FFC710"/>
+            <path d="M366.231 192.243L329.434 173.024C327.536 172.033 325.194 172.768 324.203 174.666C323.212 176.564 323.946 178.906 325.844 179.897L366.231 200.99V254.489L260.225 254.489V234.156L288.297 234.156C290.438 234.156 292.174 232.42 292.174 230.279C292.174 228.138 290.438 226.402 288.297 226.402L260.225 226.402L260.225 137.294L366.231 137.294L366.231 192.243Z" fill="#FFC710"/>
+            <path d="M496.342 254.489L390.337 254.489L390.337 163.095L496.342 163.095L496.342 254.489Z" fill="#FFC710"/>
+            <path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/>
+            <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
+        </svg>
+    </a>
+    <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+            <span class="theme-toggle__label">LIGHT</span>
+            <span class="theme-toggle__dial">
+                <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <line x1="12" y1="2" x2="12" y2="4.3"></line><line x1="12" y1="19.7" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="4.3" y2="12"></line><line x1="19.7" y1="12" x2="22" y2="12"></line>
+                    <line x1="4.93" y1="4.93" x2="6.55" y2="6.55"></line><line x1="17.45" y1="17.45" x2="19.07" y2="19.07"></line>
+                    <line x1="4.93" y1="19.07" x2="6.55" y2="17.45"></line><line x1="17.45" y1="6.55" x2="19.07" y2="4.93"></line>
+                </svg>
+                <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+                </svg>
+            </span>
+        </button>
+        <ul class="menu desktop-only">
+            <li><a href="../services/">SERVICES</a></li>
+            <li><a href="../tools/">TOOLS</a></li>
+            <li><a href="../shop/">SHOP</a></li>
+            <li><a href="../work/" class="active">WORK</a></li>
+            <li><a href="../blog/">BLOG</a></li>
+            <li><a href="../contact/">CONTACT</a></li>
+        </ul>
+        <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
+    <ul class="mobile-menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="../services/">Services</a></li>
+        <li><a href="../tools/">Tools</a></li>
+        <li><a href="../shop/">Shop</a></li>
+        <li><a href="../work/" class="active">Work</a></li>
+        <li><a href="../blog/">Blog</a></li>
+        <li><a href="../contact/">Contact</a></li>
+    </ul>
+</div>
+
+<main id="main-content">
+
+    <!-- Hero - plain -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Own product · Offline PWA · Case study</span>
+            <h1 data-reveal style="--i:1">Beben <em class="highlight-box">Arcade</em></h1>
+            <p data-reveal style="--i:2">Twelve small games at one address, installable to a home screen, every one of them still opening with the phone in airplane mode. The games took a weekend. The boundary that keeps them working took the discipline.</p>
+        </div>
+    </section>
+
+    <!-- 1. The constraint - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">The constraint</span>
+                <h2 data-reveal style="--i:1">A request that fails on a plane is a broken app</h2>
+                <p data-reveal style="--i:2">An offline arcade has exactly one failure mode that matters, and it is not a bug in a game. It is a request. Any single reference that leaves the arcade folder, a shared stylesheet, a hosted font, an icon set, an analytics snippet, becomes a fetch that resolves fine at your desk and fails in the only moment the arcade exists to serve.</p>
+                <p data-reveal style="--i:3">So the constraint was written as a boundary rather than a goal: nothing under the games directory may reference anything outside it. That reads as pedantry until you apply it, because the first things it rules out are ours. The site's own index.css, the nav partial copied verbatim into every other page, the Sprite widget, the theme toggle. The arcade had to become a deliberate exception to our own design system.</p>
+                <p data-reveal style="--i:4">The commercial constraint is that this is a design studio's own product, not a game company's output. Twelve games do not pay for themselves and were never meant to. They exist because offline-first is easy to claim in a pitch and hard to demonstrate, and a thing a prospective client can install, unplug and keep using is an argument that does not need making twice.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. What was rejected - plain. This section carries the value. -->
+    <section>
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">What lost</span>
+                <h2 data-reveal style="--i:1">The versions that did not ship</h2>
+                <p data-reveal style="--i:2">Each of these is the conventional answer to a real problem here, and each lost to the boundary rather than to taste.</p>
+            </div>
+            <div class="decisions">
+                <div class="decision" data-reveal style="--i:2">
+                    <h3>Unify the arcade with the main site's design system</h3>
+                    <p>The obvious efficiency, and the one that breaks the product. Sharing index.css, the nav and the theme toggle means sharing their availability: unified means coupled, and coupled means the arcade goes down when the site does. The arcade instead ships its own manifest, its own service worker scoped to the games directory, and its own visual language, and pays for that in duplication on purpose.</p>
+                </div>
+                <div class="decision" data-reveal style="--i:3">
+                    <h3>Build on a game engine or a framework</h3>
+                    <p>Twelve independent games would be twelve copies of the same three hundred lines, and an engine is the standard fix. It is the wrong fix at this scale for two reasons: an engine wants each game modelled its way, and it arrives with a build step attached. The build step is precisely the thing being refused, because a build step is a dependency that must keep working for the arcade to keep shipping.</p>
+                </div>
+                <div class="decision" data-reveal style="--i:4">
+                    <h3>Network-first caching, so players always get the newest build</h3>
+                    <p>Network-first is the safer default everywhere except here, where the network is assumed absent. Cache-first is the only correct strategy for an offline arcade, and it carries one sharp edge: ship a fix without changing the cache name and returning visitors keep the bug forever, not for a while, until they clear site data. The mitigation is a written rule rather than a clever mechanism.</p>
+                </div>
+                <div class="decision" data-reveal style="--i:5">
+                    <h3>Generate the game registry from a folder listing</h3>
+                    <p>Adding a game touches four separate lists: the precache array, a hub card, the hub's inline icon map, and the slug array the achievements read. A registry that derived all four from the filesystem is the obvious deduplication and needs a build step to run. The four hand-maintained lists are the cheaper trade, because the cost is paid once per new game and the build step would be paid on every deploy forever.</p>
+                </div>
+                <div class="decision" data-reveal style="--i:5">
+                    <h3>Load the display face from a font host</h3>
+                    <p>A hosted font is a cross-boundary request, so it fails offline, and the full face is too heavy to self-host casually. Subsetting to uppercase glyphs only brings it to 5,212 bytes, which is small enough to precache without thinking about it. The cost is real and permanent: every use of the face must be paired with an uppercase transform, because the lowercase glyphs are simply not in the file.</p>
+                </div>
+                <div class="decision" data-reveal style="--i:5">
+                    <h3>Keep the 168KB cover image as the hub hero</h3>
+                    <p>It was the single largest asset in a project whose whole argument is weight. Redrawing the hero in CSS and SVG costs nothing to transfer, scales to any screen without variants, and removes a file from the precache list that every installed player would have carried forever.</p>
+                </div>
+                <div class="decision" data-reveal style="--i:5">
+                    <h3>Put achievements and high scores on a server</h3>
+                    <p>A leaderboard is the expected feature and it imports an entire back end: accounts, a database, moderation of what people name themselves, and a bill that scales with players. All eight achievements evaluate against device storage instead. Nobody can see your streak but you, which is not a limitation to apologise for but the same position the studio takes on its tools: if the feature does not need a server, it does not get one.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. What shipped - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">What shipped</span>
+                <h2 data-reveal style="--i:1">What is running now</h2>
+                <p data-reveal style="--i:2">Twelve games at one address, installable as a PWA, with a service worker scoped to the arcade and a precache list of 25 entries. Put the device in airplane mode after the first visit and every game still opens.</p>
+                <p data-reveal style="--i:3">The shared runtime is arcade.js, 35,673 bytes of plain JavaScript that does the boring things every game needed and nothing more: a fixed-timestep loop so a 144Hz phone and a 60Hz laptop run the same physics, a canvas fitter that handles device pixel ratio so no game ships its own blurry-canvas bug, an 8-bit Web Audio synth so sounds are generated rather than downloaded, score and settings stores wrapped in try/catch, and top-bar chrome injected at load so the back button sits in the same pixel in all twelve games.</p>
+                <p data-reveal style="--i:4">Each game is then one self-contained HTML file that loads the runtime and owns everything else. You can open any of them, read the whole game top to bottom, and change it without knowing how the other eleven work. At this scale that property is worth more than deduplication.</p>
+                <p data-reveal style="--i:4">The identity is a constraint rather than a decoration. The arcade is dark only, never reads the main site's theme key, and assigns each game one neon accent that colours its card, its in-game chrome, its canvas art and its game-over jingle. You learn which game you are in from the colour before you read a word.</p>
+            </div>
+            <ul class="tech-list" data-reveal style="--i:4">
+                <li>Twelve games, 227,558 bytes of static files in total, installable to a home screen</li>
+                <li>A shared runtime in arcade.js and arcade.css, 46,905 bytes combined, no engine and no bundler</li>
+                <li>A cache-first service worker scoped to the arcade, precaching 25 entries under a versioned cache name</li>
+                <li>A 5,212 byte subset of Press Start 2P, uppercase glyphs only, self-hosted</li>
+                <li>Seven neon accent tokens over a near-black ground, one assigned to each of the twelve games</li>
+                <li>Eight achievements, a CRT scanline mode and a rare launch flourish, all evaluated on the device</li>
+                <li>A written rule in sw.js that every commit touching the arcade bumps the cache name</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 4. What it produced - plain. Numbers only where they exist. -->
+    <section>
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">What it produced</span>
+                <h2 data-reveal style="--i:1">What can actually be counted</h2>
+                <p data-reveal style="--i:2">This site runs no analytics, so none of what follows is a play count. Every figure below was read off disk with a shell command before it was written down.</p>
+            </div>
+            <div class="metrics">
+                <div class="metric" data-reveal style="--i:2">
+                    <span class="metric-value">227,558 bytes</span>
+                    <div class="metric-body">
+                        <span class="metric-label">total size of the arcade</span>
+                        <p class="metric-note">222.2 KB for twelve games, a shared runtime, a font, icons and a service worker.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:3">
+                    <span class="metric-value">12</span>
+                    <div class="metric-body">
+                        <span class="metric-label">games</span>
+                        <p class="metric-note">Twelve folders, each one self-contained HTML that reads top to bottom.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:4">
+                    <span class="metric-value">35,673 bytes</span>
+                    <div class="metric-body">
+                        <span class="metric-label">shared runtime</span>
+                        <p class="metric-note">arcade.js, plus 11,232 bytes of arcade.css. No engine, no bundler, no package manifest.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:5">
+                    <span class="metric-value">5,212 bytes</span>
+                    <div class="metric-body">
+                        <span class="metric-label">display font</span>
+                        <p class="metric-note">Press Start 2P subset to uppercase glyphs only, which is why every use is paired with an uppercase transform.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:5">
+                    <span class="metric-value">25</span>
+                    <div class="metric-body">
+                        <span class="metric-label">precached entries</span>
+                        <p class="metric-note">The list a new game must be added to by hand. There is no generated registry, on purpose.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:5">
+                    <span class="metric-value">7</span>
+                    <div class="metric-body">
+                        <span class="metric-label">neon accents</span>
+                        <p class="metric-note">Seven tokens across twelve games, so five neons are shared by two games each.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:5">
+                    <span class="metric-value">8</span>
+                    <div class="metric-body">
+                        <span class="metric-label">achievements</span>
+                        <p class="metric-note">All evaluated against device storage. No account, no leaderboard, no database of who played what at 2am.</p>
+                    </div>
+                </div>
+                <div class="metric" data-reveal style="--i:5">
+                    <span class="metric-value">0</span>
+                    <div class="metric-body">
+                        <span class="metric-label">runtime requests across the boundary</span>
+                        <p class="metric-note">Two absolute URLs exist under the arcade: a canonical link tag and one link back to the main site. Neither is a fetch, so nothing crosses the boundary at runtime.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="honesty" data-reveal style="--i:5">
+                <span class="honesty-label">What is not measured here</span>
+                <p>There are no play counts, no install counts and no retention figures on this page, because the arcade collects none of them and this site runs no analytics at all. That is a direct consequence of the design rather than an oversight: an analytics snippet is a cross-boundary request, so measuring the thing would have broken the property being demonstrated. What can be verified is the part that matters to a client, and it can be verified without trusting us: install it, turn the wifi off, and see whether it still opens.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Next step</span>
+            <h2 data-reveal style="--i:1">Want this kind of thinking on your product?</h2>
+            <div class="cta-row" data-reveal style="--i:2">
+                <a href="../contact/" class="cta-link">Start a project ↗</a>
+                <a href="../work/" class="cta-link">← Back to work</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-container">
+        <div class="footer-brand">
+            <p><strong>Beben Design</strong></p>
+            <p>Design &amp; Interface Studio</p>
+            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
+            <p class="copyright">&copy; Beben Design | All rights reserved</p>
+        </div>
+        <div class="footer-links">
+            <ul class="footer-nav">
+                <li><a href="../contact/">CONTACT</a></li>
+                <li><a href="../legal/">LEGAL</a></li>
+                <li><a href="../privacy/">PRIVACY POLICY</a></li>
+                <li><a href="../credits/">CREDITS</a></li>
+            </ul>
+            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
+        </div>
+    </div>
+    <div class="footer-meta">
+        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>&copy; 2026 Beben Design. All rights reserved.</span>
+    </div>
+</footer>
+
+<script src="../assets/JS/index.js"></script>
+<script src="../assets/JS/sprite.js?v=3.7"></script>
+</body>
+</html>
+

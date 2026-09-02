@@ -64,6 +64,20 @@
     <priority>0.3</priority>
   </url>
 
+  <url>
+    <loc>https://beben.design/beben-arcade/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/codex/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- tools:start (managed by scripts/build_tools.py) -->
 
   <url>

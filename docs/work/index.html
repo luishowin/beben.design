@@ -102,6 +102,31 @@
             display: none;
         }
 
+        /* Beben Arcade */
+        .project-card[href*="beben.design/beben-arcade"] .project-visual-inner {
+            background-image: url("../assets/images/arcade-cover.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .project-card[href*="beben.design/beben-arcade"] .project-placeholder {
+            display: none;
+        }
+
+        /* Codex. The hero is 1200x630 against a 4/3 frame, so contain rather
+           than cover, or a third of the labelled diagram is cropped away. */
+        .project-card[href*="beben.design/codex"] .project-visual-inner {
+            background-image: url("../assets/images/blog/codex-offline-library/hero.svg");
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .project-card[href*="beben.design/codex"] .project-placeholder {
+            display: none;
+        }
+
         .project-card[href*="beben.design/trek-watch"] .project-visual-inner {
             background-image: url("../assets/images/watch.jpg");
             background-size: cover;
@@ -343,8 +368,50 @@
                     </div>
                 </a>
 
-                <!-- 2. Trek Watch -->
-                <a href="https://beben.design/trek-watch/" class="project-card" data-reveal style="--i:1">
+                <!-- 2. Beben Arcade -->
+                <a href="https://beben.design/beben-arcade/" class="project-card" data-reveal style="--i:1">
+                    <div class="project-visual">
+                        <div class="project-visual-inner">
+                            <div class="project-placeholder">Visual coming soon</div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <span class="eyebrow">Own product &middot; Offline PWA</span>
+                        <h2>Beben Arcade</h2>
+                        <p>Twelve small games at one address, installable to a home screen. Put the phone in airplane mode and every one of them still opens.</p>
+                        <p>A case study in drawing a hard offline boundary and refusing every reference that crosses it, including our own stylesheet, nav and fonts.</p>
+                        <div class="project-tags">
+                            <span class="project-tag">PWA</span>
+                            <span class="project-tag">Service Worker</span>
+                            <span class="project-tag">Canvas</span>
+                        </div>
+                        <span class="project-cta">Read case study &rarr;</span>
+                    </div>
+                </a>
+
+                <!-- 3. Codex -->
+                <a href="https://beben.design/codex/" class="project-card" data-reveal style="--i:2">
+                    <div class="project-visual">
+                        <div class="project-visual-inner">
+                            <div class="project-placeholder">Visual coming soon</div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <span class="eyebrow">Own product &middot; Offline search</span>
+                        <h2>Codex</h2>
+                        <p>An offline library that answers in milliseconds: a large web archive rebuilt into a single portable file you can open without the tool that wrote it.</p>
+                        <p>The richest rejection trail of any project here, covering indexing, storage and ranking. Internal tooling, so nothing is downloadable yet, and the page says so.</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Python</span>
+                            <span class="project-tag">SQLite</span>
+                            <span class="project-tag">Search</span>
+                        </div>
+                        <span class="project-cta">Read case study &rarr;</span>
+                    </div>
+                </a>
+
+                <!-- 4. Trek Watch -->
+                <a href="https://beben.design/trek-watch/" class="project-card" data-reveal style="--i:3">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">
@@ -368,8 +435,8 @@
                     </div>
                 </a>
 
-                <!-- 3. Rev Log -->
-                <a href="https://beben.design/rev-log/" class="project-card" data-reveal style="--i:2">
+                <!-- 5. Rev Log -->
+                <a href="https://beben.design/rev-log/" class="project-card" data-reveal style="--i:4">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">
@@ -393,8 +460,8 @@
                     </div>
                 </a>
 
-                <!-- 4. Kilimo Pal -->
-                <a href="https://beben.design/kilimo-pal/" class="project-card" data-reveal style="--i:3">
+                <!-- 6. Kilimo Pal -->
+                <a href="https://beben.design/kilimo-pal/" class="project-card" data-reveal style="--i:5">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">
@@ -418,8 +485,8 @@
                     </div>
                 </a>
 
-                <!-- 5. Neopolaris -->
-                <a href="https://neopolaris.ai/" class="project-card" data-reveal style="--i:4">
+                <!-- 7. Neopolaris -->
+                <a href="https://neopolaris.ai/" class="project-card" data-reveal style="--i:6">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">

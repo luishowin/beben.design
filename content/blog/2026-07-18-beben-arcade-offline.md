@@ -45,7 +45,7 @@ Adding a game touches four places on purpose: the precache list, a hub card, the
 
 ## Identity as a constraint
 
-The arcade is dark only. There is no theme toggle, and it never reads the main site's theme key. Twelve games, twelve neon accents on a near-black `#080813`, one colour each for the card, the in-game chrome, the canvas art, and the game-over jingle. You learn which game you are in from the colour before you read a word.
+The arcade is dark only. There is no theme toggle, and it never reads the main site's theme key. Twelve games on a near-black `#080813`, each owning one of seven neon accents that colours its card, the in-game chrome, the canvas art, and the game-over jingle. You learn which game you are in from the colour before you read a word.
 
 The display type is Press Start 2P, self-hosted at 5KB. That number is the point. The full font is far larger; we subset it to uppercase glyphs only, which is why every use of it is paired with `text-transform: uppercase`. A web font you can afford offline is a web font you can subset until it is smaller than most tracking pixels.
 

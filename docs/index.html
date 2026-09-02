@@ -90,6 +90,49 @@
     <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <style>
+        /* Homepage case-study rows. Open rows with top-border separators,
+           the same primitive the work page and the case studies use. */
+        .case-rows { margin-top: 2.8rem; }
+        .case-row {
+            display: block;
+            border-top: 1px solid var(--border);
+            padding: 1.5rem 0;
+            text-decoration: none;
+            color: inherit;
+            transition: background var(--dur-fast) ease;
+        }
+        .case-row:last-of-type { border-bottom: 1px solid var(--border); }
+        .case-row:hover .case-row__title { color: var(--highlight); }
+        .case-row__title {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.02rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            margin-bottom: 0.45rem;
+            transition: color var(--dur-fast) ease;
+        }
+        .case-row__kind {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .case-row__decision {
+            font-size: 0.9rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin: 0;
+            max-width: 68ch;
+        }
+        .case-row__decision b {
+            font-weight: 500;
+            color: var(--text);
+        }
+    </style>
 </head>
 <body>
 
@@ -254,6 +297,25 @@
                 </div>
                 <span class="sprite-preview__tag">A little AI guide for the site &middot; see how it works &rarr;</span>
             </a>
+
+            <div class="case-rows">
+                <a href="./sprite/" class="case-row" data-reveal style="--i:4">
+                    <span class="case-row__title">Sprite <span class="case-row__kind">Chat widget</span></span>
+                    <p class="case-row__decision"><b>The decision it turned on:</b> the offline pattern engine was written first and treated as the product, so the LLM could be an upgrade instead of a dependency.</p>
+                </a>
+                <a href="./beben-arcade/" class="case-row" data-reveal style="--i:5">
+                    <span class="case-row__title">Beben Arcade <span class="case-row__kind">Offline PWA</span></span>
+                    <p class="case-row__decision"><b>The decision it turned on:</b> refusing a shared stylesheet, a hosted font and a leaderboard, because each one is a request that fails on a plane.</p>
+                </a>
+                <a href="./codex/" class="case-row" data-reveal style="--i:6">
+                    <span class="case-row__title">Codex <span class="case-row__kind">Offline search</span></span>
+                    <p class="case-row__decision"><b>The decision it turned on:</b> rebuilding the archives into plain SQLite rather than querying them where they sat, because ranking, not storage, was the actual problem.</p>
+                </a>
+            </div>
+
+            <div class="cta-wrapper" data-reveal style="--i:7">
+                <a href="./work/" class="cta-link">All case studies ↗</a>
+            </div>
         </div>
     </section>
 
