@@ -14,13 +14,13 @@
     <meta property="og:url" content="https://beben.design/contact/">
     <meta property="og:title" content="Contact | Beben Design - Start a Project">
     <meta property="og:description" content="Direct access to the builders. No account managers, no lost translations. Let's talk about your project.">
-    <meta property="og:image" content="https://beben.design/assets/img/og-image.jpg">
+    <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://beben.design/contact/">
     <meta property="twitter:title" content="Contact | Beben Design - Start a Project">
     <meta property="twitter:description" content="Direct access to the builders. Let's talk about your project.">
-    <meta property="twitter:image" content="https://beben.design/assets/img/og-image.jpg">
+    <meta property="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <script type="application/ld+json">
     {
@@ -321,6 +321,8 @@
                 We reply within one working day.</p>
 
             <form class="contact-form" action="https://formspree.io/f/mdaqkooo" method="POST" data-reveal style="--i:3">
+                <input type="hidden" name="_subject" value="New project brief from beben.design">
+                <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
                 <div class="form-field">
                     <label for="cf-name">Name</label>
                     <input id="cf-name" type="text" name="name" required autocomplete="name">
@@ -333,10 +335,14 @@
                     <label for="cf-message">What are you building?</label>
                     <textarea id="cf-message" name="message" rows="6" required></textarea>
                 </div>
-                <button type="submit" class="form-submit">Send message &rarr;</button>
+                <button type="submit" class="form-submit">Send project brief &rarr;</button>
             </form>
 
-            <p class="form-note" data-reveal style="--i:4">Prefer email?
+            <p class="form-note" data-reveal style="--i:4">What you send reaches our inbox through Formspree. We use it
+                to reply to you and for nothing else: no marketing list, no resale, no analytics. See the
+                <a href="../privacy/">Privacy Policy</a>.</p>
+
+            <p class="form-note" data-reveal style="--i:5">Prefer email?
                 <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a>
             </p>
         </div>

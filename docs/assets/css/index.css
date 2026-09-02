@@ -521,37 +521,6 @@ h2 {
 
 .cta-link:hover::after { width: 100%; }
 
-.cta-link .tooltip {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    background: var(--headers);
-    color: var(--bg);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    padding: 0.35rem 0.75rem;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease;
-    z-index: 10;
-}
-
-.cta-link .tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: var(--headers);
-}
-
-.cta-link:hover .tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 /* ── 9. SERVICE / CARD GRID ───────────────────────────────────── */
 /* These only ever sit inside .section--soft sections in the
    current rotation, so cards use the primary --bg to read as
@@ -980,29 +949,7 @@ footer {
     letter-spacing: 0.02em;
 }
 
-/* ── 18. TOAST ─────────────────────────────────────────────────── */
-#copy-toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(16px);
-    background: var(--headers);
-    color: var(--bg);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 500;
-    padding: 0.6rem 1.4rem;
-    letter-spacing: 0.04em;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 999;
-    white-space: nowrap;
-}
-
-#copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── 19. RESPONSIVE ───────────────────────────────────────────── */
+/* ── 18. RESPONSIVE ───────────────────────────────────────────── */
 .desktop-only { display: flex; }
 
 @media (max-width: 1024px) {
@@ -1054,7 +1001,6 @@ footer {
     .hero h1 { letter-spacing: -0.01em; }
     footer { padding: 2rem 1.2rem; }
     .footer-meta { padding: 0 1.2rem; }
-    .cta-link .tooltip { display: none; }
     .sprite-preview__pill { display: flex; }
     .sprite-preview__text { font-size: 0.82rem; }
 }

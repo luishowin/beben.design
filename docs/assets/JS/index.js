@@ -125,23 +125,7 @@ document.documentElement.classList.add('js');
         });
     });
 
-    // ── 5. COPY EMAIL + TOAST ────────────────────────────────────
-    const toast = document.getElementById('copy-toast');
-    document.querySelectorAll('.copy-email').forEach((link) => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            const email = this.dataset.email;
-            if (!email) return;
-            navigator.clipboard.writeText(email).then(() => {
-                if (toast) {
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 2500);
-                }
-            }).catch(() => { window.location.href = 'mailto:' + email; });
-        });
-    });
-
-    // ── 6. DEMO CONSOLE SIMULATION ───────────────────────────────
+    // ── 5. DEMO CONSOLE SIMULATION ───────────────────────────────
     // A live-style preview of how a Beben engagement actually runs —
     // metrics random-walk within a realistic band rather than
     // jumping to a fresh value each tick, so it reads as "live"
