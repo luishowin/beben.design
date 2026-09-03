@@ -9,16 +9,21 @@ served by GitHub Pages from `docs/`, no build step.
 ```
 docs/                  the published site
   index.html           homepage
-  services/ tools/ shop/ work/ contact/    main pages
-  sprite/              Sprite case study
-  kilimo-pal/ trek-watch/ rev-log/         project previews (noindex until real case studies ship)
+  services/            hub: four rows, each linking to a detail page
+  services/brand-identity/ services/ux-research/
+  services/ui-design/ services/digital-strategy/   the four detail pages
+  tools/ shop/ work/ contact/              main pages
+  sprite/ beben-arcade/ codex/             case studies (four-part, verifiable numbers)
+  rev-log/             open project page, indexed
+  kilimo-pal/ trek-watch/                  project placeholders (noindex; not case studies)
   blog/                GENERATED blog pages + feed.xml (never hand-edit; see The blog)
   legal/ privacy/ credits/ 404.html        support pages
   qr-code-generator/ contrast-grid/ character-counter/ dither-machine/
                        GENERATED tool pages (never hand-edit; see The tools)
   games/               Beben Arcade — standalone offline PWA, 12 games (see The arcade)
   redoubt/ kemmy-spa-concierge-preview/    client previews (intentionally standalone)
-  assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid, FAQ)
+  assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid,
+                       FAQ, and section 18's shared page primitives; see Shared CSS)
   assets/css/sprite.css + assets/JS/sprite.js   the Sprite chat widget
   assets/JS/index.js   theme, mobile menu, reveal animation, FAQ accordion
 content/blog/          blog posts as markdown (the SOURCE; not published)
@@ -26,6 +31,10 @@ content/tools.json + content/tools/    tool registry and per-tool sources (the S
 scripts/build_blog.py  renders content/blog/ into docs/blog/ (+ templates in scripts/templates/)
 scripts/build_tools.py renders content/tools/ into docs/<slug>/ (see The tools)
 cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of the site)
+legal-draft/           drafted Terms of Engagement, parked OUTSIDE docs/ so nothing
+                       unreviewed is served. See legal-review.md
+legal-review.md        what a Kenyan advocate needs to look at, and why
+PROJECT-STATE.md       where this revision stands, what is left, what needs the owner
 ```
 
 ## Design system
@@ -33,8 +42,14 @@ cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of th
 - **Three fonts only:** Old Standard TT (h1/h2 serif), IBM Plex Mono (eyebrows,
   labels, CTAs), Inter (body; Inter 600 sentence case for card titles, step
   titles, FAQ questions). No League Gothic, no uppercase headings.
-- **Red (`--highlight`) has four jobs:** the one italic `em` per headline, CTA
-  links, active/hovered nav, focus outlines. Decorative marks stay muted.
+- **Red has four jobs:** the one italic `em` per headline, CTA links,
+  active/hovered nav, focus outlines. Decorative marks stay muted.
+  Two tokens, and the distinction matters: `--highlight` (`#E71D36`) is the
+  brand red, used for large display text, the focus ring and fills, where 3:1
+  is the bar. `--highlight-text` is the accessible variant for red on
+  normal-size text, where the bar is 4.5:1 and the brand red measures 3.75 to
+  4.16 and fails. `.hero` remaps **both** to `--yellow`, because the red lands
+  at 2.9:1 on the hero photo.
 - **Layout:** full-bleed sections alternating plain / `.section--soft`, content
   inside a 1140px `.container`. Subpages open with `.page-hero`. Prefer open
   rows with top-border separators over nested boxes.
@@ -42,6 +57,13 @@ cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of th
   a per-page observer.
 - **Copy:** no em dashes. Titles use hyphens, badges use middle dots, prose
   uses commas/colons/periods.
+- **Shared CSS:** a pattern that appears on three or more pages belongs in
+  section 18 of `index.css`, not copied again. A page's scoped `<style>` is
+  parsed *after* the `index.css` link, so a page needing a different value
+  still overrides at equal specificity with one line, and never needs
+  `!important`. `.content-block`, `.cta-row`, `.tech-list`, `.decision`,
+  `.metric`, `.honesty`, `.service-goal`, `.deliverables-*` and `.service-faq`
+  all live there.
 - Page-specific styles live in a scoped `<style>` block in each page's head;
   shared patterns live in `index.css`. New pages copy the nav/footer markup
   verbatim from an existing page.
