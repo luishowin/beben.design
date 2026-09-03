@@ -54,7 +54,7 @@
       "name": "How much does a website cost?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Every project is quoted as a fixed-price, line-item proposal after a short discovery call, so you can see exactly what each part costs and remove anything you do not want. There is no hourly billing and no open-ended scope. The budget range on the form above is enough for us to say quickly whether we are the right fit."
+        "text": "Foundations starts at $99 USD: a simple static site for a startup, a new business, or a campaign that needs to exist properly online before it needs anything complex. Everything larger is quoted as a fixed-price, line-item proposal after a discovery call, so you can see what each part costs and remove anything you do not want. No hourly billing."
       }
     },
     {
@@ -113,8 +113,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=3.8">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.8">
+    <link rel="stylesheet" href="../assets/css/index.css?v=3.9">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=3.9">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -245,13 +245,53 @@
         .form-field select:invalid { color: var(--text-muted); }
         .form-field select option { color: var(--text); }
 
-        .field-hint {
+        /* Enquiry guidance. A disclosure rather than a hover tooltip: a tooltip
+           cannot be reached on touch or by keyboard, and this is the field the
+           whole form exists to collect. */
+        .field-help { margin-top: 0.65rem; }
+        .field-help__trigger {
             font-family: var(--font-mono);
             font-size: 0.72rem;
-            line-height: 1.6;
+            letter-spacing: 0.04em;
             color: var(--text-muted);
-            margin-top: 0.5rem;
+            background: none;
+            border: 0;
+            padding: 0.35rem 0;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 44px;
         }
+        .field-help__trigger::before {
+            content: "+";
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+        .field-help__trigger[aria-expanded="true"]::before { content: "\2212"; }
+        .field-help__trigger:hover { color: var(--highlight-text); }
+
+        .field-help__body { padding-bottom: 0.4rem; }
+        .field-help__body[hidden] { display: none; }
+        .field-help__body p,
+        .field-help__body li {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 58ch;
+        }
+        .field-help__body ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.7rem 0 0;
+        }
+        .field-help__body li {
+            border-top: 1px solid var(--border);
+            padding: 0.6rem 0;
+        }
+        .field-help__body strong { color: var(--text); font-weight: 600; }
+
 
         /* ── Success state ──
            .contact-form is display:flex, an author rule that beats the UA
@@ -425,7 +465,24 @@
                 </div>
                 <div class="form-field">
                     <label for="cf-message">What are you building?</label>
-                    <textarea id="cf-message" name="message" rows="6" required></textarea>
+                    <textarea id="cf-message" name="message" rows="6" required
+                              aria-describedby="cf-message-help"></textarea>
+                    <div class="field-help" id="cf-message-help">
+                        <button type="button" class="field-help__trigger" aria-expanded="false" aria-controls="cf-message-tips">
+                            What makes a brief we can answer properly?
+                        </button>
+                        <div class="field-help__body" id="cf-message-tips" hidden>
+                            <p>None of this is required, and a few lines is still enough. But the more of it you
+                                include, the more useful our first reply is:</p>
+                            <ul>
+                                <li><strong>The problem, not the solution.</strong> What is not working, or what does not exist yet.</li>
+                                <li><strong>Who it is for.</strong> The people who will actually use the thing.</li>
+                                <li><strong>What exists today.</strong> A live site, an app, a Figma file, or nothing at all.</li>
+                                <li><strong>What success looks like.</strong> How you would know it worked.</li>
+                                <li><strong>Anything fixed.</strong> A deadline, a platform you are stuck with, a brand you cannot change.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-field">
                     <label for="cf-timeline">Timeline</label>
@@ -437,19 +494,6 @@
                         <option>Three months or more</option>
                         <option>Just exploring</option>
                     </select>
-                </div>
-                <div class="form-field">
-                    <label for="cf-budget">Budget</label>
-                    <select id="cf-budget" name="budget" required>
-                        <option value="" disabled selected>Select a range</option>
-                        <option>Under $1,000</option>
-                        <option>$1,000 to $3,000</option>
-                        <option>$3,000 to $7,500</option>
-                        <option>$7,500 to $15,000</option>
-                        <option>Over $15,000</option>
-                        <option>Not sure yet</option>
-                    </select>
-                    <span class="field-hint">A range is enough. It tells us quickly whether we are the right fit.</span>
                 </div>
                 <button type="submit" class="form-submit">Send project brief &rarr;</button>
             </form>
@@ -489,7 +533,7 @@
             <div class="faq-item" data-reveal style="--i:2">
                 <button class="faq-trigger" aria-expanded="false">How much does a website cost?</button>
                 <div class="faq-answer">
-                    <p>Every project is quoted as a fixed-price, line-item proposal after a short discovery call, so you can see exactly what each part costs and remove anything you do not want. There is no hourly billing and no open-ended scope. The budget range on the form above is enough for us to say quickly whether we are the right fit.</p>
+                    <p>Foundations starts at $99 USD: a simple static site for a startup, a new business, or a campaign that needs to exist properly online before it needs anything complex. Everything larger is quoted as a fixed-price, line-item proposal after a discovery call, so you can see what each part costs and remove anything you do not want. No hourly billing.</p>
                 </div>
             </div>
             <div class="faq-item" data-reveal style="--i:2">
@@ -546,14 +590,23 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=3.8"></script>
-<script src="../assets/JS/sprite.js?v=3.8"></script>
+<script src="../assets/JS/index.js?v=3.9"></script>
+<script src="../assets/JS/sprite.js?v=3.9"></script>
 <script>
     /* Submit without leaving the site. Without this the form is a plain POST
        and a successful send lands the visitor on a formspree.io page, which is
        the last thing they see of the studio. Falls back to the normal POST if
        fetch is unavailable, so the form still works with this script dead. */
     (function () {
+        var help = document.querySelector('.field-help__trigger');
+        if (help) {
+            help.addEventListener('click', function () {
+                var open = help.getAttribute('aria-expanded') === 'true';
+                help.setAttribute('aria-expanded', String(!open));
+                document.getElementById('cf-message-tips').hidden = open;
+            });
+        }
+
         var form = document.querySelector('.contact-form');
         var status = document.getElementById('form-status');
         if (!form || !status || !window.fetch) return;

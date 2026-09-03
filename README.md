@@ -152,8 +152,8 @@ Nav, footer, or token changes on the site must be mirrored in
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=3.8">
-<script src="../assets/JS/sprite.js?v=3.8"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=3.9">
+<script src="../assets/JS/sprite.js?v=3.9"></script>
 ```
 
 **All four shared assets carry the same `?v=`:** `index.css`, `index.js`,
@@ -223,6 +223,27 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 
 The form on `/contact/` posts to Formspree. The form `action` in
 `docs/contact/index.html` holds the form id.
+
+Fields: name, email, message (the one that matters), timeline. Plus two hidden
+Formspree conventions, `_subject` and the `_gotcha` honeypot. Submission is an
+in-page `fetch` with a focused `role="status"` region, so a successful send
+never leaves the site; with the script dead it degrades to a normal POST.
+
+**Spam protection lives in the Formspree dashboard, not here.** The form id is
+public in the page source, so anything on the page can be skipped by posting to
+Formspree directly. Only two settings actually help:
+
+1. **Restrict allowed domains to `beben.design`.** This is the real defence.
+2. **Turn on submission notifications.** The free tier caps at 50 submissions a
+   month and fails silently once hit, which loses leads without warning.
+
+The honeypot only catches unsophisticated bots and cannot stop a direct POST.
+The one codebase-side alternative would be routing submissions through a
+Cloudflare Worker that checks `Origin` and rate-limits before forwarding, the
+same pattern as the Sprite proxy. That is deliberately **not** done: it would
+put the highest-value conversion path behind a service that needs its own
+deploy and can fail independently, in exchange for protection the dashboard
+setting already provides.
 
 ## Local preview
 

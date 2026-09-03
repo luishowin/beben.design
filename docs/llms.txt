@@ -1,8 +1,8 @@
 # Beben Design
 
-> Beben Design is a design-led digital product studio based in Nairobi, Kenya, specializing in UX research, UI design, brand identity, front-end development, and digital product strategy. The studio treats design as research-backed problem-solving rather than decoration — every engagement starts with understanding user behaviour before any visual or code work begins.
+> Beben Design is a design-led digital product studio based in Nairobi, Kenya, specializing in UX research, UI design, brand identity, front-end development, and digital product strategy. The studio treats design as research-backed problem-solving rather than decoration: every engagement starts with understanding user behaviour before any visual or code work begins.
 
-Capabilities span brand identity and visual design, UX research, UI design for web/mobile/desktop, human-machine interfaces (HMI) for hardware-driven products, posters and corporate print, and front-end development in HTML/CSS, React, Webflow, Node.js, and WordPress. The studio serves clients across e-commerce, automotive, healthcare, recreation, real estate, retail, and agriculture, and works as full studio lead, team augmentation, or long-term partner. Pricing starts around $99 USD for simple static sites, scaling with scope via fixed-price, line-item quotes (no hourly billing). The studio is based in Westlands, Nairobi, and is reachable directly via WhatsApp or email — no sales layer.
+Capabilities span brand identity and visual design, UX research, UI design for web/mobile/desktop, human-machine interfaces (HMI) for hardware-driven products, posters and corporate print, and front-end development in HTML/CSS, React, Webflow, Node.js, and WordPress. The studio serves clients across e-commerce, automotive, healthcare, recreation, real estate, retail, and agriculture, and works as full studio lead, team augmentation, or long-term partner. The Foundations package starts at $99 USD, a simple static site for startups, new businesses and campaigns getting established; larger engagements scale with scope via fixed-price, line-item quotes (no hourly billing). The studio is based in Westlands, Nairobi, and is reachable directly via WhatsApp or email, with no sales layer.
 
 ## Services
 
@@ -33,4 +33,4 @@ Capabilities span brand identity and visual design, UX research, UI design for w
 
 ## Optional
 
-- [Shop](https://beben.design/shop/): Upcoming digital products — UI kits, templates, icon sets, and print assets. In development, launching 2026.
+- [Shop](https://beben.design/shop/): Upcoming digital products: UI kits, templates, icon sets, and print assets. In development, launching 2026.

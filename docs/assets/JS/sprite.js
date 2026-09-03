@@ -252,8 +252,8 @@ const SpriteChat = (() => {
     pricing: {
       patterns: [/\b(price|pricing|cost|how much|budget|afford|expensive|cheap|rate)\b/i],
       responses: [
-        { text: "Simple static websites start at $99 USD, but it depends on complexity. The team gives transparent, line-item quotes -- no surprises. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">reach out</span> for a quote?", emotion: "happy" },
-        { text: "Pricing is honest and transparent here. Starts at $99 for static sites, scales with complexity. Best to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">get in touch</span> for a real number!", emotion: "happy" },
+        { text: "The Foundations package starts at $99 USD: a simple static site for a startup, a new business, or a campaign getting established. Bigger builds get a fixed-price, line-item quote after a call. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">reach out</span>?", emotion: "happy" },
+        { text: "Pricing is honest and transparent here. Foundations starts at $99 for a simple static site, and everything larger is quoted line by line. Best to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">get in touch</span> for a real number!", emotion: "happy" },
       ]
     },
     about: {

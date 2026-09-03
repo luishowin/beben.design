@@ -42,7 +42,9 @@ that works directly with clients. No account managers, no lost translations.
    billing, no surprises.
 4. A 50% deposit kicks off the work.
 
-Simple static websites start at $99 USD. UX/UI projects typically run 4 to 8
+The Foundations package starts at $99 USD: a simple static site for a startup,
+new business or campaign getting established. Larger work is quoted per project.
+UX/UI projects typically run 4 to 8
 weeks; rapid prototyping can move in as little as 14 days. Working hours are
 Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
 
