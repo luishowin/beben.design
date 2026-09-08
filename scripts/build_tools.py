@@ -42,6 +42,8 @@ TOOLS_INDEX = DOCS / "tools" / "index.html"
 SITEMAP = DOCS / "sitemap.xml"
 LLMS = DOCS / "llms.txt"
 SPRITE = DOCS / "sprite.md"
+# Mirrors KNOWLEDGE_MAX_CHARS in cloudflare-worker/sprite-proxy.js.
+SPRITE_MAX_CHARS = 12000
 
 SITE = "https://beben.design"
 OG_IMAGE = SITE + "/assets/images/og/ogimage.jpg"
@@ -392,6 +394,19 @@ def update_sprite(tools):
     if soon:
         lines.append("- In development: " + ", ".join(t["name"] for t in soon) + ".")
     replace_md_section(SPRITE, "## The tools", "\n".join(lines))
+
+    # The Worker slices sprite.md at KNOWLEDGE_MAX_CHARS with no error, so an
+    # over-long file loses its tail and Sprite quietly forgets whatever was at
+    # the bottom. Keep this in step with cloudflare-worker/sprite-proxy.js.
+    size = len(SPRITE.read_text(encoding="utf-8"))
+    if size > SPRITE_MAX_CHARS:
+        sys.exit(f"docs/sprite.md is {size} chars, over the Worker's "
+                 f"{SPRITE_MAX_CHARS} limit. It would be truncated silently. "
+                 f"Trim it, or raise KNOWLEDGE_MAX_CHARS in "
+                 f"cloudflare-worker/sprite-proxy.js to match.")
+    if size > SPRITE_MAX_CHARS * 0.9:
+        warn(f"docs/sprite.md is {size} chars, within 10% of the Worker's "
+             f"{SPRITE_MAX_CHARS} limit.")
 
 
 def check_orphans(tools):

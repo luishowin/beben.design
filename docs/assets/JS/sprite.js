@@ -231,15 +231,15 @@ const SpriteChat = (() => {
     services: {
       patterns: [/\b(services?|what do you (do|offer)|capabilities|help with)\b/i],
       responses: [
-        { text: "The studio does a bunch of cool stuff! Websites, Mobile UI, UX Research, AI Integration, HMI, Desktop Apps, and Rebranding. Want me to take you to the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services page</span>?", emotion: "excited" },
-        { text: "Great question! The studio covers everything from web design to AI integration. Check out the full list at <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span>!", emotion: "happy" },
+        { text: "Five of them! Brand identity, UX research, UI design and component systems, digital strategy, and migration and rebuild for a site that has grown out of shape. Want me to take you to the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services page</span>?", emotion: "excited" },
+        { text: "Great question! Everything from brand identity to front-end builds, plus HMI work for hardware and AI integration where it earns its place. Full list at <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span>!", emotion: "happy" },
       ]
     },
     work: {
       patterns: [/\b(work|portfolio|projects?|case stud|showcase|examples?)\b/i],
       responses: [
-        { text: "The 'Thinking in Pixels' section is where the real stuff lives -- case studies showing the thinking behind each design. Let me take you to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('work')\">Work</span>!", emotion: "excited" },
-        { text: "Want to see some work? Every project here is a case study in validation. Jump to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('work')\">Thinking in Pixels</span>!", emotion: "happy" },
+        { text: "'Thinking in pixels' is where the real stuff lives: Sprite (that's me), Beben Arcade, and Codex, each showing the decisions rather than the renders. Let me take you to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('work')\">Work</span>!", emotion: "excited" },
+        { text: "Want to see some work? Every project shows its working, including what got rejected. Jump to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('work')\">Thinking in pixels</span>!", emotion: "happy" },
       ]
     },
     contact: {
@@ -272,7 +272,7 @@ const SpriteChat = (() => {
     tools: {
       patterns: [/\b(tools?|framework|tech|stack|react|html|css|framer|wordpress)\b/i],
       responses: [
-        { text: "Two answers! The studio builds with HTML/CSS, React JS, Framer, and WordPress. And there's a whole page of free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('tools')\">Tools</span> you can use right now: a QR code generator, a contrast grid, a dither machine, and more. Every one of them downloads as a single file that works offline.", emotion: "happy" },
+        { text: "Two answers! The studio builds with HTML/CSS, React JS, Framer, and WordPress. And there are five free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('tools')\">Tools</span> live right now: Beben Arcade, a QR code generator, a contrast grid, a dither machine, and Does It Fit? for checking text against every limit that matters. Each one downloads as a single file that works offline forever.", emotion: "happy" },
       ]
     },
     shop: {
@@ -576,8 +576,11 @@ const SpriteChat = (() => {
       return '<a class="nav-link-inline" href="' + url + '"' +
              (external ? ' target="_blank" rel="noopener"' : '') + '>' + label + '</a>';
     });
-    // bare site paths the model may emit without markdown, e.g. /services/
-    text = text.replace(/(^|\s)(\/(?:services|tools|shop|work|contact|sprite|kilimo-pal|trek-watch|rev-log|blog|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
+    // Bare site paths the model may emit without markdown, e.g. /services/.
+    // Keep this in step with docs/sprite.md: the model learns paths from
+    // there, and any path it knows but this misses renders as dead text.
+    // The services branch covers the five detail pages and how-we-work.
+    text = text.replace(/(^|\s)(\/(?:services(?:\/[a-z-]+)?|blog(?:\/[a-z0-9-]+)?|tools|shop|work|contact|sprite|codex|beben-arcade|games|kilimo-pal|trek-watch|rev-log|qr-code-generator|contrast-grid|dither-machine|character-counter|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
       '$1<a class="nav-link-inline" href="$2">$2</a>');
     // bare WhatsApp URLs become tappable too
     text = text.replace(/(^|\s)(https:\/\/wa\.me\/\d+)(?=[\s.,!?)]|$)/g,

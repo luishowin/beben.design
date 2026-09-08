@@ -1,11 +1,10 @@
 # Sprite knowledge base
 
-This file is Sprite's extended memory. The Cloudflare Worker fetches it from
-https://beben.design/sprite.md and adds it to the model's system prompt, so
-anything written here becomes something Sprite can answer, even if it appears
-nowhere else on the site. Edit it, push, and Sprite picks it up within about
-five minutes. Keep entries short and factual; the whole file is capped at
-8,000 characters before it reaches the model.
+Sprite's extended memory, and the only source for the facts below. The
+Cloudflare Worker fetches it from https://beben.design/sprite.md and adds it
+to the system prompt, so anything here is something Sprite can answer. Edit,
+push, and it is live within five minutes. Keep entries short: the file is cut
+at 8,000 characters before it reaches the model, and the cut is silent.
 
 ## About Beben Design
 
@@ -15,20 +14,32 @@ of code. Every engagement starts with understanding user behaviour through
 research before any visual or code work begins. Design is treated as
 research-backed problem solving, not decoration.
 
-The name on the door is the studio's own: a small, multidisciplinary team
-that works directly with clients. No account managers, no lost translations.
+The studio is one person, working directly with clients. No account
+managers, no lost translations, and no pretending otherwise: whoever a client
+talks to is whoever builds the thing.
 
 ## What the studio does
 
-- Brand identity and visual design: logo systems, brand guides, colour
-  systems with WCAG-compliant contrast, typography hierarchy, optional
-  motion branding.
-- UX research and design: user interviews, journey mapping, information
-  architecture, wireframes, clickable prototypes, usability testing.
-- UI design and component systems: atomic, developer-ready UI kits in Figma
-  with full component states and accessibility annotations.
-- Digital strategy and product planning: MVP prioritisation, phased
-  technical roadmaps, competitor UX benchmarking, discovery workshops.
+Five services, each with its own page under /services/:
+
+- Brand identity and visual design (/services/brand-identity/): logo systems,
+  brand guides, colour systems with WCAG-compliant contrast, typography
+  hierarchy, optional motion branding.
+- UX research and design (/services/ux-research/): user interviews, journey
+  mapping, information architecture, wireframes, clickable prototypes,
+  usability testing.
+- UI design and component systems (/services/ui-design/): atomic,
+  developer-ready UI kits in Figma with full component states and
+  accessibility annotations.
+- Digital strategy and product planning (/services/digital-strategy/): MVP
+  prioritisation, phased technical roadmaps, competitor UX benchmarking,
+  discovery workshops.
+- Migration and rebuild (/services/migration-rebuild/): for a site that grew
+  by accretion. An audit, a content inventory, an explicit kill list, then a
+  rebuild you own outright, with redirects from every retired URL so search
+  rankings move with you. The studio inherits a client's content, not another
+  builder's code. Bring the mess, keep what is worth keeping, rebuild the rest
+  properly.
 - Front-end development: HTML/CSS, React, Framer, and WordPress builds,
   responsive from 320px to 4K.
 - Also: mobile UI, desktop app UI, human-machine interfaces (HMI) for
@@ -48,17 +59,50 @@ UX/UI projects typically run 4 to 8
 weeks; rapid prototyping can move in as little as 14 days. Working hours are
 Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
 
+## What it costs to run, and what you own
+
+The page at /services/how-we-work/ publishes this, which almost nobody does.
+
+- Running costs for a static site: a domain at roughly $12 a year, hosting
+  $0 on GitHub Pages, forms free to about 50 submissions a month. So a
+  brochure site costs about $12 a year to keep online. Anything with an API
+  behind it is itemised and quoted before it is built.
+- What the client owns: the domain, repository, hosting account, content and
+  payment processor, all in their name from the start rather than transferred
+  at the end. The studio keeps only its own component systems, licensed to the
+  client inside the deliverable.
+- Support tiers: Care (monitoring, updates, backups, bounded content edits),
+  Care plus credits (a monthly block of build time, rolling over one month),
+  On request (no retainer, billed per request), and Wind-down (a one-off that
+  archives the site, exports the content, sets redirects and hands over the
+  accounts). Prices are still being set, so do not quote a figure for these.
+- A content update replaces text, images, people, prices or dates, or adds a
+  page on an existing template. A structural change means new code: a new
+  template, component, section type, navigation or integration. Quoted
+  separately.
+
 ## Current projects
 
+Three finished case studies, three previews, one client site.
+
 - Sprite: the animated AI site guide you are talking to right now. Built
-  with plain HTML, CSS, and JS, no frameworks. Its case study is at /sprite/.
+  with plain HTML, CSS, and JS, no frameworks. Case study at /sprite/.
+- Beben Arcade: twelve tiny 8-bit games as an installable offline PWA, at
+  /games/. It refuses every reference that crosses the offline boundary,
+  including the studio's own stylesheet, nav and fonts. Case study at
+  /beben-arcade/.
+- Codex: an offline library that answers in milliseconds, with no network
+  call. Case study at /codex/. Its numbers are self-reported, because nothing
+  about it is publicly verifiable yet, and the page says so.
 - Trek Watch: a rugged adventure watch that sits between the Casio F-91W
-  and the Apple Watch Ultra. Industrial design through to the watch OS.
+  and the Apple Watch Ultra. Industrial design through to the watch OS. A
+  preview at /trek-watch/, not yet a full case study.
 - Rev Log: an open source motorcycle telemetry project. Open hardware,
   open firmware, and an open ride-data format, built in public. It measures
   progression, not just speed. Its project page is at /rev-log/.
 - Kilimo Pal: an AI-powered agriculture platform that meets farmers where
-  they are, from explaining the basics to managing sensor-driven farms.
+  they are, from explaining the basics to managing sensor-driven farms. A
+  preview at /kilimo-pal/.
 - Neopolaris: a full website design and build for a Nairobi startup, live
   at neopolaris.ai.
 
@@ -80,20 +124,20 @@ Monday to Friday, 08:00 to 18:00 EAT. The studio works with clients globally.
 - The studio writes essays and build logs at /blog/: design decisions,
   engineering trade-offs, and tools, all from real projects. The index
   leads with an article of the day, then featured articles.
-- Launch articles: how Sprite was built (/blog/building-sprite/), why
-  Rev Log publishes its data format before hardware
-  (/blog/rev-log-format-first/), and the case for tools you can
-  download and own (/blog/tools-you-can-own/).
+- Articles so far: how Sprite was built (/blog/building-sprite/), why Rev
+  Log publishes its data format before hardware
+  (/blog/rev-log-format-first/), the case for tools you can download and own
+  (/blog/tools-you-can-own/), how Beben Arcade stays playable offline
+  (/blog/beben-arcade-offline/), and Codex, an offline library that answers in
+  milliseconds (/blog/codex-offline-library/).
 
 ## Extras worth knowing
 
 - The shop launches in 2026 with UI kits, templates, icon sets, and print
   assets. The waitlist gets access 48 hours before the public.
-- The footer coordinates 1°16'S 36°48'E point to Westlands, Nairobi, where
-  the studio is built.
+- The footer coordinates 1°16'S 36°48'E point to Westlands, Nairobi.
 - The studio uses AI in its workflow where it enhances efficiency and
   creativity, not where it shortcuts thinking.
 
-<!-- Add new sections above this line. Anything you write here, Sprite
-     can answer. Good candidates: founder story, press mentions, current
-     availability, holiday closures, new services being piloted. -->
+<!-- Add new sections above this line. Anything here, Sprite can answer.
+     Watch the 8,000-character cap: the tail is cut silently. -->
