@@ -93,6 +93,12 @@
   </url>
 
   <url>
+    <loc>https://beben.design/services/migration-rebuild/</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://beben.design/services/ui-design/</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>

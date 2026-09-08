@@ -998,6 +998,21 @@ footer {
     margin-top: 2rem;
 }
 
+/* The closing "Next step" band. Was a copy-pasted eyebrow + h2 + .cta-row
+   trio on 10 pages, wrapped in three different section variants, so the
+   rhythm had already started to drift. The section still chooses its own
+   surface (plain or .section--soft); this only fixes the internal spacing
+   and the supporting paragraph, which is what was inconsistent. */
+.next-step h2 { margin-bottom: 0; }
+.next-step p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 52ch;
+    margin-top: 0.8rem;
+}
+.next-step .cta-row { margin-top: 2.2rem; }
+
 .tech-list { list-style: none; margin-top: 1.2rem; }
 .tech-list li {
     font-family: var(--font-mono);
