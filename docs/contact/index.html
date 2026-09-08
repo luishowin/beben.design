@@ -113,8 +113,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=4.2">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.2">
+    <link rel="stylesheet" href="../assets/css/index.css?v=4.3">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.3">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -218,6 +218,120 @@
         .form-submit:hover {
             background: var(--headers);
             color: var(--bg);
+        }
+
+        /* ── Triage. Added by contact.js at runtime, so none of this applies
+           until the script has actually built the flow. With the script dead
+           the page keeps the plain form underneath, untouched. ── */
+        .triage-progress {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1.6rem;
+        }
+
+        .triage-step { border: 0; padding: 0; margin: 0; min-width: 0; }
+        .triage-step[hidden] { display: none; }
+
+        .triage-step__legend {
+            font-family: var(--font-title);
+            font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+            line-height: 1.25;
+            color: var(--headers);
+            padding: 0;
+            margin-bottom: 0.5rem;
+        }
+        .triage-step__legend:focus { outline: none; }
+        .triage-step__legend:focus-visible {
+            outline: 2px solid var(--highlight);
+            outline-offset: 4px;
+        }
+
+        .triage-step__hint {
+            font-size: 0.86rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 54ch;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Choice list. Real radios, visually replaced but never removed from
+           the accessibility tree, so arrow keys and screen readers behave. */
+        .triage-choices { display: flex; flex-direction: column; gap: 0.6rem; }
+        .triage-choice { position: relative; display: block; }
+        .triage-choice input {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .triage-choice span {
+            display: block;
+            border: 1px solid var(--border);
+            padding: 1rem 1.15rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text);
+            transition: border-color var(--dur-fast) ease, background var(--dur-fast) ease;
+        }
+        .triage-choice input:hover + span { border-color: var(--headers); }
+        .triage-choice input:checked + span {
+            border-color: var(--headers);
+            background: var(--bg-soft);
+            color: var(--headers);
+        }
+        .triage-choice input:focus-visible + span {
+            outline: 2px solid var(--highlight);
+            outline-offset: 2px;
+        }
+
+        .triage-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+            align-items: center;
+        }
+
+        .triage-back {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: none;
+            border: 0;
+            padding: 0.75rem 0.25rem;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .triage-back:hover { color: var(--headers); }
+        .triage-back:focus-visible {
+            outline: 2px solid var(--highlight);
+            outline-offset: 2px;
+        }
+
+        .triage-error {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--highlight-text);
+            margin-top: 1rem;
+        }
+        .triage-error[hidden] { display: none; }
+
+        /* The assembled brief on the review step. Still the same textarea the
+           no-script form posts, so nothing downstream changes. */
+        .triage-review__note {
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            max-width: 54ch;
         }
 
 
@@ -440,7 +554,7 @@
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Get in touch</span>
             <h1 data-reveal style="--i:1">Design <em class="highlight-box">logic</em> starts with a conversation.</h1>
-            <p data-reveal style="--i:2">No aggressive sales pitch. Just a direct technical discussion about your goals, with the people who will actually build it.</p>
+            <p data-reveal style="--i:2">No sales pitch. A direct technical discussion about your goals, with the person who will actually build it.</p>
         </div>
     </section>
 
@@ -590,9 +704,347 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=4.2"></script>
-<script src="../assets/JS/sprite.js?v=4.2"></script>
+<script src="../assets/JS/index.js?v=4.3"></script>
+<script src="../assets/JS/sprite.js?v=4.3"></script>
 <script>
+    /* Situations-first triage (brief v2 section 4.8). Progressive enhancement:
+       the form in the HTML is the complete, working, no-script version, and
+       this replaces its single "What are you building?" box with one question
+       per screen, then writes the answers back into that same textarea. If
+       this block throws or never runs, the plain form is still there and still
+       posts. Nothing below removes a field; steps only move them. */
+    (function () {
+        var form = document.querySelector('.contact-form');
+        if (!form) return;
+
+        var SITUATIONS = [
+            {
+                label: 'You have a business and no website',
+                questions: [
+                    { q: 'What does the business do?', type: 'text',
+                      hint: 'A sentence is plenty. Plain words beat a positioning statement.' },
+                    { q: 'What should the site do first?', type: 'choice', options: [
+                        'Explain what you offer, clearly',
+                        'Take enquiries from people who are already interested',
+                        'Sell something directly',
+                        'Exist properly for people who were referred to you'
+                    ] },
+                    { q: 'Is there anything already?', type: 'choice', options: [
+                        'Nothing at all',
+                        'A social account, and that is it',
+                        'A domain, with nothing on it',
+                        'An old site nobody updates'
+                    ] }
+                ]
+            },
+            {
+                label: 'Your site is a mess and you do not know where to start',
+                questions: [
+                    { q: 'What is the site doing wrong?', type: 'text',
+                      hint: 'What you notice is more useful than what you think is causing it.' },
+                    { q: 'Roughly how many pages does it have?', type: 'choice', options: [
+                        'Under 10',
+                        'Somewhere between 10 and 50',
+                        'Somewhere between 50 and 200',
+                        'More than 200, or nobody knows'
+                    ] },
+                    { q: 'Who can change the content today?', type: 'choice', options: [
+                        'You can',
+                        'Someone in the business can',
+                        'Only the agency that built it',
+                        'Nobody, in practice'
+                    ] }
+                ]
+            },
+            {
+                label: 'You have a product that needs an interface',
+                questions: [
+                    { q: 'What does the product do?', type: 'text',
+                      hint: 'The problem it solves, and for whom.' },
+                    { q: 'What stage is it at?', type: 'choice', options: [
+                        'An idea, not built yet',
+                        'A prototype',
+                        'Built and working, but never designed',
+                        'Live, and being redesigned'
+                    ] },
+                    { q: 'Where does it run?', type: 'choice', options: [
+                        'In a browser',
+                        'On mobile',
+                        'On desktop',
+                        'On hardware, or a machine interface'
+                    ] }
+                ]
+            },
+            {
+                label: 'You need identity work',
+                questions: [
+                    { q: 'What exists today?', type: 'choice', options: [
+                        'Nothing yet',
+                        'A logo, and nothing around it',
+                        'A full identity that has drifted out of shape',
+                        'An identity you are not allowed to change'
+                    ] },
+                    { q: 'What is driving it?', type: 'choice', options: [
+                        'Launching something new',
+                        'Repositioning the business',
+                        'Growing past the current look',
+                        'Nothing matches anything else any more'
+                    ] },
+                    { q: 'Where does it need to work?', type: 'text',
+                      hint: 'Signage, packaging, an app icon, a pitch deck, a vehicle. Whatever is real.' }
+                ]
+            },
+            {
+                label: 'Something else',
+                questions: [
+                    { q: 'What is the situation?', type: 'text',
+                      hint: 'The problem, not the solution.' },
+                    { q: 'What have you already tried?', type: 'text',
+                      hint: 'Including nothing, if that is the honest answer.' },
+                    { q: 'What would success look like?', type: 'text',
+                      hint: 'How you would know it worked.' }
+                ]
+            }
+        ];
+
+        var fields = {
+            name: form.querySelector('#cf-name').closest('.form-field'),
+            email: form.querySelector('#cf-email').closest('.form-field'),
+            message: form.querySelector('#cf-message').closest('.form-field'),
+            timeline: form.querySelector('#cf-timeline').closest('.form-field')
+        };
+        var textarea = form.querySelector('#cf-message');
+        var submit = form.querySelector('.form-submit');
+        var intro = document.querySelector('.form-intro');
+
+        var progress = document.createElement('p');
+        progress.className = 'triage-progress';
+        progress.setAttribute('role', 'status');
+        progress.setAttribute('aria-live', 'polite');
+
+        var steps = [];
+        var branchSteps = [];
+        var current = 0;
+
+        function makeStep(legendText, hintText) {
+            var fs = document.createElement('fieldset');
+            fs.className = 'triage-step';
+            fs.hidden = true;
+            var lg = document.createElement('legend');
+            lg.className = 'triage-step__legend';
+            lg.tabIndex = -1;
+            lg.textContent = legendText;
+            fs.appendChild(lg);
+            if (hintText) {
+                var h = document.createElement('p');
+                h.className = 'triage-step__hint';
+                h.textContent = hintText;
+                fs.appendChild(h);
+            }
+            return fs;
+        }
+
+        function addNav(fs, isLast) {
+            var err = document.createElement('p');
+            err.className = 'triage-error';
+            err.setAttribute('role', 'alert');
+            err.hidden = true;
+            fs.appendChild(err);
+
+            var nav = document.createElement('div');
+            nav.className = 'triage-nav';
+            if (!isLast) {
+                var next = document.createElement('button');
+                next.type = 'button';
+                next.className = 'form-submit';
+                next.textContent = 'Continue';
+                next.addEventListener('click', function () { advance(fs); });
+                nav.appendChild(next);
+            }
+            var back = document.createElement('button');
+            back.type = 'button';
+            back.className = 'triage-back';
+            back.textContent = 'Back';
+            back.addEventListener('click', function () { goTo(current - 1); });
+            nav.appendChild(back);
+            fs.appendChild(nav);
+            fs._error = err;
+            fs._back = back;
+        }
+
+        /* Step 1: the situation. Real radios in a real fieldset, so the
+           legend labels the group and arrow keys move between options. */
+        var situationStep = makeStep("What's the situation?",
+            'Pick the one that fits closest. The next few questions change depending on which it is.');
+        var choices = document.createElement('div');
+        choices.className = 'triage-choices';
+        SITUATIONS.forEach(function (sit, i) {
+            var label = document.createElement('label');
+            label.className = 'triage-choice';
+            var input = document.createElement('input');
+            input.type = 'radio';
+            input.name = 'Situation';
+            input.value = sit.label;
+            input.addEventListener('change', function () { buildBranch(i); });
+            var span = document.createElement('span');
+            span.textContent = sit.label;
+            label.appendChild(input);
+            label.appendChild(span);
+            choices.appendChild(label);
+        });
+        situationStep.appendChild(choices);
+        addNav(situationStep, false);
+        situationStep._validate = function () {
+            return form.querySelector('input[name="Situation"]:checked')
+                ? null : 'Pick the situation that fits closest to carry on.';
+        };
+
+        /* Details and review are fixed; the branch between them is rebuilt
+           whenever the situation changes. */
+        var detailsStep = makeStep('Where should the reply go?', null);
+        detailsStep.appendChild(fields.name);
+        detailsStep.appendChild(fields.email);
+        detailsStep.appendChild(fields.timeline);
+        addNav(detailsStep, false);
+        detailsStep._validate = function () {
+            var missing = [fields.name, fields.email, fields.timeline].filter(function (f) {
+                var c = f.querySelector('input, select');
+                return !c.value.trim();
+            });
+            if (missing.length) return 'Name, email and timeline are all needed before the last step.';
+            var email = form.querySelector('#cf-email');
+            return email.checkValidity() ? null : 'That email address does not look right.';
+        };
+
+        var reviewStep = makeStep('Here is your brief', null);
+        var reviewNote = document.createElement('p');
+        reviewNote.className = 'triage-review__note';
+        reviewNote.textContent = 'Assembled from your answers. Edit anything, add anything that is missing, '
+            + 'then send it. This is the text that reaches the studio.';
+        reviewStep.appendChild(reviewNote);
+        reviewStep.appendChild(fields.message);
+        addNav(reviewStep, true);
+        reviewStep._validate = function () {
+            return textarea.value.trim() ? null : 'The brief cannot be empty.';
+        };
+
+        function buildBranch(index) {
+            branchSteps.forEach(function (fs) { fs.remove(); });
+            branchSteps = [];
+            SITUATIONS[index].questions.forEach(function (q) {
+                var fs = makeStep(q.q, q.hint || null);
+                if (q.type === 'choice') {
+                    var wrap = document.createElement('div');
+                    wrap.className = 'triage-choices';
+                    q.options.forEach(function (opt) {
+                        var label = document.createElement('label');
+                        label.className = 'triage-choice';
+                        var input = document.createElement('input');
+                        input.type = 'radio';
+                        input.name = q.q;
+                        input.value = opt;
+                        var span = document.createElement('span');
+                        span.textContent = opt;
+                        label.appendChild(input);
+                        label.appendChild(span);
+                        wrap.appendChild(label);
+                    });
+                    fs.appendChild(wrap);
+                    fs._collect = function () {
+                        var c = fs.querySelector('input:checked');
+                        return c ? c.value : '';
+                    };
+                    fs._validate = function () {
+                        return fs.querySelector('input:checked') ? null : 'Pick one to carry on.';
+                    };
+                } else {
+                    var field = document.createElement('div');
+                    field.className = 'form-field';
+                    var ta = document.createElement('textarea');
+                    ta.rows = 4;
+                    ta.name = q.q;
+                    ta.setAttribute('aria-label', q.q);
+                    field.appendChild(ta);
+                    fs.appendChild(field);
+                    fs._collect = function () { return ta.value.trim(); };
+                    fs._validate = function () {
+                        return ta.value.trim() ? null : 'A sentence is enough, but this one is needed.';
+                    };
+                }
+                fs._question = q.q;
+                addNav(fs, false);
+                branchSteps.push(fs);
+                detailsStep.parentNode.insertBefore(fs, detailsStep);
+            });
+            steps = [situationStep].concat(branchSteps, [detailsStep, reviewStep]);
+        }
+
+        function assemble() {
+            var sit = form.querySelector('input[name="Situation"]:checked');
+            var out = [];
+            if (sit) out.push('Situation: ' + sit.value + '.');
+            branchSteps.forEach(function (fs) {
+                var a = fs._collect();
+                if (a) out.push(fs._question + '\n' + a);
+            });
+            return out.join('\n\n');
+        }
+
+        function goTo(index) {
+            if (index < 0 || index >= steps.length) return;
+            current = index;
+            steps.forEach(function (fs, i) { fs.hidden = i !== index; });
+            var step = steps[index];
+            step._back.hidden = index === 0;
+            step._error.hidden = true;
+            submit.hidden = index !== steps.length - 1;
+            progress.textContent = 'Step ' + (index + 1) + ' of ' + steps.length;
+            if (index === steps.length - 1) textarea.value = assemble();
+            step.querySelector('.triage-step__legend').focus();
+        }
+
+        function advance(fs) {
+            var problem = fs._validate ? fs._validate() : null;
+            if (problem) {
+                fs._error.textContent = problem;
+                fs._error.hidden = false;
+                return;
+            }
+            fs._error.hidden = true;
+            goTo(current + 1);
+        }
+
+        /* Only take the form over once everything above has been built without
+           throwing. Until this line runs the plain form is what the page has. */
+        form.insertBefore(progress, form.firstChild);
+        form.insertBefore(situationStep, progress.nextSibling);
+        form.appendChild(detailsStep);
+        form.appendChild(reviewStep);
+        /* The submit button sits at the end of the no-script form, which is
+           now above the steps that were appended after it. Move it into the
+           review step's nav so it follows the brief it sends, in reading
+           order and in tab order, and matches Continue/Back on every other
+           step. */
+        reviewStep.querySelector('.triage-nav')
+                  .insertBefore(submit, reviewStep._back);
+        buildBranch(0);
+        form.querySelector('input[name="Situation"]').checked = false;
+        if (intro) {
+            intro.textContent = 'Five questions, one at a time. They assemble into a brief you can '
+                + 'edit before it sends. You get a reply within one working day.';
+        }
+        goTo(0);
+
+        /* If a required field is somehow empty at submit, native validation
+           cannot focus it while its step is hidden. Reveal the step first. */
+        form.addEventListener('invalid', function (e) {
+            var owner = e.target.closest('.triage-step');
+            var i = steps.indexOf(owner);
+            if (i > -1 && i !== current) goTo(i);
+        }, true);
+    })();
+
+
     /* Submit without leaving the site. Without this the form is a plain POST
        and a successful send lands the visitor on a formspree.io page, which is
        the last thing they see of the studio. Falls back to the normal POST if
@@ -635,13 +1087,13 @@
                 if (!res.ok) throw new Error(res.status);
                 form.hidden = true;
                 show('Brief received.',
-                     'We reply within one working day, usually sooner. If it is urgent, WhatsApp is faster.',
+                     'You get a reply within one working day, usually sooner. If it is urgent, WhatsApp is faster.',
                      false);
             }).catch(function () {
                 btn.disabled = false;
                 btn.textContent = label;
                 show('That did not send.',
-                     'Something went wrong on the way to our inbox. Email hello.beben.design@gmail.com directly and we will pick it up from there.',
+                     'Something went wrong on the way to the studio inbox. Email hello.beben.design@gmail.com directly and it gets picked up from there.',
                      true);
             });
         });

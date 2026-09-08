@@ -244,29 +244,63 @@ def check_html(path, show_allowed):
         if text.rstrip().endswith("?") and text.strip().lower() not in HEADING_EXEMPT:
             fails.append((where, line, "rhetorical-question headline", text))
 
+    if zone in (SELLING, UI):
+        fails += check_inline_js(path, zone)
+
     if origin and fails:
         fails = [(f"{f[0]}  [generated, edit {origin}]", *f[1:]) for f in fails]
     return fails, notes
+
+
+STRING = re.compile(r"""(['"`])((?:(?!\1)[^\\]|\\.)*)\1""")
+
+
+def js_strings(text):
+    """String literals from JS that plausibly hold visitor-facing copy.
+
+    Identifiers, selectors, class lists and locale tags are not copy. Four
+    words is the cheapest filter that keeps sentences and drops
+    "form-status form-status--error" and "en-US", the latter of which
+    otherwise trips \bus\b on its uppercase half.
+    """
+    for n, line in enumerate(text.splitlines(), 1):
+        stripped = line.strip()
+        if stripped.startswith("//") or stripped.startswith("*"):
+            continue
+        for m in STRING.finditer(line):
+            s = m.group(2)
+            if len(s.split()) >= 4:
+                yield n, s
+
+
+def check_inline_js(path, zone):
+    """UI copy built by a page's own inline script is still UI copy.
+
+    The triage on the contact page assembles its questions in JavaScript, so
+    none of that text appears in the HTML the parser sees.
+    """
+    fails = []
+    where = f"docs/{path.relative_to(DOCS)}"
+    raw = path.read_text(encoding="utf-8")
+    for block in re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", raw, re.S):
+        offset = raw[: raw.index(block)].count("\n")
+        for n, s in js_strings(block):
+            if THE_TEAM.search(s):
+                fails.append((where, offset + n, "asserts a team that does not exist", s))
+            elif FIRST_PERSON.search(s) and not is_proper_name(s):
+                fails.append((where, offset + n, f"first person in {zone} zone (inline script)", s))
+    return fails
 
 
 def check_sprite(show_allowed):
     """sprite.js keeps its jokes. Studio 'we' and team claims are still wrong."""
     path = ROOT / "docs" / "assets" / "JS" / "sprite.js"
     fails = []
-    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-        stripped = line.strip()
-        if stripped.startswith("//") or stripped.startswith("*"):
-            continue
-        for m in re.finditer(r"""(['"`])((?:(?!\1)[^\\]|\\.)*)\1""", line):
-            s = m.group(2)
-            # Identifiers, selectors and locale tags are not copy. "en-US"
-            # otherwise trips \bus\b on the uppercase half.
-            if not re.search(r"\s", s):
-                continue
-            if THE_TEAM.search(s):
-                fails.append(("docs/assets/JS/sprite.js", n, "asserts a team that does not exist", s))
-            elif FIRST_PERSON.search(s):
-                fails.append(("docs/assets/JS/sprite.js", n, "studio first person in sprite", s))
+    for n, s in js_strings(path.read_text(encoding="utf-8")):
+        if THE_TEAM.search(s):
+            fails.append(("docs/assets/JS/sprite.js", n, "asserts a team that does not exist", s))
+        elif FIRST_PERSON.search(s):
+            fails.append(("docs/assets/JS/sprite.js", n, "studio first person in sprite", s))
     return fails
 
 
