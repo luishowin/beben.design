@@ -113,6 +113,26 @@ it would have quietly lost its last section. Trimmed to 7,948, the cap raised to
 the generator rewrites the tools section and adding one tool would walk it off
 the same cliff. The two limits must be kept in step.
 
+**The seasonal banner was never wired up.** `sprite.js` has mapped the chat
+panel's header to nine dated images since `bd16a6f`, but `docs/assets/images/
+banners/` did not exist. Only `summer` resolved, because it alone pointed
+outside that directory at `sprite-profile-banner.jpg`. Every other day of the
+year served a 404 into a `background-image`, which fails silently: the panel
+opened with 140px of dead space above Sprite's name. It had been doing that
+since 1 September, and nothing reported it.
+
+Eight images now exist, drawn as one set: four seasons, and five holidays sliced
+from a single collage. Sourced at 1672px and published at 760px, the width the
+380px panel needs at 2x, as WebP. **7.7MB of PNG became 556KB**, which matters
+because this loads on every page of the site, not just one. The date logic was
+tested by running the shipped `getSeasonalBanner` against a stubbed clock for
+all 365 days of 2026 and fetching whatever each returned: nine distinct images,
+all 200, no gaps.
+
+The PNG masters are deliberately **not** committed. They are 10.8MB, they are
+unreferenced, and `docs/` is the published directory, so committing them would
+have made item 9 below worse in the same breath as fixing a bug.
+
 ---
 
 ## Corrections to brief v2
@@ -144,7 +164,9 @@ all match real tokens exactly. Do not "fix" them.
 | 8 | `.footer-nav` baseline bug | 11.2px links on a 43.5px strut. The repo already fixed this exact bug in the main nav. |
 | 9 | `/work/` page weight | The HTML is 32KB; the image payload takes it past 2MB. |
 | 9 | `.tui__h1` / `.tui__h2` are a hardcoded `#9148ff` | A fifth colour outside the system, failing contrast at 3.71 to 3.99. |
-| 9 | ~19MB of unreferenced images in `docs/assets/images/` | Caution: the hero webp scores zero on a filename grep because every reference is percent-encoded. A naive cleanup deletes a live asset. |
+| 9 | ~19MB of unreferenced images in `docs/assets/images/` | Caution: the hero webp scores zero on a filename grep because every reference is percent-encoded. A naive cleanup deletes a live asset. The four banner PNG masters sit here too, untracked, and are the one part of this pile whose provenance is known. |
+| 8 | Sprite's Easter banner fires on the wrong dates | The window is hardcoded to 20-31 March, but Easter is moveable: in 2026 it is 5 April, so the banner shows on twelve days that are not Easter, misses the day itself, and eats the first twelve days of spring. Either compute the date or drop the entry. |
+| 9 | The summer banner is the odd one out | The other eight are 760px WebP in `banners/`. Summer alone is `sprite-profile-banner.jpg`, 34KB at a different provenance and aspect, left in place because replacing it was not asked for. It will look off once the art is redrawn as a set. |
 | 9 | Eight meta descriptions over 160 characters | They truncate in results. All predate this work; the homepage one was fixed with the voice pass. |
 | 7 | The fabricated live console on the homepage | `index.html` pulses a "live" dot over four random-walk metrics and ten invented activity lines. A visitor who suspects it is synthetic discounts every other claim on the page. |
 | B | Legal | Parked in `legal-draft/`. See `legal-review.md`. |

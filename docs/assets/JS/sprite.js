@@ -176,17 +176,17 @@ const SpriteChat = (() => {
 
   const seasonalBanners = {
     holidays: [
-      { name: 'new-year',    month: 1,  dayStart: 1,  dayEnd: 3,   image: '/assets/images/banners/new-year.jpg' },
-      { name: 'valentines',  month: 2,  dayStart: 12, dayEnd: 15,  image: '/assets/images/banners/valentines.jpg' },
-      { name: 'easter',      month: 3,  dayStart: 20, dayEnd: 31,  image: '/assets/images/banners/easter.jpg' },
-      { name: 'halloween',   month: 10, dayStart: 25, dayEnd: 31,  image: '/assets/images/banners/halloween.jpg' },
-      { name: 'christmas',   month: 12, dayStart: 15, dayEnd: 31,  image: '/assets/images/banners/christmas.jpg' },
+      { name: 'new-year',    month: 1,  dayStart: 1,  dayEnd: 3,   image: '/assets/images/banners/new-year.webp' },
+      { name: 'valentines',  month: 2,  dayStart: 12, dayEnd: 15,  image: '/assets/images/banners/valentines.webp' },
+      { name: 'easter',      month: 3,  dayStart: 20, dayEnd: 31,  image: '/assets/images/banners/easter.webp' },
+      { name: 'halloween',   month: 10, dayStart: 25, dayEnd: 31,  image: '/assets/images/banners/halloween.webp' },
+      { name: 'christmas',   month: 12, dayStart: 15, dayEnd: 31,  image: '/assets/images/banners/christmas.webp' },
     ],
     seasons: {
-      spring: '/assets/images/banners/spring.jpg',
+      spring: '/assets/images/banners/spring.webp',
       summer: '/assets/images/sprite-profile-banner.jpg',
-      autumn: '/assets/images/banners/autumn.jpg',
-      winter: '/assets/images/banners/winter.jpg',
+      autumn: '/assets/images/banners/autumn.webp',
+      winter: '/assets/images/banners/winter.webp',
     }
   };
 
