@@ -54,7 +54,7 @@ PILLARS = [
     ("private", "Private by default",
      "Nothing you paste, drop, or type into these ever leaves your device."),
     ("design", "Design toolkit",
-     "The utilities we reach for on client work, rebuilt without the sign-up wall."),
+     "The utilities client work keeps reaching for, rebuilt without the sign-up wall."),
     ("business", "Run your business",
      "Pricing, invoicing, and getting your own work out of the door."),
 ]

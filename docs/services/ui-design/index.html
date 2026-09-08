@@ -40,8 +40,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="/assets/css/index.css?v=3.9">
-    <link rel="stylesheet" href="/assets/css/sprite.css?v=3.9">
+    <link rel="stylesheet" href="/assets/css/index.css?v=4.0">
+    <link rel="stylesheet" href="/assets/css/sprite.css?v=4.0">
 
     <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
@@ -129,7 +129,7 @@
             "name": "Do you use Atomic Design methodology to ensure UI components are modular and scalable?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. We build from atoms (buttons, inputs, labels) up to molecules (form fields, card headers) and then to organisms (full card components, nav bars). This means a change at the atom level - say, updating the primary button colour - propagates automatically through every component that uses it. The result is a UI Kit that scales without breaking."
+                "text": "Yes. The kit builds from atoms (buttons, inputs, labels) up to molecules (form fields, card headers) and then to organisms (full card components, nav bars). This means a change at the atom level - say, updating the primary button colour - propagates automatically through every component that uses it. The result is a UI Kit that scales without breaking."
             }
         },
         {
@@ -137,7 +137,7 @@
             "name": "Will the UI Kit be provided in Figma, and is it ready for developer handoff?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes on both. The Figma file uses Auto Layout throughout, which means components resize predictably. Variables are set up for colour and typography tokens, so a developer can read exact CSS values directly from Figma's inspect panel. We also include a separate handoff document specifying spacing, grid, and interaction behaviour for every component that has a non-obvious state."
+                "text": "Yes on both. The Figma file uses Auto Layout throughout, which means components resize predictably. Variables are set up for colour and typography tokens, so a developer can read exact CSS values directly from Figma's inspect panel. A separate handoff document specifies spacing, grid, and interaction behaviour for every component that has a non-obvious state."
             }
         },
         {
@@ -145,12 +145,12 @@
             "name": "How do you handle accessibility (WCAG compliance) to ensure the interface works for everyone?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Accessibility is built in from the start, not retrofitted. We check colour contrast ratios against WCAG AA (4.5:1 for normal text, 3:1 for large text) as we design. We annotate focus order and keyboard navigation paths in the handoff file. We also flag any components that require ARIA attributes - these are documented for the development team so accessibility doesn't get lost in implementation."
+                "text": "Accessibility is built in from the start, not retrofitted. Colour contrast is checked against WCAG AA (4.5:1 for normal text, 3:1 for large text) during design, not after. Focus order and keyboard navigation paths are annotated in the handoff file, and any component needing ARIA attributes is flagged and documented for whoever builds it so accessibility doesn't get lost in implementation."
             }
         },
         {
             "@type": "Question",
-            "name": "Can you create custom iconography and illustrations unique to our product?",
+            "name": "Can you create custom iconography and illustrations unique to your product?",
             "acceptedAnswer": {
                 "@type": "Answer",
                 "text": "Yes. Custom icon sets are delivered as SVG with consistent stroke weight, optical balance adjustments for small sizes, and both outlined and filled variants. Illustrations follow the same process as brand identity - mood board first, style approval, then production. All source files are included in the deliverable."
@@ -161,7 +161,7 @@
             "name": "How do you balance industry best practices with a unique, eye-catching visual style?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Best practices govern structure and behaviour - where to place navigation, how to handle form errors, what a primary CTA should look like. Visual style governs everything else. We apply conventions where breaking them costs users time (e.g., navigation placement) and break conventions where following them makes a product forgettable (e.g., colour, typography, layout rhythm). The output is a product that users can navigate immediately but remember distinctly."
+                "text": "Best practices govern structure and behaviour - where to place navigation, how to handle form errors, what a primary CTA should look like. Visual style governs everything else. Conventions hold where breaking them costs users time (e.g., navigation placement) and break where following them makes a product forgettable (e.g., colour, typography, layout rhythm). The output is a product that users can navigate immediately but remember distinctly."
             }
         }
     ]
@@ -350,23 +350,23 @@
             <div class="service-faq">
                 <div class="faq-item" data-reveal style="--i:2">
                     <button class="faq-trigger" aria-expanded="false">Do you use Atomic Design methodology to ensure UI components are modular and scalable?</button>
-                    <div class="faq-answer"><p>Yes. We build from atoms (buttons, inputs, labels) up to molecules (form fields, card headers) and then to organisms (full card components, nav bars). This means a change at the atom level - say, updating the primary button colour - propagates automatically through every component that uses it. The result is a UI Kit that scales without breaking.</p></div>
+                    <div class="faq-answer"><p>Yes. The kit builds from atoms (buttons, inputs, labels) up to molecules (form fields, card headers) and then to organisms (full card components, nav bars). This means a change at the atom level - say, updating the primary button colour - propagates automatically through every component that uses it. The result is a UI Kit that scales without breaking.</p></div>
                 </div>
                 <div class="faq-item" data-reveal style="--i:3">
                     <button class="faq-trigger" aria-expanded="false">Will the UI Kit be provided in Figma, and is it ready for developer handoff?</button>
-                    <div class="faq-answer"><p>Yes on both. The Figma file uses Auto Layout throughout, which means components resize predictably. Variables are set up for colour and typography tokens, so a developer can read exact CSS values directly from Figma's inspect panel. We also include a separate handoff document specifying spacing, grid, and interaction behaviour for every component that has a non-obvious state.</p></div>
+                    <div class="faq-answer"><p>Yes on both. The Figma file uses Auto Layout throughout, which means components resize predictably. Variables are set up for colour and typography tokens, so a developer can read exact CSS values directly from Figma's inspect panel. A separate handoff document specifies spacing, grid, and interaction behaviour for every component that has a non-obvious state.</p></div>
                 </div>
                 <div class="faq-item" data-reveal style="--i:4">
                     <button class="faq-trigger" aria-expanded="false">How do you handle accessibility (WCAG compliance) to ensure the interface works for everyone?</button>
-                    <div class="faq-answer"><p>Accessibility is built in from the start, not retrofitted. We check colour contrast ratios against WCAG AA (4.5:1 for normal text, 3:1 for large text) as we design. We annotate focus order and keyboard navigation paths in the handoff file. We also flag any components that require ARIA attributes - these are documented for the development team so accessibility doesn't get lost in implementation.</p></div>
+                    <div class="faq-answer"><p>Accessibility is built in from the start, not retrofitted. Colour contrast is checked against WCAG AA (4.5:1 for normal text, 3:1 for large text) during design, not after. Focus order and keyboard navigation paths are annotated in the handoff file, and any component needing ARIA attributes is flagged and documented for whoever builds it so accessibility doesn't get lost in implementation.</p></div>
                 </div>
                 <div class="faq-item" data-reveal style="--i:5">
-                    <button class="faq-trigger" aria-expanded="false">Can you create custom iconography and illustrations unique to our product?</button>
+                    <button class="faq-trigger" aria-expanded="false">Can you create custom iconography and illustrations unique to your product?</button>
                     <div class="faq-answer"><p>Yes. Custom icon sets are delivered as SVG with consistent stroke weight, optical balance adjustments for small sizes, and both outlined and filled variants. Illustrations follow the same process as brand identity - mood board first, style approval, then production. All source files are included in the deliverable.</p></div>
                 </div>
                 <div class="faq-item" data-reveal style="--i:5">
                     <button class="faq-trigger" aria-expanded="false">How do you balance industry best practices with a unique, eye-catching visual style?</button>
-                    <div class="faq-answer"><p>Best practices govern structure and behaviour - where to place navigation, how to handle form errors, what a primary CTA should look like. Visual style governs everything else. We apply conventions where breaking them costs users time (e.g., navigation placement) and break conventions where following them makes a product forgettable (e.g., colour, typography, layout rhythm). The output is a product that users can navigate immediately but remember distinctly.</p></div>
+                    <div class="faq-answer"><p>Best practices govern structure and behaviour - where to place navigation, how to handle form errors, what a primary CTA should look like. Visual style governs everything else. Conventions hold where breaking them costs users time (e.g., navigation placement) and break where following them makes a product forgettable (e.g., colour, typography, layout rhythm). The output is a product that users can navigate immediately but remember distinctly.</p></div>
                 </div>
             </div>
         </div>
@@ -427,7 +427,7 @@
     </div>
 </footer>
 
-<script src="/assets/JS/index.js?v=3.9"></script>
-<script src="/assets/JS/sprite.js?v=3.9"></script>
+<script src="/assets/JS/index.js?v=4.0"></script>
+<script src="/assets/JS/sprite.js?v=4.0"></script>
 </body>
 </html>

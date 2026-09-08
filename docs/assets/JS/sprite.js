@@ -231,7 +231,7 @@ const SpriteChat = (() => {
     services: {
       patterns: [/\b(services?|what do you (do|offer)|capabilities|help with)\b/i],
       responses: [
-        { text: "We do a bunch of cool stuff! Websites, Mobile UI, UX Research, AI Integration, HMI, Desktop Apps, and Rebranding. Want me to take you to the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services page</span>?", emotion: "excited" },
+        { text: "The studio does a bunch of cool stuff! Websites, Mobile UI, UX Research, AI Integration, HMI, Desktop Apps, and Rebranding. Want me to take you to the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services page</span>?", emotion: "excited" },
         { text: "Great question! The studio covers everything from web design to AI integration. Check out the full list at <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span>!", emotion: "happy" },
       ]
     },
@@ -246,7 +246,7 @@ const SpriteChat = (() => {
       patterns: [/\b(contact|reach|email|talk|hire|get in touch|start|project)\b/i],
       responses: [
         { text: "Love the enthusiasm! Head to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact</span> or just email hello.beben.design@gmail.com. No aggressive sales pitch -- just a real conversation.", emotion: "happy" },
-        { text: "Ready to chat? There's a project form on the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact page</span>. The team is super approachable!", emotion: "waving" },
+        { text: "Ready to chat? There's a project form on the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact page</span>. It goes straight to the person who builds the thing!", emotion: "waving" },
       ]
     },
     pricing: {
@@ -359,8 +359,8 @@ const SpriteChat = (() => {
     compliment: {
       patterns: [/\b(cute|adorable|cool|awesome|great site|love this|beautiful|nice design)\b/i],
       responses: [
-        { text: "Aw, thank you! I'll pass that along to the team. They put a lot of heart into this.", emotion: "excited" },
-        { text: "You just made my day! The folks behind this site really care about the details.", emotion: "happy" },
+        { text: "Aw, thank you! I'll pass that along. There's a lot of heart in this one.", emotion: "excited" },
+        { text: "You just made my day! There's a lot of care in the details here.", emotion: "happy" },
       ]
     },
     demo: {
