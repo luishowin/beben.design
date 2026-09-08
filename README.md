@@ -9,9 +9,11 @@ served by GitHub Pages from `docs/`, no build step.
 ```
 docs/                  the published site
   index.html           homepage
-  services/            hub: four rows, each linking to a detail page
-  services/brand-identity/ services/ux-research/
-  services/ui-design/ services/digital-strategy/   the four detail pages
+  services/            hub: five rows, each linking to a detail page
+  services/brand-identity/ services/ux-research/ services/ui-design/
+  services/digital-strategy/ services/migration-rebuild/   the five detail pages
+  services/how-we-work/    running costs, ownership, support tiers. Not in the
+                       nav by design; linked from the hub and every service CTA
   tools/ shop/ work/ contact/              main pages
   sprite/ beben-arcade/ codex/             case studies (four-part, verifiable numbers)
   rev-log/             open project page, indexed
@@ -34,6 +36,7 @@ cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of th
 legal-draft/           drafted Terms of Engagement, parked OUTSIDE docs/ so nothing
                        unreviewed is served. See legal-review.md
 legal-review.md        what a Kenyan advocate needs to look at, and why
+scripts/check_voice.py checks copy against the voice zoning (see Voice)
 PROJECT-STATE.md       where this revision stands, what is left, what needs the owner
 ```
 
@@ -62,8 +65,8 @@ PROJECT-STATE.md       where this revision stands, what is left, what needs the 
   parsed *after* the `index.css` link, so a page needing a different value
   still overrides at equal specificity with one line, and never needs
   `!important`. `.content-block`, `.cta-row`, `.tech-list`, `.decision`,
-  `.metric`, `.honesty`, `.service-goal`, `.deliverables-*` and `.service-faq`
-  all live there.
+  `.metric`, `.honesty`, `.service-goal`, `.deliverables-*`, `.service-faq`,
+  `.next-step` and `.tier-price` all live there.
 - Page-specific styles live in a scoped `<style>` block in each page's head;
   shared patterns live in `index.css`. New pages copy the nav/footer markup
   verbatim from an existing page.
@@ -251,6 +254,30 @@ Formspree conventions, `_subject` and the `_gotcha` honeypot. Submission is an
 in-page `fetch` with a focused `role="status"` region, so a successful send
 never leaves the site; with the script dead it degrades to a normal POST.
 
+**The triage is an enhancement, and the HTML is the fallback.** The markup
+served is that plain form and nothing else: open `view-source:` and there is no
+step markup in it. An inline script builds the flow at runtime by *moving* those
+existing fields into steps, so with JavaScript blocked or broken the page is the
+plain form, still required-validated, still posting to the same endpoint.
+
+The flow is five situations, one pick, then three branched questions one screen
+at a time, assembling into the same `message` textarea the no-script form posts.
+The visitor can edit the assembled brief before sending.
+
+Rules if you touch it:
+
+- **Never remove a field, only relocate it.** A `required` field inside a hidden
+  step cannot be focused by native validation, which is why every step validates
+  before it advances and a capturing `invalid` listener reveals the owning step.
+- **Real radios in a real fieldset.** They are visually replaced, never taken
+  out of the accessibility tree, so arrow keys and the legend still work.
+- Focus moves to the new step's legend on every transition, progress is a live
+  region, and errors carry `role="alert"`.
+- Questions are defined in the `SITUATIONS` array at the top of the script.
+  Adding a situation means adding an entry; nothing else needs to change.
+- **Do not submit the form while testing.** It posts to the live inbox and
+  spends one of the 50 free-tier submissions.
+
 **Spam protection lives in the Formspree dashboard, not here.** The form id is
 public in the page source, so anything on the page can be skipped by posting to
 Formspree directly. Only two settings actually help:
@@ -267,6 +294,39 @@ put the highest-value conversion path behind a service that needs its own
 deploy and can fail independently, in exchange for protection the dashboard
 setting already provides.
 
+## Voice
+
+Copy is zoned rather than governed by one rule, because the studio's proposition
+is that a named human's judgment sets the direction. Stripping first person
+everywhere would delete the thing being sold.
+
+| Zone | Person | Where |
+|---|---|---|
+| Selling | Second person only | home, services, tools, shop |
+| UI | Second person, warm | contact, 404, form copy |
+| Case study | First person plural | work, sprite, codex, beben-arcade |
+| About | First person plural | services/how-we-work/ |
+| Legal | Third person, named | legal, privacy |
+| Sprite | Playful, jokes, contractions | assets/JS/sprite.js |
+
+`python3 scripts/check_voice.py` enforces it, and exits non-zero on a failure.
+It parses rendered text rather than grepping source, so JS variable names and
+CSS comments cannot trip a rule, and it also reads inline `<script>` string
+literals on selling and UI pages, because the contact triage builds its copy in
+JavaScript.
+
+Deliberately excluded: `kemmy-spa-concierge-preview/` and `redoubt/` speak as
+mock clients, `games/` is a separate sub-app, and `blog/` is journal voice.
+
+Two traps are encoded in the checker rather than rediscovered. A plain
+`\bsolution\b` also matches inside "resolution". And `\bus\b` matches the
+uppercase half of "en-US". Exemptions are narrow and named: "Does It Fit?" is a
+product name, "How we work" is a page name.
+
+**One claim that is not a style rule:** the site is written by one person across
+three git identities. Copy asserting a team is a factual problem, not a tonal
+one, and the checker fails it wherever it appears.
+
 ## Local preview
 
 ```
@@ -274,4 +334,17 @@ python -m http.server 8123 --directory docs
 ```
 
 then open http://localhost:8123. The Worker's CORS allowlist includes
-localhost:8123, so the live Sprite brain works from the preview too.
+localhost:8123, so the live Sprite brain works from the preview too. Any other
+port serves the site fine, but Sprite falls back to its offline replies.
+
+Before committing, the checks that matter:
+
+```
+python3 scripts/check_voice.py      # voice zoning and banned constructions
+python3 scripts/build_tools.py      # both generators must be idempotent:
+.venv/bin/python scripts/build_blog.py
+git status --short                  # a run against unchanged sources leaves this clean
+
+grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html | sort -u
+                                    # exactly one version, or the bump was partial
+```
