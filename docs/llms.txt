@@ -11,6 +11,7 @@ Capabilities span brand identity and visual design, UX research, UI design for w
 - [UI Design & Component Systems](https://beben.design/services/ui-design/): Atomic, developer-ready UI kits in Figma with full component states, WCAG AA accessibility annotations, and developer handoff specs.
 - [Digital Strategy & Product Planning](https://beben.design/services/digital-strategy/): MVP feature prioritisation, phased technical roadmaps, competitor UX benchmarking, and discovery workshops for early-stage concepts.
 - [Migration & Rebuild](https://beben.design/services/migration-rebuild/): Audit, content inventory, an explicit kill list, then a rebuild you own outright. Redirects from every retired URL so search rankings move with you. Inherited content, not inherited code.
+- [How we work](https://beben.design/services/how-we-work/): Running costs published and itemised, what the client owns and when, what a pivot costs, and the support tiers (Care, Care + credits, On request, Wind-down). Defines the line between a content update and a structural change.
 
 ## Tools
 

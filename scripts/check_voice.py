@@ -19,6 +19,8 @@ a failure or the house style:
   selling     second person only. No we/our/us.
   ui          second person, warm. Forms, errors, 404.
   case-study  first person plural is correct. A judgment call needs an owner.
+  about       the studio may describe itself. Folded into /services/how-we-work/,
+              because v2's architecture has no /about/ page to carry it.
   legal       third person, named. "Beben Design is not liable", never "we".
   sprite      the mascot speaks as "I" and jokes. Studio "we" still leaks here.
 
@@ -39,6 +41,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 
 SELLING = "selling"
+ABOUT = "about"
 UI = "ui"
 CASE_STUDY = "case-study"
 LEGAL = "legal"
@@ -48,6 +51,10 @@ SPRITE = "sprite"
 ZONES = {
     "index.html": SELLING,
     "services/": SELLING,
+    # Brief v2 1.1: the one zone where the studio may describe itself. The
+    # philosophy folded in here is the About content; v2's own architecture
+    # has no /about/ page to put it on.
+    "services/how-we-work/": ABOUT,
     "tools/": SELLING,
     "shop/": SELLING,
     "contact/": UI,
@@ -104,6 +111,21 @@ SOLUTION = re.compile(r"(?<!re)\bsolutions?\b", re.I)
 
 # "Does It Fit?" is a product name, not a rhetorical headline.
 HEADING_EXEMPT = {"does it fit?"}
+
+# Page names, which brief v2 fixes in section 2 and 4.3. "How we work" is
+# first person, but it is the page's name rather than a sentence about the
+# studio, and it appears as link text on selling-zone pages. Renaming it to
+# satisfy the pronoun rule would rename a page the brief names twice.
+PROPER_NAMES = {"how we work"}
+NAME_NOISE = re.compile(r"^(read|see|more about)\s+|[\s\u2197\u2190\u2192.:,!?]+$", re.I)
+
+
+def is_proper_name(flat):
+    prev = None
+    while prev != flat:
+        prev = flat
+        flat = NAME_NOISE.sub("", flat).strip()
+    return flat.lower() in PROPER_NAMES
 
 SKIP_TAGS = {"script", "style"}
 META_NAMES = {"description", "og:description", "twitter:description"}
@@ -193,11 +215,14 @@ def check_html(path, show_allowed):
             continue
 
         hits = FIRST_PERSON.findall(flat)
-        if hits:
+        if hits and not is_proper_name(flat):
             if zone in (SELLING, UI):
                 fails.append((where, line, f"first person in {zone} zone", flat))
             elif zone == LEGAL:
                 fails.append((where, line, "first person in legal zone (name the party)", flat))
+            elif zone == ABOUT:
+                if show_allowed:
+                    notes.append((where, line, "first person, allowed in about", flat))
             elif zone == SPRITE:
                 fails.append((where, line, "studio first person in sprite", flat))
             elif show_allowed:

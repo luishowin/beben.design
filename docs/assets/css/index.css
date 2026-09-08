@@ -1141,6 +1141,16 @@ footer {
     color: var(--text-muted);
     margin-bottom: 0.5rem;
 }
+/* Support tier price, sitting on the same line as the tier name. Sentence
+   case on purpose: the label above it is already tracked-out uppercase, and
+   two tracked-out runs on one line read as a templated price table. */
+.tier-price {
+    float: right;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: var(--headers);
+}
+
 .deliverables-list { list-style: none; max-width: 46ch; }
 .deliverables-list li {
     display: flex;
