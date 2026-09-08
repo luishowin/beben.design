@@ -1,8 +1,12 @@
 # Site revision, state of play
 
-Two revisions are now on `main`: the phase 0-1 corrections, and brief v2 phases
-1 to 4. GitHub Pages serves `docs/` from `main`, so pushing `main` publishes.
-The Cloudflare Worker is the exception and does not deploy from git at all.
+Three pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
+1 to 4, and the Sprite knowledge rework. GitHub Pages serves `docs/` from
+`main`, so pushing `main` publishes.
+
+The Cloudflare Worker still does not deploy from git, but it no longer needs to
+for a content change. It is current, and it reads Sprite's facts from
+`docs/sprite.md` at runtime, so pushing that file is the deploy.
 
 Both briefs were audited against the working tree before any code was written.
 The first was wrong about the repo in fourteen material ways. v2 was
@@ -77,6 +81,38 @@ screen, assembling into a brief the visitor can edit. Progressive enhancement:
 the served HTML is the previous plain form, and the flow is built at runtime by
 moving those fields into steps.
 
+### Sprite
+
+**Knowledge has one home.** The Worker deployed in production turned out to be
+an older generation of the file than the repo's, with no runtime knowledge fetch
+at all. That is why the live Sprite still quoted pre-Foundations pricing: the
+site was corrected, the Worker was never re-pasted.
+
+The fix was to stop keeping two copies of the facts. The Worker now holds only
+the stable core, meaning personality, the one-person rule, contact details,
+top-level paths and the linking rules. Services, projects, pricing and tools
+live in `docs/sprite.md` alone, which the Worker fetches every five minutes.
+**Changing what Sprite knows is now a git push.**
+
+Because that removed Sprite's fallback knowledge, the prompt gained an
+instruction for the degraded case: when the extended knowledge does not cover
+the question, say so and point at `/contact/` rather than filling the gap from
+general knowledge about design studios.
+
+**Model.** `gpt-oss-120b`, the 20b having been retired. Two comments written for
+the old model were wrong and are fixed: the header claimed the default was
+`llama-v3p1-8b-instruct`, untrue since `bd16a6f`, and the cost note quoted 20b
+rates. 120b is $0.15/M input and $0.60/M output, double the old figures, 128K
+context. `MAX_TOKENS` went 450 to 700 because reasoning tokens count against the
+cap and 120b reasons more, so the old ceiling truncated replies mid-sentence.
+
+**A silent cliff, closed.** `sprite.md` is sliced at a character cap with no
+error, from the tail. The new sections took it to 8,177 against a 8,000 cap, so
+it would have quietly lost its last section. Trimmed to 7,948, the cap raised to
+12,000, and `build_tools.py` now fails the build if the file passes it, because
+the generator rewrites the tools section and adding one tool would walk it off
+the same cliff. The two limits must be kept in step.
+
 ---
 
 ## Corrections to brief v2
@@ -120,10 +156,12 @@ all match real tokens exactly. Do not "fix" them.
 1. **Four prices on `/services/how-we-work/`.** Care, Care + credits, the
    on-request rate, and the wind-down fee, all showing `Price TBC`. v2 gives
    only a 5 to 10 percent of build cost heuristic.
-2. **Deploy the Cloudflare Worker.** `cloudflare-worker/sprite-proxy.js` carries
-   Sprite's live system prompt and **outranks** `docs/sprite.md`. A git push does
-   not reach Cloudflare. Until it is pasted in, the live Sprite keeps the old
-   pricing and the old voice.
+2. **The Cloudflare Worker is deployed and current** as of 9 September 2026, and
+   no longer needs a visit when Sprite's facts change: edit `docs/sprite.md`,
+   push, and it is live within five minutes. Re-paste
+   `cloudflare-worker/sprite-proxy.js` only when that *file* changes, which now
+   means personality, contact details, the linking rules or the model. Leave the
+   `MODEL` variable unset unless overriding the 120b default.
 3. **Formspree dashboard:** restrict allowed domains to `beben.design`, and turn
    on submission notifications. The free tier caps at 50 a month and fails
    silently once hit.
@@ -144,9 +182,14 @@ all match real tokens exactly. Do not "fix" them.
 ## Verifying a change
 
 ```
-python3 -m http.server 8123 --directory docs        # local preview
+python3 -m http.server 8123 --directory docs        # local preview. Port matters:
+                                                    # the Worker's CORS allowlist
+                                                    # has 8123, so any other port
+                                                    # gives Sprite's offline replies
 
 python3 scripts/check_voice.py                      # voice zoning, banned words
+node --check cloudflare-worker/sprite-proxy.js      # the Worker parses before pasting
+node --check docs/assets/JS/sprite.js
 
 python3 scripts/build_tools.py                      # both generators are idempotent:
 .venv/bin/python scripts/build_blog.py              # a run against unchanged sources
