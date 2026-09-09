@@ -228,9 +228,9 @@ figures on that page are exact to the byte.
 
 **Two latent bugs, found on the way in.** `build_blog.py` was not idempotent:
 the templates were never bumped when Sprite's assets went to 4.5, so running it
-dragged all six blog pages back to a stale `?v=4.4`. And the asset version is
-now **4.6 everywhere**, one value, which is what the check at the bottom of
-this file was always asking for.
+dragged all six blog pages back to a stale `?v=4.4`. The asset version is one
+value everywhere now, which is what the check at the bottom of this file was
+always asking for. It landed on `4.6` and moved to `4.7` with the nav height.
 
 ---
 
@@ -335,7 +335,7 @@ Current state, all of it measured rather than remembered: 33 pages served
 excluding the arcade plus `404.html`, 30 sitemap URLs, 965 internal references
 resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
-one asset version (`4.6`) everywhere.
+one asset version (`4.7`) everywhere.
 
 The link figure is lower than the 837 recorded before because the checker now
 strips script bodies first. A URL a page assembles in JavaScript is not a link,
