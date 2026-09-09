@@ -35,8 +35,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=4.4">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.5">
+    <link rel="stylesheet" href="../assets/css/index.css?v=4.6">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.6">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -44,6 +44,33 @@
 
     <style>
         /* ── Project Cards ── */
+        /* ── Problem groups. Same shape as the pillar groups on /tools/. ── */
+        .work-group + .work-group { margin-top: 4rem; }
+        .work-group:last-child { padding-bottom: 4rem; }
+
+        .group-head {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .group-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--headers);
+            margin-bottom: 0.4rem;
+        }
+
+        .group-note {
+            font-size: 0.85rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+            max-width: 62ch;
+        }
+
         .projects-grid {
             display: flex;
             flex-direction: column;
@@ -63,8 +90,12 @@
         .project-card:last-child { border-bottom: none; }
         .project-card:hover { background: var(--bg-soft); }
 
-        .project-card:nth-child(even) { direction: rtl; }
-        .project-card:nth-child(even) > * { direction: ltr; }
+        /* The zigzag. This used to be :nth-child(even), which counts inside
+           one container, so splitting the list into problem groups restarted
+           the count at every heading and put two visuals side by side. The
+           flip is now stated on the card, once, in reading order. */
+        .project-card--flip { direction: rtl; }
+        .project-card--flip > * { direction: ltr; }
 
         .project-visual {
             display: flex;
@@ -340,17 +371,25 @@
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Case studies</span>
             <h1 data-reveal style="--i:1">Thinking in <em class="highlight-box">pixels</em></h1>
-            <p data-reveal style="--i:2">Every project is a case study in validation. We don't just showcase final renders; we showcase the decisions, iterations, and user-centric logic that led to the result.</p>
+            <p data-reveal style="--i:2">Seven projects, grouped by the problem they had rather than the technology they were built with. Nobody arrives here looking for a service worker. They arrive because something has to keep working with the wifi off.</p>
+            <p data-reveal style="margin-top: 0.8rem; --i:3;">Each one is written up the same way: the problem, the versions that did not ship, what is running now, what can actually be counted, what is still wrong, and what happens next. The rejected versions are the interesting part, so they stay in. Status is stated on every card, and three of these are still in design.</p>
         </div>
     </section>
 
-    <!-- Projects -->
+    <!-- Projects, grouped by the problem rather than the medium. The old
+         grid was one flat list ordered by how each thing was built, which
+         is the one axis a visitor with a problem of their own cannot use. -->
     <section class="section--soft" style="padding-top:0; padding-bottom:0;">
         <div class="container" style="max-width:1280px;">
-            <div class="projects-grid">
 
-                <!-- 1. Sprite -->
-                <a href="https://beben.design/sprite/" class="project-card" data-reveal style="--i:0">
+                <div class="work-group">
+                    <div class="group-head" data-reveal style="--i:0">
+                        <h2 class="group-title">When a stranger has thirty seconds</h2>
+                        <p class="group-note">Somebody lands, works out what this is, and either finds what they came for or leaves. Both of these are about that first half minute.</p>
+                    </div>
+                    <div class="projects-grid">
+                    <!-- Sprite -->
+                <a href="https://beben.design/sprite/" class="project-card" data-reveal style="--i:1">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="work-sprite-pill">
@@ -371,7 +410,7 @@
                         </div>
                     </div>
                     <div class="project-info">
-                        <span class="eyebrow">AI &middot; UI Component</span>
+                        <span class="eyebrow">Live &middot; Built for this site</span>
                         <h2>Sprite</h2>
                         <p>A character-driven AI site guide that replaces the generic chatbox with an animated mascot. Built with plain HTML, CSS, and JS. No frameworks, no dependencies.</p>
                         <p>Pattern-matching conversation engine, sentiment-aware expressions, seasonal banners, TTS, and voice input. The MVP is live.</p>
@@ -384,15 +423,47 @@
                     </div>
                 </a>
 
-                <!-- 2. Beben Arcade -->
-                <a href="https://beben.design/beben-arcade/" class="project-card" data-reveal style="--i:1">
+                    <!-- Neopolaris -->
+                <a href="https://neopolaris.ai/" class="project-card project-card--flip" data-reveal style="--i:2">
+                    <div class="project-visual">
+                        <div class="project-visual-inner">
+                            <div class="project-placeholder">
+                                <span class="placeholder-icon">&#9670;</span>
+                                Neopolaris visual
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <span class="eyebrow">Live &middot; Client build</span>
+                        <h2>Neopolaris</h2>
+                        <p>A full website design and build for Neopolaris, a Nairobi-based startup. High-performance, conversion-optimised, and built to communicate brand authority at first glance.</p>
+                        <p>Responsive from 320px to 4K, semantic HTML, performance-first CSS, and smooth interaction design that serves the business goals without getting in the way.</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Web Design</span>
+                            <span class="project-tag">Front-end Dev</span>
+                            <span class="project-tag">Brand Identity</span>
+                        </div>
+                        <span class="project-cta">Visit Website &rarr;</span>
+                    </div>
+                </a>
+                    </div>
+                </div>
+
+                <div class="work-group">
+                    <div class="group-head" data-reveal style="--i:0">
+                        <h2 class="group-title">When the network is not there</h2>
+                        <p class="group-note">Airplane mode, a dead cell, a machine that was never online. Two projects that had to keep answering anyway, and what drawing that line actually costs.</p>
+                    </div>
+                    <div class="projects-grid">
+                    <!-- Beben Arcade -->
+                <a href="https://beben.design/beben-arcade/" class="project-card" data-reveal style="--i:3">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">Visual coming soon</div>
                         </div>
                     </div>
                     <div class="project-info">
-                        <span class="eyebrow">Own product &middot; Offline PWA</span>
+                        <span class="eyebrow">Live &middot; Own product</span>
                         <h2>Beben Arcade</h2>
                         <p>Twelve small games at one address, installable to a home screen. Put the phone in airplane mode and every one of them still opens.</p>
                         <p>A case study in drawing a hard offline boundary and refusing every reference that crosses it, including our own stylesheet, nav and fonts.</p>
@@ -405,15 +476,15 @@
                     </div>
                 </a>
 
-                <!-- 3. Codex -->
-                <a href="https://beben.design/codex/" class="project-card" data-reveal style="--i:2">
+                    <!-- Codex -->
+                <a href="https://beben.design/codex/" class="project-card project-card--flip" data-reveal style="--i:1">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">Visual coming soon</div>
                         </div>
                     </div>
                     <div class="project-info">
-                        <span class="eyebrow">Own product &middot; Offline search</span>
+                        <span class="eyebrow">Running internally &middot; Own tooling</span>
                         <h2>Codex</h2>
                         <p>An offline library that answers in milliseconds: a large web archive rebuilt into a single portable file you can open without the tool that wrote it.</p>
                         <p>The richest rejection trail of any project here, covering indexing, storage and ranking. Internal tooling, so nothing is downloadable yet, and the page says so.</p>
@@ -425,9 +496,17 @@
                         <span class="project-cta">Read case study &rarr;</span>
                     </div>
                 </a>
+                    </div>
+                </div>
 
-                <!-- 4. Trek Watch -->
-                <a href="https://beben.design/trek-watch/" class="project-card" data-reveal style="--i:3">
+                <div class="work-group">
+                    <div class="group-head" data-reveal style="--i:0">
+                        <h2 class="group-title">When the software lives inside a device</h2>
+                        <p class="group-note">A battery, a screen that has to stay readable in the sun, and hardware somebody is holding while the weather happens to them.</p>
+                    </div>
+                    <div class="projects-grid">
+                    <!-- Trek Watch -->
+                <a href="https://beben.design/trek-watch/" class="project-card" data-reveal style="--i:2">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">
@@ -437,7 +516,7 @@
                         </div>
                     </div>
                     <div class="project-info">
-                        <span class="eyebrow">Hardware &amp; Software &middot; Product Design</span>
+                        <span class="eyebrow">In design &middot; Hardware and interface</span>
                         <h2>Trek Watch</h2>
                         <p>A rugged adventure watch that lives somewhere between the Casio F-91W and the Apple Watch Ultra. Accessible enough for everyday wear, tough enough for the trail.</p>
                         <p>Full product design from industrial design and materials to the interface layer, a watch OS that prioritises legibility, battery life, and one-glance information over feature bloat.</p>
@@ -451,8 +530,8 @@
                     </div>
                 </a>
 
-                <!-- 5. Rev Log -->
-                <a href="https://beben.design/rev-log/" class="project-card" data-reveal style="--i:4">
+                    <!-- Rev Log -->
+                <a href="https://beben.design/rev-log/" class="project-card project-card--flip" data-reveal style="--i:3">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">
@@ -462,7 +541,7 @@
                         </div>
                     </div>
                     <div class="project-info">
-                        <span class="eyebrow">Open Hardware &middot; Telemetry</span>
+                        <span class="eyebrow">Building in public &middot; Open hardware</span>
                         <h2>Rev Log</h2>
                         <p>An open source telemetry system for motorcycles. Lean, throttle, braking, revs: captured on the bike, visualised in the browser, and owned by the rider.</p>
                         <p>Open hardware, open firmware, and an open ride-data format, built in public before market. Progression telemetry for riders getting better, not just going faster.</p>
@@ -476,8 +555,8 @@
                     </div>
                 </a>
 
-                <!-- 6. Kilimo Pal -->
-                <a href="https://beben.design/kilimo-pal/" class="project-card" data-reveal style="--i:5">
+                    <!-- Kilimo Pal -->
+                <a href="https://beben.design/kilimo-pal/" class="project-card" data-reveal style="--i:1">
                     <div class="project-visual">
                         <div class="project-visual-inner">
                             <div class="project-placeholder">
@@ -487,7 +566,7 @@
                         </div>
                     </div>
                     <div class="project-info">
-                        <span class="eyebrow">AgriTech &amp; AI &middot; Platform</span>
+                        <span class="eyebrow">In design &middot; Platform</span>
                         <h2>Kilimo Pal</h2>
                         <p>An AI-powered agriculture platform that meets farmers where they are: from the absolute basics of what manure is, to managing large-scale onion plantations with sensor data and weather forecasts.</p>
                         <p>Modular hardware and software: start with just the app and AI guidance, add soil sensors, weather stations, and irrigation controllers as you grow. Regular soil test reminders, localised planting calendars, and yield predictions.</p>
@@ -500,36 +579,12 @@
                         <span class="project-cta">Project preview &rarr;</span>
                     </div>
                 </a>
-
-                <!-- 7. Neopolaris -->
-                <a href="https://neopolaris.ai/" class="project-card" data-reveal style="--i:6">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">
-                                <span class="placeholder-icon">&#9670;</span>
-                                Neopolaris visual
-                            </div>
-                        </div>
                     </div>
-                    <div class="project-info">
-                        <span class="eyebrow">Client &middot; Website</span>
-                        <h2>Neopolaris</h2>
-                        <p>A full website design and build for Neopolaris, a Nairobi-based startup. High-performance, conversion-optimised, and built to communicate brand authority at first glance.</p>
-                        <p>Responsive from 320px to 4K, semantic HTML, performance-first CSS, and smooth interaction design that serves the business goals without getting in the way.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">Web Design</span>
-                            <span class="project-tag">Front-end Dev</span>
-                            <span class="project-tag">Brand Identity</span>
-                        </div>
-                        <span class="project-cta">Visit Website &rarr;</span>
-                    </div>
-                </a>
+                </div>
 
-            </div>
         </div>
     </section>
 
-    <!-- CTA -->
     <section class="work-cta">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Got a project?</span>
@@ -559,6 +614,10 @@
                 <li><a href="../privacy/">PRIVACY POLICY</a></li>
                 <li><a href="../credits/">CREDITS</a></li>
             </ul>
+            <ul class="footer-nav footer-social">
+                <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
+                <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
+            </ul>
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
         </div>
     </div>
@@ -569,7 +628,7 @@
 </footer>
 
 
-<script src="../assets/JS/index.js?v=4.4"></script>
-<script src="../assets/JS/sprite.js?v=4.5"></script>
+<script src="../assets/JS/index.js?v=4.6"></script>
+<script src="../assets/JS/sprite.js?v=4.6"></script>
 </body>
 </html>

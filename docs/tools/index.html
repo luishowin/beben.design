@@ -57,8 +57,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=4.4">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.5">
+    <link rel="stylesheet" href="../assets/css/index.css?v=4.6">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.6">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -166,6 +166,69 @@
             line-height: 1.65;
             color: var(--text-muted);
         }
+
+        /* ── Run modes ──
+           What you can actually do with the tool, on the card. Generated
+           from run_modes in content/tools.json; the build refuses to write
+           a "browser" badge onto a page that contains any way of sending
+           what you typed somewhere else. */
+        .run-modes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 1rem;
+        }
+
+        .run-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.5rem;
+            white-space: nowrap;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+
+        /* The same three words in the hero, so the badges below mean
+           something the first time they are seen. */
+        .tool-promises {
+            list-style: none;
+            margin-top: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            /* Stated as a length on purpose. .page-hero p is 52ch and lands
+               at about 580px, but ch here is measured against the font-size
+               this list inherits from the hero, which is 27.2px, so the same
+               number would come out nearly twice as wide. 640px leaves the
+               text column beside the badges about as wide as the paragraph
+               above it. */
+            max-width: 640px;
+        }
+
+        .tool-promises li {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+        }
+
+        .tool-promises .run-badge { flex: none; }
 
         /* ── Card footer — open + download strip ── */
         .card-footer {
@@ -319,11 +382,17 @@
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Tools · Browser-native utilities</span>
             <h1 data-reveal style="--i:1">Small tools. <em class="highlight-box">Zero</em> friction.</h1>
-            <p data-reveal style="--i:2">A growing collection of single-purpose web utilities built with the same design
-                logic that goes into client work: fast, focused, and free. Every tool runs entirely in your browser.
-                No accounts, no data collection, no server calls.</p>
-            <p data-reveal style="margin-top: 0.8rem; --i:3;">Download any tool as a standalone HTML file and run it
-                locally forever. Works offline, works on any device, works with nothing else installed.</p>
+            <p data-reveal style="--i:2">Single-purpose utilities, built with the design logic that goes into client
+                work. Free, and free of the usual conditions: no account, no upload, no trial that runs out. Each card
+                below carries the same three badges, and each one is a promise the build checks before it ships.</p>
+            <ul class="tool-promises" data-reveal style="--i:3">
+                <li><span class="run-badge">browser</span> <span>Everything happens in the tab. Nothing you paste or
+                    drop is sent anywhere, because there is nothing in the page that could send it.</span></li>
+                <li><span class="run-badge">download</span> <span>Take the whole tool as one HTML file. It keeps
+                    working with the wifi off, on any device, with nothing else installed.</span></li>
+                <li><span class="run-badge">self-host</span> <span>Put that file on your own server, or on an
+                    intranet with no route out to the internet at all.</span></li>
+            </ul>
             <p class="feedback-line" data-reveal style="--i:4">
                 Built something you'd want to see here? Found a bug?
                 <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a>
@@ -353,6 +422,7 @@
                             <span class="card-tag">// Arcade</span>
                             <h3>Beben Arcade</h3>
                             <p>Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.</p>
+                            <p class="run-modes"><span class="visually-hidden">Runs as: </span><span class="run-badge" title="Runs in the tab. Nothing you paste is uploaded.">browser</span><span class="run-badge" title="Add it to a home screen and open it offline.">install</span></p>
                         </a>
                         <div class="card-footer">
                             <a href="../games/" class="card-open">Insert coin &rarr;</a>
@@ -364,6 +434,7 @@
                             <span class="card-tag">// Generator</span>
                             <h3>QR Code Generator</h3>
                             <p>Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.</p>
+                            <p class="run-modes"><span class="visually-hidden">Runs as: </span><span class="run-badge" title="Runs in the tab. Nothing you paste is uploaded.">browser</span><span class="run-badge" title="One HTML file. Keep it, run it offline.">download</span><span class="run-badge" title="Put that file on your own server.">self-host</span></p>
                         </a>
                         <div class="card-footer">
                             <a href="../qr-code-generator/" class="card-open">Open tool &nearr;</a>
@@ -450,6 +521,7 @@
                             <span class="card-tag">// Utility</span>
                             <h3>Contrast Grid</h3>
                             <p>Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.</p>
+                            <p class="run-modes"><span class="visually-hidden">Runs as: </span><span class="run-badge" title="Runs in the tab. Nothing you paste is uploaded.">browser</span><span class="run-badge" title="One HTML file. Keep it, run it offline.">download</span><span class="run-badge" title="Put that file on your own server.">self-host</span></p>
                         </a>
                         <div class="card-footer">
                             <a href="../contrast-grid/" class="card-open">Open tool &nearr;</a>
@@ -509,6 +581,7 @@
                             <span class="card-tag">// Generator</span>
                             <h3>Dither Machine</h3>
                             <p>Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.</p>
+                            <p class="run-modes"><span class="visually-hidden">Runs as: </span><span class="run-badge" title="Runs in the tab. Nothing you paste is uploaded.">browser</span><span class="run-badge" title="One HTML file. Keep it, run it offline.">download</span><span class="run-badge" title="Put that file on your own server.">self-host</span></p>
                         </a>
                         <div class="card-footer">
                             <a href="../dither-machine/" class="card-open">Open tool &nearr;</a>
@@ -532,6 +605,7 @@
                             <span class="card-tag">// Utility</span>
                             <h3>Does It Fit?</h3>
                             <p>One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.</p>
+                            <p class="run-modes"><span class="visually-hidden">Runs as: </span><span class="run-badge" title="Runs in the tab. Nothing you paste is uploaded.">browser</span><span class="run-badge" title="One HTML file. Keep it, run it offline.">download</span><span class="run-badge" title="Put that file on your own server.">self-host</span></p>
                         </a>
                         <div class="card-footer">
                             <a href="../character-counter/" class="card-open">Open tool &nearr;</a>
@@ -627,6 +701,10 @@
                 <li><a href="../privacy/">PRIVACY POLICY</a></li>
                 <li><a href="../credits/">CREDITS</a></li>
             </ul>
+            <ul class="footer-nav footer-social">
+                <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
+                <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
+            </ul>
             <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
         </div>
     </div>
@@ -636,7 +714,7 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=4.4"></script>
-<script src="../assets/JS/sprite.js?v=4.5"></script>
+<script src="../assets/JS/index.js?v=4.6"></script>
+<script src="../assets/JS/sprite.js?v=4.6"></script>
 </body>
 </html>

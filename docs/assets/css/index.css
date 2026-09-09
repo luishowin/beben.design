@@ -29,6 +29,9 @@
        6.13:1 on --bg, 5.81:1 on --bg-soft. The brand red is 4.16 / 3.95. */
     --highlight-text: #B81124;
     --yellow:        #FFC710;
+    /* Accessible variant, for --yellow applied to normal-size TEXT.
+       5.26:1 on --bg, 4.98:1 on --bg-soft. Banana yellow is 1.43 / 1.36. */
+    --yellow-text:   #806200;
     --text:          #141414;
 
     --text-muted:    rgba(20, 20, 20, 0.62);
@@ -50,6 +53,9 @@
     /* 4.98:1 on --bg, 4.60:1 on --bg-soft. The brand red is 4.06 / 3.75. */
     --highlight-text: #F04458;
     --yellow:        #FFC710;
+    /* 11.78:1 on --bg, 10.90:1 on --bg-soft. On a dark surface the brand
+       yellow is already past AAA, so it needs no separate text variant. */
+    --yellow-text:   #FFC710;
     --text:          #F7F4F3;
 
     --text-muted:    rgba(247, 244, 243, 0.62);
@@ -736,36 +742,21 @@ h2 {
     letter-spacing: 0.02em;
 }
 
-.tui__live {
+/* Was .tui__live, a green dot pulsing over numbers that were generated in
+   JavaScript. The panel is now measured at build time, so the slot carries
+   the date it was measured on and holds still. */
+.tui__stamp {
     margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
     font-size: 0.7rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-muted);
 }
 
-.tui__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--whatsapp);
-    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55);
-    animation: pulse 2.4s ease-out infinite;
-}
-
-@keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
-    70%  { box-shadow: 0 0 0 7px rgba(37, 211, 102, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-}
-
 .tui__body { padding: 18px 20px 6px; }
 
 .tui__h1, .tui__h2 {
-    color: #9148ff;
+    color: var(--highlight-text);
     font-weight: 500;
 }
 
@@ -775,16 +766,15 @@ h2 {
 
 .tui__metrics { display: flex; flex-direction: column; gap: 3px; margin-bottom: 4px; }
 .tui__metric { display: flex; gap: 10px; color: var(--text); }
-.tui__metric-key { color: var(--text-muted); min-width: 13ch; }
+.tui__metric-key { color: var(--text-muted); min-width: 20ch; }
 .tui__metric-key::before { content: '  '; white-space: pre; }
 
 .tui__log {
     display: flex;
     flex-direction: column;
-    height: 152px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    padding-bottom: 14px;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 14px;
 }
 
 .tui__line {
@@ -793,7 +783,7 @@ h2 {
     white-space: pre-wrap;
 }
 
-.tui__check { color: var(--yellow); }
+.tui__check { color: var(--yellow-text); }
 
 .tui__prompt {
     padding: 8px 0 16px;
@@ -801,11 +791,22 @@ h2 {
     color: var(--text-muted);
 }
 
+.demo__source {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    max-width: 68ch;
+    margin-top: 1rem;
+    line-height: 1.8;
+}
+
+.demo__source a { color: var(--text); text-underline-offset: 3px; }
+
 .tui__cursor {
     display: inline-block;
     width: 7px;
     height: 1em;
-    background: #9148ff;
+    background: var(--highlight-text);
     vertical-align: -2px;
     margin-left: 2px;
     animation: blink 1s step-end infinite;
@@ -928,11 +929,30 @@ footer {
 
 .copyright { color: var(--text-muted) !important; margin-top: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem !important; }
 
-.footer-links { display: flex; flex-direction: column; align-items: flex-end; gap: 1.5rem; }
+/* The two link lists read as one block, so they sit tight to each other.
+   The button keeps the 1.5rem it always had, moved onto the button itself. */
+.footer-links { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; }
+.footer-links .back-to-top { margin-top: 1.25rem; }
 
-.footer-nav { list-style: none; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: flex-end; }
+/* line-height:1 for the same reason as .theme-toggle: without it the list
+   items inherit body's and each 11.2px link sits in a 43.5px line box. The
+   row looked right only because that accidental strut happened to be about
+   the height a tap target should be. The link itself was 14.4px tall, which
+   is what a thumb actually had to hit. It is now the box, at 44px, and the
+   row height is deliberate rather than a leftover. */
+.footer-nav {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    justify-content: flex-end;
+    line-height: 1;
+}
 
 .footer-nav li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-family: var(--font-mono);
     font-size: 0.7rem;
     font-weight: 500;

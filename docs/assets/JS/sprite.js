@@ -174,13 +174,58 @@ const SpriteChat = (() => {
   // ── Seasonal Banner ──
   // Absolute paths: the widget renders on every page depth.
 
+  // Local midnight, so every comparison below is a whole day and never a
+  // few hours either side of one.
+  function midnight(year, month, day) {
+    return new Date(year, month - 1, day);
+  }
+
+  function addDays(date, n) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + n);
+  }
+
+  // Anonymous Gregorian computus. Easter moves: 5 April in 2026, 28 March in
+  // 2027, 25 April in 2038. This entry used to be hardcoded to 20-31 March,
+  // which in 2026 would have shown the banner on twelve days that are not
+  // Easter, missed the day itself, and eaten the first twelve days of spring.
+  function easterSunday(year) {
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const n = h + l - 7 * m + 114;
+    return midnight(year, Math.floor(n / 31), (n % 31) + 1);
+  }
+
+  // A window is a function of the year, because one of them has to be. The
+  // fixed ones say so; Easter works its own dates out.
+  function fixed(month, dayStart, dayEnd) {
+    return function (year) {
+      return [midnight(year, month, dayStart), midnight(year, month, dayEnd)];
+    };
+  }
+
   const seasonalBanners = {
     holidays: [
-      { name: 'new-year',    month: 1,  dayStart: 1,  dayEnd: 3,   image: '/assets/images/banners/new-year.webp' },
-      { name: 'valentines',  month: 2,  dayStart: 12, dayEnd: 15,  image: '/assets/images/banners/valentines.webp' },
-      { name: 'easter',      month: 3,  dayStart: 20, dayEnd: 31,  image: '/assets/images/banners/easter.webp' },
-      { name: 'halloween',   month: 10, dayStart: 25, dayEnd: 31,  image: '/assets/images/banners/halloween.webp' },
-      { name: 'christmas',   month: 12, dayStart: 15, dayEnd: 31,  image: '/assets/images/banners/christmas.webp' },
+      { name: 'new-year',    window: fixed(1, 1, 3),    image: '/assets/images/banners/new-year.webp' },
+      { name: 'valentines',  window: fixed(2, 12, 15),  image: '/assets/images/banners/valentines.webp' },
+      // Good Friday to Easter Monday, both public holidays in Kenya. The
+      // window can straddle March and April, which is why these are dates
+      // and not a month plus a pair of day numbers.
+      { name: 'easter',      window: function (year) {
+          const sunday = easterSunday(year);
+          return [addDays(sunday, -2), addDays(sunday, 1)];
+        }, image: '/assets/images/banners/easter.webp' },
+      { name: 'halloween',   window: fixed(10, 25, 31), image: '/assets/images/banners/halloween.webp' },
+      { name: 'christmas',   window: fixed(12, 15, 31), image: '/assets/images/banners/christmas.webp' },
     ],
     seasons: {
       spring: '/assets/images/banners/spring.webp',
@@ -190,13 +235,16 @@ const SpriteChat = (() => {
     }
   };
 
-  function getSeasonalBanner() {
-    const now = new Date();
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
+  // `now` is a parameter so the whole year can be walked in a test without
+  // stubbing the clock.
+  function getSeasonalBanner(now) {
+    const on = now || new Date();
+    const today = midnight(on.getFullYear(), on.getMonth() + 1, on.getDate());
     for (const h of seasonalBanners.holidays) {
-      if (month === h.month && day >= h.dayStart && day <= h.dayEnd) return h.image;
+      const span = h.window(today.getFullYear());
+      if (today >= span[0] && today <= span[1]) return h.image;
     }
+    const month = today.getMonth() + 1;
     if (month >= 3 && month <= 5) return seasonalBanners.seasons.spring;
     if (month >= 6 && month <= 8) return seasonalBanners.seasons.summer;
     if (month >= 9 && month <= 11) return seasonalBanners.seasons.autumn;
@@ -339,6 +387,10 @@ const SpriteChat = (() => {
     nairobi: {
       patterns: [/\b(nairobi|kenya|location|where|based|africa)\b/i],
       responses: [
+        // "deg" spelled out on purpose. This string is spoken: speak() strips
+        // tags but does not decode entities, so "&deg;" would be read aloud
+        // character by character. Canonical value is 1&deg;16'S 36&deg;48'E,
+        // and scripts/check_facts.py knows all three spellings are the same.
         { text: "The studio is based in Westlands, Nairobi -- coordinates 1 deg 16'S 36 deg 48'E to be exact! But they work with teams globally.", emotion: "happy" },
       ]
     },

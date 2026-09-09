@@ -1,7 +1,8 @@
 # Site revision, state of play
 
-Three pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
-1 to 4, and the Sprite knowledge rework. GitHub Pages serves `docs/` from
+Four pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
+1 to 4, the Sprite knowledge rework, and the run described below, which closed
+v1 phases 7 and 8 and v2 phases 5 and 6. GitHub Pages serves `docs/` from
 `main`, so pushing `main` publishes.
 
 The Cloudflare Worker still does not deploy from git, but it no longer needs to
@@ -129,9 +130,107 @@ tested by running the shipped `getSeasonalBanner` against a stubbed clock for
 all 365 days of 2026 and fetching whatever each returned: nine distinct images,
 all 200, no gaps.
 
-The PNG masters are deliberately **not** committed. They are 10.8MB, they are
-unreferenced, and `docs/` is the published directory, so committing them would
-have made item 9 below worse in the same breath as fixing a bug.
+The PNG masters were deliberately **not** committed, and have since been
+deleted. They were 11MB of unreferenced source art sitting inside `docs/`, the
+published directory, so committing them would have made item 9 below worse in
+the same breath as fixing a bug. All eight derivatives are tracked and
+referenced, so nothing shippable went with them. **They were never in git, so
+there is no copy**: the 760px WebPs are now the only surviving version of that
+artwork, and a redraw at a different size starts from scratch.
+
+### v1 phases 7 and 8, v2 phases 5 and 6
+
+**The homepage stopped inventing things.** `index.html` pulsed a green "live"
+dot over four metrics that random-walked in JavaScript and ten invented
+activity lines, under the heading "Beben engagement - live status". None of it
+was real, next to case studies whose whole claim is that every number was
+re-run from source. It is now measured: `scripts/build_status.py` counts the
+site and writes the panel between markers. Pages, internal links checked and
+broken, CSS and JS weight, JavaScript dependencies, analytics scripts, cookies.
+The date stamp moves only when a figure moves, so a rebuild on an unchanged
+tree writes nothing, like the other two generators. **The honest version is
+also 3.8KB smaller**, because the simulation went with it.
+
+Each detector was tested by injecting the thing it looks for. A tracker, an
+off-site script, a `document.cookie` write and a dead link all fire, with the
+file named. The first pass reported three analytics scripts, all false: `gtag(`
+matched inside `createSvgTag(`, and Sprite's case study *lists* five vendors in
+a sentence about not using any of them. Trackers are now matched against code
+surfaces only, never prose.
+
+**`#9148ff` is gone**, the fifth colour outside the system, replaced by the
+`--highlight-text` token that exists for exactly this. Its neighbour turned out
+to be worse: `.tui__check` was brand yellow on a light surface at **1.36:1**,
+which is not a colour, it is an absence. `--yellow-text` now follows the
+`--highlight-text` pattern, dark amber in light mode at 4.98:1, unchanged
+banana in dark where it already clears AAA.
+
+**Easter is computed.** The banner was hardcoded to 20-31 March. Easter 2026 is
+5 April, so it showed on twelve days that were not Easter, missed the day, and
+ate the first twelve days of spring. Anonymous Gregorian computus now runs the
+window from Good Friday to Easter Monday, both public holidays in Kenya.
+Verified against ten known dates from 1997 to 2038, and every day of 2026, 2027
+and 2038 walked: nine banners, no gaps. The window straddles March and April in
+2029, 2040, 2051 and 2056, which the old month-and-day comparison could not
+have handled at all.
+
+**`.footer-nav`** was 11.2px links inside a 43.5px inherited strut. The row
+looked right only because that accident was near the height a tap target should
+be; the link itself was 14.4px. All four are now 44px boxes, and the row height
+is deliberate.
+
+**The social profiles are linked, and one was fictional.** The homepage JSON-LD
+claimed three `sameAs` profiles and linked none of them. Instagram and Behance
+are real and verified, and now sit in every footer. The LinkedIn URL returns
+404, and so does the `/company/` form of it, so it has been removed rather than
+published: `sameAs` is a claim to search engines, and that one was not true.
+**If there is a real LinkedIn, give me the URL and it goes back.**
+
+**The coordinates have a checker instead of a convention.** They were written
+three ways, so a grep for any one spelling found some of them and reported
+success. `scripts/check_facts.py` normalises all three before comparing, which
+is the thing a grep cannot do, and also pins the email and the city. The
+sprite.js spelling stays as it is: that string is spoken, and `speak()` strips
+tags without decoding entities, so `&deg;` would be read out character by
+character.
+
+**Tools carry run-mode badges**, and every badge is checked before it ships.
+`browser` is refused on a page containing an off-site script, a `fetch`, an
+`XMLHttpRequest`, a `sendBeacon`, a WebSocket or a posting form. `download` is
+refused for a tool with no generated file, `self-host` without `download`. All
+four refusals were tested by making them fail. The hero teaches the three words
+before the cards use them. v2 4.5 also asks for a "promise-not-photo" hero: the
+hero had no photo, so only the promise half was real work.
+
+**`/work/` is grouped by problem, not medium.** Nobody arrives looking for a
+service worker. Three groups: when a stranger has thirty seconds, when the
+network is not there, when the software lives inside a device. Status moved
+into the eyebrow, so the four live things and the three still in design say so
+on the card rather than only in the CTA label. The zigzag was
+`:nth-child(even)`, which counts inside one container and would have broken at
+every new heading; it is now stated per card in reading order.
+
+**The case-study skeleton is six parts**, adding *what is still wrong* and
+*what happens next* to the four that existed. The brief's own six were not in
+the repo, so these are proposed rather than transcribed: problem, versions that
+did not ship, what is running now, what can be counted, what is still wrong,
+what happens next. Sprite already had a roadmap, so it needed one new section
+and both live in one soft band, because inserting a section into a strictly
+alternating stack inverts every surface below it including the shared
+`.next-step`.
+
+Writing *what is still wrong* found a real one. The arcade case study published
+"a precache list of 25 entries" twice. The list holds **20**, and git says it
+has held 16, then 18, then 20, and never 25. Corrected, and the correction is
+now published in the section itself, because a hand-typed number drifting from
+a hand-maintained list is exactly what that section is for. The other seven
+figures on that page are exact to the byte.
+
+**Two latent bugs, found on the way in.** `build_blog.py` was not idempotent:
+the templates were never bumped when Sprite's assets went to 4.5, so running it
+dragged all six blog pages back to a stale `?v=4.4`. And the asset version is
+now **4.6 everywhere**, one value, which is what the check at the bottom of
+this file was always asking for.
 
 ---
 
@@ -155,23 +254,16 @@ all match real tokens exactly. Do not "fix" them.
 
 | # | Item | Why it matters |
 |---|---|---|
-| v2-5 | **Work**: reorganise by problem type, six-part case study skeleton | v2 4.1. Current skeleton is four-part and organised by medium. |
-| v2-6 | **Tools**: run-mode badges (`browser` / `download` / `self-host`), promise-not-photo hero | v2 4.5. `content/tools.json` takes a new field cleanly. |
-| v2-7 | **Journal**: three columns (Teardown / Build log / Reference), rename from Blog | **Not a rename, a migration.** 32 files reference `/blog/`, plus `feed.xml`, the sitemap block and `build_blog.py`. GitHub Pages has no server-side redirects, so five indexed post URLs would break. |
+| v2-7 | **Journal**: three columns (Teardown / Build log / Reference), rename from Blog | **Not a rename, a migration.** 32 files reference `/blog/`, plus `feed.xml`, the sitemap block and `build_blog.py`. GitHub Pages has no server-side redirects, so five indexed post URLs would break. The homepage build report and the `/work/` hero both say "blog", not "journal", and change with it. |
 | v2-8 | **Shop**: Kenya-only, three products, Paystack | **Bigger than v2 admits.** The current page promises six *digital* products; v2 4.6 specifies *physical* goods with courier and Pickup Mtaani. That changes the product line, fulfilment and the legal position. Blocked on legal, see below. |
-| v2-9 | Arcade UI overhaul | Tracked separately, blocks nothing. |
-| 8 | Instagram footer link, and the Nairobi coordinates in **29 files** | Three encodings: one literal `1°16'S` on the homepage, 27 as `1&deg;16'S` entities, and one in `sprite.js` spelled `1 deg 16'S` that defeats a degree-sign grep. Grew from 16 as pages were added, and grows again with every new page. |
-| 8 | `.footer-nav` baseline bug | 11.2px links on a 43.5px strut. The repo already fixed this exact bug in the main nav. |
-| 9 | `/work/` page weight | The HTML is 32KB; the image payload takes it past 2MB. |
-| 9 | `.tui__h1` / `.tui__h2` are a hardcoded `#9148ff` | A fifth colour outside the system, failing contrast at 3.71 to 3.99. |
-| 9 | ~19MB of unreferenced images in `docs/assets/images/` | Caution: the hero webp scores zero on a filename grep because every reference is percent-encoded. A naive cleanup deletes a live asset. The four banner PNG masters sit here too, untracked, and are the one part of this pile whose provenance is known. |
-| 8 | Sprite's Easter banner fires on the wrong dates | The window is hardcoded to 20-31 March, but Easter is moveable: in 2026 it is 5 April, so the banner shows on twelve days that are not Easter, misses the day itself, and eats the first twelve days of spring. Either compute the date or drop the entry. |
-| 9 | The summer banner is the odd one out | The other eight are 760px WebP in `banners/`. Summer alone is `sprite-profile-banner.jpg`, 34KB at a different provenance and aspect, left in place because replacing it was not asked for. It will look off once the art is redrawn as a set. |
+| v2-9 | Arcade UI overhaul | Tracked separately, blocks nothing. Now also named on the arcade case study as the oldest part of the product. |
+| 9 | `/work/` page weight | The HTML is 33KB; the image payload takes it past 2MB. Regrouping by problem did not change the payload. |
+| 9 | ~19MB of unreferenced images in `docs/assets/images/` | Caution: the hero webp scores zero on a filename grep because every reference is percent-encoded. A naive cleanup deletes a live asset. The four banner PNG masters that used to sit here are gone, which was the easy 11MB because their provenance was known. What is left is four cover PNGs and the rest of the pile, and none of it can be removed on a grep alone. |
+| 9 | The summer banner is the odd one out | The other eight are 760px WebP in `banners/`. Summer alone is `sprite-profile-banner.jpg`, 34,478 bytes at a different provenance and aspect. Now published as a known fault on the Sprite case study rather than only tracked here. |
 | 9 | Eight meta descriptions over 160 characters | They truncate in results. All predate this work; the homepage one was fixed with the voice pass. |
-| 7 | The fabricated live console on the homepage | `index.html` pulses a "live" dot over four random-walk metrics and ten invented activity lines. A visitor who suspects it is synthetic discounts every other claim on the page. |
+| 9 | The arcade cache name is bumped by a comment | `sw.js` says "bump CACHE on EVERY commit that touches docs/games/**" and nothing enforces it. Cache-first means a missed bump serves a stale game to every installed player. The precache list is hand-typed for the same reason. Both are now published as faults on the arcade case study, with the fix named. |
+| 9 | `.back-to-top` is a 29.6px target | Found while fixing `.footer-nav` next to it. Clears the WCAG 2.2 AA minimum of 24px and misses the 44px the footer links now hit, so the two sit inconsistently in the same corner. |
 | B | Legal | Parked in `legal-draft/`. See `legal-review.md`. |
-
----
 
 ## Needs the owner, not the codebase
 
@@ -197,7 +289,17 @@ all match real tokens exactly. Do not "fix" them.
    moves the shop from digital downloads to physical goods, which needs terms of
    sale, a refund and returns position, and shipping terms.
 6. **Codex needs something verifiable.** Publishing the schema and one small
-   sample file would let a reader confirm the page's central claim.
+   sample file would let a reader confirm the page's central claim. This is now
+   published as a fault on the Codex page itself, under *what is still wrong*,
+   so the page names its own weakness rather than waiting for a reader to.
+7. **A LinkedIn URL, if there is one.** The homepage JSON-LD claimed
+   `linkedin.com/beben.design`, which returns 404, as does
+   `linkedin.com/company/beben-design`. It has been removed from `sameAs`
+   rather than left as a false claim. Instagram and Behance were verified and
+   are now linked in every footer. Give me the real URL and it goes back in
+   both places.
+8. **Four prices are still `Price TBC`.** Unchanged by this run, and repeated
+   here because it is the oldest open item on the list.
 
 ---
 
@@ -210,12 +312,18 @@ python3 -m http.server 8123 --directory docs        # local preview. Port matter
                                                     # gives Sprite's offline replies
 
 python3 scripts/check_voice.py                      # voice zoning, banned words
+python3 scripts/check_facts.py                      # the coordinates, email and city
+                                                    # agree in all three spellings
 node --check cloudflare-worker/sprite-proxy.js      # the Worker parses before pasting
 node --check docs/assets/JS/sprite.js
 
-python3 scripts/build_tools.py                      # both generators are idempotent:
+python3 scripts/build_tools.py                      # all three generators are idempotent:
 .venv/bin/python scripts/build_blog.py              # a run against unchanged sources
-git status --short                                  # must leave the tree clean
+python3 scripts/build_status.py                     # must leave the tree clean
+git status --short
+
+python3 scripts/build_status.py --check             # fails if the homepage panel has
+                                                    # drifted from the measurements
 
 grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html | sort -u
                                                     # must return exactly one version
@@ -223,6 +331,13 @@ grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html |
 
 `build_blog.py` needs `markdown`: `python3 -m venv .venv && .venv/bin/pip install markdown`.
 
-Current state: 34 pages served excluding the arcade, 30 sitemap URLs, 837
-internal links resolve, all JSON-LD valid, no duplicate titles or descriptions,
-no em dashes in visitor-facing copy, voice clean.
+Current state, all of it measured rather than remembered: 33 pages served
+excluding the arcade plus `404.html`, 30 sitemap URLs, 965 internal references
+resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
+em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
+one asset version (`4.6`) everywhere.
+
+The link figure is lower than the 837 recorded before because the checker now
+strips script bodies first. A URL a page assembles in JavaScript is not a link,
+and counting the arcade's `'./' + last + '/'` as a broken one is how you end up
+publishing "2 broken links" about a site that has none.

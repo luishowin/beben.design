@@ -61,6 +61,27 @@ PILLARS = [
      "Pricing, invoicing, and getting your own work out of the door."),
 ]
 
+# Run modes. Badges on the card, and a promise each. Every one of them is
+# checked against what the build actually produced, because a badge saying
+# "nothing leaves the tab" is worth exactly as much as the check behind it.
+RUN_MODES = {
+    "browser":   "Runs in the tab. Nothing you paste is uploaded.",
+    "download":  "One HTML file. Keep it, run it offline.",
+    "self-host": "Put that file on your own server.",
+    "install":   "Add it to a home screen and open it offline.",
+}
+
+# An off-site script, or any way of getting data off the page, contradicts
+# the browser badge. Checked against the rendered output, not the sources.
+LEAKS = [
+    (re.compile(r'<script[^>]+src="https?://', re.I), "an off-site script"),
+    (re.compile(r"\bfetch\s*\(", re.I), "a fetch() call"),
+    (re.compile(r"\bXMLHttpRequest\b"), "an XMLHttpRequest"),
+    (re.compile(r"\bnavigator\.sendBeacon\b"), "a sendBeacon call"),
+    (re.compile(r"\bnew\s+WebSocket\b"), "a WebSocket"),
+    (re.compile(r"<form[^>]+action=", re.I), "a form that posts somewhere"),
+]
+
 warnings = []
 
 
@@ -112,6 +133,26 @@ def load_registry():
             for key in ("number", "h1", "lead", "meta_title", "meta_description"):
                 if not tool.get(key):
                     sys.exit(f"{slug}: live generated tools need '{key}' in the registry.")
+
+        modes = tool.get("run_modes") or []
+        if not isinstance(modes, list):
+            sys.exit(f"{slug}: run_modes must be a list, got {modes!r}.")
+        for mode in modes:
+            if mode not in RUN_MODES:
+                sys.exit(f"{slug}: unknown run mode {mode!r}. "
+                         f"Expected some of {sorted(RUN_MODES)}.")
+        if len(set(modes)) != len(modes):
+            sys.exit(f"{slug}: run_modes repeats a mode: {modes!r}.")
+        if modes and tool["status"] != "live":
+            sys.exit(f"{slug}: only live tools may claim run modes. Nothing is "
+                     "built for a 'soon' tool, so nothing can be checked.")
+        if "download" in modes and not tool["generated"]:
+            sys.exit(f"{slug}: claims 'download', but this script does not "
+                     "generate a standalone file for it, so there is nothing "
+                     "to download.")
+        if "self-host" in modes and "download" not in modes:
+            sys.exit(f"{slug}: claims 'self-host' without 'download'. You "
+                     "cannot host a file you cannot get.")
 
         copy_text = " ".join(str(tool.get(k, "")) for k in
                              ("name", "description", "lead", "meta_title", "meta_description"))
@@ -226,6 +267,8 @@ def build_tool_page(tool, template):
     if left:
         sys.exit(f"{slug}: template placeholders left unfilled: {sorted(set(left))}")
 
+    verify_browser_badge(tool, page)
+
     out = DOCS / slug / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8", newline="\n")
@@ -234,12 +277,25 @@ def build_tool_page(tool, template):
 
 # ── TOOLS INDEX GRID ──────────────────────────────────────────────────
 
+def run_modes_html(tool, indent):
+    """The badge row. Empty string for a tool that claims nothing."""
+    modes = tool.get("run_modes") or []
+    if not modes:
+        return ""
+    badges = "".join(
+        f'<span class="run-badge" title="{esc(RUN_MODES[m])}">{esc(m)}</span>'
+        for m in modes)
+    return (f'\n{indent}<p class="run-modes">'
+            f'<span class="visually-hidden">Runs as: </span>{badges}</p>')
+
+
 def card_html(tool, stagger):
     slug = tool["slug"]
     i = min(stagger, MAX_STAGGER)
     tag = f'<span class="card-tag">// {esc(tool["tag"])}</span>'
     title = f'<h3>{esc(tool["name"])}</h3>'
     desc = f'<p>{esc(tool["description"])}</p>'
+    modes = run_modes_html(tool, " " * 28)
 
     if tool["status"] == "soon":
         return (f'                    <article class="tool-card tool-card--soon" data-reveal style="--i:{i}">\n'
@@ -277,7 +333,7 @@ def card_html(tool, stagger):
             + f'                        <a href="{esc(href)}" class="card-body">\n'
             f'                            {tag}\n'
             f'                            {title}\n'
-            f'                            {desc}\n'
+            f'                            {desc}{modes}\n'
             "                        </a>\n"
             '                        <div class="card-footer">\n'
             + footer
@@ -303,6 +359,22 @@ def grid_html(tools):
             "                </div>\n"
             "            </div>")
     return "\n\n".join(groups)
+
+
+def verify_browser_badge(tool, rendered):
+    """A tool claiming 'browser' must have no way to send anything anywhere.
+
+    Run against the finished page, so an inlined vendor library counts. The
+    site's own fonts and favicons are requests too, but they carry nothing
+    the visitor typed, which is what the badge is about.
+    """
+    if "browser" not in (tool.get("run_modes") or []):
+        return
+    for pattern, what in LEAKS:
+        if pattern.search(rendered):
+            sys.exit(f"{tool['slug']}: claims the 'browser' badge, but the "
+                     f"generated page contains {what}. Either the badge is "
+                     "wrong or the tool is.")
 
 
 def replace_block(text, start, end, block, path):

@@ -84,8 +84,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=4.4">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.5">
+    <link rel="stylesheet" href="../assets/css/index.css?v=4.6">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.6">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -454,9 +454,20 @@
         </div>
     </section>
 
-    <!-- Roadmap - soft -->
+    <!-- 5 and 6. What is still wrong, then what happens next. Both live in
+         one soft section on purpose: the surfaces alternate strictly down the
+         page, so adding a section here would invert every surface below it,
+         including the shared .next-step component. -->
     <section class="section--soft">
         <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">What is still wrong</span>
+                <h2 data-reveal style="--i:1">Two files that have to agree, and a Worker nobody can deploy</h2>
+                <p data-reveal style="--i:2">Changing what Sprite knows is a git push. The Worker fetches docs/sprite.md every five minutes, so the facts ship with the site. The Worker itself does not. cloudflare-worker/sprite-proxy.js is pasted into a dashboard by hand, and nothing would notice if it were not. That is not a hypothetical: the deployed Worker turned out to be an older generation of the file than the repository's, with no runtime knowledge fetch in it at all. The site's pricing was corrected and the Worker was never re-pasted, so the live Sprite went on quoting the old number to anyone who asked.</p>
+                <p data-reveal style="--i:3">The knowledge file is sliced at a character cap, from the tail, with no error. The cap is written in two places, as KNOWLEDGE_MAX_CHARS in the Worker and SPRITE_MAX_CHARS in scripts/build_tools.py, and the two stay equal because a person remembers. The build now refuses to write a sprite.md past the limit, which closes half of it. The other half is that raising one number without the other puts the cliff back. The file currently runs 7,950 characters against 12,000.</p>
+                <p data-reveal style="--i:4">The seasonal banners are eight images drawn as one set, 760px wide, published as WebP. Summer is not one of them. It is sprite-profile-banner.jpg, 34,478 bytes at a different size and a different aspect, left alone because replacing it was never asked for. It will look like the odd one out the first time anyone compares two seasons.</p>
+            </div>
+
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What's next</span>
                 <h2 data-reveal style="--i:1">Roadmap</h2>
@@ -538,6 +549,10 @@
                 <li><a href="../privacy/">PRIVACY POLICY</a></li>
                 <li><a href="../credits/">CREDITS</a></li>
             </ul>
+            <ul class="footer-nav footer-social">
+                <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
+                <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
+            </ul>
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
         </div>
     </div>
@@ -547,7 +562,7 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=4.4"></script>
-<script src="../assets/JS/sprite.js?v=4.5"></script>
+<script src="../assets/JS/index.js?v=4.6"></script>
+<script src="../assets/JS/sprite.js?v=4.6"></script>
 </body>
 </html>

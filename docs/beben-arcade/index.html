@@ -40,8 +40,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=4.4">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.5">
+    <link rel="stylesheet" href="../assets/css/index.css?v=4.6">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=4.6">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -229,7 +229,7 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What shipped</span>
                 <h2 data-reveal style="--i:1">What is running now</h2>
-                <p data-reveal style="--i:2">Twelve games at one address, installable as a PWA, with a service worker scoped to the arcade and a precache list of 25 entries. Put the device in airplane mode after the first visit and every game still opens.</p>
+                <p data-reveal style="--i:2">Twelve games at one address, installable as a PWA, with a service worker scoped to the arcade and a precache list of 20 entries. Put the device in airplane mode after the first visit and every game still opens.</p>
                 <p data-reveal style="--i:3">The shared runtime is arcade.js, 35,673 bytes of plain JavaScript that does the boring things every game needed and nothing more: a fixed-timestep loop so a 144Hz phone and a 60Hz laptop run the same physics, a canvas fitter that handles device pixel ratio so no game ships its own blurry-canvas bug, an 8-bit Web Audio synth so sounds are generated rather than downloaded, score and settings stores wrapped in try/catch, and top-bar chrome injected at load so the back button sits in the same pixel in all twelve games.</p>
                 <p data-reveal style="--i:4">Each game is then one self-contained HTML file that loads the runtime and owns everything else. You can open any of them, read the whole game top to bottom, and change it without knowing how the other eleven work. At this scale that property is worth more than deduplication.</p>
                 <p data-reveal style="--i:4">The identity is a constraint rather than a decoration. The arcade is dark only, never reads the main site's theme key, and assigns each game one neon accent that colours its card, its in-game chrome, its canvas art and its game-over jingle. You learn which game you are in from the colour before you read a word.</p>
@@ -237,7 +237,7 @@
             <ul class="tech-list" data-reveal style="--i:4">
                 <li>Twelve games, 227,558 bytes of static files in total, installable to a home screen</li>
                 <li>A shared runtime in arcade.js and arcade.css, 46,905 bytes combined, no engine and no bundler</li>
-                <li>A cache-first service worker scoped to the arcade, precaching 25 entries under a versioned cache name</li>
+                <li>A cache-first service worker scoped to the arcade, precaching 20 entries under a versioned cache name</li>
                 <li>A 5,212 byte subset of Press Start 2P, uppercase glyphs only, self-hosted</li>
                 <li>Seven neon accent tokens over a near-black ground, one assigned to each of the twelve games</li>
                 <li>Eight achievements, a CRT scanline mode and a rare launch flourish, all evaluated on the device</li>
@@ -320,6 +320,37 @@
     </section>
 
     <!-- CTA - soft -->
+    <!-- 5. What is still wrong - soft. -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">What is still wrong</span>
+                <h2 data-reveal style="--i:1">A rule in a comment is not a check</h2>
+                <p data-reveal style="--i:2">The service worker is cache-first. That is what makes airplane mode work, and it is also what makes a stale file permanent. The whole defence is one line at the top of sw.js telling whoever edits the arcade to bump the cache name on every commit that touches it. It is a comment. Nothing enforces it and no test fails without it, and a missed bump serves the old game to everyone who already has the arcade installed until they go and clear storage.</p>
+                <p data-reveal style="--i:3">The precache list has the same shape. Twenty paths, typed by hand, and adding a thirteenth game means remembering to add its folder or shipping a game that quietly only works online. This page is the evidence. It described that list as twenty-five entries. The list has held sixteen, then eighteen, then twenty, and never twenty-five. The figure was corrected the moment somebody recounted it, which is what writing numbers down is for, but a list a person maintains and a number a person types will drift again.</p>
+                <p data-reveal style="--i:4">And the boundary costs what it was always going to cost. The arcade shares nothing with the main site, so a fix made once out there has to be made again in here, and the two drift apart in small ways forever. That was the trade rather than an oversight, and it is still the right one, but it is a bill that arrives every month rather than a win that arrived once.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. What happens next - plain. -->
+    <section>
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">What happens next</span>
+                <h2 data-reveal style="--i:1">Turning two hand-kept lists into checks</h2>
+                <p data-reveal style="--i:2">Nothing here is a promise with a date on it. It is the shortlist, in the order the risk actually sits.</p>
+            </div>
+
+            <ul class="tech-list" data-reveal style="--i:4">
+                <li>Make the cache-name rule a check that fails the build, rather than a sentence at the top of a file</li>
+                <li>Generate the precache list from the folders on disk, so adding a game cannot leave one out</li>
+                <li>Publish the list and the cache name on this page from the source, the way the homepage figures are</li>
+                <li>The hub interface is the oldest part of the arcade and the part a first visit is judged on</li>
+            </ul>
+        </div>
+    </section>
+
     <section class="next-step section--soft">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Next step</span>
@@ -350,6 +381,10 @@
                 <li><a href="../privacy/">PRIVACY POLICY</a></li>
                 <li><a href="../credits/">CREDITS</a></li>
             </ul>
+            <ul class="footer-nav footer-social">
+                <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
+                <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
+            </ul>
             <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
         </div>
     </div>
@@ -359,8 +394,8 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=4.4"></script>
-<script src="../assets/JS/sprite.js?v=4.5"></script>
+<script src="../assets/JS/index.js?v=4.6"></script>
+<script src="../assets/JS/sprite.js?v=4.6"></script>
 </body>
 </html>
 
