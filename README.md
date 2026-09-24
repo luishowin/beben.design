@@ -242,7 +242,7 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v8`) moves in lockstep as an on-device sanity check.
+   hub (`v9`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a hub card in `docs/games/index.html`, an entry in the hub's
    inline `ICONS` map, and the `SLUGS` array in `arcade.js` (for achievements).

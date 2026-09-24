@@ -436,7 +436,7 @@
     </section>
     <p class="hub-tagline">
         <span>tiny games &middot; big scores &middot; zero ads</span>
-        <span>v8</span>
+        <span>v9</span>
     </p>
 
     <div id="installSlot"></div>
@@ -521,7 +521,6 @@
             <span class="game-best" data-best="skystack"></span>
         </a>
         <a class="game-card" href="./paddle-duel/" style="--ac: var(--neon-lime)">
-            <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/paddle-duel.png" alt="Paddle Duel icon" loading="lazy"></span>
             <span class="game-name">Paddle Duel</span>
             <span class="game-desc">First to seven takes the duel.</span>
@@ -532,7 +531,6 @@
             <span class="game-best" data-best="paddle-duel"></span>
         </a>
         <a class="game-card" href="./star-swarm/" style="--ac: var(--neon-purple)">
-            <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/star-swarm.png" alt="Star Swarm icon" loading="lazy"></span>
             <span class="game-name">Star Swarm</span>
             <span class="game-desc">Blast the swarm. Survive the void.</span>
@@ -544,7 +542,6 @@
             <span class="game-best" data-best="star-swarm"></span>
         </a>
         <a class="game-card" href="./sudoku/" style="--ac: var(--neon-yellow)">
-            <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/sudoku.png" alt="Sudoku icon" loading="lazy"></span>
             <span class="game-name">Sudoku</span>
             <span class="game-desc">Fill every grid without a repeat.</span>
@@ -554,7 +551,6 @@
             <span class="game-best" data-best="sudoku-easy" data-suffix="s"></span>
         </a>
         <a class="game-card" href="./four-in-a-row/" style="--ac: var(--neon-red)">
-            <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/four-in-a-row.png" alt="Four in a Row icon" loading="lazy"></span>
             <span class="game-name">Four in a Row</span>
             <span class="game-desc">Connect four before they do.</span>
@@ -665,7 +661,7 @@
 
     <footer class="hub-footer">
         <a href="https://beben.design/">&larr; beben.design</a>
-        <button class="hub-trophy" id="hubTrophy" type="button">Trophy case &#127942;</button>
+        <button class="hub-trophy" id="hubTrophy" type="button">TROPHY CASE &#127942;</button>
         <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
     </footer>
 
@@ -723,7 +719,7 @@
     var trophy = document.getElementById('hubTrophy');
     function paintTrophy() {
         var c = Arcade.achievements.count();
-        trophy.innerHTML = 'Trophy case &#127942;';
+        trophy.innerHTML = 'TROPHY CASE &#127942;';
         trophy.title = c.unlocked + '/' + c.total + ' achievements unlocked';
     }
     paintTrophy();
