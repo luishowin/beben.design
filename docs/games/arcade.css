@@ -97,8 +97,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
     border-bottom: 2px solid var(--accent);
 }
 
-.arc-bar .arc-btn,
-.arc-bar .arc-back {
+.arc-bar .arc-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -110,23 +109,22 @@ canvas, .arc-surface { touch-action: none; display: block; }
     transition: opacity var(--dur-fast) ease;
 }
 
-/* back-to-arcade chip: bordered + accent arrow so it reads at a glance */
+/* back link: plain pixel-font text, same height as the game title,
+   a bit fainter so the title still leads */
 .arc-bar .arc-back {
-    min-width: 46px;
-    min-height: 46px;
-    margin-right: 0.1rem;
-    border: 1px solid var(--border-strong);
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.07);
-    color: var(--accent);
-    font-size: 1.35rem;
-    font-weight: 700;
-    line-height: 1;
-    opacity: 1;
-    box-shadow: 0 0 10px var(--accent-glow);
+    font-family: var(--font-pixel);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    margin-right: 0.45rem;
+    color: var(--bezel-text);
+    opacity: 0.62;
+    white-space: nowrap;
+    transition: opacity var(--dur-fast) ease;
 }
 
-.arc-bar .arc-back:active { opacity: 0.55; }
+.arc-bar .arc-back:active { opacity: 0.4; }
 
 .arc-title {
     flex: 1;

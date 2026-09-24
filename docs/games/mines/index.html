@@ -72,7 +72,7 @@
             border: 1px solid var(--border-strong);
             border-radius: 4px;
             padding: 2px;
-            background: var(--bg-soft);
+            background: #000;
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
@@ -136,8 +136,11 @@
     function sizeCells() {
         var p = preset();
         var stage = document.querySelector('.arc-stage');
+        var cs = getComputedStyle(stage);
+        var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
         var avail = Math.min(stage.clientWidth - 20, 460);
-        var availH = stage.clientHeight - 90;
+        var hudH = document.querySelector('.mines-hud').offsetHeight;
+        var availH = stage.clientHeight - pad - hudH - 13; /* 13px ≈ 0.8rem flex gap */
         var cell = Math.floor(Math.min(avail / p.cols, availH / p.rows, 40)) - 2;
         gridEl.style.setProperty('--cell', cell + 'px');
         gridEl.style.gridTemplateColumns = 'repeat(' + p.cols + ', var(--cell))';

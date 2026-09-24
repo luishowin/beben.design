@@ -614,7 +614,7 @@
         var bar = document.createElement('header');
         bar.className = 'arc-bar';
         bar.innerHTML =
-            '<a class="arc-back" href="../" aria-label="Back to ARCADIA">&larr;</a>' +
+            '<a class="arc-back" href="../" aria-label="Back to ARCADIA">&lt; BACK</a>' +
             '<span class="arc-title"></span>' +
             '<span class="arc-score-slot"></span>' +
             '<button class="arc-btn arc-pause-btn" aria-label="Pause">&#10074;&#10074;</button>' +

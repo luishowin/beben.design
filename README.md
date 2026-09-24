@@ -228,7 +228,9 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
   `#171717` border (border flips to the game's neon on hover). Each game card
   shows a frameless icon, the name in pixel type, a one-line description, and
   one to three `> GENRE` lines. The UI is flat by default; CRT scanlines only
-  appear when the CRT effect is toggled on.
+  appear when the CRT effect is toggled on. Every game canvas paints a pure
+  `#000` backdrop (no `--bg-soft` fills), and the in-game bar shows
+  `< BACK` in pixel type next to the game title.
 - **Pixel display font.** `docs/games/fonts/press-start-2p.woff2` is a ~5KB OFL
   subset (uppercase glyphs only, so always pair it with
   `text-transform: uppercase`). Rebuild it with `py scripts/subset_arcade_font.py`
@@ -242,7 +244,7 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v9`) moves in lockstep as an on-device sanity check.
+   hub (`v10`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a hub card in `docs/games/index.html`, an entry in the hub's
    inline `ICONS` map, and the `SLUGS` array in `arcade.js` (for achievements).
