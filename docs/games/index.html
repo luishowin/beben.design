@@ -33,19 +33,8 @@
             flex-direction: column;
         }
 
-        /* faint CRT scanlines over everything */
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: 90;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent 0 2px,
-                rgba(0, 0, 0, 0.14) 2px 4px
-            );
-        }
+        /* CRT mode adds scanlines via html.arc-crt::after in arcade.css;
+           with CRT off the hub stays completely flat. */
 
         /* ── Content column ── */
         .hub-main {
@@ -63,7 +52,7 @@
             padding: 2.4rem 1rem 2.1rem;
             text-align: center;
             background: var(--bg-card);
-            border: 1px solid var(--border-strong);
+            border: 1px solid #171717;
             border-radius: 10px;
             box-shadow: 0 0 30px rgba(25, 198, 255, 0.08);
         }
@@ -222,20 +211,14 @@
 
         .hub-section .tick { color: var(--accent); }
 
-        .hub-section .soon-note {
-            font-family: var(--font-mono);
-            font-size: 0.62rem;
-            letter-spacing: 0.1em;
-            text-transform: none;
-            color: var(--text-muted);
-        }
-
         /* ── Game grid ── */
         .game-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.7rem;
         }
+
+        .game-grid + .game-grid { margin-top: 1.4rem; }
 
         @media (min-width: 560px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 720px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -245,13 +228,11 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
-            aspect-ratio: 3 / 4;
-            padding: 0.9rem 0.5rem 0.7rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            align-items: stretch;
+            gap: 0.4rem;
+            padding: 0.9rem 0.7rem 0.7rem;
+            background: #000;
+            border: 1px solid #171717;
             border-radius: 10px;
             transition: transform var(--dur-fast) var(--ease-snap), border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
         }
@@ -268,12 +249,9 @@
         }
 
         .game-icon {
-            width: calc(75% + 0.75rem);   /* 75% of the card, compensating 0.5rem side padding */
+            align-self: center;
+            width: calc(70% + 0.75rem);
             aspect-ratio: 1;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            overflow: hidden;
         }
 
         .game-icon img {
@@ -284,23 +262,49 @@
         }
 
         .game-name {
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
+            font-family: var(--font-pixel);
+            font-size: 0.52rem;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             color: var(--headers);
-            text-align: center;
+            text-align: left;
+        }
+
+        .game-desc {
+            font-size: 0.52rem;
+            line-height: 1.5;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: rgba(197, 199, 208, 0.72);
+            text-align: left;
+        }
+
+        .game-genres {
+            display: flex;
+            flex-direction: column;
+            gap: 0.12rem;
+        }
+
+        .game-genre {
+            font-size: 0.5rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(197, 199, 208, 0.5);
+            text-align: left;
         }
 
         .game-best {
-            min-height: 1em;
-            font-size: 0.62rem;
+            margin-top: auto;
+            padding-top: 0.25rem;
+            font-size: 0.55rem;
             letter-spacing: 0.08em;
+            text-transform: uppercase;
             color: var(--ac);
             font-variant-numeric: tabular-nums;
+            text-align: left;
         }
 
-        /* tiny pixel badge (NEW / SOON) */
+        /* tiny pixel badge (NEW) */
         .pix-badge {
             position: absolute;
             top: 0.5rem;
@@ -327,17 +331,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text-muted);
-            background: transparent;
-            border: 1px dashed var(--border-strong);
-        }
-
-        .game-card--soon .pix-badge {
-            color: var(--text-muted);
-            background: transparent;
-            border: 1px solid var(--border-strong);
         }
 
         /* ── Footer ── */
@@ -365,8 +361,8 @@
         }
 
         .hub-footer {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             gap: 0.8rem;
             margin-top: 1.4rem;
@@ -377,10 +373,13 @@
             color: var(--text-muted);
         }
 
-        .hub-footer a { color: var(--headers); }
+        .hub-footer a { color: var(--headers); justify-self: start; }
         .hub-footer a:hover { color: var(--neon-blue); }
 
-        .hub-status { font-variant-numeric: tabular-nums; }
+        .hub-trophy { justify-self: center; }
+        .hub-gear { justify-self: end; }
+
+        .hub-status { justify-self: end; font-variant-numeric: tabular-nums; }
         .hub-status.ready { color: var(--neon-lime); }
 
         .hub-trophy {
@@ -430,135 +429,229 @@
             <span class="w1">ARCADIA</span>
             <span class="w2">by BEBEN DESIGN</span>
         </h1>
-        <p class="hero-sub">Tiny games &middot; big scores &middot; zero ads</p>
         <div class="hero-actions">
             <button class="hero-btn" id="randomBtn" type="button">&#9654; Random game</button>
             <a class="hero-btn hero-btn--ghost" id="continueBtn" hidden></a>
         </div>
     </section>
     <p class="hub-tagline">
-        <span>12 games &middot; 8 previews &middot; offline &middot; <span class="free">no ads, ever</span></span>
-        <span>v7</span>
+        <span>tiny games &middot; big scores &middot; zero ads</span>
+        <span>v8</span>
     </p>
 
     <div id="installSlot"></div>
 
-    <h2 class="hub-section"><span class="tick">&#9646;</span> Now playing</h2>
+    <h2 class="hub-section"><span class="tick">&#9646;</span> Game library</h2>
     <div class="game-grid" id="liveGrid">
         <a class="game-card" href="./snake/" style="--ac: var(--neon-lime)">
             <span class="game-icon"><img src="./icons/games/snake.png" alt="Snake icon" loading="lazy"></span>
             <span class="game-name">Snake</span>
+            <span class="game-desc">Eat. Grow. Don't bite your tail.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ARCADE</span>
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best" data-best="snake"></span>
         </a>
         <a class="game-card" href="./2048/" style="--ac: var(--neon-yellow)">
             <span class="game-icon"><img src="./icons/games/2048.png" alt="2048 icon" loading="lazy"></span>
             <span class="game-name">2048</span>
+            <span class="game-desc">Merge tiles. Reach 2048.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; PUZZLE</span>
+            </span>
             <span class="game-best" data-best="2048"></span>
         </a>
         <a class="game-card" href="./blockfall/" style="--ac: var(--neon-purple)">
             <span class="game-icon"><img src="./icons/games/blockfall.png" alt="Blockfall icon" loading="lazy"></span>
             <span class="game-name">Blockfall</span>
+            <span class="game-desc">Stack clean lines before you top out.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; PUZZLE</span>
+                <span class="game-genre">&gt; ARCADE</span>
+            </span>
             <span class="game-best" data-best="blockfall"></span>
         </a>
         <a class="game-card" href="./brick-bash/" style="--ac: var(--neon-orange)">
             <span class="game-icon"><img src="./icons/games/brick-bash.png" alt="Brick Bash icon" loading="lazy"></span>
             <span class="game-name">Brick Bash</span>
+            <span class="game-desc">Break every brick with one ball.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ARCADE</span>
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best" data-best="brick-bash"></span>
         </a>
         <a class="game-card" href="./wingbeat/" style="--ac: var(--neon-blue)">
             <span class="game-icon"><img src="./icons/games/wingbeat.png" alt="Wingbeat icon" loading="lazy"></span>
             <span class="game-name">Wingbeat</span>
+            <span class="game-desc">Flap through the gaps. Don't fall.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best" data-best="wingbeat"></span>
         </a>
         <a class="game-card" href="./mines/" style="--ac: var(--neon-red)">
             <span class="game-icon"><img src="./icons/games/mines.png" alt="Mines icon" loading="lazy"></span>
             <span class="game-name">Mines</span>
+            <span class="game-desc">Clear the field. Trust no number.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; PUZZLE</span>
+                <span class="game-genre">&gt; LOGIC</span>
+            </span>
             <span class="game-best" data-best="mines-easy" data-suffix="s"></span>
         </a>
         <a class="game-card" href="./pixel-dash/" style="--ac: var(--neon-pink)">
             <span class="game-icon"><img src="./icons/games/pixel-dash.png" alt="Pixel Dash icon" loading="lazy"></span>
             <span class="game-name">Pixel Dash</span>
+            <span class="game-desc">Run, jump and dodge to the finish.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best" data-best="pixel-dash"></span>
         </a>
         <a class="game-card" href="./skystack/" style="--ac: var(--neon-blue)">
             <span class="game-icon"><img src="./icons/games/skystack.png" alt="Skystack icon" loading="lazy"></span>
             <span class="game-name">Skystack</span>
+            <span class="game-desc">Stack perfect blocks to the sky.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; PUZZLE</span>
+                <span class="game-genre">&gt; ARCADE</span>
+            </span>
             <span class="game-best" data-best="skystack"></span>
         </a>
         <a class="game-card" href="./paddle-duel/" style="--ac: var(--neon-lime)">
             <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/paddle-duel.png" alt="Paddle Duel icon" loading="lazy"></span>
             <span class="game-name">Paddle Duel</span>
+            <span class="game-desc">First to seven takes the duel.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; SPORT</span>
+                <span class="game-genre">&gt; ARCADE</span>
+            </span>
             <span class="game-best" data-best="paddle-duel"></span>
         </a>
         <a class="game-card" href="./star-swarm/" style="--ac: var(--neon-purple)">
             <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/star-swarm.png" alt="Star Swarm icon" loading="lazy"></span>
             <span class="game-name">Star Swarm</span>
+            <span class="game-desc">Blast the swarm. Survive the void.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ACTION</span>
+                <span class="game-genre">&gt; ARCADE</span>
+                <span class="game-genre">&gt; SHOOTER</span>
+            </span>
             <span class="game-best" data-best="star-swarm"></span>
         </a>
         <a class="game-card" href="./sudoku/" style="--ac: var(--neon-yellow)">
             <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/sudoku.png" alt="Sudoku icon" loading="lazy"></span>
             <span class="game-name">Sudoku</span>
+            <span class="game-desc">Fill every grid without a repeat.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; PUZZLE</span>
+            </span>
             <span class="game-best" data-best="sudoku-easy" data-suffix="s"></span>
         </a>
         <a class="game-card" href="./four-in-a-row/" style="--ac: var(--neon-red)">
             <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/four-in-a-row.png" alt="Four in a Row icon" loading="lazy"></span>
             <span class="game-name">Four in a Row</span>
+            <span class="game-desc">Connect four before they do.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; STRATEGY</span>
+                <span class="game-genre">&gt; BOARD</span>
+            </span>
             <span class="game-best" data-best="four-in-a-row"></span>
         </a>
     </div>
 
-    <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon <span class="soon-note">· playable previews</span></h2>
     <div class="game-grid" id="soonGrid">
         <a class="game-card game-card--soon" href="./rockfield/" style="--ac: var(--neon-orange)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Rockfield</span>
+            <span class="game-desc">Smash rocks. Mine gems. Beat the clock.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ARCADE</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./void-dodger/" style="--ac: var(--neon-blue)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Void Dodger</span>
+            <span class="game-desc">Dodge the asteroids. Ride the void.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./maze-muncher/" style="--ac: var(--neon-yellow)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Maze Muncher</span>
+            <span class="game-desc">Eat every pellet. Evade the chaser.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ARCADE</span>
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./hop-across/" style="--ac: var(--neon-lime)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Hop Across</span>
+            <span class="game-desc">Cross the road. Traffic won't brake.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; ARCADE</span>
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./wave-rider/" style="--ac: var(--neon-pink)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Wave Rider</span>
+            <span class="game-desc">Ride the wave. Catch the stars.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; SPORT</span>
+                <span class="game-genre">&gt; ACTION</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./solitaire/" style="--ac: var(--neon-purple)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Solitaire</span>
+            <span class="game-desc">Build four suits, ace to king.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; CARD</span>
+                <span class="game-genre">&gt; PUZZLE</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./checkers/" style="--ac: var(--neon-red)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Checkers</span>
+            <span class="game-desc">Capture every last piece.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; BOARD</span>
+                <span class="game-genre">&gt; STRATEGY</span>
+            </span>
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./chess/" style="--ac: var(--neon-blue)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Chess</span>
+            <span class="game-desc">Outmove the AI. Take the king.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; BOARD</span>
+                <span class="game-genre">&gt; STRATEGY</span>
+                <span class="game-genre">&gt; CLASSIC</span>
+            </span>
             <span class="game-best"></span>
         </a>
     </div>
@@ -567,13 +660,13 @@
         <p>ARCADIA is a pocket arcade &mdash; tiny 8-bit games, zero ads, zero sign-ups, zero tracking. It plays offline, keeps your best scores on your device, and never phones home.</p>
         <p>Built with plain <strong>HTML, CSS and JavaScript</strong>: canvas rendering, a service worker for offline installs, self-hosted pixel type, no frameworks. A design project by <strong>Luis Howin</strong>, creative director at BEBEN DESIGN &mdash; about 99% of the code was written with AI.</p>
         <p class="cta">Have fun. And tell a friend to tell a friend.</p>
+        <p class="hub-status" id="hubStatus">&nbsp;</p>
     </section>
 
     <footer class="hub-footer">
         <a href="https://beben.design/">&larr; beben.design</a>
-        <button class="hub-trophy" id="hubTrophy" type="button">&#9733; 0/8</button>
+        <button class="hub-trophy" id="hubTrophy" type="button">Trophy case &#127942;</button>
         <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
-        <span class="hub-status" id="hubStatus">&nbsp;</span>
     </footer>
 
 </main>
@@ -630,7 +723,8 @@
     var trophy = document.getElementById('hubTrophy');
     function paintTrophy() {
         var c = Arcade.achievements.count();
-        trophy.innerHTML = '★ ' + c.unlocked + '/' + c.total;
+        trophy.innerHTML = 'Trophy case &#127942;';
+        trophy.title = c.unlocked + '/' + c.total + ' achievements unlocked';
     }
     paintTrophy();
     trophy.addEventListener('click', function () {
