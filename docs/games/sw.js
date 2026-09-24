@@ -2,7 +2,7 @@
    RULE: bump CACHE on EVERY commit that touches docs/games/** —
    cache-first serves stale files forever otherwise. */
 
-const CACHE = 'beben-arcade-v10';
+const CACHE = 'beben-arcade-v11';
 
 const PRECACHE = [
     './',
@@ -30,6 +30,14 @@ const PRECACHE = [
     './icons/games/star-swarm.png',
     './icons/games/sudoku.png',
     './icons/games/four-in-a-row.png',
+    './icons/games/rockfield.png',
+    './icons/games/void-dodger.png',
+    './icons/games/maze-muncher.png',
+    './icons/games/hop-across.png',
+    './icons/games/wave-rider.png',
+    './icons/games/solitaire.png',
+    './icons/games/checkers.png',
+    './icons/games/chess.png',
     './2048/',
     './snake/',
     './blockfall/',
