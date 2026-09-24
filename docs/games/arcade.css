@@ -97,6 +97,13 @@ canvas, .arc-surface { touch-action: none; display: block; }
     border-bottom: 2px solid var(--accent);
 }
 
+/* iOS standalone (Add to Home Screen): the status bar's blur overhangs the
+   top of the viewport, so drop the bar an extra 40px to keep the controls clear */
+html.ios-standalone .arc-bar {
+    min-height: calc(var(--bar-h) + env(safe-area-inset-top) + 40px);
+    padding-top: calc(0.35rem + env(safe-area-inset-top) + 40px);
+}
+
 .arc-bar .arc-btn {
     display: inline-flex;
     align-items: center;

@@ -72,32 +72,41 @@
             background-size: cover;
             background-position: center;
             opacity: 0;
-            animation: hero-fade 15s infinite;
+            /* one image per hour: 3 slides -> 3h cycle, 1.5s crossfade at each boundary */
+            animation: hero-fade 10800s linear infinite;
         }
 
         .hero-slide.s1 { background-image: url("./icons/hero-01.webp"); animation-delay: 0s; }
-        .hero-slide.s2 { background-image: url("./icons/hero-02.webp"); animation-delay: 5s; }
-        .hero-slide.s3 { background-image: url("./icons/hero-03.webp"); animation-delay: 10s; }
+        .hero-slide.s2 { background-image: url("./icons/hero-02.webp"); animation-delay: 3600s; }
+        .hero-slide.s3 { background-image: url("./icons/hero-03.webp"); animation-delay: 7200s; }
         .hero-slide.m1 { background-image: url("./icons/hero-mobile-01.webp"); display: none; }
         .hero-slide.m2 { background-image: url("./icons/hero-mobile-02.webp"); display: none; }
 
         @keyframes hero-fade {
-            0%   { opacity: 0; }
-            4%   { opacity: 1; }
-            33%  { opacity: 1; }
-            37%  { opacity: 0; }
-            100% { opacity: 0; }
+            0%      { opacity: 0; }
+            0.014%  { opacity: 1; }
+            33.31%  { opacity: 1; }
+            33.33%  { opacity: 0; }
+            100%    { opacity: 0; }
+        }
+
+        @keyframes hero-fade-m {
+            0%      { opacity: 0; }
+            0.021%  { opacity: 1; }
+            49.98%  { opacity: 1; }
+            50%     { opacity: 0; }
+            100%    { opacity: 0; }
         }
 
         @media (max-width: 560px) {
             .hero-slide.s1, .hero-slide.s2, .hero-slide.s3 { display: none; }
             .hero-slide.m1, .hero-slide.m2 {
                 display: block;
-                animation-duration: 8s;
+                animation: hero-fade-m 7200s linear infinite;
                 background-position: center 30%;
             }
             .hero-slide.m1 { animation-delay: 0s; }
-            .hero-slide.m2 { animation-delay: 4s; }
+            .hero-slide.m2 { animation-delay: 3600s; }
         }
 
         .hero-pixels span {
@@ -427,7 +436,7 @@
     </section>
     <p class="hub-tagline">
         <span>tiny games &middot; big scores &middot; zero ads</span>
-        <span>v11</span>
+        <span>v12</span>
     </p>
 
     <div id="installSlot"></div>

@@ -15,7 +15,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-BG = (8, 8, 19, 255)         # #080813 arcade black
+BG = (0, 0, 0, 255)         # pure black app-icon background
 STICK = (25, 198, 255, 255)  # #19C6FF neon blue (stick + base)
 BALL = (255, 45, 170, 255)   # #FF2DAA neon pink (ball)
 GLINT = (234, 242, 255, 255) # #EAF2FF glint

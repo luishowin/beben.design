@@ -237,14 +237,16 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
   (needs `pip install fonttools brotli`). Body text stays system mono.
 - **Extras.** Offline achievements (`beben-arcade-achievements`), a CRT
   scanline mode (7 taps on the hub title, or the settings toggle), and a rare
-  INSERT COIN launch flourish. Install icons regenerate via
-  `py scripts/make_arcade_icons.py`.
+  INSERT COIN launch flourish. Hero imagery swaps once per hour (3h desktop
+  cycle / 2h mobile cycle, 1.5s crossfade). In iOS standalone mode the game
+  bar drops 40px to clear the status-bar blur. App icons sit on pure `#000`.
+  Install icons regenerate via `py scripts/make_arcade_icons.py`.
 
 **Hard rules when touching `docs/games/**`:**
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v11`) moves in lockstep as an on-device sanity check.
+   hub (`v12`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a hub card in `docs/games/index.html`, an entry in the hub's
    inline `ICONS` map, and the `SLUGS` array in `arcade.js` (for achievements).

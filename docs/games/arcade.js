@@ -602,6 +602,7 @@
     function init(opts) {
         state.opts = opts || {};
         document.body.classList.add('arc-playing');
+        if (navigator.standalone) document.documentElement.classList.add('ios-standalone');
         if (opts && opts.slug) settings.set('lastPlayed', opts.slug);
         if (opts && opts.accent) {
             var val = ACCENTS[opts.accent] ? 'var(' + ACCENTS[opts.accent] + ')' : opts.accent;
