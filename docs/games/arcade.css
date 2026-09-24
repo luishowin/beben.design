@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BEBEN ARCADE — arcade.css
+   ARCADIA — arcade.css
    Shared chrome for the /games/ PWA scope. Standalone by design:
    dark-only neon identity, self-hosted pixel font, zero references
    outside /games/.
@@ -16,7 +16,7 @@
 }
 
 :root {
-    --bg:            #080813;
+    --bg:            #000;
     --bg-soft:       #12162A;
     --bg-card:       #1B2038;
     --headers:       #EAF2FF;
@@ -110,8 +110,23 @@ canvas, .arc-surface { touch-action: none; display: block; }
     transition: opacity var(--dur-fast) ease;
 }
 
-.arc-bar .arc-btn:active,
-.arc-bar .arc-back:active { opacity: 0.5; }
+/* back-to-arcade chip: bordered + accent arrow so it reads at a glance */
+.arc-bar .arc-back {
+    min-width: 46px;
+    min-height: 46px;
+    margin-right: 0.1rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--accent);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 1;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.arc-bar .arc-back:active { opacity: 0.55; }
 
 .arc-title {
     flex: 1;
@@ -309,6 +324,23 @@ canvas, .arc-surface { touch-action: none; display: block; }
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     color: var(--text-muted);
+}
+
+/* ── Coming-soon prototype chip ───────────────────────────────── */
+.arc-proto {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 5;
+    padding: 0.32rem 0.55rem;
+    font-family: var(--font-pixel);
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-strong);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.45);
 }
 
 /* ── Toast ────────────────────────────────────────────────────── */

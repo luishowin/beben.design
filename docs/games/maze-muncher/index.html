@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-yellow); --accent-glow: rgba(255,213,51,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Maze Muncher — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* MAZE MUNCHER (prototype)
+       Eat every pellet. The chaser wants you. Power pellets turn the tables. */
+
+    var C = 15, R = 13;
+    var LIVES = 3;
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: C / R, maxW: 480 });
+
+    var walls, pellets, player, ghost, dir, queue, score, lives, level, over;
+    var edibleT, ghostStepT, ghostMoveT, powerCells;
+
+    function open(x, y) {
+        return x >= 0 && y >= 0 && x < C && y < R && !walls[y][x];
+    }
+
+    function buildMaze() {
+        walls = [];
+        for (var y = 0; y < R; y++) {
+            walls[y] = [];
+            for (var x = 0; x < C; x++) walls[y][x] = true;
+        }
+        // carve with randomized DFS over odd cells
+        var stack = [[1, 1]];
+        walls[1][1] = false;
+        var D = [[0, -2], [0, 2], [-2, 0], [2, 0]];
+        while (stack.length) {
+            var cur = stack[stack.length - 1];
+            var opts = [];
+            for (var i = 0; i < D.length; i++) {
+                var nx = cur[0] + D[i][0], ny = cur[1] + D[i][1];
+                if (nx > 0 && ny > 0 && nx < C - 1 && ny < R - 1 && walls[ny][nx]) opts.push([nx, ny, i]);
+            }
+            if (!opts.length) { stack.pop(); continue; }
+            var pick = opts[Math.floor(Math.random() * opts.length)];
+            walls[cur[1] + D[pick[2]][1] / 2][cur[0] + D[pick[2]][0] / 2] = false;
+            walls[pick[1]][pick[0]] = false;
+            stack.push([pick[0], pick[1]]);
+        }
+        // border ring stays walled; spawn corners are open by construction (odd coords)
+    }
+
+    function placePellets() {
+        pellets = [];
+        powerCells = [];
+        var cells = [];
+        for (var y = 0; y < R; y++)
+            for (var x = 0; x < C; x++)
+                if (!walls[y][x]) cells.push([x, y]);
+        for (var i = 0; i < cells.length; i++) pellets.push(cells[i].slice());
+        // power pellets: the 4 cells farthest from center
+        var cx = (C - 1) / 2, cy = (R - 1) / 2;
+        cells.sort(function (a, b) {
+            var da = (a[0] - cx) * (a[0] - cx) + (a[1] - cy) * (a[1] - cy);
+            var db = (b[0] - cx) * (b[0] - cx) + (b[1] - cy) * (b[1] - cy);
+            return db - da;
+        });
+        for (var i = 0; i < 4; i++) powerCells.push(cells[i].slice());
+    }
+
+    function reset() {
+        level = 1;
+        score = 0;
+        lives = LIVES;
+        over = false;
+        newLevel();
+        Arcade.ui.setScore('000');
+    }
+
+    function newLevel() {
+        buildMaze();
+        placePellets();
+        player = { cx: 1, cy: R - 2, px: 1, py: R - 2 };
+        dir = { x: 0, y: 0 };
+        queue = [];
+        ghost = { cx: (C - 1) / 2, cy: (R - 1) / 2, px: (C - 1) / 2, py: (R - 1) / 2 };
+        edibleT = 0;
+        ghostStepT = 0;
+        ghostMoveT = Math.max(0.18, 0.34 - (level - 1) * 0.03);
+        if (level > 1) Arcade.ui.toast('Level ' + level);
+    }
+
+    var DIRS = {
+        up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
+        left: { x: -1, y: 0 }, right: { x: 1, y: 0 }
+    };
+
+    function pushDir(d) {
+        var last = queue.length ? queue[queue.length - 1] : dir;
+        if (d.x === -last.x && d.y === -last.y) return;  // no 180s while moving
+        if (queue.length < 3) queue.push(d);
+    }
+
+    Arcade.swipe(document.body, function (d) { pushDir(DIRS[d]); });
+    document.addEventListener('keydown', function (e) {
+        var d = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+                  w: 'up', s: 'down', a: 'left', d: 'right' }[e.key];
+        if (d) { e.preventDefault(); pushDir(DIRS[d]); }
+    });
+
+    function endGame() {
+        over = true;
+        var res = Arcade.scores.submit('maze-muncher', score);
+        loop.pause();
+        Arcade.ui.gameOver({
+            title: 'MAZE MUNCHER',
+            score: score,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function playerCell() {
+        var cell = view.w / C;
+        return { x: Math.floor(player.px / cell), y: Math.floor(player.py / cell) };
+    }
+
+    function loseLife() {
+        lives--;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        if (lives <= 0) { endGame(); return; }
+        player = { cx: 1, cy: R - 2, px: 1, py: R - 2 };
+        ghost = { cx: (C - 1) / 2, cy: (R - 1) / 2, px: (C - 1) / 2, py: (R - 1) / 2 };
+        queue = [];
+        dir = { x: 0, y: 0 };
+        edibleT = 0;
+    }
+
+    function ghostStep() {
+        var edible = edibleT > 0;
+        var opts = [];
+        for (var k in DIRS) {
+            var d = DIRS[k];
+            if (open(ghost.cx + d.x, ghost.cy + d.y)) opts.push(d);
+        }
+        if (!opts.length) return;
+        var dx = player.cx - ghost.cx, dy = player.cy - ghost.cy;
+        if (edible) { dx = -dx; dy = -dy; }
+        opts.sort(function (a, b) {
+            return (Math.abs(dx - a.x) + Math.abs(dy - a.y)) - (Math.abs(dx - b.x) + Math.abs(dy - b.y));
+        });
+        var d;
+        if (Math.random() < 0.22) d = opts[Math.floor(Math.random() * opts.length)];
+        else d = opts[0];
+        ghost.cx += d.x; ghost.cy += d.y;
+        ghost.px += d.x; ghost.py += d.y;
+    }
+
+    function update(dt) {
+        if (over) return;
+
+        var cell = view.w / C;
+        var speed = cell * 8;
+
+        // player movement toward queued dir through open cells
+        if (queue.length && Math.abs(player.px * cell - player.cx * cell) < 1 &&
+            Math.abs(player.py * cell - player.cy * cell) < 1) {
+            var want = queue.shift();
+            if (open(player.cx + want.x, player.cy + want.y)) dir = want;
+        }
+        var tx = player.px + dir.x * speed * dt / cell;
+        var ty = player.py + dir.y * speed * dt / cell;
+        if (open(Math.round(tx), Math.round(ty))) {
+            player.px = tx; player.py = ty;
+            player.cx = Math.round(player.px); player.cy = Math.round(player.py);
+        } else {
+            dir = { x: 0, y: 0 };
+        }
+
+        // pellets
+        for (var i = pellets.length - 1; i >= 0; i--) {
+            if (pellets[i][0] === player.cx && pellets[i][1] === player.cy) {
+                var isPower = powerCells.some(function (pc) { return pc[0] === player.cx && pc[1] === player.cy; });
+                pellets.splice(i, 1);
+                if (isPower) {
+                    score += 50;
+                    edibleT = 6;
+                    Arcade.audio.play('coinup');
+                } else {
+                    score += 10;
+                    Arcade.audio.play('coin');
+                }
+                Arcade.ui.setScore(String(score).padStart(3, '0'));
+            }
+        }
+
+        if (!pellets.length) {
+            level++;
+            newLevel();
+            Arcade.ui.toast('Level ' + level + ' \u2014 faster chaser');
+            return;
+        }
+
+        // ghost
+        edibleT = Math.max(0, edibleT - dt);
+        ghostStepT += dt;
+        if (ghostStepT >= ghostMoveT) {
+            ghostStepT = 0;
+            ghostStep();
+        }
+
+        // collision
+        if (player.cx === ghost.cx && player.cy === ghost.cy) {
+            if (edibleT > 0) {
+                score += 50;
+                Arcade.audio.play('merge');
+                Arcade.ui.setScore(String(score).padStart(3, '0'));
+                ghost = { cx: (C - 1) / 2, cy: (R - 1) / 2, px: (C - 1) / 2, py: (R - 1) / 2 };
+                edibleT = 0;
+            } else {
+                loseLife();
+            }
+        }
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var cell = view.w / C;
+
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // walls
+        ctx.fillStyle = p.border;
+        for (var y = 0; y < R; y++)
+            for (var x = 0; x < C; x++)
+                if (walls[y][x])
+                    ctx.fillRect(x * cell + 1, y * cell + 1, cell - 2, cell - 2);
+
+        // pellets
+        ctx.fillStyle = p.headers;
+        for (var i = 0; i < pellets.length; i++) {
+            var pl = pellets[i];
+            var isPower = powerCells.some(function (pc) { return pc[0] === pl[0] && pc[1] === pl[1]; });
+            if (isPower) {
+                ctx.fillStyle = p.accent;
+                ctx.globalAlpha = 0.55 + 0.45 * Math.sin(performance.now() / 150);
+                ctx.beginPath();
+                ctx.arc(pl[0] * cell + cell / 2, pl[1] * cell + cell / 2, cell * 0.22, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            } else {
+                ctx.fillRect(pl[0] * cell + cell * 0.38, pl[1] * cell + cell * 0.38, cell * 0.24, cell * 0.24);
+            }
+        }
+
+        // ghost
+        var gx = ghost.px * cell + cell / 2, gy = ghost.py * cell + cell / 2;
+        ctx.fillStyle = edibleT > 0 ? p.neon.blue : p.neon.pink;
+        ctx.beginPath();
+        ctx.arc(gx, gy, cell * 0.38, Math.PI, 0);
+        ctx.lineTo(gx + cell * 0.38, gy + cell * 0.38);
+        ctx.lineTo(gx + cell * 0.18, gy + cell * 0.2);
+        ctx.lineTo(gx, gy + cell * 0.38);
+        ctx.lineTo(gx - cell * 0.18, gy + cell * 0.2);
+        ctx.lineTo(gx - cell * 0.38, gy + cell * 0.38);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.fillRect(gx - cell * 0.22, gy - cell * 0.12, cell * 0.14, cell * 0.16);
+        ctx.fillRect(gx + cell * 0.08, gy - cell * 0.12, cell * 0.14, cell * 0.16);
+
+        // player
+        var px = player.px * cell + cell / 2, py = player.py * cell + cell / 2;
+        ctx.fillStyle = p.accent;
+        ctx.beginPath();
+        var a0 = 0.25 + (dir.x === 1 ? 0 : dir.x === -1 ? Math.PI : dir.y === 1 ? Math.PI / 2 : -Math.PI / 2);
+        ctx.arc(px, py, cell * 0.4, a0, a0 + Math.PI * 1.5);
+        ctx.lineTo(px, py);
+        ctx.closePath();
+        ctx.fill();
+
+        // lives
+        ctx.fillStyle = p.red;
+        for (var i = 0; i < lives; i++) ctx.fillRect(8 + i * 14, 8, 8, 8);
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        title: 'Maze Muncher',
+        accent: 'yellow',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

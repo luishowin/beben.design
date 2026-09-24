@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Beben Arcade — tiny games, no ads, works offline</title>
-    <meta name="description" content="Twelve tiny 8-bit games by beben.design. Install it on your phone, play offline, beat your best. No ads, ever.">
+    <title>ARCADIA by BEBEN DESIGN — tiny games, no ads, works offline</title>
+    <meta name="description" content="ARCADIA by BEBEN DESIGN — tiny 8-bit games. Install it on your phone, play offline, beat your best. No ads, ever.">
 
-    <meta name="theme-color" content="#080813">
+    <meta name="theme-color" content="#000000">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Arcade">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
     <link rel="manifest" href="/games/manifest.webmanifest">
     <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
     <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
@@ -22,7 +22,7 @@
 
     <style>
         /* ─────────────────────────────────────────────────────────
-           ARCADE HUB — scoped additions only.
+           ARCADIA HUB — scoped additions only.
            Tokens + shared chrome come from arcade.css.
            Per-card accent rides on --ac (set inline per card).
         ───────────────────────────────────────────────────────── */
@@ -47,68 +47,74 @@
             );
         }
 
-        /* ── Marquee ── */
-        .hub-marquee {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: calc(0.6rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.6rem calc(1rem + env(safe-area-inset-left));
-            color: var(--bezel-text);
-            border-bottom: 2px solid transparent;
-            background:
-                linear-gradient(var(--bezel), var(--bezel)) padding-box,
-                linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-lime), var(--neon-yellow), var(--neon-purple)) border-box;
-        }
-
-        .hub-logo {
-            flex: 1;
-            font-family: var(--font-pixel);
-            font-size: 0.75rem;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .hub-logo .l1 { color: var(--neon-blue);  text-shadow: 0 0 10px rgba(25, 198, 255, 0.5); }
-        .hub-logo .l2 { color: var(--neon-pink);  text-shadow: 0 0 10px rgba(255, 45, 170, 0.5); }
-
-        .hub-gear {
-            min-width: 42px;
-            min-height: 42px;
-            font-size: 1.05rem;
-            color: var(--bezel-text);
-            opacity: 0.85;
-        }
-
-        .hub-gear:active { opacity: 0.5; }
-
         /* ── Content column ── */
         .hub-main {
             flex: 1;
             width: 100%;
             max-width: 760px;
             margin: 0 auto;
-            padding: 1.25rem 1rem calc(2rem + env(safe-area-inset-bottom));
+            padding: calc(1.5rem + env(safe-area-inset-top)) 1rem calc(2rem + env(safe-area-inset-bottom));
         }
 
-        /* ── Hero: neon sign ── */
+        /* ── Hero: neon sign over a photo slideshow ── */
         .hub-hero {
             position: relative;
             overflow: hidden;
-            padding: 2.2rem 1rem 2rem;
+            padding: 2.4rem 1rem 2.1rem;
             text-align: center;
-            background: var(--bg-soft);
+            background: var(--bg-card);
             border: 1px solid var(--border-strong);
             border-radius: 10px;
-            box-shadow: 0 0 30px rgba(25, 198, 255, 0.08), inset 0 0 60px rgba(8, 8, 19, 0.6);
+            box-shadow: 0 0 30px rgba(25, 198, 255, 0.08);
+        }
+
+        /* dark scrim over the photos so the type always reads */
+        .hub-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.78));
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: hero-fade 15s infinite;
+        }
+
+        .hero-slide.s1 { background-image: url("./icons/hero-01.webp"); animation-delay: 0s; }
+        .hero-slide.s2 { background-image: url("./icons/hero-02.webp"); animation-delay: 5s; }
+        .hero-slide.s3 { background-image: url("./icons/hero-03.webp"); animation-delay: 10s; }
+        .hero-slide.m1 { background-image: url("./icons/hero-mobile-01.webp"); display: none; }
+        .hero-slide.m2 { background-image: url("./icons/hero-mobile-02.webp"); display: none; }
+
+        @keyframes hero-fade {
+            0%   { opacity: 0; }
+            4%   { opacity: 1; }
+            33%  { opacity: 1; }
+            37%  { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        @media (max-width: 560px) {
+            .hero-slide.s1, .hero-slide.s2, .hero-slide.s3 { display: none; }
+            .hero-slide.m1, .hero-slide.m2 {
+                display: block;
+                animation-duration: 8s;
+                background-position: center 30%;
+            }
+            .hero-slide.m1 { animation-delay: 0s; }
+            .hero-slide.m2 { animation-delay: 4s; }
         }
 
         .hero-pixels span {
             position: absolute;
             bottom: -12%;
+            z-index: 2;
             font-family: var(--font-mono);
             font-size: 0.8rem;
             opacity: 0.12;
@@ -121,38 +127,44 @@
 
         .hero-title {
             position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.55rem;
+            line-height: 1.2;
+        }
+
+        .hero-title .w1 {
             font-family: var(--font-pixel);
-            font-size: clamp(1.3rem, 6.5vw, 2rem);
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            line-height: 1.4;
+            font-size: clamp(1.5rem, 8vw, 2.6rem);
+            letter-spacing: 0.05em;
+            color: #fff;
+            text-shadow: 0 0 18px rgba(25, 198, 255, 0.65), 0 0 46px rgba(25, 198, 255, 0.35), 0 2px 0 rgba(0, 0, 0, 0.6);
         }
 
-        .hero-title .w1 { color: var(--neon-blue); text-shadow: 0 0 16px rgba(25, 198, 255, 0.55), 0 0 40px rgba(25, 198, 255, 0.25); }
-        .hero-title .w2 { color: var(--neon-pink); text-shadow: 0 0 16px rgba(255, 45, 170, 0.55), 0 0 40px rgba(255, 45, 170, 0.25); }
-
-        .hero-line {
-            width: min(240px, 60%);
-            height: 3px;
-            margin: 1rem auto 0.9rem;
-            border-radius: 999px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-lime), var(--neon-yellow), var(--neon-purple), var(--neon-blue));
-            background-size: 200% 100%;
-            animation: hero-flow 6s linear infinite;
+        .hero-title .w2 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-size: clamp(0.78rem, 3.2vw, 1rem);
+            letter-spacing: 0.18em;
+            color: rgba(234, 242, 255, 0.88);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
-
-        @keyframes hero-flow { to { background-position: 200% 0; } }
 
         .hero-sub {
             position: relative;
+            z-index: 2;
             font-size: 0.68rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: var(--text-muted);
+            color: rgba(197, 199, 208, 0.9);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         .hero-actions {
             position: relative;
+            z-index: 2;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -166,7 +178,7 @@
             font-size: 0.55rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #080813;
+            color: #000;
             background: var(--neon-yellow);
             border: 1px solid var(--neon-yellow);
             border-radius: 4px;
@@ -178,7 +190,7 @@
 
         .hero-btn--ghost {
             color: var(--neon-blue);
-            background: transparent;
+            background: rgba(0, 0, 0, 0.55);
             border-color: var(--neon-blue);
             box-shadow: 0 0 16px rgba(25, 198, 255, 0.15);
         }
@@ -210,6 +222,14 @@
 
         .hub-section .tick { color: var(--accent); }
 
+        .hub-section .soon-note {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            text-transform: none;
+            color: var(--text-muted);
+        }
+
         /* ── Game grid ── */
         .game-grid {
             display: grid;
@@ -226,8 +246,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.55rem;
-            padding: 1.1rem 0.6rem 0.9rem;
+            justify-content: center;
+            gap: 0.45rem;
+            aspect-ratio: 3 / 4;
+            padding: 0.9rem 0.5rem 0.7rem;
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -246,14 +268,20 @@
         }
 
         .game-icon {
-            width: 56px;
-            height: 56px;
-            padding: 8px;
-            border-radius: 8px;
-            background: color-mix(in srgb, var(--ac) 10%, transparent);
+            width: calc(75% + 0.75rem);   /* 75% of the card, compensating 0.5rem side padding */
+            aspect-ratio: 1;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            overflow: hidden;
         }
 
-        .game-icon svg { display: block; width: 100%; height: 100%; }
+        .game-icon img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
         .game-name {
             font-size: 0.72rem;
@@ -283,13 +311,16 @@
             letter-spacing: 0.06em;
             text-transform: uppercase;
             border-radius: 3px;
-            color: #080813;
+            color: #000;
             background: var(--ac);
         }
 
         .game-card--soon {
-            opacity: 0.45;
-            pointer-events: none;
+            opacity: 0.72;
+        }
+
+        .game-card--soon:hover {
+            opacity: 1;
         }
 
         .game-card--soon .game-icon {
@@ -310,12 +341,35 @@
         }
 
         /* ── Footer ── */
+        .footer-manifesto {
+            margin-top: 2.5rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-size: 0.74rem;
+            line-height: 1.75;
+            letter-spacing: 0.02em;
+            color: var(--text-muted);
+        }
+
+        .footer-manifesto strong { color: var(--headers); font-weight: 600; }
+
+        .footer-manifesto .cta {
+            font-family: Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-size: 0.98rem;
+            line-height: 1.5;
+            color: var(--neon-lime);
+        }
+
         .hub-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
-            margin-top: 2.5rem;
+            gap: 0.8rem;
+            margin-top: 1.4rem;
             padding-top: 1.2rem;
             border-top: 1px solid var(--border);
             font-size: 0.7rem;
@@ -339,18 +393,29 @@
             border-radius: 4px;
         }
         .hub-trophy:active { transform: translateY(1px); }
+
+        .hub-gear {
+            min-width: 42px;
+            min-height: 36px;
+            padding: 0.15rem 0.6rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+        .hub-gear:active { transform: translateY(1px); }
     </style>
 </head>
 <body>
 
-<header class="hub-marquee">
-    <span class="hub-logo" id="hubLogo"><span class="l1">BEBEN</span> <span class="l2">ARCADE</span></span>
-    <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
-</header>
-
 <main class="hub-main">
 
     <section class="hub-hero">
+        <div class="hero-slide s1" aria-hidden="true"></div>
+        <div class="hero-slide s2" aria-hidden="true"></div>
+        <div class="hero-slide s3" aria-hidden="true"></div>
+        <div class="hero-slide m1" aria-hidden="true"></div>
+        <div class="hero-slide m2" aria-hidden="true"></div>
         <div class="hero-pixels" aria-hidden="true">
             <span style="left:6%;  color:var(--neon-blue);   animation-delay:-2s;">+</span>
             <span style="left:18%; color:var(--neon-pink);   animation-delay:-9s;  font-size:0.6rem;">&#9651;</span>
@@ -361,8 +426,10 @@
             <span style="left:82%; color:var(--neon-blue);   animation-delay:-10s;">&#9671;</span>
             <span style="left:92%; color:var(--neon-pink);   animation-delay:-6s;  font-size:0.6rem;">&#9633;</span>
         </div>
-        <h1 class="hero-title"><span class="w1">BEBEN</span> <span class="w2">ARCADE</span></h1>
-        <div class="hero-line" aria-hidden="true"></div>
+        <h1 class="hero-title" id="heroTitle">
+            <span class="w1">ARCADIA</span>
+            <span class="w2">by BEBEN DESIGN</span>
+        </h1>
         <p class="hero-sub">Tiny games &middot; big scores &middot; zero ads</p>
         <div class="hero-actions">
             <button class="hero-btn" id="randomBtn" type="button">&#9654; Random game</button>
@@ -370,8 +437,8 @@
         </div>
     </section>
     <p class="hub-tagline">
-        <span>12 games &middot; offline &middot; <span class="free">no ads, ever</span></span>
-        <span>v6</span>
+        <span>12 games &middot; 8 previews &middot; offline &middot; <span class="free">no ads, ever</span></span>
+        <span>v7</span>
     </p>
 
     <div id="installSlot"></div>
@@ -379,86 +446,133 @@
     <h2 class="hub-section"><span class="tick">&#9646;</span> Now playing</h2>
     <div class="game-grid" id="liveGrid">
         <a class="game-card" href="./snake/" style="--ac: var(--neon-lime)">
-            <span class="game-icon" data-icon="snake"></span>
+            <span class="game-icon"><img src="./icons/games/snake.png" alt="Snake icon" loading="lazy"></span>
             <span class="game-name">Snake</span>
             <span class="game-best" data-best="snake"></span>
         </a>
         <a class="game-card" href="./2048/" style="--ac: var(--neon-yellow)">
-            <span class="game-icon" data-icon="g2048"></span>
+            <span class="game-icon"><img src="./icons/games/2048.png" alt="2048 icon" loading="lazy"></span>
             <span class="game-name">2048</span>
             <span class="game-best" data-best="2048"></span>
         </a>
         <a class="game-card" href="./blockfall/" style="--ac: var(--neon-purple)">
-            <span class="game-icon" data-icon="blockfall"></span>
+            <span class="game-icon"><img src="./icons/games/blockfall.png" alt="Blockfall icon" loading="lazy"></span>
             <span class="game-name">Blockfall</span>
             <span class="game-best" data-best="blockfall"></span>
         </a>
         <a class="game-card" href="./brick-bash/" style="--ac: var(--neon-orange)">
-            <span class="game-icon" data-icon="brickbash"></span>
+            <span class="game-icon"><img src="./icons/games/brick-bash.png" alt="Brick Bash icon" loading="lazy"></span>
             <span class="game-name">Brick Bash</span>
             <span class="game-best" data-best="brick-bash"></span>
         </a>
         <a class="game-card" href="./wingbeat/" style="--ac: var(--neon-blue)">
-            <span class="game-icon" data-icon="wingbeat"></span>
+            <span class="game-icon"><img src="./icons/games/wingbeat.png" alt="Wingbeat icon" loading="lazy"></span>
             <span class="game-name">Wingbeat</span>
             <span class="game-best" data-best="wingbeat"></span>
         </a>
         <a class="game-card" href="./mines/" style="--ac: var(--neon-red)">
-            <span class="game-icon" data-icon="mines"></span>
+            <span class="game-icon"><img src="./icons/games/mines.png" alt="Mines icon" loading="lazy"></span>
             <span class="game-name">Mines</span>
             <span class="game-best" data-best="mines-easy" data-suffix="s"></span>
         </a>
         <a class="game-card" href="./pixel-dash/" style="--ac: var(--neon-pink)">
-            <span class="game-icon" data-icon="pixeldash"></span>
+            <span class="game-icon"><img src="./icons/games/pixel-dash.png" alt="Pixel Dash icon" loading="lazy"></span>
             <span class="game-name">Pixel Dash</span>
             <span class="game-best" data-best="pixel-dash"></span>
         </a>
         <a class="game-card" href="./skystack/" style="--ac: var(--neon-blue)">
-            <span class="game-icon" data-icon="skystack"></span>
+            <span class="game-icon"><img src="./icons/games/skystack.png" alt="Skystack icon" loading="lazy"></span>
             <span class="game-name">Skystack</span>
             <span class="game-best" data-best="skystack"></span>
         </a>
         <a class="game-card" href="./paddle-duel/" style="--ac: var(--neon-lime)">
             <span class="pix-badge">New</span>
-            <span class="game-icon" data-icon="paddleduel"></span>
+            <span class="game-icon"><img src="./icons/games/paddle-duel.png" alt="Paddle Duel icon" loading="lazy"></span>
             <span class="game-name">Paddle Duel</span>
             <span class="game-best" data-best="paddle-duel"></span>
         </a>
         <a class="game-card" href="./star-swarm/" style="--ac: var(--neon-purple)">
             <span class="pix-badge">New</span>
-            <span class="game-icon" data-icon="starswarm"></span>
+            <span class="game-icon"><img src="./icons/games/star-swarm.png" alt="Star Swarm icon" loading="lazy"></span>
             <span class="game-name">Star Swarm</span>
             <span class="game-best" data-best="star-swarm"></span>
         </a>
         <a class="game-card" href="./sudoku/" style="--ac: var(--neon-yellow)">
             <span class="pix-badge">New</span>
-            <span class="game-icon" data-icon="sudoku"></span>
+            <span class="game-icon"><img src="./icons/games/sudoku.png" alt="Sudoku icon" loading="lazy"></span>
             <span class="game-name">Sudoku</span>
             <span class="game-best" data-best="sudoku-easy" data-suffix="s"></span>
         </a>
         <a class="game-card" href="./four-in-a-row/" style="--ac: var(--neon-red)">
             <span class="pix-badge">New</span>
-            <span class="game-icon" data-icon="fourrow"></span>
+            <span class="game-icon"><img src="./icons/games/four-in-a-row.png" alt="Four in a Row icon" loading="lazy"></span>
             <span class="game-name">Four in a Row</span>
             <span class="game-best" data-best="four-in-a-row"></span>
         </a>
     </div>
 
-    <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon</h2>
-    <div class="game-grid">
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Rockfield</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Void Dodger</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Maze Muncher</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Hop Across</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Wave Rider</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Solitaire</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Checkers</span></span>
-        <span class="game-card game-card--soon"><span class="pix-badge">Soon</span><span class="game-icon">?</span><span class="game-name">Chess</span></span>
+    <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon <span class="soon-note">· playable previews</span></h2>
+    <div class="game-grid" id="soonGrid">
+        <a class="game-card game-card--soon" href="./rockfield/" style="--ac: var(--neon-orange)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Rockfield</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./void-dodger/" style="--ac: var(--neon-blue)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Void Dodger</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./maze-muncher/" style="--ac: var(--neon-yellow)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Maze Muncher</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./hop-across/" style="--ac: var(--neon-lime)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Hop Across</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./wave-rider/" style="--ac: var(--neon-pink)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Wave Rider</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./solitaire/" style="--ac: var(--neon-purple)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Solitaire</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./checkers/" style="--ac: var(--neon-red)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Checkers</span>
+            <span class="game-best"></span>
+        </a>
+        <a class="game-card game-card--soon" href="./chess/" style="--ac: var(--neon-blue)">
+            <span class="pix-badge">Soon</span>
+            <span class="game-icon">?</span>
+            <span class="game-name">Chess</span>
+            <span class="game-best"></span>
+        </a>
     </div>
+
+    <section class="footer-manifesto">
+        <p>ARCADIA is a pocket arcade &mdash; tiny 8-bit games, zero ads, zero sign-ups, zero tracking. It plays offline, keeps your best scores on your device, and never phones home.</p>
+        <p>Built with plain <strong>HTML, CSS and JavaScript</strong>: canvas rendering, a service worker for offline installs, self-hosted pixel type, no frameworks. A design project by <strong>Luis Howin</strong>, creative director at BEBEN DESIGN &mdash; about 99% of the code was written with AI.</p>
+        <p class="cta">Have fun. And tell a friend to tell a friend.</p>
+    </section>
 
     <footer class="hub-footer">
         <a href="https://beben.design/">&larr; beben.design</a>
         <button class="hub-trophy" id="hubTrophy" type="button">&#9733; 0/8</button>
+        <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
         <span class="hub-status" id="hubStatus">&nbsp;</span>
     </footer>
 
@@ -468,208 +582,6 @@
 (function () {
     'use strict';
 
-    /* ── pixel icons: 12×12 maps ──────────────────────────────────
-       b blue · p pink · l lime · y yellow · u purple · o orange ·
-       r red · t headers · m muted                                  */
-    var COLORS = {
-        b: 'var(--neon-blue)',
-        p: 'var(--neon-pink)',
-        l: 'var(--neon-lime)',
-        y: 'var(--neon-yellow)',
-        u: 'var(--neon-purple)',
-        o: 'var(--neon-orange)',
-        r: 'var(--neon-red)',
-        t: 'var(--headers)',
-        m: 'var(--text-muted)'
-    };
-    var ICONS = {
-        snake: [
-            '............',
-            '..lllllll...',
-            '..l.....l...',
-            '..l.lll.l...',
-            '..l.l.l.l...',
-            '..l.l.l.l...',
-            '..l.l...l...',
-            '..l.lllll...',
-            '..l.........',
-            '..ll....rr..',
-            '.........rr.',
-            '............'
-        ],
-        g2048: [
-            '............',
-            '.tttt.yyyy..',
-            '.tttt.yyyy..',
-            '.tttt.yyyy..',
-            '.tttt.yyyy..',
-            '............',
-            '.yyyy.oooo..',
-            '.yyyy.oooo..',
-            '.yyyy.oooo..',
-            '.yyyy.oooo..',
-            '............',
-            '............'
-        ],
-        blockfall: [
-            '.....uu.....',
-            '.....uu.....',
-            '.....uuuu...',
-            '............',
-            '............',
-            '.yy.........',
-            '.yy....bb...',
-            '.yyyy..bb...',
-            '.yyyy..bbbb.',
-            'tttttt.bbbb.',
-            'tttttttttttt',
-            '............'
-        ],
-        brickbash: [
-            'ooo.ooo.ooo.',
-            'ooo.ooo.ooo.',
-            '............',
-            'yyy.yyy.yyy.',
-            'yyy.yyy.yyy.',
-            '............',
-            '............',
-            '......tt....',
-            '......tt....',
-            '............',
-            '...oooooo...',
-            '............'
-        ],
-        wingbeat: [
-            '..........yy',
-            'l.........yy',
-            'l...........',
-            'l..bbb......',
-            'l.bbbbb.....',
-            'l.bbbbtb....',
-            '..bbbbbb....',
-            'l..bbb.l....',
-            'l......l....',
-            'l......l....',
-            'l......l....',
-            '.......l....'
-        ],
-        mines: [
-            '............',
-            '.....r......',
-            '..r..r..r...',
-            '...rrrrr....',
-            '..rrrrrrrr..',
-            'rrrrrrrrr...',
-            '..rryrrr....',
-            '...rrrrr....',
-            '..r..r..r...',
-            '.....r......',
-            '............',
-            '............'
-        ],
-        pixeldash: [
-            '............',
-            '.....ppp....',
-            '.....pppt...',
-            '.....pppp...',
-            '..l..pp.....',
-            '..l.pppp....',
-            '..l.pppp....',
-            '..l..pp.....',
-            '..l..p.p....',
-            '..l.p...p...',
-            'tttttttttttt',
-            '............'
-        ],
-        skystack: [
-            '............',
-            '....yyyy....',
-            '............',
-            '...bbbbbb...',
-            '............',
-            '..bbbbbbbb..',
-            '............',
-            '.bbbbbbbbbb.',
-            '............',
-            'bbbbbbbbbbbb',
-            '............',
-            '............'
-        ],
-        paddleduel: [
-            '............',
-            '...rrrrrr...',
-            '............',
-            '............',
-            '............',
-            '.....tt.....',
-            '.....tt.....',
-            '............',
-            '............',
-            '...llllll...',
-            '............',
-            '............'
-        ],
-        starswarm: [
-            '............',
-            '...u...u....',
-            '....u.u.....',
-            '...uuuuu....',
-            '..uu.u.uu...',
-            '.uuuuuuuuu..',
-            '.u.uuuuu.u..',
-            '.u.u...u.u..',
-            '............',
-            '............',
-            '............',
-            '............'
-        ],
-        sudoku: [
-            'yy.yy.yy.yy.',
-            'y5.y3.y8.yt.',
-            '............',
-            'yy.yy.yy.yy.',
-            'y2.yt.y6.y1.',
-            '............',
-            'yy.yy.yy.yy.',
-            'yt.y9.y4.yt.',
-            '............',
-            'yy.yy.yy.yy.',
-            'y7.yt.y2.y5.',
-            '............'
-        ],
-        fourrow: [
-            '.tttttttttt.',
-            '.t.r.t.r.t..',
-            '.trr.ty.rt..',
-            '.t.r.tyyrt..',
-            '.trrytyyrt..',
-            '.tryrtryyt..',
-            '.tttttttttt.',
-            '...t....t...',
-            '..t......t..',
-            '............',
-            '............',
-            '............'
-        ]
-    };
-
-    function renderIcon(map) {
-        var rects = '';
-        for (var y = 0; y < map.length; y++) {
-            for (var x = 0; x < map[y].length; x++) {
-                var color = COLORS[map[y][x]];
-                if (!color) continue;
-                rects += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + color + '"/>';
-            }
-        }
-        return '<svg viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>';
-    }
-
-    document.querySelectorAll('.game-icon[data-icon]').forEach(function (el) {
-        var map = ICONS[el.dataset.icon];
-        if (map) el.innerHTML = renderIcon(map);
-    });
-
     /* ── best-score chips ── */
     document.querySelectorAll('.game-best[data-best]').forEach(function (el) {
         var best = Arcade.scores.best(el.dataset.best);
@@ -677,7 +589,7 @@
     });
 
     /* ── card tap blip ── */
-    document.querySelectorAll('#liveGrid .game-card').forEach(function (card) {
+    document.querySelectorAll('.game-card[href]').forEach(function (card) {
         card.addEventListener('pointerdown', function () {
             Arcade.audio.play('select');
         });
@@ -726,8 +638,8 @@
         Arcade.achievements.openPanel();
     });
 
-    /* ── 7 rapid taps on the logo toggles CRT (mobile easter egg) ── */
-    var taps = [], logo = document.getElementById('hubLogo');
+    /* ── 7 rapid taps on the ARCADIA title toggles CRT (easter egg) ── */
+    var taps = [], logo = document.getElementById('heroTitle');
     logo.addEventListener('pointerdown', function () {
         var now = Date.now();
         taps = taps.filter(function (t) { return now - t < 2000; });

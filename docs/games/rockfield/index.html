@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-orange); --accent-glow: rgba(255,155,33,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Rockfield — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+    <style>
+        .arc-stage { position: relative; }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ROCKFIELD (prototype)
+       A field of rocks. Smash them before time runs out.
+       Gems hide under some (+10), bombs under a few (-1 life). */
+
+    var COLS = 6, ROWS = 5;
+    var TIME = 45, LIVES = 3;
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 480 });
+
+    var field, timeLeft, lives, gems, cursor, over, shake;
+
+    function newCell() {
+        var r = Math.random();
+        if (r < 0.18) return 'gem';
+        if (r < 0.28) return 'bomb';
+        return 'rock';
+    }
+
+    function reset() {
+        field = [];
+        for (var y = 0; y < ROWS; y++) {
+            field[y] = [];
+            for (var x = 0; x < COLS; x++) field[y][x] = newCell();
+        }
+        timeLeft = TIME;
+        lives = LIVES;
+        gems = 0;
+        cursor = { x: 0, y: 0 };
+        over = false;
+        shake = 0;
+        paintScore();
+    }
+
+    function paintScore() {
+        Arcade.ui.setScore('G ' + gems + ' \u00B7 ' + Math.ceil(timeLeft) + 's');
+    }
+
+    function refill() {
+        var open = 0;
+        for (var y = 0; y < ROWS; y++)
+            for (var x = 0; x < COLS; x++)
+                if (field[y][x] === 'open') open++;
+        if (open >= COLS * ROWS * 0.45) return;
+        for (var y = 0; y < ROWS; y++)
+            for (var x = 0; x < COLS; x++)
+                if (field[y][x] === 'open') field[y][x] = newCell();
+    }
+
+    function smash(x, y) {
+        if (over) return;
+        if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return;
+        var c = field[y][x];
+        if (c === 'open') return;
+        cursor.x = x; cursor.y = y;
+        if (c === 'gem') {
+            gems += 10;
+            Arcade.audio.play('coin');
+            Arcade.haptics.buzz('light');
+        } else if (c === 'bomb') {
+            lives--;
+            shake = 0.35;
+            Arcade.audio.play('boom');
+            Arcade.haptics.buzz('error');
+        } else {
+            Arcade.audio.play('drop');
+        }
+        field[y][x] = 'open';
+        paintScore();
+        refill();
+        if (lives <= 0) endGame();
+    }
+
+    function endGame() {
+        over = true;
+        var res = Arcade.scores.submit('rockfield', gems);
+        loop.pause();
+        Arcade.ui.gameOver({
+            title: 'ROCKFIELD',
+            score: gems,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function cellAt(e) {
+        var r = canvas.getBoundingClientRect();
+        var cx = (e.clientX - r.left) / r.width * view.w;
+        var cy = (e.clientY - r.top) / r.height * view.h;
+        return { x: Math.floor(cx / (view.w / COLS)), y: Math.floor(cy / (view.h / ROWS)) };
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        var c = cellAt(e);
+        smash(c.x, c.y);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        var d = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        cursor.x = Math.max(0, Math.min(COLS - 1, cursor.x + d[0]));
+        cursor.y = Math.max(0, Math.min(ROWS - 1, cursor.y + d[1]));
+        if (e.key === ' ' || e.key === 'Enter') smash(cursor.x, cursor.y);
+    });
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var cw = view.w / COLS, ch = view.h / ROWS;
+
+        if (shake > 0) {
+            ctx.save();
+            ctx.translate((Math.random() - 0.5) * shake * 30, (Math.random() - 0.5) * shake * 30);
+        }
+
+        ctx.fillStyle = p.bgSoft;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        for (var y = 0; y < ROWS; y++) {
+            for (var x = 0; x < COLS; x++) {
+                var cx = x * cw, cy = y * ch;
+                ctx.fillStyle = (x + y) % 2 ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.2)';
+                ctx.fillRect(cx, cy, cw, ch);
+
+                if (field[y][x] === 'rock') {
+                    ctx.fillStyle = '#5A6278';
+                    ctx.fillRect(cx + cw * 0.16, cy + ch * 0.3, cw * 0.68, ch * 0.55);
+                    ctx.fillStyle = '#8B93AC';
+                    ctx.fillRect(cx + cw * 0.16, cy + ch * 0.3, cw * 0.68, ch * 0.16);
+                    ctx.fillStyle = '#3A4152';
+                    ctx.fillRect(cx + cw * 0.16, cy + ch * 0.62, cw * 0.68, ch * 0.23);
+                    ctx.fillStyle = '#20242F';
+                    ctx.fillRect(cx + cw * 0.22, cy + ch * 0.9, cw * 0.56, ch * 0.08);
+                } else if (field[y][x] === 'open') {
+                    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                    ctx.fillRect(cx + cw * 0.18, cy + ch * 0.3, cw * 0.64, ch * 0.5);
+                }
+            }
+        }
+
+        // keyboard cursor
+        ctx.strokeStyle = p.accent;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(cursor.x * cw + 1, cursor.y * ch + 1, cw - 2, ch - 2);
+
+        // lives
+        ctx.fillStyle = p.red;
+        for (var i = 0; i < lives; i++) {
+            ctx.fillRect(view.w - (i + 1) * (cw * 0.34) - 8, 8, cw * 0.24, cw * 0.24);
+        }
+
+        if (shake > 0) {
+            ctx.restore();
+            shake = Math.max(0, shake - 1 / 60);
+        }
+    }
+
+    var loop = Arcade.loop({
+        update: function (dt) {
+            if (over) return;
+            timeLeft -= dt;
+            if (timeLeft <= 0) { timeLeft = 0; paintScore(); endGame(); return; }
+            if (Math.ceil(timeLeft) !== Math.ceil(timeLeft + dt)) paintScore();
+        },
+        render: render
+    });
+
+    Arcade.init({
+        title: 'Rockfield',
+        accent: 'orange',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

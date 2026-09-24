@@ -1,8 +1,8 @@
-/* BEBEN ARCADE service worker.
+/* ARCADIA service worker.
    RULE: bump CACHE on EVERY commit that touches docs/games/** —
    cache-first serves stale files forever otherwise. */
 
-const CACHE = 'beben-arcade-v6';
+const CACHE = 'beben-arcade-v7';
 
 const PRECACHE = [
     './',
@@ -13,6 +13,23 @@ const PRECACHE = [
     './icons/icon-192.png',
     './icons/icon-512.png',
     './icons/apple-touch-icon-180.png',
+    './icons/hero-01.webp',
+    './icons/hero-02.webp',
+    './icons/hero-03.webp',
+    './icons/hero-mobile-01.webp',
+    './icons/hero-mobile-02.webp',
+    './icons/games/snake.png',
+    './icons/games/2048.png',
+    './icons/games/blockfall.png',
+    './icons/games/brick-bash.png',
+    './icons/games/wingbeat.png',
+    './icons/games/mines.png',
+    './icons/games/pixel-dash.png',
+    './icons/games/skystack.png',
+    './icons/games/paddle-duel.png',
+    './icons/games/star-swarm.png',
+    './icons/games/sudoku.png',
+    './icons/games/four-in-a-row.png',
     './2048/',
     './snake/',
     './blockfall/',
@@ -24,7 +41,15 @@ const PRECACHE = [
     './paddle-duel/',
     './star-swarm/',
     './sudoku/',
-    './four-in-a-row/'
+    './four-in-a-row/',
+    './rockfield/',
+    './void-dodger/',
+    './maze-muncher/',
+    './hop-across/',
+    './wave-rider/',
+    './solitaire/',
+    './checkers/',
+    './chess/'
 ];
 
 self.addEventListener('install', (event) => {

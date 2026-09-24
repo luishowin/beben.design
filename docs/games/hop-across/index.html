@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-lime); --accent-glow: rgba(142,255,42,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Hop Across — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* HOP ACROSS (prototype)
+       Cross the road, one hop at a time. Traffic does not brake. */
+
+    var LANES = 5, COLS = 9;
+    var LIVES = 3;
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.72, maxW: 430 });
+
+    var cars, frog, score, lives, over, invuln, speedMul;
+
+    function reset() {
+        cars = [];
+        for (var l = 0; l < LANES; l++) {
+            var dir = l % 2 === 0 ? 1 : -1;
+            var n = 1 + Math.floor(Math.random() * 2);
+            for (var i = 0; i < n; i++) {
+                cars.push({
+                    lane: l,
+                    x: Math.random(),
+                    dir: dir,
+                    speed: (0.28 + Math.random() * 0.22) * (dir),
+                    w: 0.085 + Math.random() * 0.03,
+                    hue: l
+                });
+            }
+        }
+        frog = { lane: LANES, col: Math.floor(COLS / 2), hopT: 0 };
+        score = 0;
+        lives = LIVES;
+        over = false;
+        invuln = 0;
+        speedMul = 1;
+        Arcade.ui.setScore('000');
+    }
+
+    var CAR_COLORS = ['#FF2DAA', '#FF9B21', '#8B5CFF', '#19C6FF', '#FFD533'];
+
+    function endGame() {
+        over = true;
+        var res = Arcade.scores.submit('hop-across', score);
+        loop.pause();
+        Arcade.ui.gameOver({
+            title: 'HOP ACROSS',
+            score: score,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function hitCar() {
+        lives--;
+        invuln = 1.6;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        if (lives <= 0) { endGame(); return; }
+        frog = { lane: LANES, col: Math.floor(COLS / 2), hopT: 0 };
+    }
+
+    function hop(dl, dc) {
+        if (over || frog.hopT > 0) return;
+        var nl = frog.lane + dl, nc = frog.col + dc;
+        if (nl < 0) {           // reached the far side
+            score += 100;
+            speedMul += 0.12;
+            Arcade.audio.play('fanfare');
+            Arcade.haptics.buzz('success');
+            Arcade.ui.setScore(String(score).padStart(3, '0'));
+            frog = { lane: LANES, col: Math.floor(COLS / 2), hopT: 0.35 };
+            return;
+        }
+        if (nl > LANES) return;
+        if (nc < 0 || nc >= COLS) return;
+        frog.lane = nl;
+        frog.col = nc;
+        frog.hopT = 0.22;
+        Arcade.audio.play('flap');
+    }
+
+    Arcade.swipe(document.body, function (d) {
+        if (d === 'up') hop(-1, 0);
+        if (d === 'down') hop(1, 0);
+        if (d === 'left') hop(0, -1);
+        if (d === 'right') hop(0, 1);
+    }, { min: 18 });
+
+    document.addEventListener('keydown', function (e) {
+        var map = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1],
+                    w: [-1, 0], s: [1, 0], a: [0, -1], d: [0, 1] };
+        var m = map[e.key];
+        if (m) { e.preventDefault(); hop(m[0], m[1]); }
+    });
+
+    function update(dt) {
+        if (over) return;
+        invuln = Math.max(0, invuln - dt);
+        frog.hopT = Math.max(0, frog.hopT - dt);
+
+        for (var i = 0; i < cars.length; i++) {
+            var c = cars[i];
+            c.x += c.speed * speedMul * dt;
+            if (c.x > 1.15) c.x = -0.15;
+            if (c.x < -0.15) c.x = 1.15;
+        }
+
+        if (invuln <= 0 && frog.lane < LANES) {
+            for (var i = 0; i < cars.length; i++) {
+                var c = cars[i];
+                if (c.lane !== frog.lane) continue;
+                var fx = (frog.col + 0.5) / COLS;
+                if (Math.abs(c.x - fx) < c.w / 2 + 0.045) { hitCar(); break; }
+            }
+        }
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var laneH = view.h / (LANES + 1);
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // lanes
+        for (var l = 0; l <= LANES; l++) {
+            ctx.fillStyle = l % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.01)';
+            ctx.fillRect(0, l * laneH, view.w, laneH);
+            if (l < LANES) {
+                ctx.fillStyle = 'rgba(255,255,255,0.14)';
+                for (var x = 0; x < view.w; x += laneH * 0.9) {
+                    ctx.fillRect(((x + t * 30) % view.w), l * laneH + laneH * 0.5 - 1.5, laneH * 0.45, 3);
+                }
+            }
+        }
+
+        // finish strip
+        ctx.fillStyle = p.accent;
+        ctx.globalAlpha = 0.5;
+        ctx.fillRect(0, 0, view.w, 5);
+        ctx.globalAlpha = 1;
+
+        // cars
+        for (var i = 0; i < cars.length; i++) {
+            var c = cars[i];
+            var cy = (c.lane + 0.5) * laneH;
+            var cw = c.w * view.w;
+            var cx = c.x * view.w;
+            ctx.fillStyle = CAR_COLORS[c.hue % CAR_COLORS.length];
+            ctx.fillRect(cx - cw / 2, cy - laneH * 0.3, cw, laneH * 0.6);
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(cx - cw / 2 + 4, cy - laneH * 0.12, cw - 8, laneH * 0.12);
+            ctx.fillRect(cx - cw / 2 + 4, cy + laneH * 0.02, cw - 8, laneH * 0.12);
+        }
+
+        // frog
+        var fx = (frog.col + 0.5) / COLS * view.w;
+        var fy = (frog.lane + 0.5) * laneH + Math.sin(frog.hopT * 30) * 6;
+        if (invuln > 0 && Math.floor(invuln * 8) % 2 === 0) { /* blink */ }
+        else {
+            ctx.fillStyle = p.accent;
+            ctx.beginPath();
+            ctx.arc(fx, fy, laneH * 0.26, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.fillRect(fx - laneH * 0.14, fy - laneH * 0.1, laneH * 0.1, laneH * 0.1);
+            ctx.fillRect(fx + laneH * 0.04, fy - laneH * 0.1, laneH * 0.1, laneH * 0.1);
+        }
+
+        // lives
+        ctx.fillStyle = p.red;
+        for (var i = 0; i < lives; i++) ctx.fillRect(8 + i * 14, 8, 8, 8);
+    }
+
+    var t = 0;
+    var loop = Arcade.loop({
+        update: function (dt) { t += dt; update(dt); },
+        render: render
+    });
+
+    Arcade.init({
+        title: 'Hop Across',
+        accent: 'lime',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

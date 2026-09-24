@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-blue); --accent-glow: rgba(25,198,255,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Chess — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* CHESS (prototype)
+       You are white. Capture the black king to win. No check, castling
+       or en passant yet — that's the full game. */
+
+    var N = 8;
+    var GLYPH = { w: { K: '\u2654', Q: '\u2655', R: '\u2656', B: '\u2657', N: '\u2658', P: '\u2659' },
+                  b: { K: '\u265A', Q: '\u265B', R: '\u265C', B: '\u265D', N: '\u265E', P: '\u265F' } };
+    var VAL = { P: 1, N: 3, B: 3, R: 5, Q: 9, K: 100 };
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 480 });
+
+    var board, playerTurn, sel, moves, score, over, aiTimer, lastMove;
+
+    function reset() {
+        board = [];
+        for (var y = 0; y < N; y++) board[y] = new Array(N).fill(null);
+        var back = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
+        for (var x = 0; x < N; x++) {
+            board[0][x] = { t: back[x], c: 'b' };
+            board[1][x] = { t: 'P', c: 'b' };
+            board[6][x] = { t: 'P', c: 'w' };
+            board[7][x] = { t: back[x], c: 'w' };
+        }
+        playerTurn = true;
+        sel = null;
+        moves = [];
+        score = 0;
+        over = false;
+        lastMove = null;
+        clearTimeout(aiTimer);
+        Arcade.ui.setScore('000');
+    }
+
+    function inside(x, y) { return x >= 0 && y >= 0 && x < N && y < N; }
+
+    function slideMoves(x, y, dirs) {
+        var p = board[y][x], out = [];
+        for (var i = 0; i < dirs.length; i++) {
+            var dx = dirs[i][0], dy = dirs[i][1];
+            var nx = x + dx, ny = y + dy;
+            while (inside(nx, ny)) {
+                if (!board[ny][nx]) out.push({ x: nx, y: ny });
+                else {
+                    if (board[ny][nx].c !== p.c) out.push({ x: nx, y: ny });
+                    break;
+                }
+                nx += dx; ny += dy;
+            }
+        }
+        return out;
+    }
+
+    function movesFor(x, y) {
+        var p = board[y][x];
+        if (!p) return [];
+        var out = [];
+        if (p.t === 'P') {
+            var d = p.c === 'w' ? -1 : 1;
+            var startRow = p.c === 'w' ? 6 : 1;
+            if (inside(x, y + d) && !board[y + d][x]) {
+                out.push({ x: x, y: y + d });
+                if (y === startRow && !board[y + d * 2][x]) out.push({ x: x, y: y + d * 2 });
+            }
+            for (var dx = -1; dx <= 1; dx += 2) {
+                var nx = x + dx, ny = y + d;
+                if (inside(nx, ny) && board[ny][nx] && board[ny][nx].c !== p.c) out.push({ x: nx, y: ny });
+            }
+            return out;
+        }
+        if (p.t === 'N') {
+            var J = [[1, 2], [2, 1], [-1, 2], [2, -1], [1, -2], [-2, 1], [-1, -2], [-2, -1]];
+            for (var i = 0; i < J.length; i++) {
+                var nx = x + J[i][0], ny = y + J[i][1];
+                if (inside(nx, ny) && (!board[ny][nx] || board[ny][nx].c !== p.c)) out.push({ x: nx, y: ny });
+            }
+            return out;
+        }
+        if (p.t === 'B') return slideMoves(x, y, [[1, 1], [1, -1], [-1, 1], [-1, -1]]);
+        if (p.t === 'R') return slideMoves(x, y, [[1, 0], [-1, 0], [0, 1], [0, -1]]);
+        if (p.t === 'Q') return slideMoves(x, y, [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]);
+        if (p.t === 'K') {
+            for (var dx = -1; dx <= 1; dx++)
+                for (var dy = -1; dy <= 1; dy++) {
+                    if (!dx && !dy) continue;
+                    var nx = x + dx, ny = y + dy;
+                    if (inside(nx, ny) && (!board[ny][nx] || board[ny][nx].c !== p.c)) out.push({ x: nx, y: ny });
+                }
+            return out;
+        }
+        return out;
+    }
+
+    function allMoves(color) {
+        var list = [];
+        for (var y = 0; y < N; y++)
+            for (var x = 0; x < N; x++) {
+                if (!board[y][x] || board[y][x].c !== color) continue;
+                var m = movesFor(x, y);
+                for (var i = 0; i < m.length; i++) list.push({ from: { x: x, y: y }, to: m[i] });
+            }
+        return list;
+    }
+
+    function endGame(playerWon, label) {
+        over = true;
+        clearTimeout(aiTimer);
+        var res = Arcade.scores.submit('chess', score);
+        Arcade.audio.play(playerWon ? 'fanfare' : 'boom');
+        Arcade.ui.gameOver({
+            title: playerWon ? 'YOU WIN' : 'AI WINS',
+            label: label || 'Material captured',
+            score: score,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); }
+        });
+    }
+
+    function applyMove(mv) {
+        var p = board[mv.from.y][mv.from.x];
+        var cap = board[mv.to.y][mv.to.x];
+        board[mv.to.y][mv.to.x] = p;
+        board[mv.from.y][mv.from.x] = null;
+        if (p.t === 'P' && (mv.to.y === 0 || mv.to.y === N - 1)) p.t = 'Q';   // auto-queen
+        lastMove = mv;
+        return cap;
+    }
+
+    function playerMove(mv) {
+        var cap = applyMove(mv);
+        if (cap) {
+            if (cap.t === 'K') { endGame(true, 'Black king captured'); return; }
+            score += VAL[cap.t];
+            Arcade.audio.play('merge');
+            Arcade.haptics.buzz('medium');
+        } else {
+            Arcade.audio.play('bounce');
+        }
+        Arcade.ui.setScore(String(score).padStart(3, '0'));
+        sel = null; moves = [];
+        playerTurn = false;
+        aiTimer = setTimeout(aiMove, 520);
+    }
+
+    function aiMove() {
+        if (over) return;
+        var list = allMoves('b');
+        if (!list.length) { endGame(true, 'AI has no moves'); return; }
+        // naive AI: prefer a random capture, else a random move
+        var captures = list.filter(function (m) { return board[m.to.y][m.to.x] !== null; });
+        var pool = captures.length ? captures : list;
+        var mv = pool[Math.floor(Math.random() * pool.length)];
+        var cap = applyMove(mv);
+        if (cap) {
+            if (cap.t === 'K') { endGame(false, 'White king captured'); return; }
+            Arcade.audio.play('bounce');
+        }
+        var rest = allMoves('w');
+        if (!rest.length) { endGame(false, 'No moves left'); return; }
+        playerTurn = true;
+    }
+
+    function cellAt(e) {
+        var r = canvas.getBoundingClientRect();
+        var cx = (e.clientX - r.left) / r.width * view.w;
+        var cy = (e.clientY - r.top) / r.height * view.h;
+        return { x: Math.floor(cx / (view.w / N)), y: Math.floor(cy / (view.h / N)) };
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        if (over || !playerTurn) return;
+        var c = cellAt(e);
+        for (var i = 0; i < moves.length; i++) {
+            if (moves[i].x === c.x && moves[i].y === c.y) {
+                playerMove({ from: sel, to: moves[i] });
+                return;
+            }
+        }
+        var piece = board[c.y][c.x];
+        if (piece && piece.c === 'w') {
+            var m = movesFor(c.x, c.y);
+            if (m.length) {
+                sel = { x: c.x, y: c.y };
+                moves = m;
+                Arcade.audio.play('tap');
+                return;
+            }
+        }
+        sel = null; moves = [];
+    });
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var cell = view.w / N;
+
+        for (var y = 0; y < N; y++) {
+            for (var x = 0; x < N; x++) {
+                ctx.fillStyle = (x + y) % 2 === 0 ? '#39405E' : '#151828';
+                ctx.fillRect(x * cell, y * cell, cell, cell);
+            }
+        }
+
+        if (sel) {
+            ctx.fillStyle = 'rgba(25,198,255,0.35)';
+            ctx.fillRect(sel.x * cell, sel.y * cell, cell, cell);
+        }
+        if (lastMove) {
+            ctx.strokeStyle = 'rgba(255,213,51,0.5)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(lastMove.from.x * cell + 1, lastMove.from.y * cell + 1, cell - 2, cell - 2);
+            ctx.strokeRect(lastMove.to.x * cell + 1, lastMove.to.y * cell + 1, cell - 2, cell - 2);
+        }
+        for (var i = 0; i < moves.length; i++) {
+            var m = moves[i];
+            if (board[m.y][m.x]) {
+                ctx.strokeStyle = 'rgba(255,75,92,0.8)';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(m.x * cell + 3, m.y * cell + 3, cell - 6, cell - 6);
+            } else {
+                ctx.fillStyle = 'rgba(142,255,42,0.4)';
+                ctx.beginPath();
+                ctx.arc((m.x + 0.5) * cell, (m.y + 0.5) * cell, cell * 0.12, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        var size = cell * 0.74;
+        ctx.font = size + 'px Georgia, serif';
+        for (var y = 0; y < N; y++) {
+            for (var x = 0; x < N; x++) {
+                var pc = board[y][x];
+                if (!pc) continue;
+                var cx = (x + 0.5) * cell, cy = (y + 0.52) * cell;
+                if (pc.c === 'w') {
+                    ctx.fillStyle = '#F5F5F7';
+                    ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+                } else {
+                    ctx.fillStyle = '#434A63';
+                    ctx.strokeStyle = '#D9DEED';
+                }
+                ctx.lineWidth = Math.max(1.5, cell * 0.05);
+                ctx.strokeText(GLYPH[pc.c][pc.t], cx, cy);
+                ctx.fillText(GLYPH[pc.c][pc.t], cx, cy);
+            }
+        }
+    }
+
+    var loop = Arcade.loop({ update: function () {}, render: render });
+
+    Arcade.init({
+        title: 'Chess',
+        accent: 'blue',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

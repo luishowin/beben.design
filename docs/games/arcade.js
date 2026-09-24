@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BEBEN ARCADE — arcade.js
+   ARCADIA — arcade.js
    Shared runtime for every game under /games/. Load in <head>
    (no defer).
 
@@ -614,7 +614,7 @@
         var bar = document.createElement('header');
         bar.className = 'arc-bar';
         bar.innerHTML =
-            '<a class="arc-back" href="../" aria-label="Back to arcade">&larr;</a>' +
+            '<a class="arc-back" href="../" aria-label="Back to ARCADIA">&larr;</a>' +
             '<span class="arc-title"></span>' +
             '<span class="arc-score-slot"></span>' +
             '<button class="arc-btn arc-pause-btn" aria-label="Pause">&#10074;&#10074;</button>' +

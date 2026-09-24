@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-pink); --accent-glow: rgba(255,45,170,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Wave Rider — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* WAVE RIDER (prototype)
+       Stay on the wave, catch stars, dodge the rocks. Wipeout = lost life. */
+
+    var LIVES = 3;
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 16 / 10, maxW: 520 });
+
+    var speed, dist, score, lives, over, invuln, riderY, wavePhase, riderSnap;
+    var stars, rocks, spawnStar, spawnRock;
+
+    function reset() {
+        speed = 130;
+        dist = 0;
+        score = 0;
+        lives = LIVES;
+        over = false;
+        invuln = 0;
+        riderY = view.h / 2;
+        riderSnap = true;   // view.h may grow after layout; snap on first frame
+        wavePhase = 0;
+        stars = [];
+        rocks = [];
+        spawnStar = 1.2;
+        spawnRock = 2.4;
+        Arcade.ui.setScore('000');
+    }
+
+    function waveY(x) {
+        return view.h / 2 + Math.sin(x / 70 + wavePhase) * view.h * 0.18 + Math.sin(x / 150 + wavePhase * 1.7) * 12;
+    }
+
+    function endGame() {
+        over = true;
+        var pts = Math.floor(score);
+        var res = Arcade.scores.submit('wave-rider', pts);
+        loop.pause();
+        Arcade.ui.gameOver({
+            title: 'WAVE RIDER',
+            score: pts + ' pts',
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function wipeout() {
+        lives--;
+        invuln = 2;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        if (lives <= 0) endGame();
+    }
+
+    canvas.addEventListener('pointermove', function (e) {
+        var r = canvas.getBoundingClientRect();
+        riderY = Math.max(20, Math.min(view.h - 20, (e.clientY - r.top) / r.height * view.h));
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowUp') riderY -= 26;
+        if (e.key === 'ArrowDown') riderY += 26;
+        riderY = Math.max(20, Math.min(view.h - 20, riderY));
+    });
+
+    function update(dt) {
+        if (over) return;
+        if (riderSnap) { riderSnap = false; riderY = view.h / 2; }
+        riderY = Math.max(20, Math.min(view.h - 20, riderY));
+        dist += speed * dt;
+        speed = Math.min(320, speed + dt * 3.5);
+        wavePhase += dt * 2.4;
+        invuln = Math.max(0, invuln - dt);
+
+        // stars
+        spawnStar -= dt;
+        if (spawnStar <= 0) {
+            spawnStar = 1 + Math.random() * 1.6;
+            stars.push({ x: view.w + 20, y: Math.random() * view.h });
+        }
+        for (var i = stars.length - 1; i >= 0; i--) {
+            stars[i].x -= speed * dt;
+            stars[i].y += Math.sin(stars[i].x / 40 + wavePhase) * 18 * dt;
+            if (stars[i].x < -20) { stars.splice(i, 1); continue; }
+            var dx = stars[i].x - view.w * 0.28, dy = stars[i].y - riderY;
+            if (dx * dx + dy * dy < 26 * 26) {
+                stars.splice(i, 1);
+                score += 50;
+                Arcade.audio.play('coin');
+                Arcade.haptics.buzz('light');
+                Arcade.ui.setScore(String(Math.floor(score)).padStart(3, '0'));
+            }
+        }
+
+        // rocks (on the wave)
+        spawnRock -= dt;
+        if (spawnRock <= 0) {
+            spawnRock = 1.6 + Math.random() * 1.8;
+            rocks.push({ x: view.w + 30 });
+        }
+        for (var i = rocks.length - 1; i >= 0; i--) {
+            rocks[i].x -= speed * dt;
+            if (rocks[i].x < -40) { rocks.splice(i, 1); continue; }
+            var ry = waveY(rocks[i].x);
+            if (invuln <= 0) {
+                var ddx = rocks[i].x - view.w * 0.28, ddy = ry - riderY;
+                if (ddx * ddx + ddy * ddy < 22 * 22) {
+                    rocks.splice(i, 1);
+                    wipeout();
+                    if (over) return;
+                }
+            }
+        }
+
+        // staying on the wave scores; falling off stalls it
+        var wy = waveY(view.w * 0.28);
+        if (Math.abs(riderY - wy) < 46) score += dt * 5;
+        Arcade.ui.setScore(String(Math.floor(score)).padStart(3, '0'));
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // sky band
+        var grad = ctx.createLinearGradient(0, 0, 0, view.h);
+        grad.addColorStop(0, '#0B1224');
+        grad.addColorStop(0.6, '#101B38');
+        grad.addColorStop(1, '#06080F');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // stars in the sky
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        for (var i = 0; i < 24; i++) {
+            var sx = ((i * 97 + 31) % Math.floor(view.w));
+            var sy = ((i * 53 + 17) % Math.floor(view.h * 0.45));
+            ctx.fillRect(sx, sy, 2, 2);
+        }
+
+        // the wave
+        ctx.beginPath();
+        ctx.moveTo(0, waveY(0));
+        for (var x = 0; x <= view.w; x += 8) ctx.lineTo(x, waveY(x));
+        ctx.lineTo(view.w, view.h);
+        ctx.lineTo(0, view.h);
+        ctx.closePath();
+        ctx.fillStyle = p.accent;
+        ctx.globalAlpha = 0.22;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // wave crest
+        ctx.beginPath();
+        for (var x = 0; x <= view.w; x += 6) {
+            var y = waveY(x);
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = p.accent;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // rocks
+        for (var i = 0; i < rocks.length; i++) {
+            var r = rocks[i];
+            var ry = waveY(r.x);
+            ctx.fillStyle = '#4A5266';
+            ctx.beginPath();
+            ctx.arc(r.x, ry - 8, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = p.muted;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        // stars to collect
+        for (var i = 0; i < stars.length; i++) {
+            var s = stars[i];
+            ctx.fillStyle = p.neon.yellow;
+            ctx.save();
+            ctx.translate(s.x, s.y);
+            ctx.rotate(Math.sin(s.x / 30 + wavePhase * 3) * 0.4);
+            ctx.beginPath();
+            for (var k = 0; k < 4; k++) {
+                var a = (k / 4) * Math.PI * 2;
+                var a2 = a + Math.PI / 4;
+                ctx.lineTo(Math.cos(a) * 10, Math.sin(a) * 10);
+                ctx.lineTo(Math.cos(a2) * 4.5, Math.sin(a2) * 4.5);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // surfer
+        var sx = view.w * 0.28;
+        var blink = invuln > 0 && Math.floor(invuln * 8) % 2 === 0;
+        if (!blink) {
+            var lean = (riderY - waveY(sx)) * 0.4;
+            ctx.fillStyle = p.headers;
+            ctx.beginPath();
+            ctx.arc(sx, riderY - 9, 6.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = p.accent;
+            ctx.fillRect(sx - 3, riderY - 5, 6, 14);
+            ctx.fillStyle = p.neon.blue;
+            ctx.save();
+            ctx.translate(sx, riderY + 7);
+            ctx.rotate(lean / 60);
+            ctx.fillRect(-14, 0, 28, 4);
+            ctx.restore();
+        }
+
+        // lives
+        ctx.fillStyle = p.accent;
+        for (var i = 0; i < lives; i++) ctx.fillRect(10 + i * 14, 10, 8, 8);
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        title: 'Wave Rider',
+        accent: 'pink',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

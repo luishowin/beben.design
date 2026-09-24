@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-purple); --accent-glow: rgba(139,92,255,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Solitaire — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+    <style>
+        .sol {
+            width: min(400px, 94vw);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            user-select: none;
+        }
+        .sol-found {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .sol-slot {
+            position: relative;
+            aspect-ratio: 5 / 7;
+            border: 1px dashed var(--border-strong);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .sol-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .sol-pile {
+            position: relative;
+            width: 64px;
+            aspect-ratio: 5 / 7;
+        }
+        .sol-stock {
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            border: 1px solid var(--border-strong);
+            background:
+                repeating-linear-gradient(45deg, var(--neon-purple) 0 2px, transparent 2px 7px),
+                #161230;
+            color: var(--headers);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+        .sol-stock:active { transform: translateY(1px); }
+        .sol-waste {
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .sol-card {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            background: #F4F1E8;
+            border: 1px solid rgba(0, 0, 0, 0.35);
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            font-family: Georgia, serif;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .sol-card.red { color: #D3263B; }
+        .sol-card.blk { color: #161616; }
+        .sol-card .rk { font-size: 1.15rem; }
+        .sol-card .st { font-size: 1.05rem; }
+        .sol-card.shake { animation: sol-shake 0.25s ease; }
+        @keyframes sol-shake {
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-3px); }
+        }
+        .sol-hint {
+            text-align: center;
+            font-size: 0.66rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage">
+    <div class="sol">
+        <div class="sol-found" id="found"></div>
+        <div class="sol-row">
+            <div class="sol-pile"><button class="sol-stock" id="stock" type="button">DRAW</button></div>
+            <div class="sol-pile"><div class="sol-waste" id="waste"></div></div>
+        </div>
+        <p class="sol-hint">tap the deck to draw &middot; tap a card to play it to the foundations</p>
+    </div>
+    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* SOLITAIRE SPRINT (prototype)
+       Draw from the stock, build A→K on the four foundations. */
+
+    var SUITS = ['\u2660', '\u2665', '\u2666', '\u2663'];   // ♠ ♥ ♦ ♣
+    var RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+    var stock = [], waste = [], found = { 0: 0, 1: 0, 2: 0, 3: 0 };
+    var score, combo, lastPlace, started, over, seconds;
+
+    function shuffle(a) {
+        for (var i = a.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+    }
+
+    function newDeck() {
+        var d = [];
+        for (var s = 0; s < 4; s++)
+            for (var r = 1; r <= 13; r++)
+                d.push({ suit: s, rank: r });
+        return shuffle(d);
+    }
+
+    function reset() {
+        stock = newDeck();
+        waste = [];
+        found = { 0: 0, 1: 0, 2: 0, 3: 0 };
+        score = 0;
+        combo = 0;
+        lastPlace = 0;
+        started = Date.now();
+        over = false;
+        seconds = 0;
+        paint();
+        Arcade.ui.setScore('000');
+    }
+
+    function cardEl(card) {
+        var el = document.createElement('div');
+        el.className = 'sol-card ' + (card.suit === 0 || card.suit === 2 ? 'blk' : 'red');
+        el.innerHTML = '<span class="rk">' + RANKS[card.rank - 1] + '</span><span class="st">' + SUITS[card.suit] + '</span>';
+        return el;
+    }
+
+    function paint() {
+        var foundEl = document.getElementById('found');
+        foundEl.innerHTML = '';
+        for (var s = 0; s < 4; s++) {
+            var slot = document.createElement('div');
+            slot.className = 'sol-slot';
+            if (found[s] === 0) {
+                slot.textContent = SUITS[s];
+                slot.style.color = s === 1 || s === 3 ? 'rgba(211,38,59,0.55)' : 'rgba(234,242,255,0.35)';
+            } else {
+                slot.style.fontSize = '0';
+                slot.appendChild(cardEl({ suit: s, rank: found[s] }));
+            }
+            foundEl.appendChild(slot);
+        }
+
+        var stockEl = document.getElementById('stock');
+        stockEl.textContent = stock.length ? stock.length + ' \u2190' : 'RECYCLE';
+        stockEl.style.opacity = stock.length ? 1 : 0.6;
+
+        var wasteEl = document.getElementById('waste');
+        wasteEl.innerHTML = '';
+        if (waste.length) {
+            var top = waste[waste.length - 1];
+            var el = cardEl(top);
+            el.addEventListener('click', function () { playWasteTop(el); });
+            wasteEl.appendChild(el);
+        }
+    }
+
+    function playWasteTop(el) {
+        if (over) return;
+        var card = waste[waste.length - 1];
+        var s = card.suit;
+        if (found[s] === card.rank - 1) {
+            waste.pop();
+            found[s] = card.rank;
+            var now = Date.now();
+            combo = (now - lastPlace < 3000) ? combo + 1 : 1;
+            lastPlace = now;
+            score += 10 + combo * 5;
+            Arcade.audio.play('merge');
+            Arcade.haptics.buzz('light');
+            Arcade.ui.setScore(String(score).padStart(3, '0'));
+            paint();
+            if (found[0] === 13 && found[1] === 13 && found[2] === 13 && found[3] === 13) win();
+        } else {
+            el.classList.remove('shake');
+            void el.offsetWidth;
+            el.classList.add('shake');
+            Arcade.audio.play('denied');
+        }
+    }
+
+    function win() {
+        over = true;
+        var secs = Math.floor((Date.now() - started) / 1000);
+        var bonus = Math.max(0, 600 - secs * 2);
+        score += bonus;
+        var res = Arcade.scores.submit('solitaire', score);
+        Arcade.audio.play('fanfare');
+        Arcade.haptics.buzz('success');
+        Arcade.ui.gameOver({
+            title: 'SOLITAIRE',
+            label: 'Score (+' + bonus + ' time bonus)',
+            score: score,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); }
+        });
+    }
+
+    document.getElementById('stock').addEventListener('click', function () {
+        if (over) return;
+        if (stock.length) {
+            waste.push(stock.pop());
+            Arcade.audio.play('flap');
+        } else if (waste.length) {
+            // recycle waste back into the stock (same order — unlimited redeals)
+            while (waste.length) stock.push(waste.pop());
+            stock.reverse();
+            Arcade.audio.play('select');
+        }
+        paint();
+    });
+
+    var timer = setInterval(function () {
+        if (over) return;
+        seconds = Math.floor((Date.now() - started) / 1000);
+    }, 1000);
+
+    Arcade.init({
+        title: 'Solitaire',
+        accent: 'purple',
+        onPause: function () {},
+        onResume: function () {}
+    });
+
+    reset();
+})();
+</script>
+
+</body>
+</html>
