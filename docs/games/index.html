@@ -52,7 +52,7 @@
             padding: 2.4rem 1rem 2.1rem;
             text-align: center;
             background: var(--bg-card);
-            border: 1px solid var(--border-strong);
+            border: 1px solid #171717;
             border-radius: 10px;
             box-shadow: 0 0 30px rgba(25, 198, 255, 0.08);
         }
@@ -211,20 +211,14 @@
 
         .hub-section .tick { color: var(--accent); }
 
-        .hub-section .soon-note {
-            font-family: var(--font-mono);
-            font-size: 0.62rem;
-            letter-spacing: 0.1em;
-            text-transform: none;
-            color: var(--text-muted);
-        }
-
         /* ── Game grid ── */
         .game-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.7rem;
         }
+
+        .game-grid + .game-grid { margin-top: 1.4rem; }
 
         @media (min-width: 560px) { .game-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 720px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -238,7 +232,7 @@
             gap: 0.4rem;
             padding: 0.9rem 0.7rem 0.7rem;
             background: #000;
-            border: 1px solid #C8C8C8;
+            border: 1px solid #171717;
             border-radius: 10px;
             transition: transform var(--dur-fast) var(--ease-snap), border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
         }
@@ -310,7 +304,7 @@
             text-align: left;
         }
 
-        /* tiny pixel badge (NEW / SOON) */
+        /* tiny pixel badge (NEW) */
         .pix-badge {
             position: absolute;
             top: 0.5rem;
@@ -340,12 +334,6 @@
             font-size: 2rem;
             font-weight: 700;
             color: var(--text-muted);
-        }
-
-        .game-card--soon .pix-badge {
-            color: var(--text-muted);
-            background: transparent;
-            border: 1px solid var(--border-strong);
         }
 
         /* ── Footer ── */
@@ -448,7 +436,7 @@
     </section>
     <p class="hub-tagline">
         <span>tiny games &middot; big scores &middot; zero ads</span>
-        <span>v7</span>
+        <span>v8</span>
     </p>
 
     <div id="installSlot"></div>
@@ -578,10 +566,9 @@
         </a>
     </div>
 
-    <h2 class="hub-section"><span class="tick">&#9646;</span> Coming soon <span class="soon-note">· playable previews</span></h2>
     <div class="game-grid" id="soonGrid">
         <a class="game-card game-card--soon" href="./rockfield/" style="--ac: var(--neon-orange)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Rockfield</span>
             <span class="game-desc">Smash rocks. Mine gems. Beat the clock.</span>
@@ -591,7 +578,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./void-dodger/" style="--ac: var(--neon-blue)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Void Dodger</span>
             <span class="game-desc">Dodge the asteroids. Ride the void.</span>
@@ -601,7 +588,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./maze-muncher/" style="--ac: var(--neon-yellow)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Maze Muncher</span>
             <span class="game-desc">Eat every pellet. Evade the chaser.</span>
@@ -612,7 +599,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./hop-across/" style="--ac: var(--neon-lime)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Hop Across</span>
             <span class="game-desc">Cross the road. Traffic won't brake.</span>
@@ -623,7 +610,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./wave-rider/" style="--ac: var(--neon-pink)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Wave Rider</span>
             <span class="game-desc">Ride the wave. Catch the stars.</span>
@@ -634,7 +621,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./solitaire/" style="--ac: var(--neon-purple)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Solitaire</span>
             <span class="game-desc">Build four suits, ace to king.</span>
@@ -645,7 +632,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./checkers/" style="--ac: var(--neon-red)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Checkers</span>
             <span class="game-desc">Capture every last piece.</span>
@@ -656,7 +643,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./chess/" style="--ac: var(--neon-blue)">
-            <span class="pix-badge">Soon</span>
+            <span class="pix-badge">New</span>
             <span class="game-icon">?</span>
             <span class="game-name">Chess</span>
             <span class="game-desc">Outmove the AI. Take the king.</span>

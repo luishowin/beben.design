@@ -22,7 +22,7 @@ docs/                  the published site
   legal/ privacy/ credits/ 404.html        support pages
   qr-code-generator/ contrast-grid/ character-counter/ dither-machine/
                        GENERATED tool pages (never hand-edit; see The tools)
-  games/               Beben Arcade — standalone offline PWA, 12 games (see The arcade)
+  games/               ARCADIA by BEBEN DESIGN — standalone offline PWA, 20 games (see The arcade)
   redoubt/ kemmy-spa-concierge-preview/    client previews (intentionally standalone)
   assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid,
                        FAQ, and section 18's shared page primitives; see Shared CSS)
@@ -207,8 +207,8 @@ mailto, and tel. Deploy steps: [cloudflare-worker/README.md](cloudflare-worker/R
 
 ## The arcade
 
-[beben.design/games](https://beben.design/games) is **Beben Arcade**, a
-self-contained installable PWA of 12 tiny offline games. It is intentionally
+[beben.design/games](https://beben.design/games) is **ARCADIA by BEBEN DESIGN**,
+a self-contained installable PWA of 20 tiny offline games. It is intentionally
 standalone: no `index.css`, no nav, no Sprite, no external fonts, and zero
 references outside `/games/` so it runs fully offline once installed. It has
 its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
@@ -219,30 +219,35 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
   `audio.jingle()`, haptics, top-bar chrome, `fitCanvas`, a fixed-timestep
   `loop`, `palette()`, `achievements`, `toggleCRT`) plus `arcade.css`. Each
   game is one self-contained `<slug>/index.html` that loads both.
-- **Dark-only neon identity.** Tokens live in `arcade.css`: `--bg #080813` and
+- **Dark-only neon identity.** Tokens live in `arcade.css`: `--bg #000` and
   seven `--neon-*` accents. Every game owns one neon via a per-game `--accent`
   (set inline on `<html>` and through `Arcade.init({accent:'lime'})`), used for
   its card, in-game chrome, canvas art, and a game-over jingle. There is no
   light theme and the arcade never touches the main site's `beben-theme`.
+- **Hub cards.** The hero card and all 20 game cards are `#000` with a 1px
+  `#171717` border (border flips to the game's neon on hover). Each game card
+  shows a frameless icon, the name in pixel type, a one-line description, and
+  one to three `> GENRE` lines. The UI is flat by default; CRT scanlines only
+  appear when the CRT effect is toggled on.
 - **Pixel display font.** `docs/games/fonts/press-start-2p.woff2` is a ~5KB OFL
   subset (uppercase glyphs only, so always pair it with
   `text-transform: uppercase`). Rebuild it with `py scripts/subset_arcade_font.py`
   (needs `pip install fonttools brotli`). Body text stays system mono.
 - **Extras.** Offline achievements (`beben-arcade-achievements`), a CRT
-  scanline mode (Konami code, 7 taps on the logo, or the settings toggle), and
-  a rare INSERT COIN launch flourish. Install icons regenerate via
+  scanline mode (7 taps on the hub title, or the settings toggle), and a rare
+  INSERT COIN launch flourish. Install icons regenerate via
   `py scripts/make_arcade_icons.py`.
 
 **Hard rules when touching `docs/games/**`:**
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v6`) moves in lockstep as an on-device sanity check.
+   hub (`v8`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a hub card in `docs/games/index.html`, an entry in the hub's
    inline `ICONS` map, and the `SLUGS` array in `arcade.js` (for achievements).
-3. All arcade-internal links use trailing slashes. Coming-soon names are
-   reserved on the hub — use "Four in a Row", never "Connect Four" (trademark).
+3. All arcade-internal links use trailing slashes. Use "Four in a Row", never
+   "Connect Four" (trademark).
 
 ## Contact form
 
