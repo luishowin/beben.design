@@ -180,23 +180,38 @@
             ctx.fillRect(cx - cw / 2 + 4, cy + laneH * 0.02, cw - 8, laneH * 0.12);
         }
 
-        // frog
+        // goose (pixel sprite, 7×8 map — beak up, legs down)
         var fx = (frog.col + 0.5) / COLS * view.w;
-        var fy = (frog.lane + 0.5) * laneH + Math.sin(frog.hopT * 30) * 6;
+        var fy2 = (frog.lane + 0.5) * laneH + Math.sin(frog.hopT * 30) * 6;
         if (invuln > 0 && Math.floor(invuln * 8) % 2 === 0) { /* blink */ }
-        else {
-            ctx.fillStyle = p.accent;
-            ctx.beginPath();
-            ctx.arc(fx, fy, laneH * 0.26, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.fillRect(fx - laneH * 0.14, fy - laneH * 0.1, laneH * 0.1, laneH * 0.1);
-            ctx.fillRect(fx + laneH * 0.04, fy - laneH * 0.1, laneH * 0.1, laneH * 0.1);
-        }
+        else drawGoose(ctx, fx, fy2, laneH * 0.075);
 
         // lives
         ctx.fillStyle = p.red;
         for (var i = 0; i < lives; i++) ctx.fillRect(8 + i * 14, 8, 8, 8);
+    }
+
+    var GOOSE_COLORS = { W: '#F2F4F8', G: '#AEB6C4', O: '#FF9B21', K: '#101018' };
+    var GOOSE_MAP = [
+        '..OOO..',
+        '.WWWWW.',
+        'WWKWWKW',
+        'WWWWWWW',
+        'WWWWWWW',
+        'GWWWWWG',
+        '.GGGGG.',
+        '.O...O.'
+    ];
+    function drawGoose(ctx, cx, cy, s) {
+        var x0 = cx - 3.5 * s, y0 = cy - 4 * s;
+        for (var r = 0; r < GOOSE_MAP.length; r++) {
+            for (var c = 0; c < GOOSE_MAP[r].length; c++) {
+                var ch = GOOSE_MAP[r][c];
+                if (ch === '.') continue;
+                ctx.fillStyle = GOOSE_COLORS[ch];
+                ctx.fillRect(x0 + c * s, y0 + r * s, s, s);
+            }
+        }
     }
 
     var t = 0;

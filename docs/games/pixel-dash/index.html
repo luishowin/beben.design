@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="--accent: var(--neon-pink); --accent-glow: rgba(255,45,170,0.3)">
+<html lang="en" style="--accent: var(--neon-orange); --accent-glow: rgba(255,155,33,0.3)">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
@@ -26,13 +26,80 @@
 (function () {
     'use strict';
 
+    /* PIXEL DASH — desert at golden hour. The lizard runs the dunes;
+       after 90 s of running, the sun drops and the theme fades to night. */
+
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 1.5, maxW: 640 });
 
+    var NIGHT_AT = 90;     // seconds of running before night falls
+    var NIGHT_FADE = 4;    // seconds for the day->night blend
+
     var runner, obstacles, score, speed, running, dead, t, holdTime, holding, distToNext;
+    var runT, nightT, nightStarted, stars, clouds, cacti;
 
     function groundY() { return view.h - Math.max(20, view.h * 0.09); }
     function unit() { return view.h / 240; }   // scale factor
+
+    /* ── theme: golden-hour day ↔ night; every colour lerps ─────────── */
+    function hex(c) {
+        return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
+    }
+    function mix(a, b, k) {
+        return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+    }
+    function css(c) { return 'rgb(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ')'; }
+
+    var DAY = {
+        skyTop: hex('#43275F'), skyMid: hex('#D2643A'), skyHor: hex('#FFC36B'),
+        sun: hex('#FFE9A8'), sunGlow: hex('#FF9B5E'),
+        cloud: hex('#F2A06B'),
+        duneFar: hex('#8C4A5E'), duneNear: hex('#C0603C'),
+        ground: hex('#E0A85E'), speck: hex('#B87F3E'), line: hex('#8A5A2E'),
+        cactus: hex('#3F7D4F'), cactusShade: hex('#2F5F3C'),
+        rock: hex('#8A6B4F'), rockHi: hex('#A9875F'), rockLo: hex('#5E4836'),
+        vult: hex('#4A3B2E'), beak: hex('#E8C87E'),
+        liz: hex('#7BB661'), lizBelly: hex('#A8D08C'), lizStripe: hex('#5C9347'),
+        hat: hex('#8A5A2B'), hatBand: hex('#5C3A1E'), eye: hex('#14141F')
+    };
+    var NIGHT = {
+        skyTop: hex('#0D1030'), skyMid: hex('#262C5E'), skyHor: hex('#414A7E'),
+        sun: hex('#F4EECB'), sunGlow: hex('#8C86B8'),
+        cloud: hex('#333B6E'),
+        duneFar: hex('#1D2447'), duneNear: hex('#2A2F52'),
+        ground: hex('#4A4258'), speck: hex('#3A3347'), line: hex('#2B2638'),
+        cactus: hex('#24402E'), cactusShade: hex('#1B3122'),
+        rock: hex('#4E4460'), rockHi: hex('#5D5274'), rockLo: hex('#3A3248'),
+        vult: hex('#1C1C2E'), beak: hex('#C9B98A'),
+        liz: hex('#5C9E52'), lizBelly: hex('#7FB46F'), lizStripe: hex('#43793B'),
+        hat: hex('#7A4E26'), hatBand: hex('#4E3119'), eye: hex('#0A0A12')
+    };
+    function theme(k) {
+        var o = {}, name;
+        for (name in DAY) o[name] = css(mix(DAY[name], NIGHT[name], k));
+        return o;
+    }
+
+    /* ── scenery ────────────────────────────────────────────────────── */
+    function seedScenery() {
+        stars = [];
+        for (var i = 0; i < 42; i++) {
+            stars.push({ x: ((i * 73) % 97) / 97, y: ((i * 37) % 61) / 61 * 0.55, tw: i % 3 });
+        }
+        clouds = [
+            { x: 0.12, y: 0.16, s: 1.1, v: 9 },
+            { x: 0.46, y: 0.25, s: 0.7, v: 6 },
+            { x: 0.78, y: 0.12, s: 1.3, v: 12 },
+            { x: 0.32, y: 0.08, s: 0.5, v: 5 }
+        ];
+        cacti = { far: [], near: [] };
+        for (i = 0; i < 5; i++) {
+            cacti.far.push({ x: Math.random() * view.w, kind: i % 5, h: (26 + Math.random() * 22) * unit() });
+        }
+        for (i = 0; i < 3; i++) {
+            cacti.near.push({ x: Math.random() * view.w, kind: (i * 2 + 1) % 5, h: (58 + Math.random() * 34) * unit() });
+        }
+    }
 
     function reset() {
         var u = unit();
@@ -46,6 +113,10 @@
         holdTime = 0;
         holding = false;
         distToNext = view.w * 0.9;
+        runT = 0;
+        nightT = 0;
+        nightStarted = false;
+        seedScenery();
         Arcade.ui.setScore('0');
     }
 
@@ -93,13 +164,13 @@
         var u = unit();
         var kind;
         var r = Math.random();
-        if (score > 12 && r < 0.3) kind = 'bar';        // overhead bar — duck under it
-        else if (r < 0.65) kind = 'block';               // ground block — jump it
-        else kind = 'tall';                              // tall pillar — jump it
+        if (score > 12 && r < 0.3) kind = 'vult';    // overhead vulture — duck under it
+        else if (r < 0.65) kind = 'rock';            // ground rock — jump it
+        else kind = 'spire';                         // tall rock spire — jump it
         var g = groundY();
-        if (kind === 'block') obstacles.push({ kind: kind, x: view.w + 20, y: g - 12 * u, w: 12 * u, h: 12 * u });
-        if (kind === 'tall') obstacles.push({ kind: kind, x: view.w + 20, y: g - 26 * u, w: 9 * u, h: 26 * u });
-        if (kind === 'bar') obstacles.push({ kind: kind, x: view.w + 20, y: g - 34 * u, w: 26 * u, h: 8 * u });
+        if (kind === 'rock') obstacles.push({ kind: kind, x: view.w + 20, y: g - 12 * u, w: 12 * u, h: 12 * u });
+        if (kind === 'spire') obstacles.push({ kind: kind, x: view.w + 20, y: g - 26 * u, w: 9 * u, h: 26 * u });
+        if (kind === 'vult') obstacles.push({ kind: kind, x: view.w + 20, y: g - 34 * u, w: 26 * u, h: 8 * u });
 
         // gap scales with speed so high speed stays winnable
         var minGap = speed * 0.55 + 90 * u;
@@ -129,6 +200,33 @@
         // speed ramp
         speed = Math.min(speed + 5.5 * dt * (view.w / 500), 560 * (view.w / 500));
 
+        // run clock: night falls after NIGHT_AT s of running
+        runT += dt;
+        if (runT >= NIGHT_AT && !nightStarted) {
+            nightStarted = true;
+            Arcade.audio.play('coinup');
+            Arcade.ui.toast('NIGHT FALLS — keep running');
+        }
+        nightT += (((runT >= NIGHT_AT) ? 1 : 0) - nightT) * Math.min(1, dt / NIGHT_FADE);
+
+        // parallax scenery
+        var i, c;
+        for (i = 0; i < cacti.far.length; i++) {
+            c = cacti.far[i];
+            c.x -= speed * 0.22 * dt;
+            if (c.x < -60) { c.x = view.w + 40 + Math.random() * 160; c.kind = Math.floor(Math.random() * 5); }
+        }
+        for (i = 0; i < cacti.near.length; i++) {
+            c = cacti.near[i];
+            c.x -= speed * 0.5 * dt;
+            if (c.x < -80) { c.x = view.w + 60 + Math.random() * 220; c.kind = Math.floor(Math.random() * 5); }
+        }
+        for (i = 0; i < clouds.length; i++) {
+            c = clouds[i];
+            c.x += (c.v / view.w) * dt;
+            if (c.x > 1.15) c.x = -0.18;
+        }
+
         // physics: variable jump height while held
         var grav = 1750 * (view.h / 500);
         if (holding && holdTime > 0 && runner.vy < 0) { grav *= 0.45; holdTime -= dt; }
@@ -156,7 +254,7 @@
         var ry = runner.y - rh;
         var pad = 2 * u;   // forgiveness
 
-        for (var i = obstacles.length - 1; i >= 0; i--) {
+        for (i = obstacles.length - 1; i >= 0; i--) {
             var o = obstacles[i];
             o.x -= speed * dt;
             if (o.x + o.w < -30) { obstacles.splice(i, 1); continue; }
@@ -168,7 +266,8 @@
         }
     }
 
-    function hills(ctx, p, off, amp, base, color) {
+    /* ── drawing ────────────────────────────────────────────────────── */
+    function hills(ctx, off, amp, base, color) {
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.moveTo(0, view.h);
@@ -181,64 +280,226 @@
         ctx.fill();
     }
 
+    function drawCloud(ctx, x, y, s, col) {
+        var w = 46 * s, h = 13 * s;
+        ctx.fillStyle = col;
+        ctx.fillRect(x, y, w, h);
+        ctx.fillRect(x + 9 * s, y - 6 * s, w * 0.52, 7 * s);
+        ctx.fillRect(x + w * 0.38, y - 9 * s, w * 0.38, 9 * s);
+    }
+
+    function drawCactus(ctx, cx, baseY, h, kind, c1, c2) {
+        var w = Math.max(4, h * 0.18);
+        ctx.fillStyle = c1;
+        switch (kind) {
+            case 0:  // classic saguaro, two arms
+                ctx.fillRect(cx - w / 2, baseY - h, w, h);
+                ctx.fillRect(cx - w, baseY - h * 0.62, w * 0.55, h * 0.12);
+                ctx.fillRect(cx - w, baseY - h * 0.82, w * 0.55, h * 0.3);
+                ctx.fillRect(cx + w * 0.45, baseY - h * 0.5, w * 0.55, h * 0.12);
+                ctx.fillRect(cx + w * 0.45, baseY - h * 0.7, w * 0.55, h * 0.26);
+                break;
+            case 1:  // one-armed shorty
+                ctx.fillRect(cx - w / 2, baseY - h * 0.8, w, h * 0.8);
+                ctx.fillRect(cx - w * 0.95, baseY - h * 0.55, w * 0.45, h * 0.1);
+                ctx.fillRect(cx - w * 0.95, baseY - h * 0.75, w * 0.45, h * 0.24);
+                break;
+            case 2:  // barrel with ribs
+                ctx.fillRect(cx - w * 0.7, baseY - h * 0.5, w * 1.4, h * 0.5);
+                ctx.fillStyle = c2;
+                ctx.fillRect(cx - w * 0.25, baseY - h * 0.5, w * 0.16, h * 0.5);
+                ctx.fillRect(cx + w * 0.28, baseY - h * 0.5, w * 0.16, h * 0.5);
+                ctx.fillRect(cx + w * 0.55, baseY - h * 0.5, w * 0.1, h * 0.5);
+                ctx.fillStyle = c1;
+                break;
+            case 3:  // organ pipe, four columns
+                var colw = w * 0.36;
+                for (var i = 0; i < 4; i++) {
+                    var ch = h * (0.5 + 0.16 * i);
+                    ctx.fillRect(cx - w * 0.6 + i * (colw + 2), baseY - ch, colw, ch);
+                }
+                break;
+            case 4:  // prickly pear, stacked pads
+                ctx.fillRect(cx - w * 0.6, baseY - h * 0.28, w * 1.2, h * 0.28);
+                ctx.fillRect(cx - w * 0.45, baseY - h * 0.54, w * 0.9, h * 0.26);
+                ctx.fillRect(cx - w * 0.3, baseY - h * 0.78, w * 0.6, h * 0.24);
+                break;
+        }
+        // right-side shade for volume
+        ctx.fillStyle = c2;
+        if (kind === 0) { ctx.fillRect(cx + w * 0.2, baseY - h, w * 0.3, h); ctx.fillRect(cx + w * 0.45, baseY - h * 0.7, w * 0.18, h * 0.26); }
+        if (kind === 1) ctx.fillRect(cx + w * 0.2, baseY - h * 0.8, w * 0.3, h * 0.8);
+        if (kind === 3) ctx.fillRect(cx - w * 0.6 + 3 * (colw + 2) + colw * 0.7, baseY - h * 0.98, colw * 0.3, h * 0.98);
+        if (kind === 4) {
+            ctx.fillRect(cx + w * 0.5, baseY - h * 0.28, w * 0.12, h * 0.28);
+            ctx.fillRect(cx + w * 0.35, baseY - h * 0.54, w * 0.12, h * 0.26);
+            ctx.fillRect(cx + w * 0.2, baseY - h * 0.78, w * 0.12, h * 0.24);
+        }
+    }
+
+    function drawRock(ctx, x, y, w, h, c1, c2, c3) {
+        ctx.fillStyle = c1;
+        ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = c2;
+        ctx.fillRect(x + 2, y + 2, w - 4, h * 0.22);
+        ctx.fillStyle = c3;
+        ctx.fillRect(x + 2, y + h * 0.66, w - 4, h * 0.32);
+    }
+
+    function drawVulture(ctx, cx, cy, u, flap, C) {
+        ctx.fillStyle = C.vult;
+        ctx.fillRect(cx - 6 * u, cy - 2 * u, 12 * u, 4 * u);          // body
+        ctx.fillRect(cx - 10 * u, cy - 3 * u, 5 * u, 3 * u);          // head
+        ctx.fillStyle = C.beak;
+        ctx.fillRect(cx - 11 * u, cy - 2 * u, 2 * u, 2 * u);          // beak
+        var a = Math.sin(flap) * 0.55 + 0.45;
+        ctx.save();
+        ctx.translate(cx - 5 * u, cy - 1 * u);
+        ctx.rotate(-a);
+        ctx.fillStyle = C.vult;
+        ctx.fillRect(-11 * u, -1.5 * u, 11 * u, 3 * u);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(cx + 5 * u, cy - 1 * u);
+        ctx.rotate(a);
+        ctx.fillRect(0, -1.5 * u, 11 * u, 3 * u);
+        ctx.restore();
+    }
+
+    /* the runner: desert lizard in a cowboy hat, facing right */
+    function drawLizard(ctx, rx, ry, w, h, legA, C) {
+        // tail (behind)
+        ctx.fillStyle = C.liz;
+        ctx.fillRect(rx - w * 0.52, ry + h * 0.4, w * 0.52, h * 0.16);
+        ctx.fillRect(rx - w * 0.72, ry + h * 0.44, w * 0.22, h * 0.12);
+        // torso + belly + stripe
+        ctx.fillRect(rx, ry + h * 0.2, w * 0.72, h * 0.62);
+        ctx.fillStyle = C.lizBelly;
+        ctx.fillRect(rx + w * 0.06, ry + h * 0.68, w * 0.6, h * 0.14);
+        ctx.fillStyle = C.lizStripe;
+        ctx.fillRect(rx, ry + h * 0.52, w * 0.72, h * 0.07);
+        // head + snout
+        ctx.fillStyle = C.liz;
+        ctx.fillRect(rx + w * 0.5, ry + h * 0.08, w * 0.5, h * 0.38);
+        ctx.fillRect(rx + w * 0.86, ry + h * 0.18, w * 0.28, h * 0.2);
+        // eye
+        ctx.fillStyle = C.eye;
+        ctx.fillRect(rx + w * 0.6, ry + h * 0.14, w * 0.09, h * 0.09);
+        // cowboy hat: brim, crown, band
+        ctx.fillStyle = C.hat;
+        ctx.fillRect(rx + w * 0.4, ry + h * 0.02, w * 0.62, h * 0.08);
+        ctx.fillRect(rx + w * 0.52, ry - h * 0.3, w * 0.36, h * 0.34);
+        ctx.fillStyle = C.hatBand;
+        ctx.fillRect(rx + w * 0.52, ry - h * 0.04, w * 0.36, h * 0.07);
+        // legs
+        ctx.fillStyle = C.liz;
+        ctx.fillRect(rx + w * 0.1, ry + h * 0.78, w * 0.12, h * 0.24 * (0.55 + 0.45 * legA));
+        ctx.fillRect(rx + w * 0.5, ry + h * 0.78, w * 0.12, h * 0.24 * (0.55 - 0.45 * legA));
+    }
+
     function render() {
-        var p = Arcade.palette();
         var ctx = view.ctx;
         var u = unit();
         var g = groundY();
         var dist = score * 40;
+        var C = theme(nightT);
 
-        ctx.fillStyle = p.bg;
+        // sky: golden-hour gradient, fading to night
+        var sky = ctx.createLinearGradient(0, 0, 0, g);
+        sky.addColorStop(0, C.skyTop);
+        sky.addColorStop(0.55, C.skyMid);
+        sky.addColorStop(1, C.skyHor);
+        ctx.fillStyle = sky;
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // sun
-        ctx.fillStyle = p.neon.orange;
-        ctx.globalAlpha = 0.85;
-        ctx.beginPath();
-        ctx.arc(view.w * 0.82, view.h * 0.22, 16 * u, 0, Math.PI * 2);
-        ctx.fill();
+        // stars (visible as night falls)
+        if (nightT > 0.02) {
+            ctx.fillStyle = '#FFFFFF';
+            for (var si = 0; si < stars.length; si++) {
+                var st = stars[si];
+                ctx.globalAlpha = nightT * (0.35 + 0.5 * (0.5 + 0.5 * Math.sin(t * 2 + st.tw * 2)));
+                var ss = (si % 7 === 0) ? 3 : 2;
+                ctx.fillRect(st.x * view.w, st.y * g, ss, ss);
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // sun (day) / moon (night), cross-faded
+        var sunX = view.w * 0.78, sunY = g * 0.3;
+        var moonX = view.w * 0.22, moonY = g * 0.26;
+        ctx.globalAlpha = Math.max(0, 1 - nightT) * 0.9;
+        ctx.fillStyle = C.sunGlow;
+        ctx.beginPath(); ctx.arc(sunX, sunY, 40 * u, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.sun;
+        ctx.beginPath(); ctx.arc(sunX, sunY, 26 * u, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = nightT;
+        ctx.fillStyle = C.sunGlow;
+        ctx.beginPath(); ctx.arc(moonX, moonY, 30 * u, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.sun;
+        ctx.beginPath(); ctx.arc(moonX, moonY, 19 * u, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.sunGlow;
+        ctx.fillRect(moonX - 8 * u, moonY - 7 * u, 5 * u, 5 * u);
+        ctx.fillRect(moonX + 5 * u, moonY + 3 * u, 4 * u, 4 * u);
         ctx.globalAlpha = 1;
 
-        // parallax hills: purple far, pink near
-        hills(ctx, p, dist * 0.25, 26 * u, g, 'hsl(258, 55%, 30%)');
-        hills(ctx, p, dist * 0.55 + 400, 16 * u, g, 'hsl(324, 65%, 38%)');
+        // clouds, far away
+        ctx.globalAlpha = 0.5;
+        for (var ci = 0; ci < clouds.length; ci++) {
+            var cl = clouds[ci];
+            drawCloud(ctx, cl.x * view.w, cl.y * g, cl.s * u, C.cloud);
+        }
+        ctx.globalAlpha = 1;
+
+        // parallax dunes
+        hills(ctx, dist * 0.25, 26 * u, g, C.duneFar);
+        for (ci = 0; ci < cacti.far.length; ci++) {
+            var cf = cacti.far[ci];
+            ctx.globalAlpha = 0.85;
+            drawCactus(ctx, cf.x, g, cf.h, cf.kind, C.cactus, C.cactusShade);
+            ctx.globalAlpha = 1;
+        }
+        hills(ctx, dist * 0.55 + 400, 16 * u, g, C.duneNear);
 
         // ground
-        ctx.fillStyle = p.headers;
+        ctx.fillStyle = C.ground;
         ctx.fillRect(0, g, view.w, view.h - g);
-        ctx.fillStyle = p.bg;
+        ctx.fillStyle = C.line;
+        ctx.fillRect(0, g, view.w, 2);
+        ctx.fillStyle = C.speck;
         for (var x = -((dist * 1) % (26 * u)); x < view.w; x += 26 * u) {
             ctx.fillRect(x, g + 6 * u, 12 * u, 2);
         }
 
+        // near cacti in front of the ground
+        for (ci = 0; ci < cacti.near.length; ci++) {
+            var cn = cacti.near[ci];
+            drawCactus(ctx, cn.x, g, cn.h, cn.kind, C.cactus, C.cactusShade);
+        }
+
         // obstacles
         obstacles.forEach(function (o) {
-            ctx.fillStyle = o.kind === 'bar' ? p.neon.yellow : p.neon.blue;
-            ctx.fillRect(o.x, o.y, o.w, o.h);
-            if (o.kind === 'tall') {
-                ctx.fillStyle = 'rgba(0,0,0,0.2)';
-                ctx.fillRect(o.x, o.y, o.w, 4 * u);
+            if (o.kind === 'rock') {
+                drawRock(ctx, o.x, o.y, o.w, o.h, C.rock, C.rockHi, C.rockLo);
+            } else if (o.kind === 'spire') {
+                drawRock(ctx, o.x, o.y + 6 * u, o.w, o.h - 6 * u, C.rock, C.rockHi, C.rockLo);
+                ctx.fillStyle = C.rock;
+                ctx.fillRect(o.x + o.w * 0.22, o.y, o.w * 0.56, 7 * u);
+                ctx.fillStyle = C.rockHi;
+                ctx.fillRect(o.x + o.w * 0.28, o.y + 1, o.w * 0.44, 3 * u);
+            } else {
+                drawVulture(ctx, o.x + o.w / 2, o.y + o.h / 2, u, t * 11, C);
             }
         });
 
-        // runner: pink body, accent cap, animated legs
+        // runner: desert lizard in a cowboy hat
         var rh = runner.h * (runner.duck ? 0.55 : 1);
         var rx = runner.x - runner.w / 2;
         var ry = runner.y - rh;
-        ctx.fillStyle = p.accent;
-        ctx.fillRect(rx, ry, runner.w, rh * 0.78);
-        ctx.fillStyle = p.neon.lime;
-        ctx.fillRect(rx - 1 * u, ry - 3 * u, runner.w + 2 * u, 4 * u);   // cap
-        ctx.fillStyle = p.headers;
-        ctx.fillRect(rx + runner.w * 0.62, ry + rh * 0.18, 3 * u, 3 * u); // eye
-        // legs
         var legA = onGround() && running ? Math.sin(runner.leg * 4) : 0.6;
-        ctx.fillStyle = p.headers;
-        ctx.fillRect(rx + runner.w * 0.15, ry + rh * 0.78, 3 * u, rh * 0.22 * (0.6 + 0.4 * legA));
-        ctx.fillRect(rx + runner.w * 0.65, ry + rh * 0.78, 3 * u, rh * 0.22 * (0.6 - 0.4 * legA));
+        drawLizard(ctx, rx, ry, runner.w, rh, legA, C);
 
         if (!running && !dead) {
-            ctx.fillStyle = p.muted;
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
             ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
             ctx.textAlign = 'center';
             ctx.fillText(Arcade.env.touch ? 'TAP TO RUN  ·  SWIPE DOWN TO DUCK' : 'SPACE TO RUN  ·  DOWN TO DUCK', view.w / 2, view.h * 0.4);
@@ -250,7 +511,7 @@
     Arcade.init({
         slug: 'pixel-dash',
         title: 'Pixel Dash',
-        accent: 'pink',
+        accent: 'orange',
         jingles: {
             best: [[587, 0.07], [740, 0.07], [880, 0.07], [1175, 0.07], [1480, 0.18]],
             over: [[440, 0.1], [349, 0.1], [277, 0.2]]

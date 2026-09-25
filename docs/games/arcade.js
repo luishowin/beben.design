@@ -19,7 +19,7 @@
     var SETTINGS_KEY = 'beben-arcade-settings';
     var SCORES_KEY = 'beben-arcade-scores';
     var ACH_KEY = 'beben-arcade-achievements';
-    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: false };
+    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: true };
     var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat', 'mines',
         'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row'];
 
@@ -252,7 +252,7 @@
         { id: 'installed',      name: 'Installed',     check: function () { return env.standalone; } },
         { id: 'streak-3',       name: '3-Day Streak',  check: function (s) { return maxStreak(s.stats.daysPlayed) >= 3; } },
         { id: 'night-owl',      name: 'Night Owl',     check: function () { var h = new Date().getHours(); return h < 5; } },
-        { id: 'crt-head',       name: 'CRT Head',      check: function () { return !!settingsData.crt; } }
+        { id: 'crt-head',       name: 'CRT Head',      check: function (s) { return !!s.stats.crtToggled; } }
     ];
 
     var achStore = normalizeAch(readJSON(ACH_KEY, {}));
@@ -443,7 +443,13 @@
     function setCRT(on) {
         settings.set('crt', on);
         document.documentElement.classList.toggle('arc-crt', on);
-        if (on) achCheckAll();
+        // CRT is on by default now — the achievement tracks having
+        // actually played with the toggle (konami or settings).
+        if (on && !achStore.stats.crtToggled) {
+            achStore.stats.crtToggled = true;
+            saveAch();
+            achCheckAll();
+        }
     }
     function toggleCRT() {
         setCRT(!settingsData.crt);
@@ -690,9 +696,11 @@
         return out;
     }
 
-    /* ── fixed-timestep loop ──────────────────────────────────── */
+    /* ── fixed-timestep loop ────────────────────────────────────
+       Physics steps at 240 Hz: fine enough that motion reads as
+       smooth on any display refresh rate (60/75/90/120/144 Hz). */
     function loop(o) {
-        var step = o.step || 1000 / 60;
+        var step = o.step || 1000 / 240;
         var raf = 0, last = 0, acc = 0, running = false, paused = false;
         function frame(t) {
             if (!running) return;

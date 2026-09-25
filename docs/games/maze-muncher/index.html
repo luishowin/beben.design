@@ -181,9 +181,11 @@
         var cell = view.w / C;
         var speed = cell * 8;
 
-        // player movement toward queued dir through open cells
-        if (queue.length && Math.abs(player.px * cell - player.cx * cell) < 1 &&
-            Math.abs(player.py * cell - player.cy * cell) < 1) {
+        // player movement toward queued dir through open cells.
+        // aligned = at (or almost at) a cell centre, the only place turns are legal
+        var aligned = Math.abs(player.px * cell - player.cx * cell) < 2 &&
+                      Math.abs(player.py * cell - player.cy * cell) < 2;
+        if (queue.length && aligned) {
             var want = queue.shift();
             if (open(player.cx + want.x, player.cy + want.y)) dir = want;
         }
@@ -193,6 +195,14 @@
             player.px = tx; player.py = ty;
             player.cx = Math.round(player.px); player.cy = Math.round(player.py);
         } else {
+            // bumped a wall: snap back to the centre of the cell we came
+            // from (floor/ceil by travel direction), so the turn queue —
+            // which only fires at cell centres — can run again.
+            // (previously the player stopped mid-cell, possibly inside the
+            // wall, and could never turn: stuck forever)
+            player.px = dir.x > 0 ? Math.floor(player.px) : dir.x < 0 ? Math.ceil(player.px) : Math.round(player.px);
+            player.py = dir.y > 0 ? Math.floor(player.py) : dir.y < 0 ? Math.ceil(player.py) : Math.round(player.py);
+            player.cx = player.px; player.cy = player.py;
             dir = { x: 0, y: 0 };
         }
 

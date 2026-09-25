@@ -26,7 +26,6 @@
             background: #000;
             border: 1px solid var(--border-strong);
             border-radius: 6px;
-            box-shadow: 0 0 24px var(--accent-glow);
             touch-action: none;
         }
 
@@ -56,15 +55,14 @@
             background: var(--bg);
             border: 1px solid var(--border);
             color: var(--headers);
-            transition: transform 110ms cubic-bezier(0.22, 0.9, 0.32, 1);
+            /* flat, constant-speed slide — like pushing a block of wood */
+            transition: transform 90ms linear;
             will-change: transform;
         }
 
-        .tile.pop { animation: pop 140ms cubic-bezier(0.22, 0.9, 0.32, 1); }
-        .tile.spawn { animation: spawn 140ms ease-out; }
+        .tile.spawn { animation: spawn 150ms linear; }
 
-        @keyframes pop   { 0% { scale: 1; } 50% { scale: 1.18; } 100% { scale: 1; } }
-        @keyframes spawn { 0% { scale: 0.4; opacity: 0; } 100% { scale: 1; opacity: 1; } }
+        @keyframes spawn { from { opacity: 0; } to { opacity: 1; } }
 
         .t8    { background: color-mix(in srgb, var(--neon-yellow) 35%, var(--bg)); }
         .t16   { background: color-mix(in srgb, var(--neon-yellow) 60%, var(--bg)); color: #080813; }
@@ -85,6 +83,32 @@
             border: 1px solid var(--border);
         }
         .restart:active { color: var(--accent); }
+
+        .badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: #080813;
+            background: var(--neon-yellow);
+            border-radius: 3px;
+            padding: 0.35rem 0.6rem;
+            box-shadow: 0 0 10px rgba(255, 213, 51, 0.35);
+        }
+
+        .confetti {
+            position: absolute;
+            top: -12px;
+            width: 7px;
+            height: 11px;
+            pointer-events: none;
+            z-index: 6;
+            animation: confetti-fall var(--cf-dur, 1.5s) linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(var(--cf-fall, 420px)) rotate(720deg); opacity: 0.7; }
+        }
     </style>
 </head>
 <body>
@@ -99,6 +123,7 @@
     <div class="wrap">
         <div class="board" id="board"></div>
         <button class="restart" id="restart">&#8635; NEW GAME</button>
+        <div class="badge" id="badge" hidden>&#9733; 2048 TILE</div>
     </div>
 </main>
 
@@ -205,14 +230,15 @@
                 var target = grid[nr][nc];
                 grid[t.r][t.c] = null;
                 if (target) {
-                    // merge: t slides onto target
+                    // merge: t slides UNDER the survivor, then disappears
                     target.merging = true;
                     target.val *= 2;
                     gained += target.val;
                     merges.push({ survivor: target, absorbed: t });
                     t.r = nr; t.c = nc;
                     place(t.el, nr, nc);
-                    t.el.style.zIndex = 1;
+                    t.el.style.zIndex = 0;
+                    target.el.style.zIndex = 1;
                 } else {
                     grid[nr][nc] = t;
                     t.r = nr; t.c = nc;
@@ -232,13 +258,16 @@
             merges.forEach(function (m) {
                 m.absorbed.el.remove();
                 m.survivor.merging = false;
+                m.survivor.el.style.zIndex = '';
                 style(m.survivor);
-                m.survivor.el.classList.add('pop');
                 if (m.survivor.val === 2048 && !won) {
                     won = true;
+                    score += 2048;                     // reward bonus
                     Arcade.audio.play('fanfare');
                     Arcade.haptics.buzz('success');
-                    Arcade.ui.toast('2048! Keep going — the board is yours.');
+                    Arcade.ui.toast('2048 TILE! +2048 bonus');
+                    unlockBadge();
+                    confettiBurst();
                 }
             });
             if (gained) {
@@ -248,7 +277,7 @@
             spawnTile();
             busy = false;
             if (isStuck()) endGame();
-        }, 120);
+        }, 100);
     }
 
     function isStuck() {
@@ -262,6 +291,35 @@
         }
         return true;
     }
+
+    /* ── 2048 reward: persistent badge + gold confetti burst ──────── */
+    var BADGE_KEY = 'beben-2048-badge';
+    function showBadge() {
+        var b = document.getElementById('badge');
+        if (b) b.hidden = false;
+    }
+    function unlockBadge() {
+        try { localStorage.setItem(BADGE_KEY, '1'); } catch (e) { /* ignore */ }
+        showBadge();
+    }
+    function confettiBurst() {
+        var cols = ['#FFD533', '#FFB320', '#FF9B21', '#FFF3C4', '#FF2DAA'];
+        var b = document.getElementById('board');
+        if (!b) return;
+        var h = b.clientHeight;
+        for (var i = 0; i < 30; i++) {
+            var p = document.createElement('div');
+            p.className = 'confetti';
+            p.style.left = (Math.random() * 96) + '%';
+            p.style.background = cols[i % cols.length];
+            p.style.setProperty('--cf-fall', (h + 24) + 'px');
+            p.style.setProperty('--cf-dur', (1.2 + Math.random() * 0.8) + 's');
+            p.style.animationDelay = (Math.random() * 0.25) + 's';
+            b.appendChild(p);
+            (function (el) { setTimeout(function () { el.remove(); }, 2600); })(p);
+        }
+    }
+    try { if (localStorage.getItem(BADGE_KEY)) showBadge(); } catch (e) { /* ignore */ }
 
     function endGame() {
         Arcade.audio.play('boom');

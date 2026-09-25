@@ -29,7 +29,13 @@
     var WIN = 7;
 
     var canvas = document.getElementById('game');
-    var view = Arcade.fitCanvas(canvas, { aspect: 0.62, maxW: 420 });
+    var canvasRect = { left: 0, top: 0, width: 1, height: 1 };
+    function cacheRect() {
+        var r = canvas.getBoundingClientRect();
+        canvasRect.left = r.left; canvasRect.top = r.top;
+        canvasRect.width = r.width; canvasRect.height = r.height;
+    }
+    var view = Arcade.fitCanvas(canvas, { aspect: 0.62, maxW: 420, onResize: cacheRect });
 
     // phase: 'select' | 'serve' | 'play' | 'over'
     var phase = 'select';
@@ -155,14 +161,12 @@
         phase = 'serve';
     }
 
-    /* ── input: pointer per half ─────────────────────────────────── */
+    /* ── input: pointer per half (canvas rect cached on resize) ── */
     function relX(clientX) {
-        var rect = canvas.getBoundingClientRect();
-        return Math.max(0, Math.min(view.w, (clientX - rect.left) * (view.w / rect.width)));
+        return Math.max(0, Math.min(view.w, (clientX - canvasRect.left) * (view.w / canvasRect.width)));
     }
     function whichHalf(clientY) {
-        var rect = canvas.getBoundingClientRect();
-        return (clientY - rect.top) < rect.height / 2 ? 'top' : 'bottom';
+        return (clientY - canvasRect.top) < canvasRect.height / 2 ? 'top' : 'bottom';
     }
     function assign(half, x) {
         if (half === 'bottom') pPaddle.x = x;

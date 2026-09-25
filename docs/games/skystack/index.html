@@ -171,11 +171,35 @@
         stack.forEach(function (s) { drawSlab(s, s.x); });
         if (current) drawSlab(current, currentX());
 
+        // ── drop guide: the thin window between the moving slab and the
+        // stack top. Rails mark the target width; the bright band on the
+        // moving slab is exactly where it would land; accent = perfect.
+        if (current && !dead) {
+            var top = stack[stack.length - 1];
+            var delta = currentX() - top.x;
+            var overlap = top.w - Math.abs(delta);
+            var curSy = slabScreenY(current.y);
+
+            // rails bracket the moving slab: from the stack top up past it
+            ctx.globalAlpha = 0.22;
+            ctx.fillStyle = p.headers;
+            ctx.fillRect(top.x - top.w / 2 - 2, curSy - 6, 2, h + 6);
+            ctx.fillRect(top.x + top.w / 2, curSy - 6, 2, h + 6);
+            ctx.globalAlpha = 1;
+
+            if (overlap > 0) {
+                var x0 = Math.max(currentX() - current.w / 2, top.x - top.w / 2);
+                var x1 = Math.min(currentX() + current.w / 2, top.x + top.w / 2);
+                ctx.fillStyle = Math.abs(delta) <= PERFECT_PX ? p.accent : 'rgba(255,255,255,0.35)';
+                ctx.fillRect(x0, curSy, x1 - x0, h - 2);
+            }
+        }
+
         if (score === 0 && !dead) {
             ctx.fillStyle = p.muted;
             ctx.font = '600 13px ui-monospace, Menlo, Consolas, monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(Arcade.env.touch ? 'TAP TO DROP' : 'SPACE TO DROP', view.w / 2, view.h * 0.3);
+            ctx.fillText(Arcade.env.touch ? 'TAP TO DROP — LAND IN THE RAILS' : 'SPACE TO DROP — LAND IN THE RAILS', view.w / 2, view.h * 0.3);
         }
     }
 

@@ -398,7 +398,9 @@ html.ios-standalone .arc-bar {
 
 .arc-hint .arc-action { flex: 0 0 auto; padding: 0.5rem 0.9rem; }
 
-/* ── CRT mode (easter egg): stronger scanlines + flicker ──────── */
+/* ── CRT mode (on by default): static scanlines, no flicker ────
+   The old steps(2) flicker strobed the whole screen at ~8 Hz,
+   which made fast-moving sprites look like they left trails. */
 html.arc-crt::after {
     content: "";
     position: fixed;
@@ -408,12 +410,9 @@ html.arc-crt::after {
     background: repeating-linear-gradient(
         to bottom,
         transparent 0 2px,
-        rgba(0, 0, 0, 0.22) 2px 4px
+        rgba(0, 0, 0, 0.16) 2px 4px
     );
-    animation: arc-crt-flicker 0.13s steps(2) infinite;
 }
-
-@keyframes arc-crt-flicker { 50% { opacity: 0.82; } }
 
 /* ── INSERT COIN launch flourish ──────────────────────────────── */
 .arc-coin { z-index: 85; background: rgba(8, 8, 19, 0.72); }

@@ -217,7 +217,8 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 - **Shared runtime.** `docs/games/arcade.js` (`window.Arcade`: settings/scores
   stores namespaced `beben-arcade-*`, an 8-bit Web Audio synth with
   `audio.jingle()`, haptics, top-bar chrome, `fitCanvas`, a fixed-timestep
-  `loop`, `palette()`, `achievements`, `toggleCRT`) plus `arcade.css`. Each
+  `loop` (240 Hz physics, so motion stays smooth on 75/90/120/144 Hz
+  displays), `palette()`, `achievements`, `toggleCRT`) plus `arcade.css`. Each
   game is one self-contained `<slug>/index.html` that loads both.
 - **Dark-only neon identity.** Tokens live in `arcade.css`: `--bg #000` and
   seven `--neon-*` accents. Every game owns one neon via a per-game `--accent`
@@ -227,26 +228,29 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 - **Hub cards.** The hero card and all 20 game cards are `#000` with a 1px
   `#171717` border (border flips to the game's neon on hover). Each game card
   shows a frameless icon, the name in pixel type, a one-line description, and
-  one to three `> GENRE` lines. The UI is flat by default; CRT scanlines only
-  appear when the CRT effect is toggled on. Every game canvas paints a pure
-  `#000` backdrop (no `--bg-soft` fills), and the in-game bar shows
-  `< BACK` in pixel type next to the game title.
+  one to three `> GENRE` lines. CRT scanlines are **on by default** (static,
+  no flicker — a strobe made fast sprites trail) and can be toggled off in
+  settings. Every game canvas paints a pure `#000` backdrop (no `--bg-soft`
+  fills), and the in-game bar shows `< BACK` in pixel type next to the game
+  title.
 - **Pixel display font.** `docs/games/fonts/press-start-2p.woff2` is a ~5KB OFL
   subset (uppercase glyphs only, so always pair it with
   `text-transform: uppercase`). Rebuild it with `py scripts/subset_arcade_font.py`
   (needs `pip install fonttools brotli`). Body text stays system mono.
 - **Extras.** Offline achievements (`beben-arcade-achievements`), a CRT
-  scanline mode (7 taps on the hub title, or the settings toggle), and a rare
-  INSERT COIN launch flourish. Hero imagery swaps once per hour (3h desktop
-  cycle / 2h mobile cycle, 1.5s crossfade). In iOS standalone mode the game
-  bar drops 40px to clear the status-bar blur. App icons sit on pure `#000`.
+  scanline mode (on by default; 7 taps on the hub title, the konami code, or
+  the settings toggle — the CRT Head achievement now tracks an explicit
+  toggle), and a rare INSERT COIN launch flourish. Hero imagery swaps once
+  per hour (3h desktop cycle / 2h mobile cycle, 1.5s crossfade). In iOS
+  standalone mode the game bar drops 40px to clear the status-bar blur. App
+  icons sit on pure `#000`.
   Install icons regenerate via `py scripts/make_arcade_icons.py`.
 
 **Hard rules when touching `docs/games/**`:**
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v12`) moves in lockstep as an on-device sanity check.
+   hub (`v13`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a hub card in `docs/games/index.html`, an entry in the hub's
    inline `ICONS` map, and the `SLUGS` array in `arcade.js` (for achievements).

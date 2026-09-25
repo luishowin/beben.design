@@ -1,8 +1,9 @@
 # Site revision, state of play
 
-Four pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
-1 to 4, the Sprite knowledge rework, and the run described below, which closed
-v1 phases 7 and 8 and v2 phases 5 and 6. GitHub Pages serves `docs/` from
+Five pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
+1 to 4, the Sprite knowledge rework, the run described below, which closed
+v1 phases 7 and 8 and v2 phases 5 and 6, and an arcade gameplay pass, which
+has its own heading. GitHub Pages serves `docs/` from
 `main`, so pushing `main` publishes.
 
 The Cloudflare Worker still does not deploy from git, but it no longer needs to
@@ -232,6 +233,54 @@ dragged all six blog pages back to a stale `?v=4.4`. The asset version is one
 value everywhere now, which is what the check at the bottom of this file was
 always asking for. It landed on `4.6` and moved to `4.7` with the nav height.
 
+### Arcade gameplay pass
+
+Player-reported fixes across seven games plus the shared runtime, all verified
+in a live browser against a local server. This is not the v2-9 hub overhaul,
+which remains tracked separately.
+
+**CRT is now on by default.** The scanline overlay is static: the old `steps(2)`
+flicker strobed the whole screen at ~8 Hz, which made fast-moving sprites look
+like they left trails and reads as dropped frames. The default flip reaches
+fresh settings; anyone who explicitly switched CRT off keeps it off, because
+their choice is stored. The CRT Head achievement would have unlocked for
+everyone under the new default, so it now tracks an explicit toggle instead.
+
+**Motion was quantized to 60 Hz regardless of the display.** The shared loop
+stepped physics at a fixed 1000/60, so on a 75/90/120/144 Hz panel fast objects
+advanced in irregular jumps — judder, the other half of "doesn't feel like
+60fps". The step is now 1000/240, which is fine enough that motion reads as
+smooth at any refresh rate; every game's update is dt-scaled, so nothing else
+changed. `brick-bash` and `paddle-duel` also read `getBoundingClientRect()` on
+every pointermove — a layout flush per mouse event at 500-1000 events/s on
+gaming mice — and now cache the rect on resize.
+
+All 20 games were walked in a headless browser after the loop change: zero
+console errors, and movement re-checked on the two accumulator-based games.
+
+**maze-muncher was actually broken.** Hitting a wall stopped the muncher
+mid-cell, but turns only trigger at cell centres, so the input queue could
+never fire again — permanently stuck. Fixed by snapping to the centre of the
+cell being left when blocked (floor/ceil by travel direction, so the snap
+never lands inside the wall), plus a slightly wider turn window. Verified by
+driving the muncher into a wall with real key events and reading exact game
+state: reverse and turn-from-wall both work.
+
+**The smaller requests.** 2048: flat 90ms linear slide (the pop/spring is
+gone), the absorbed tile slides under its survivor, board glow removed, and
+reaching a 2048 tile now pays a +2048 bonus with a gold confetti burst and a
+persistent "★ 2048 TILE" badge. Skystack: a drop guide — rails bracket the
+moving slab and a bright band shows the landing cut, going accent in the
+perfect window. Hop-across: the circle is a pixel goose. Pixel-dash: a full
+redraw — golden-hour gradient, sun, clouds, five cactus variants on two
+parallax layers, dunes, a lizard in a cowboy hat, rock and vulture obstacles,
+and night (stars, moon, dark ground) after 90 s of running with a 4 s
+crossfade.
+
+The 2048 confetti path is verified structurally but was not played to a real
+2048 tile; it shares the trigger the fanfare already used. The service worker
+cache moved to `v13` with the hub label in lockstep, per the hard rule.
+
 ---
 
 ## Corrections to brief v2
@@ -332,12 +381,15 @@ grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html |
 `build_blog.py` needs `markdown`: `python3 -m venv .venv && .venv/bin/pip install markdown`.
 
 Current state, all of it measured rather than remembered: 33 pages served
-excluding the arcade plus `404.html`, 30 sitemap URLs, 965 internal references
+excluding the arcade plus `404.html`, 30 sitemap URLs, 1033 internal references
 resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
 one asset version (`4.7`) everywhere.
 
-The link figure is lower than the 837 recorded before because the checker now
-strips script bodies first. A URL a page assembles in JavaScript is not a link,
-and counting the arcade's `'./' + last + '/'` as a broken one is how you end up
-publishing "2 broken links" about a site that has none.
+The link figure moved 965 to 1033 with the arcade gameplay pass above: the
+status stamp predates the hub's growth from 12 to 20 games, so the arcade's own
+internal links were counted for the first time since. The figure is lower than
+the 837 recorded before that because the checker now strips script bodies
+first. A URL a page assembles in JavaScript is not a link, and counting the
+arcade's `'./' + last + '/'` as a broken one is how you end up publishing
+"2 broken links" about a site that has none.

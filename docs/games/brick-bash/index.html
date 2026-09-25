@@ -32,10 +32,19 @@
 
     var paddle, ball, bricks, score, lives, level, stuck, brickW, brickH, brickTop;
 
+    /* canvas rect cached once per layout — reading getBoundingClientRect
+       on every pointermove forces a layout flush and stalls the loop */
+    var canvasRect = { left: 0, top: 0 };
+    function cacheRect() {
+        var r = canvas.getBoundingClientRect();
+        canvasRect.left = r.left; canvasRect.top = r.top;
+    }
+
     function layout() {
         brickW = view.w / COLS;
         brickH = Math.max(14, view.h * 0.035);
         brickTop = view.h * 0.1;
+        cacheRect();
     }
 
     function buildBricks() {
@@ -76,8 +85,7 @@
 
     /* input: pointer drags paddle anywhere, tap launches */
     document.body.addEventListener('pointermove', function (e) {
-        var rect = canvas.getBoundingClientRect();
-        var x = (e.clientX - rect.left);
+        var x = (e.clientX - canvasRect.left);
         paddle.x = Math.max(paddle.w / 2, Math.min(view.w - paddle.w / 2, x));
         if (stuck) ball.x = paddle.x;
     });
