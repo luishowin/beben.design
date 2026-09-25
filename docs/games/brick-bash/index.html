@@ -212,13 +212,17 @@
         }
         ctx.globalAlpha = 1;
 
-        // bricks: warm rows cycle orange / yellow / red
-        var rowColors = [p.accent, p.yellow, p.red];
+        // bricks: vibrant diagonal mosaic through the whole neon set
+        var mosaic = [p.neon.red, p.neon.orange, p.neon.yellow, p.neon.lime, p.neon.blue, p.neon.purple, p.neon.pink];
         bricks.forEach(function (b) {
             if (!b.alive) return;
             var rc = brickRect(b);
-            ctx.fillStyle = rowColors[b.r % 3];
+            ctx.fillStyle = mosaic[(b.r + b.c) % mosaic.length];
             ctx.fillRect(rc.x, rc.y, rc.w, rc.h);
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';   // glossy top edge
+            ctx.fillRect(rc.x, rc.y, rc.w, 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';        // shaded bottom edge
+            ctx.fillRect(rc.x, rc.y + rc.h - 2, rc.w, 2);
         });
 
         // paddle
@@ -228,9 +232,11 @@
         ctx.fillStyle = p.accent;
         ctx.fillRect(paddle.x - 4, py - paddle.h / 2, 8, paddle.h);
 
-        // ball
-        ctx.fillStyle = p.headers;
+        // ball: red with a small shine
+        ctx.fillStyle = p.red;
         ctx.fillRect(ball.x - ball.r, ball.y - ball.r, ball.r * 2, ball.r * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.65)';
+        ctx.fillRect(ball.x - ball.r * 0.5, ball.y - ball.r * 0.6, Math.max(2, ball.r * 0.5), Math.max(2, ball.r * 0.4));
 
         // HUD: lives + level
         ctx.fillStyle = p.muted;

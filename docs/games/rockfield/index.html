@@ -17,12 +17,25 @@
     <script src="../arcade.js"></script>
     <style>
         .arc-stage { position: relative; }
+        .arc-help {
+            position: absolute;
+            bottom: 0.55rem;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            text-align: center;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
 <main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
     <span class="arc-proto">Prototype &middot; full game coming soon</span>
+    <span class="arc-help">SMASH THE ROCKS &middot; GEMS (+10) AND BOMBS (&minus;1 LIFE) HIDE UNDERNEATH &middot; BEAT THE CLOCK</span>
 </main>
 
 <script>
@@ -31,7 +44,7 @@
 
     /* ROCKFIELD (prototype)
        A field of rocks. Smash them before time runs out.
-       Gems hide under some (+10), bombs under a few (-1 life). */
+       Gems hide under some rocks (+10), bombs under a few (-1 life). */
 
     var COLS = 6, ROWS = 5;
     var TIME = 45, LIVES = 3;
@@ -39,20 +52,13 @@
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 480 });
 
-    var field, timeLeft, lives, gems, cursor, over, shake;
-
-    function newCell() {
-        var r = Math.random();
-        if (r < 0.18) return 'gem';
-        if (r < 0.28) return 'bomb';
-        return 'rock';
-    }
+    var field, timeLeft, lives, gems, cursor, over, shake, flashes;
 
     function reset() {
         field = [];
         for (var y = 0; y < ROWS; y++) {
             field[y] = [];
-            for (var x = 0; x < COLS; x++) field[y][x] = newCell();
+            for (var x = 0; x < COLS; x++) field[y][x] = 'rock';
         }
         timeLeft = TIME;
         lives = LIVES;
@@ -60,6 +66,7 @@
         cursor = { x: 0, y: 0 };
         over = false;
         shake = 0;
+        flashes = [];
         paintScore();
     }
 
@@ -75,25 +82,31 @@
         if (open >= COLS * ROWS * 0.45) return;
         for (var y = 0; y < ROWS; y++)
             for (var x = 0; x < COLS; x++)
-                if (field[y][x] === 'open') field[y][x] = newCell();
+                if (field[y][x] === 'open') field[y][x] = 'rock';
     }
 
     function smash(x, y) {
         if (over) return;
         if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return;
         var c = field[y][x];
-        if (c === 'open') return;
+        if (c !== 'rock') return;
         cursor.x = x; cursor.y = y;
-        if (c === 'gem') {
+
+        // what hides underneath? 18% gem, 10% bomb, otherwise just dust
+        var r = Math.random();
+        if (r < 0.18) {
             gems += 10;
+            flashes.push({ x: x, y: y, kind: 'gem', t: 0 });
             Arcade.audio.play('coin');
             Arcade.haptics.buzz('light');
-        } else if (c === 'bomb') {
+        } else if (r < 0.28) {
             lives--;
             shake = 0.35;
+            flashes.push({ x: x, y: y, kind: 'bomb', t: 0 });
             Arcade.audio.play('boom');
             Arcade.haptics.buzz('error');
         } else {
+            flashes.push({ x: x, y: y, kind: 'dust', t: 0 });
             Arcade.audio.play('drop');
         }
         field[y][x] = 'open';
@@ -136,6 +149,88 @@
         if (e.key === ' ' || e.key === 'Enter') smash(cursor.x, cursor.y);
     });
 
+    /* ── vibrant pixel boulder: 8x6 mask, per-cell neon hue ────────── */
+    var ROCK_HUES = ['#FF5A8A', '#FF9B21', '#FFD533', '#8EFF2A', '#19C6FF', '#B45AFF', '#FF4D4D', '#00E5A0'];
+    var ROCK_MASK = ['.XXXXXX.', 'XXXXXXXX', 'XXXXXXXX', 'XXXXXXXX', '.XXXXXX.', '..XXXX..'];
+    var ROCK_LIGHT = ['........', '.LL.....', '.LL.....', '........', '........', '........'];
+    var ROCK_SHADE = ['........', '........', '........', '......DD', '.....DDD', '.......D'];
+
+    function drawRock(ctx, cx, cy, cw, ch, hue) {
+        var bw = cw * 0.8, bh = ch * 0.62;
+        var bx = cx + (cw - bw) / 2, by = cy + ch * 0.32;
+        var px = bw / 8, py = bh / 6;
+        // silhouette (dark outline)
+        ctx.fillStyle = '#171722';
+        for (var ry = 0; ry < 6; ry++) {
+            for (var rx = 0; rx < 8; rx++) {
+                if (ROCK_MASK[ry][rx] === 'X') ctx.fillRect(bx + rx * px - 1, by + ry * py - 1, px + 2, py + 2);
+            }
+        }
+        // body
+        ctx.fillStyle = hue;
+        for (var ry2 = 0; ry2 < 6; ry2++) {
+            for (var rx2 = 0; rx2 < 8; rx2++) {
+                if (ROCK_MASK[ry2][rx2] === 'X') ctx.fillRect(bx + rx2 * px, by + ry2 * py, px + 0.5, py + 0.5);
+            }
+        }
+        // top-left light + bottom-right shade
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        for (var ry3 = 0; ry3 < 6; ry3++) {
+            for (var rx3 = 0; rx3 < 8; rx3++) {
+                if (ROCK_LIGHT[ry3][rx3] === 'L') ctx.fillRect(bx + rx3 * px, by + ry3 * py, px + 0.5, py + 0.5);
+            }
+        }
+        ctx.fillStyle = 'rgba(0,0,0,0.32)';
+        for (var ry4 = 0; ry4 < 6; ry4++) {
+            for (var rx4 = 0; rx4 < 8; rx4++) {
+                if (ROCK_SHADE[ry4][rx4] === 'D') ctx.fillRect(bx + rx4 * px, by + ry4 * py, px + 0.5, py + 0.5);
+            }
+        }
+    }
+
+    function drawFlash(ctx, f, cw, ch) {
+        var a = Math.max(0, 1 - f.t / 0.6);   // fade out over 0.6s
+        var fx = f.x * cw + cw / 2, fy = f.y * ch + ch / 2;
+        ctx.globalAlpha = a;
+        if (f.kind === 'gem') {
+            // crystal diamond + sparkle
+            ctx.fillStyle = '#7FE7FF';
+            ctx.beginPath();
+            ctx.moveTo(fx, fy - ch * 0.24);
+            ctx.lineTo(fx + cw * 0.2, fy);
+            ctx.lineTo(fx, fy + ch * 0.24);
+            ctx.lineTo(fx - cw * 0.2, fy);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.95)';
+            ctx.fillRect(fx - 3, fy - ch * 0.09, 3, 3);
+            ctx.fillRect(fx, fy, 3, 3);
+        } else if (f.kind === 'bomb') {
+            // black bomb, red band, lit fuse
+            ctx.fillStyle = '#141420';
+            ctx.beginPath();
+            ctx.arc(fx, fy, cw * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#FF4D4D';
+            ctx.fillRect(fx - cw * 0.2, fy - 2, cw * 0.4, 4);
+            ctx.strokeStyle = '#B08A5A';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(fx + cw * 0.13, fy - cw * 0.15);
+            ctx.lineTo(fx + cw * 0.3, fy - cw * 0.32);
+            ctx.stroke();
+            ctx.fillStyle = '#FFD533';
+            ctx.fillRect(fx + cw * 0.27, fy - cw * 0.4, 4, 4);
+        } else {
+            // dust puff
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillRect(fx - cw * 0.1, fy - 3, 4, 4);
+            ctx.fillRect(fx + cw * 0.04, fy, 4, 4);
+            ctx.fillRect(fx - cw * 0.02, fy - 8, 3, 3);
+        }
+        ctx.globalAlpha = 1;
+    }
+
     function render() {
         var p = Arcade.palette();
         var ctx = view.ctx;
@@ -156,20 +251,19 @@
                 ctx.fillRect(cx, cy, cw, ch);
 
                 if (field[y][x] === 'rock') {
-                    ctx.fillStyle = '#5A6278';
-                    ctx.fillRect(cx + cw * 0.16, cy + ch * 0.3, cw * 0.68, ch * 0.55);
-                    ctx.fillStyle = '#8B93AC';
-                    ctx.fillRect(cx + cw * 0.16, cy + ch * 0.3, cw * 0.68, ch * 0.16);
-                    ctx.fillStyle = '#3A4152';
-                    ctx.fillRect(cx + cw * 0.16, cy + ch * 0.62, cw * 0.68, ch * 0.23);
-                    ctx.fillStyle = '#20242F';
-                    ctx.fillRect(cx + cw * 0.22, cy + ch * 0.9, cw * 0.56, ch * 0.08);
-                } else if (field[y][x] === 'open') {
-                    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                    drawRock(ctx, cx, cy, cw, ch, ROCK_HUES[(x * 5 + y * 3) % ROCK_HUES.length]);
+                } else {
+                    // smashed pit
+                    ctx.fillStyle = 'rgba(0,0,0,0.45)';
                     ctx.fillRect(cx + cw * 0.18, cy + ch * 0.3, cw * 0.64, ch * 0.5);
+                    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+                    ctx.fillRect(cx + cw * 0.22, cy + ch * 0.34, cw * 0.56, ch * 0.1);
                 }
             }
         }
+
+        // reveal flashes
+        for (var fi = 0; fi < flashes.length; fi++) drawFlash(ctx, flashes[fi], cw, ch);
 
         // keyboard cursor
         ctx.strokeStyle = p.accent;
@@ -194,6 +288,10 @@
             timeLeft -= dt;
             if (timeLeft <= 0) { timeLeft = 0; paintScore(); endGame(); return; }
             if (Math.ceil(timeLeft) !== Math.ceil(timeLeft + dt)) paintScore();
+            for (var i = flashes.length - 1; i >= 0; i--) {
+                flashes[i].t += dt;
+                if (flashes[i].t >= 0.6) flashes.splice(i, 1);
+            }
         },
         render: render
     });

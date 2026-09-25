@@ -139,41 +139,84 @@
             }
         }
 
-        // garden: sparse deterministic grass tufts
-        ctx.globalAlpha = 0.08;
-        ctx.fillStyle = p.accent;
+        // garden: sparse deterministic grass tufts (decorative)
+        ctx.globalAlpha = 0.15;
         for (var gy = 0; gy < ROWS; gy++) {
             for (var gx = 0; gx < COLS; gx++) {
-                if ((gx * 7 + gy * 13) % 29 !== 0) continue;
-                var tx = (gx + 0.5) * cell, ty = (gy + 0.72) * cell;
-                ctx.fillRect(tx - cell * 0.06, ty - cell * 0.22, cell * 0.12, cell * 0.22);
-                ctx.fillRect(tx - cell * 0.2, ty - cell * 0.12, cell * 0.12, cell * 0.12);
-                ctx.fillRect(tx + 0.08 * cell, ty - cell * 0.12, cell * 0.12, cell * 0.12);
+                var n = gx * 7 + gy * 13;
+                if (n % 13 !== 0 && n % 37 !== 5) continue;
+                var tx = (gx + 0.5) * cell, ty = (gy + 0.74) * cell;
+                ctx.fillStyle = n % 37 === 5 ? '#3F8F2F' : p.accent;
+                ctx.fillRect(tx - cell * 0.06, ty - cell * 0.24, cell * 0.12, cell * 0.24);
+                ctx.fillRect(tx - cell * 0.2, ty - cell * 0.13, cell * 0.12, cell * 0.13);
+                ctx.fillRect(tx + 0.08 * cell, ty - cell * 0.13, cell * 0.12, cell * 0.13);
             }
         }
         ctx.globalAlpha = 1;
 
-        // food
-        var pad = cell * 0.18;
-        ctx.fillStyle = p.red;
-        ctx.fillRect(food.x * cell + pad, food.y * cell + pad, cell - pad * 2, cell - pad * 2);
+        // food: pixel apple (red body, leaf, stem)
+        var APPLE = [
+            '..ss....',
+            '.lls....',
+            'drrrrrd.',
+            'drhrhrd.',
+            'drrrrrd.',
+            'dRRrRRd.',
+            '.ddddd..'
+        ];
+        var ap = cell * 0.82 / 8;
+        var ax = (food.x + 0.5) * cell - ap * 4, ay = (food.y + 0.5) * cell - ap * 3.5;
+        for (var ayy = 0; ayy < APPLE.length; ayy++) {
+            for (var axx = 0; axx < APPLE[ayy].length; axx++) {
+                var ch = APPLE[ayy][axx];
+                if (ch === '.') continue;
+                ctx.fillStyle =
+                    ch === 'r' ? p.red :
+                    ch === 'd' ? '#9E2B2B' :
+                    ch === 'h' ? '#FF9B8F' :
+                    ch === 'R' ? '#F27A6B' :
+                    ch === 's' ? '#8A5A2B' : '#59C467';
+                ctx.fillRect(ax + axx * ap, ay + ayy * ap, ap + 0.5, ap + 0.5);
+            }
+        }
 
         // snake
-        for (var i = snake.length - 1; i >= 0; i--) {
+        for (var i = snake.length - 1; i >= 1; i--) {
             var s = snake[i];
             var g = cell * 0.06;
-            ctx.fillStyle = i === 0 ? p.headers : p.accent;
+            ctx.fillStyle = p.accent;
             ctx.fillRect(s.x * cell + g, s.y * cell + g, cell - g * 2, cell - g * 2);
         }
-        // eye on head
+
+        // pixel head, oriented along the direction of travel
         var h = snake[0];
-        ctx.fillStyle = p.red;
-        var eye = Math.max(2, cell * 0.16);
-        ctx.fillRect(
-            (h.x + 0.5 + dir.x * 0.22) * cell - eye / 2,
-            (h.y + 0.5 + dir.y * 0.22) * cell - eye / 2,
-            eye, eye
-        );
+        var HEAD = [
+            '.DDDDD.',
+            'DGGLLLD',
+            'DGGLLLD',
+            'DGGWWBD',
+            'DGGLLLD',
+            'DGGLLLD',
+            '.DDDDD.'
+        ];
+        var hp = cell * 0.92 / 7;
+        var hx = (h.x + 0.5) * cell, hy = (h.y + 0.5) * cell;
+        ctx.save();
+        ctx.translate(hx, hy);
+        ctx.rotate(Math.atan2(dir.y, dir.x));
+        for (var hyy = 0; hyy < HEAD.length; hyy++) {
+            for (var hxx = 0; hxx < HEAD[hyy].length; hxx++) {
+                var hch = HEAD[hyy][hxx];
+                if (hch === '.') continue;
+                ctx.fillStyle =
+                    hch === 'D' ? '#4D9E1F' :
+                    hch === 'G' ? p.accent :
+                    hch === 'L' ? '#C9FF8A' :
+                    hch === 'W' ? '#F5F7FA' : '#0A0A12';
+                ctx.fillRect((hxx - 3.5) * hp, (hyy - 3.5) * hp, hp + 0.5, hp + 0.5);
+            }
+        }
+        ctx.restore();
     }
 
     var loop = Arcade.loop({

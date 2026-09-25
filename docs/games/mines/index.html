@@ -100,6 +100,14 @@
         .cell.n3 { color: var(--neon-yellow); }
         .cell.n4 { color: var(--neon-purple); }
         .cell.n5, .cell.n6, .cell.n7, .cell.n8 { color: var(--neon-orange); }
+
+        .mines-help {
+            margin: 0;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -114,6 +122,7 @@
         <button class="flag-toggle" id="flagMode" aria-pressed="false">&#9873; FLAG</button>
     </div>
     <div class="mines-grid" id="grid"></div>
+    <p class="mines-help">TAP TO REVEAL &middot; NUMBERS COUNT NEARBY MINES &middot; FLAG SUSPECTS &middot; CLEAR EVERY SAFE CELL TO WIN</p>
 </main>
 
 <script>
@@ -140,7 +149,9 @@
         var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
         var avail = Math.min(stage.clientWidth - 20, 460);
         var hudH = document.querySelector('.mines-hud').offsetHeight;
-        var availH = stage.clientHeight - pad - hudH - 13; /* 13px ≈ 0.8rem flex gap */
+        var helpEl = document.querySelector('.mines-help');
+        var helpH = helpEl ? helpEl.offsetHeight : 0;
+        var availH = stage.clientHeight - pad - hudH - helpH - 22; /* gaps ≈ 0.8rem each */
         var cell = Math.floor(Math.min(avail / p.cols, availH / p.rows, 40)) - 2;
         gridEl.style.setProperty('--cell', cell + 'px');
         gridEl.style.gridTemplateColumns = 'repeat(' + p.cols + ', var(--cell))';

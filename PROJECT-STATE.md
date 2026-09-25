@@ -281,6 +281,56 @@ The 2048 confetti path is verified structurally but was not played to a real
 2048 tile; it shares the trigger the fanfare already used. The service worker
 cache moved to `v13` with the hub label in lockstep, per the hard rule.
 
+### Arcade polish pass (2)
+
+A second round of player requests, same verification discipline: every visual
+change was checked against real canvas pixels in a headless browser, not just
+eyeballed in code.
+
+**Snake.** The food is now a pixel apple (red body, darker edge, leaf, stem) and
+the head is a bitmap sprite — dark-green outline, lighter snout, white-and-black
+eye — rotated to face the direction of travel. Grass tufts got denser and two
+shades of green (still decorative). The hub card icon is a hand-drawn 16×15
+pixel apple scaled to 256 — the first icon in the set not produced by the
+rembg pipeline.
+
+**Paddle Duel.** The ball is a pixel tennis ball (optic yellow disc, white seam
+curves, shaded edge) and the court reads as a padel court now: blue turf with
+mowed stripes, glass back walls with frame posts, metal mesh side walls, white
+boundary and service lines, and a proper centre net band.
+
+**Wingbeat.** Pipes cycle through all six neon colours. The first cut coloured
+by the pipe's current array index, which resets as gates leave the array — the
+last three colours could never appear. Colour is now assigned at spawn and
+stays with the pipe for its whole flight; verified by disabling collision
+temporarily and reading pixels (orange and yellow pipes visible, which were
+impossible before).
+
+**2048.** Every power of two has its own pastel — cream, apricot, pink, lilac,
+lavender, baby blue, aqua, mint, butter, peach, and gold for 2048 — dark text,
+flat, no glow.
+
+**Brick Bash.** The ball is red with a white shine. The bricks are a diagonal
+mosaic across all seven neons with a glossy top edge and shaded bottom, instead
+of three row colours.
+
+**Mines** and **Rockfield** both carry a small-print instruction line now.
+Rockfield's rocks are vibrant pixel boulders — eight neon hues with outline,
+highlight and shade — and smashing reveals what was hiding underneath (gem
+diamond, bomb with fuse, or dust), which fixes the prototype's confusing
+invisible gem/bomb cells: everything is a rock until you smash it, matching
+the game's own header comment. The field still refills while less than 45% is
+cleared, so fresh rocks keep coming.
+
+**Skystack.** The background is pixel art: hard band gradient from deep space
+to warm sunset, deterministic stars with sparkles, a pixel moon, and slow
+blocky clouds.
+
+**Pixel Dash.** Obstacles went high-contrast: dark silhouettes with a bright
+golden rim-light by day, moonlit-light bodies at night (the ground goes dark,
+so the contrast inverts), and the vulture got a bright beak. Cache `v14`, hub
+label in lockstep.
+
 ---
 
 ## Corrections to brief v2

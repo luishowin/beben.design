@@ -280,14 +280,60 @@
     function render() {
         var p = Arcade.palette();
         var ctx = view.ctx;
-        ctx.fillStyle = p.bg;
+
+        // ── padel court: blue turf, glass back walls, mesh side walls ──
+        ctx.fillStyle = '#0E2A52';
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // center net
-        ctx.fillStyle = p.gridLine;
-        var seg = view.h * 0.02;
-        for (var y = 0; y < view.w; y += seg * 2) {
-            ctx.fillRect(y, view.h / 2 - 1, seg, 2);
+        // mowed turf stripes
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        var band = view.h / 8;
+        for (var b = 1; b < 8; b += 2) ctx.fillRect(0, b * band, view.w, band);
+
+        // side mesh walls
+        var wall = Math.max(5, view.w * 0.016);
+        ctx.fillStyle = '#2C3A52';
+        ctx.fillRect(0, 0, wall, view.h);
+        ctx.fillRect(view.w - wall, 0, wall, view.h);
+        ctx.fillStyle = 'rgba(255,255,255,0.14)';
+        for (var m = 0; m < view.h; m += 7) {
+            ctx.fillRect(1, m, 2, 2);
+            ctx.fillRect(wall - 4, m + 3, 2, 2);
+            ctx.fillRect(view.w - wall + 1, m + 3, 2, 2);
+            ctx.fillRect(view.w - 3, m, 2, 2);
+        }
+
+        // glass back walls (behind each player) with frame posts
+        var gwall = Math.max(10, view.h * 0.032);
+        ctx.fillStyle = 'rgba(180,215,255,0.16)';
+        ctx.fillRect(0, 0, view.w, gwall);
+        ctx.fillRect(0, view.h - gwall, view.w, gwall);
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        var posts = Math.ceil(view.w / 46);
+        for (var q = 0; q <= posts; q++) {
+            var qx = q * (view.w / posts);
+            ctx.fillRect(qx - 1, 0, 2, gwall);
+            ctx.fillRect(qx - 1, view.h - gwall, 2, gwall);
+        }
+
+        // white boundary + service lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(2, 2, view.w - 4, view.h - 4);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, view.h * 0.22); ctx.lineTo(view.w, view.h * 0.22);
+        ctx.moveTo(0, view.h * 0.78); ctx.lineTo(view.w, view.h * 0.78);
+        ctx.stroke();
+
+        // center net: solid band with mesh ticks
+        var ny = view.h / 2;
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillRect(0, ny - 3, view.w, 6);
+        ctx.fillStyle = 'rgba(255,255,255,0.16)';
+        var seg = view.h * 0.012;
+        for (var x2 = 0; x2 < view.w; x2 += seg * 2) {
+            ctx.fillRect(x2, ny - 5, seg, 10);
         }
 
         // big translucent scores
@@ -306,11 +352,26 @@
         ctx.fillStyle = p.accent;
         ctx.fillRect(pPaddle.x - hw, bottomY() - ph, hw * 2, ph * 2);
 
-        // ball
+        // ball: pixel tennis ball — optic yellow disc, white seams
         if (phase === 'serve' || phase === 'play') {
             var r = ballR();
-            ctx.fillStyle = p.headers;
-            ctx.fillRect(ball.x - r, ball.y - r, r * 2, r * 2);
+            var px = Math.max(2, r / 4);
+            for (var py = -r; py <= r; py += px) {
+                for (var bx = -r; bx <= r; bx += px) {
+                    var d = Math.sqrt(bx * bx + py * py);
+                    if (d > r) continue;
+                    if (Math.abs(Math.abs(bx) - r * 0.52) <= px * 0.9 && Math.abs(py) < r * 0.62) {
+                        ctx.fillStyle = '#F7F9F2';       // seam curve
+                    } else if (d > r - px * 1.2) {
+                        ctx.fillStyle = '#A8B32A';       // edge shade
+                    } else if (bx <= -r * 0.35 && py <= -r * 0.35) {
+                        ctx.fillStyle = '#F0FA7E';       // shine
+                    } else {
+                        ctx.fillStyle = '#D9EC3F';       // optic yellow
+                    }
+                    ctx.fillRect(ball.x + bx, ball.y + py, px + 0.5, px + 0.5);
+                }
+            }
         }
 
         if (phase === 'serve') {

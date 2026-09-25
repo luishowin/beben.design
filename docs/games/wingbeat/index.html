@@ -55,10 +55,21 @@
         };
     }
 
+    // pipes cycle through the whole neon set — the colour is assigned
+    // at spawn time so it stays stable for the pipe's whole flight
+    var PIPE_COLORS = null, colorIdx = 0;
+    function pipeColor() {
+        if (!PIPE_COLORS) {
+            var pp = Arcade.palette();
+            PIPE_COLORS = [pp.neon.lime, pp.neon.blue, pp.neon.pink, pp.neon.purple, pp.neon.orange, pp.neon.yellow];
+        }
+        return PIPE_COLORS[colorIdx++ % PIPE_COLORS.length];
+    }
+
     function spawnGate(m, x) {
         var margin = view.h * 0.14;
         var cy = margin + Math.random() * (m.ground - margin * 2);
-        gates.push({ x: x, cy: cy, passed: false });
+        gates.push({ x: x, cy: cy, passed: false, color: pipeColor() });
     }
 
     function flap() {
@@ -167,9 +178,9 @@
         }
         ctx.globalAlpha = 1;
 
-        // gates: lime pipes
+        // gates: each pipe keeps the colour it spawned with
         gates.forEach(function (g, i) {
-            ctx.fillStyle = i % 2 ? p.neon.lime : p.accent;
+            ctx.fillStyle = g.color;
             var top = g.cy - m.gap / 2, bot = g.cy + m.gap / 2;
             ctx.fillRect(g.x, 0, m.gateW, top);
             ctx.fillRect(g.x, bot, m.gateW, m.ground - bot);

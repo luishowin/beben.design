@@ -134,22 +134,52 @@
         ctx.fillStyle = p.bgSoft;
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // dusk glow toward the horizon
-        var dusk = ctx.createLinearGradient(0, 0, 0, view.h);
-        dusk.addColorStop(0, 'rgba(139,92,255,0)');
-        dusk.addColorStop(1, 'rgba(139,92,255,0.1)');
-        ctx.fillStyle = dusk;
-        ctx.fillRect(0, 0, view.w, view.h);
+        // pixel-art sky: hard band gradient, deep space to warm sunset
+        var BANDS = ['#14112E', '#1B1440', '#251750', '#33205F', '#442A6A', '#5A3570', '#74416F', '#915266', '#B1665B', '#CF7A4E'];
+        var bh = view.h / BANDS.length;
+        for (var bi = 0; bi < BANDS.length; bi++) {
+            ctx.fillStyle = BANDS[bi];
+            ctx.fillRect(0, bi * bh, view.w, bh + 1);
+        }
 
-        // static stars (far parallax — they don't ride the camera)
-        ctx.globalAlpha = 0.1;
+        // pixel stars (deterministic; some sparkle)
         ctx.fillStyle = p.headers;
-        for (var si = 0; si < 28; si++) {
+        for (var si = 0; si < 40; si++) {
             var sx = ((si * 89) % 97) / 97 * view.w;
-            var sy = ((si * 41) % 83) / 83 * view.h * 0.7;
-            ctx.fillRect(sx, sy, 2, 2);
+            var sy = ((si * 41) % 61) / 61 * view.h;
+            var ss = (si % 7 === 0) ? 2 : 1;
+            ctx.globalAlpha = (si % 3 === 0) ? 0.5 : 0.22;
+            ctx.fillRect(sx, sy, ss, ss);
+            if (si % 11 === 0) {
+                ctx.globalAlpha = 0.35;
+                ctx.fillRect(sx - 1, sy, 4, 1);
+                ctx.fillRect(sx, sy - 1, 1, 4);
+            }
         }
         ctx.globalAlpha = 1;
+
+        // pixel moon
+        var MOON = ['..YYYY..', '.YYYYYY.', 'YYYgYYYY', 'YYYYYYYY', 'YYgYYYYY', '.YYYYYY.', '..YYYY..'];
+        var mp = 4, mx = view.w - 64, my = 24;
+        for (var myy = 0; myy < MOON.length; myy++) {
+            for (var mxx = 0; mxx < MOON[myy].length; mxx++) {
+                var mch = MOON[myy][mxx];
+                if (mch === '.') continue;
+                ctx.fillStyle = mch === 'Y' ? '#FFF3D0' : '#E0C89A';
+                ctx.fillRect(mx + mxx * mp, my + myy * mp, mp, mp);
+            }
+        }
+
+        // slow blocky sunset clouds
+        ctx.fillStyle = 'rgba(255,190,150,0.16)';
+        for (var ci = 0; ci < 3; ci++) {
+            var cw = view.w * (0.16 + ci * 0.05);
+            var cx = view.w - ((t * (6 + ci * 3) + ci * view.w * 0.45) % (view.w + cw * 2));
+            var cy = view.h * (0.14 + ci * 0.1);
+            ctx.fillRect(cx, cy, cw, 6);
+            ctx.fillRect(cx + cw * 0.15, cy - 4, cw * 0.6, 4);
+            ctx.fillRect(cx + cw * 0.4, cy - 7, cw * 0.3, 3);
+        }
 
         // faint altitude lines
         ctx.strokeStyle = p.gridLine;
