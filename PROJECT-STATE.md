@@ -290,9 +290,9 @@ eyeballed in code.
 **Snake.** The food is now a pixel apple (red body, darker edge, leaf, stem) and
 the head is a bitmap sprite — dark-green outline, lighter snout, white-and-black
 eye — rotated to face the direction of travel. Grass tufts got denser and two
-shades of green (still decorative). The hub card icon is a hand-drawn 16×15
-pixel apple scaled to 256 — the first icon in the set not produced by the
-rembg pipeline.
+shades of green (still decorative). The hub icon briefly became a hand-drawn
+pixel apple; that was a misunderstanding of where the apple belonged, and the
+original icon was reinstated in the next commit.
 
 **Paddle Duel.** The ball is a pixel tennis ball (optic yellow disc, white seam
 curves, shaded edge) and the court reads as a padel court now: blue turf with
