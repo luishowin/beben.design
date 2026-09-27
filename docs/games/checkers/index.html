@@ -15,45 +15,82 @@
     <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
     <link rel="stylesheet" href="../arcade.css">
     <script src="../arcade.js"></script>
+    <style>
+        /* live turn indicator, tucked under the board; the stage keeps a band
+           reserved for it so the text never lands on the bottom row */
+        .arc-stage { padding-bottom: calc(1.9rem + env(safe-area-inset-bottom)); }
+        .arc-status {
+            position: absolute;
+            bottom: 0.55rem;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            text-align: center;
+            font-size: 0.6rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .arc-status--red { color: var(--neon-red); }
+        .arc-status--light { color: #EAF2FF; }
+    </style>
 </head>
 <body>
 
 <main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
-    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+    <span class="arc-proto">Beta</span>
+    <span class="arc-status" id="status" role="status" aria-live="polite"></span>
 </main>
 
 <script>
 (function () {
     'use strict';
 
-    /* CHECKERS (prototype)
-       You are red. Capture every light piece. The AI plays a simple strategy. */
+    /* CHECKERS
+       Red discs hold the bottom three rows and climb the board; light
+       comes down from the top. 1 Player: race the simple AI.
+       2 Players: hot-seat, both sides on this device. */
 
     var N = 8;
+    var MODE_KEY = 'beben-arcade-checkers-mode';
+
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 480 });
+    var statusEl = document.getElementById('status');
 
-    var board, playerTurn, sel, moves, captures, over, aiTimer;
+    var board, mode, turn, sel, moves, caps, over, aiTimer, selEl;
 
-    function reset() {
+    /* ── mode preference (Safari private mode throws) ────────────── */
+    function readMode() {
+        try { return localStorage.getItem(MODE_KEY) === '2p' ? '2p' : 'cpu'; }
+        catch (e) { return 'cpu'; }
+    }
+    function saveMode(m) {
+        try { localStorage.setItem(MODE_KEY, m); } catch (e) { /* ignore */ }
+    }
+
+    function reset(m) {
+        if (m) mode = m;
         board = [];
         for (var y = 0; y < N; y++) {
             board[y] = [];
             for (var x = 0; x < N; x++) {
                 board[y][x] = 0;
                 if ((x + y) % 2 === 1) {
-                    if (y < 3) board[y][x] = 1;        // player (dark/red)
-                    if (y > 4) board[y][x] = -1;       // AI (light)
+                    if (y > 4) board[y][x] = 1;        // red — you / P1, bottom rows
+                    if (y < 3) board[y][x] = -1;       // light — AI / P2, top rows
                 }
             }
         }
-        playerTurn = true;
+        turn = 1;                                      // red opens
         sel = null;
         moves = [];
-        captures = 0;
+        caps = { red: 0, light: 0 };
         over = false;
         clearTimeout(aiTimer);
-        Arcade.ui.setScore('000');
+        updateHud();
     }
 
     function inside(x, y) { return x >= 0 && y >= 0 && x < N && y < N; }
@@ -62,7 +99,7 @@
         var p = board[y][x];
         if (!p) return { steps: [], jumps: [] };
         var steps = [], jumps = [];
-        var dy = p > 0 ? 1 : -1;                       // player moves down, AI up
+        var dy = p > 0 ? -1 : 1;                       // red climbs, light descends
         var dirs = Math.abs(p) === 2 ? [dy, -dy] : [dy];
         for (var i = 0; i < dirs.length; i++) {
             var d = dirs[i];
@@ -96,37 +133,64 @@
         board[to.y][to.x] = p;
         board[from.y][from.x] = 0;
         if (via) board[via.y][via.x] = 0;
-        // promote
-        if (p === 1 && to.y === N - 1) board[to.y][to.x] = 2;
-        if (p === -1 && to.y === 0) board[to.y][to.x] = -2;
+        // crowned on the far rank: red on top, light on the bottom
+        if (p === 1 && to.y === 0) board[to.y][to.x] = 2;
+        if (p === -1 && to.y === N - 1) board[to.y][to.x] = -2;
     }
 
-    function endGame(playerWon) {
+    function updateHud() {
+        if (mode === '2p') Arcade.ui.setScore(caps.red + ' : ' + caps.light);
+        else Arcade.ui.setScore(String(caps.red).padStart(3, '0'));
+        if (statusEl) {
+            var txt, cls;
+            if (mode === '2p') {
+                txt = turn > 0 ? 'Red to move' : 'Light to move';
+                cls = turn > 0 ? 'arc-status--red' : 'arc-status--light';
+            } else {
+                txt = turn > 0 ? 'Your move' : 'CPU thinking';
+                cls = turn > 0 ? 'arc-status--red' : 'arc-status--light';
+            }
+            statusEl.textContent = txt;
+            statusEl.className = 'arc-status ' + cls;
+        }
+    }
+
+    function endGame(winner) {                          // winner: 1 red, -1 light
         over = true;
-        var res = Arcade.scores.submit('checkers', captures);
-        Arcade.audio.play(playerWon ? 'fanfare' : 'boom');
-        Arcade.ui.gameOver({
-            title: playerWon ? 'YOU WIN' : 'AI WINS',
-            label: 'Pieces captured',
-            score: captures,
-            best: res.best, isNew: res.isNew,
-            onReplay: function () { reset(); }
-        });
+        clearTimeout(aiTimer);
+        var opts = { onReplay: showSelect };
+        if (mode === '2p') {
+            Arcade.audio.play('fanfare');
+            opts.title = winner > 0 ? 'RED WINS' : 'LIGHT WINS';
+            opts.label = 'Pieces captured — red : light';
+            opts.score = caps.red + ' : ' + caps.light;
+            opts.best = null;
+            opts.isNew = false;
+        } else {
+            var playerWon = winner > 0;
+            var res = Arcade.scores.submit('checkers', caps.red);
+            Arcade.audio.play(playerWon ? 'fanfare' : 'boom');
+            opts.title = playerWon ? 'YOU WIN' : 'AI WINS';
+            opts.label = 'Pieces captured';
+            opts.score = caps.red;
+            opts.best = res.best;
+            opts.isNew = res.isNew;
+        }
+        Arcade.ui.gameOver(opts);
     }
 
     function afterMove(sign) {
         var opp = -sign;
-        var oppList = allMovesFor(Math.sign(opp));
-        var any = false;
-        for (var i = 0; i < oppList.length; i++) if (oppList[i].to.length) { any = true; break; }
-        if (!any) { endGame(sign > 0); return; }
-        playerTurn = sign < 0;   // AI just moved (sign<0) → player's turn
+        if (!allMovesFor(opp).length) { endGame(sign); return; }
+        turn = opp;
+        updateHud();
+        if (mode === 'cpu' && turn < 0) aiTimer = setTimeout(aiMove, 550);
     }
 
     function aiMove() {
-        if (over) return;
+        if (over || mode !== 'cpu' || turn > 0) return;
         var list = allMovesFor(-1);
-        if (!list.length) { endGame(true); return; }
+        if (!list.length) { endGame(1); return; }
         // prefer jumps, else random
         var withJumps = list.filter(function (m) { return m.from && movesFor(m.from.x, m.from.y).jumps.length; });
         var pool = withJumps.length ? withJumps : list;
@@ -138,18 +202,19 @@
     }
 
     function playerMove(from, to) {
+        var p = board[from.y][from.x];
         var via = to.via || null;
         if (via) {
-            captures++;
+            if (p > 0) caps.red++; else caps.light++;
             Arcade.audio.play('merge');
             Arcade.haptics.buzz('medium');
         } else {
             Arcade.audio.play('bounce');
         }
         applyMove(from, to, via);
-        Arcade.ui.setScore(String(captures).padStart(3, '0'));
-        afterMove(1);
-        if (!over && !playerTurn) aiTimer = setTimeout(aiMove, 550);
+        sel = null;
+        moves = [];
+        afterMove(p > 0 ? 1 : -1);
     }
 
     function cellAt(e) {
@@ -161,20 +226,20 @@
 
     canvas.addEventListener('pointerdown', function (e) {
         e.preventDefault();
-        if (over || !playerTurn) return;
+        if (over || selEl) return;                     // game over, or mode picker open
+        if (mode === 'cpu' && turn < 0) return;        // CPU is moving
         var c = cellAt(e);
         if (sel && sel.x === c.x && sel.y === c.y) { sel = null; moves = []; return; }
         // click a highlighted target?
         for (var i = 0; i < moves.length; i++) {
             if (moves[i].x === c.x && moves[i].y === c.y) {
-                var m = moves[i];
-                playerMove(sel, m);
-                sel = null; moves = [];
+                playerMove(sel, moves[i]);
                 return;
             }
         }
-        // select own piece
-        if (Math.sign(board[c.y][c.x]) === 1) {
+        // select a piece of the side to move
+        var sign = Math.sign(board[c.y][c.x]);
+        if (sign === turn) {
             var mf = movesFor(c.x, c.y);
             var opts = mf.jumps.length ? mf.jumps : mf.steps;
             if (opts.length) {
@@ -183,9 +248,46 @@
                 Arcade.audio.play('tap');
             }
         } else {
+            if (sign) Arcade.audio.play('denied');     // the other side's piece
             sel = null; moves = [];
         }
     });
+
+    /* ── mode picker (1 player vs CPU / 2 players hot-seat) ──────── */
+    function showSelect() {
+        clearTimeout(aiTimer);
+        if (statusEl) statusEl.textContent = '';
+        if (selEl) return;
+        selEl = document.createElement('div');
+        selEl.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        panel.style.textAlign = 'center';
+        panel.innerHTML = '<div class="arc-panel-title">Checkers</div>' +
+            '<div class="arc-over-label">Capture every piece<br>or block every move</div>';
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        actions.style.flexDirection = 'column';
+        actions.appendChild(modeButton('1 Player', 'cpu'));
+        actions.appendChild(modeButton('2 Players', '2p'));
+        panel.appendChild(actions);
+        selEl.appendChild(panel);
+        document.body.appendChild(selEl);
+    }
+    function modeButton(label, m) {
+        var btn = document.createElement('button');
+        btn.className = 'arc-action' + (m === mode ? ' arc-action--primary' : '');
+        btn.textContent = label;
+        btn.addEventListener('click', function () { chooseMode(m); });
+        return btn;
+    }
+    function chooseMode(m) {
+        mode = m;
+        saveMode(m);
+        Arcade.audio.play('select');
+        if (selEl) { selEl.remove(); selEl = null; }
+        reset(m);
+    }
 
     function render() {
         var p = Arcade.palette();
@@ -255,8 +357,9 @@
         onResume: function () { loop.resume(); }
     });
 
-    reset();
+    reset(readMode());
     loop.start();
+    showSelect();
 })();
 </script>
 
