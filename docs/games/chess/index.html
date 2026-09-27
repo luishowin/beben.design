@@ -31,8 +31,10 @@
        or en passant yet — that's the full game. */
 
     var N = 8;
-    var GLYPH = { w: { K: '\u2654', Q: '\u2655', R: '\u2656', B: '\u2657', N: '\u2658', P: '\u2659' },
-                  b: { K: '\u265A', Q: '\u265B', R: '\u265C', B: '\u265D', N: '\u265E', P: '\u265F' } };
+    /* Solid silhouettes for BOTH sides. The hollow "white chess" glyphs, filled
+       dark, read as white line art on this board, so light and dark pieces were
+       impossible to tell apart — hence one solid glyph set + strong fills. */
+    var GLYPH = { K: '\u265A', Q: '\u265B', R: '\u265C', B: '\u265D', N: '\u265E', P: '\u265F' };
     var VAL = { P: 1, N: 3, B: 3, R: 5, Q: 9, K: 100 };
 
     var canvas = document.getElementById('game');
@@ -263,16 +265,18 @@
                 var pc = board[y][x];
                 if (!pc) continue;
                 var cx = (x + 0.5) * cell, cy = (y + 0.52) * cell;
-                if (pc.c === 'w') {
-                    ctx.fillStyle = '#F5F5F7';
-                    ctx.strokeStyle = 'rgba(0,0,0,0.55)';
-                } else {
-                    ctx.fillStyle = '#434A63';
-                    ctx.strokeStyle = '#D9DEED';
+                var glyph = GLYPH[pc.t];
+                if (pc.c === 'w') {          // white: near-white body, dark rim
+                    ctx.fillStyle = '#F2F4FA';
+                    ctx.strokeStyle = 'rgba(8,10,17,0.85)';
+                    ctx.lineWidth = Math.max(1.2, cell * 0.045);
+                } else {                     // black: near-black body, slim slate rim
+                    ctx.fillStyle = '#0D1019';
+                    ctx.strokeStyle = '#AAB5D2';
+                    ctx.lineWidth = Math.max(1.2, cell * 0.038);
                 }
-                ctx.lineWidth = Math.max(1.5, cell * 0.05);
-                ctx.strokeText(GLYPH[pc.c][pc.t], cx, cy);
-                ctx.fillText(GLYPH[pc.c][pc.t], cx, cy);
+                ctx.strokeText(glyph, cx, cy);
+                ctx.fillText(glyph, cx, cy);
             }
         }
     }
