@@ -331,6 +331,41 @@ golden rim-light by day, moonlit-light bodies at night (the ground goes dark,
 so the contrast inverts), and the vulture got a bright beak. Cache `v14`, hub
 label in lockstep.
 
+### Theme toggle, brand red, navbar, hero CTA
+
+**Toggle rebuilt as a travel pill.** The old in-place sun/moon crossfade is now a
+single `132px` pill (later tightened to `122px`): the icon mover travels the pill
+width and rolls ~205 degrees while the Figma sun/moon crossfade at the midpoint,
+and the LIGHT/DARK labels crossfade with a small translateX. Figma exports live
+in `docs/assets/icons/sun.svg` + `moon.svg` and are inlined verbatim; the mover
+parent owns translate/rotate, each icon only fades/scales. The moon needed two
+corrections in CSS (vertical flip, then horizontal mirror, then a 45-degree
+clockwise tilt, eased back 30 degrees counter-clockwise on mobile). Same
+`beben-theme` / `data-theme` / pre-paint logic, both labels always in the markup
+so JS only syncs `aria-pressed`/`aria-label`. Mobile keeps a 30px icon-only
+circle. Dark pill blends into the nav (`var(--nav-bg)`), light pill is white
+with onyx text (white-on-white would have been invisible). Verified travelling
+offset + overshoot settle in a headless browser, both directions, persistence
+across reload, tool pages, zero console errors.
+
+**Brand red is `#E20531`.** `--highlight`/`--accent` moved off `#E71D36`
+everywhere (index.css both themes, tool shell, sprite fallback). The accessible
+`--highlight-text` pair stays: the new red measures 4.48 (light) / 3.77 (dark),
+still under 4.5:1 for body text. Tool-internal `#E71D36` demo data and error
+colours (contrast-grid, qr-code-generator) intentionally untouched.
+
+**Navbar** is 70% (`--nav-bg` alpha 0.86 to 0.7, tool shell included) with a
+10px backdrop blur on both prefixes. This also fixed a latent mismatch where
+Safari got `blur(2px)` against everyone else's `blur(12px)`.
+
+**Hero CTA is a pill** (`.cta-link.cta-pill`, hero only): 1px ring now
+`var(--border)` — faint on the dark photo in light site-theme, by request —
+translucent black resting fill, yellow-tint brightening on hover (no motion),
+219px wide with the arrow in its own span 28px off the text.
+
+Asset lock moved `4.7` to `5.9` across all four files in lockstep; both
+generators re-ran idempotent, status panel re-stamped, voice and facts clean.
+
 ---
 
 ## Corrections to brief v2

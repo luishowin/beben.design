@@ -19,10 +19,11 @@ document.documentElement.classList.add('js');
     html.setAttribute('data-theme', initialTheme);
 
     const themeToggle = document.getElementById('theme-toggle');
-    const themeLabel = themeToggle ? themeToggle.querySelector('.theme-toggle__label') : null;
 
+    // The LIGHT/DARK strings both live in the pill markup and crossfade
+    // via CSS, so JS only keeps the accessible name in sync. It never
+    // rewrites the visible text (that would fight the transition).
     function reflectTheme(theme) {
-        if (themeLabel) themeLabel.textContent = theme === 'dark' ? 'DARK' : 'LIGHT';
         if (themeToggle) {
             themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
             themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');

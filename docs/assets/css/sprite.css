@@ -226,7 +226,7 @@
    with no visible keyboard focus on every page of the site. */
 .sprite-panel .chat-input:focus:not(:focus-visible) { outline: none; }
 .sprite-panel .chat-input:focus-visible {
-  outline: 2px solid var(--sw-accent, #E71D36);
+  outline: 2px solid var(--sw-accent, #E20531);
   outline-offset: 1px;
 }
 .sprite-panel .chat-input::placeholder { color: var(--sw-text-muted); }

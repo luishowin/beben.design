@@ -68,8 +68,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="/assets/css/index.css?v=4.7">
-    <link rel="stylesheet" href="/assets/css/sprite.css?v=4.7">
+    <link rel="stylesheet" href="/assets/css/index.css?v=5.9">
+    <link rel="stylesheet" href="/assets/css/sprite.css?v=5.9">
     <link rel="alternate" type="application/rss+xml" title="Beben Design Blog" href="/blog/feed.xml">
 
     <link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
@@ -287,18 +287,63 @@
     </a>
     <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
-            <span class="theme-toggle__label">LIGHT</span>
-            <span class="theme-toggle__dial">
-                <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <line x1="12" y1="2" x2="12" y2="4.3"></line><line x1="12" y1="19.7" x2="12" y2="22"></line>
-                    <line x1="2" y1="12" x2="4.3" y2="12"></line><line x1="19.7" y1="12" x2="22" y2="12"></line>
-                    <line x1="4.93" y1="4.93" x2="6.55" y2="6.55"></line><line x1="17.45" y1="17.45" x2="19.07" y2="19.07"></line>
-                    <line x1="4.93" y1="19.07" x2="6.55" y2="17.45"></line><line x1="17.45" y1="6.55" x2="19.07" y2="4.93"></line>
-                </svg>
-                <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
-                </svg>
+            <span class="theme-toggle__label theme-toggle__label--light" aria-hidden="true">LIGHT</span>
+            <span class="theme-toggle__label theme-toggle__label--dark" aria-hidden="true">DARK</span>
+            <span class="theme-toggle__mover" aria-hidden="true">
+                <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M30.3037 54.4873C30.3037 55.614 29.3904 56.5273 28.2637 56.5273C27.137 56.5273 26.2236 55.614 26.2236 54.4873V47.5342C26.2236 46.4075 27.137 45.4941 28.2637 45.4941C29.3904 45.4941 30.3037 46.4075 30.3037 47.5342V54.4873Z" fill="url(#paint0_linear_723_42)"/>
+<path d="M16.0796 40.4478C16.8765 41.2446 16.8765 42.5366 16.0796 43.3335L11.1636 48.2495C10.3667 49.0464 9.07471 49.0464 8.27783 48.2495C7.48096 47.4526 7.48096 46.1606 8.27783 45.3638L13.1938 40.4478C13.9907 39.6509 15.2827 39.6509 16.0796 40.4478Z" fill="url(#paint1_linear_723_42)"/>
+<path d="M48.2495 45.3647C49.0463 46.1616 49.0462 47.4535 48.2493 48.2502C47.4525 49.0468 46.1609 49.0466 45.3643 48.25L40.4478 43.3335C39.6509 42.5367 39.651 41.2447 40.448 40.448C41.2448 39.6515 42.5364 39.6516 43.333 40.4482L48.2495 45.3647Z" fill="url(#paint2_linear_723_42)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M28.2627 16.0215C35.0239 16.0215 40.5057 21.5025 40.5059 28.2637L40.502 28.5801C40.3343 35.1954 34.9184 40.5068 28.2627 40.5068L27.9473 40.5029C21.3319 40.3354 16.0205 34.9194 16.0205 28.2637C16.0207 21.5027 21.5017 16.0217 28.2627 16.0215ZM28.2627 20.0215C23.7108 20.0217 20.0207 23.7118 20.0205 28.2637C20.0205 32.8157 23.7107 36.5066 28.2627 36.5068C32.8149 36.5068 36.5059 32.8159 36.5059 28.2637C36.5057 23.7116 32.8148 20.0215 28.2627 20.0215Z" fill="url(#paint3_linear_723_42)"/>
+<path d="M11.0332 28.2642C11.0332 29.3911 10.1196 30.3047 8.99268 30.3047H2.04053C0.913575 30.3047 0 29.3911 0 28.2642C0 27.1372 0.913575 26.2236 2.04053 26.2236H8.99268C10.1196 26.2236 11.0332 27.1372 11.0332 28.2642Z" fill="url(#paint4_linear_723_42)"/>
+<path d="M56.5273 28.2642C56.5273 29.3911 55.6138 30.3047 54.4868 30.3047H47.5347C46.4077 30.3047 45.4941 29.3911 45.4941 28.2642C45.4941 27.1372 46.4077 26.2236 47.5347 26.2236H54.4868C55.6138 26.2236 56.5273 27.1372 56.5273 28.2642Z" fill="url(#paint5_linear_723_42)"/>
+<path d="M16.0796 13.1948C16.8765 13.9917 16.8765 15.2837 16.0796 16.0806C15.2827 16.8774 13.9907 16.8774 13.1938 16.0806L8.27783 11.1645C7.48096 10.3677 7.48096 9.07568 8.27783 8.27881C9.07471 7.48193 10.3667 7.48193 11.1636 8.27881L16.0796 13.1948Z" fill="url(#paint6_linear_723_42)"/>
+<path d="M48.2495 8.27881C49.0464 9.07568 49.0464 10.3677 48.2495 11.1646L43.3335 16.0806C42.5366 16.8774 41.2446 16.8774 40.4478 16.0806C39.6509 15.2837 39.6509 13.9917 40.4478 13.1948L45.3638 8.27881C46.1606 7.48193 47.4526 7.48193 48.2495 8.27881Z" fill="url(#paint7_linear_723_42)"/>
+<path d="M30.3037 8.99414C30.3037 10.1208 29.3904 11.0342 28.2637 11.0342C27.137 11.0342 26.2236 10.1208 26.2236 8.99414V2.04004C26.2236 0.913356 27.137 0 28.2637 0C29.3904 0 30.3037 0.913357 30.3037 2.04004V8.99414Z" fill="url(#paint8_linear_723_42)"/>
+<defs>
+<linearGradient id="paint0_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint1_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint2_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint3_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint4_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint5_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint6_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint7_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+<linearGradient id="paint8_linear_723_42" x1="34.1408" y1="32.922" x2="53.0327" y2="11.5152" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF9D00"/>
+<stop offset="1" stop-color="#FFDB21"/>
+</linearGradient>
+</defs></svg>
+                <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.6084 0C17.5413 3.02651 16.96 6.28223 16.96 9.67383C16.96 25.7381 29.9826 38.7616 46.0469 38.7617C49.7405 38.7617 53.2728 38.071 56.5234 36.8154C52.5363 48.1235 41.7594 56.2285 29.0869 56.2285C13.0227 56.2284 0.000128601 43.2058 0 27.1416C7.93753e-05 14.7716 7.72213 4.20574 18.6084 0Z" fill="url(#paint0_linear_723_41)"/>
+<defs>
+<linearGradient id="paint0_linear_723_41" x1="28.2617" y1="12.3139" x2="28.2617" y2="77.3354" gradientUnits="userSpaceOnUse">
+<stop stop-color="#B0C9EC"/>
+<stop offset="1" stop-color="#1F242B"/>
+</linearGradient>
+</defs></svg>
             </span>
         </button>
         <ul class="menu desktop-only">
@@ -439,7 +484,7 @@
     </div>
 </footer>
 
-<script src="/assets/JS/index.js?v=4.7"></script>
-<script src="/assets/JS/sprite.js?v=4.7"></script>
+<script src="/assets/JS/index.js?v=5.9"></script>
+<script src="/assets/JS/sprite.js?v=5.9"></script>
 </body>
 </html>

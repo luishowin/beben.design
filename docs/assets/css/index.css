@@ -24,9 +24,11 @@
     --bg:            #f5f5f5;
     --bg-soft:       #efefef;
     --headers:       #141414;
-    --highlight:     #E71D36;
+    --highlight:     #E20531;
     /* Accessible variant, for --highlight applied to normal-size TEXT.
-       6.13:1 on --bg, 5.81:1 on --bg-soft. The brand red is 4.16 / 3.95. */
+       6.13:1 on --bg, 5.81:1 on --bg-soft. The brand red (#E20531) is
+       4.48 / 4.25, so it stays reserved for large display text, fills
+       and focus rings where 3:1 is the bar. */
     --highlight-text: #B81124;
     --yellow:        #FFC710;
     /* Accessible variant, for --yellow applied to normal-size TEXT.
@@ -40,7 +42,7 @@
     --grid-line:     rgba(20, 20, 20, 0.04);
 
     --whatsapp:      #25D366;
-    --nav-bg:        rgba(245, 245, 245, 0.86);
+    --nav-bg:        rgba(245, 245, 245, 0.7);
     --overlay:       #F5F5F5;
 }
 
@@ -49,8 +51,10 @@
     --bg:            #141414;
     --bg-soft:       #1C1C1C;
     --headers:       #F7F4F3;
-    --highlight:     #E71D36;
-    /* 4.98:1 on --bg, 4.60:1 on --bg-soft. The brand red is 4.06 / 3.75. */
+    --highlight:     #E20531;
+    /* 4.98:1 on --bg, 4.60:1 on --bg-soft. The brand red (#E20531) is
+       3.77 / 3.49 on dark surfaces, so it stays reserved for large
+       display text, fills and focus rings where 3:1 is the bar. */
     --highlight-text: #F04458;
     --yellow:        #FFC710;
     /* 11.78:1 on --bg, 10.90:1 on --bg-soft. On a dark surface the brand
@@ -64,7 +68,7 @@
     --grid-line:     rgba(247, 244, 243, 0.04);
 
     --whatsapp:      #25D366;
-    --nav-bg:        rgba(20, 20, 20, 0.86);
+    --nav-bg:        rgba(20, 20, 20, 0.7);
     --overlay:       #141414;
 }
 
@@ -145,8 +149,8 @@ nav {
     justify-content: space-between;
     padding: 0 2rem;
     background: var(--nav-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -171,66 +175,125 @@ nav {
     gap: 1.5rem;
 }
 
-/* ── Theme toggle — pill switch with sun/moon dial ──────────────── */
+/* ── Theme toggle — LIGHT/DARK travel pill ────────────────────
+   A single pill control. The icon mover travels the pill width and
+   rolls while the sun/moon crossfade at the midpoint; the labels
+   crossfade with a small translateX. End positions are driven by
+   :root[data-theme], so the pre-paint theme applies instantly with
+   no animation on load. The sun/moon SVGs are the Figma exports,
+   untouched — the .theme-toggle__mover parent owns translate/rotate
+   and each icon only fades/scales. */
 .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: 2px solid var(--headers);
+    --toggle-travel: 76px;
+    position: relative;
+    width: 122px;
+    height: 38px;
+    flex: none;
+    border: 1px solid #3F3F3F;
     border-radius: 999px;
-    padding: 4px 5px 4px 12px;
-    /* Without this the label inherits body's 1.6 and its line box —
-       not the dial — sets the pill height, so the resize below would
-       silently do nothing. */
-    line-height: 1;
-    background: transparent;
-    color: var(--headers);
+    /* Light theme: white pill. Dark theme (below) blends into the nav. */
+    background: #FFFFFF;
+    color: #141414;
     cursor: pointer;
-    transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease,
+    padding: 0;
+    overflow: hidden;
+    /* Without this the label inherits body's 1.6 and its line box
+       sets the pill height instead of the fixed height below. */
+    line-height: 1;
+    transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease,
                 transform var(--dur-fast) var(--ease-snap);
 }
 
-.theme-toggle:hover {
-    border-color: var(--highlight);
-    color: var(--highlight-text);
+/* Dark theme: same background as the navbar so the pill sits in it. */
+:root[data-theme="dark"] .theme-toggle {
+    background: var(--nav-bg);
+    color: #FFFFFF;
 }
 
+.theme-toggle:hover { border-color: currentColor; }
+.theme-toggle:active { transform: scale(0.98); }
+
 .theme-toggle__label {
+    position: absolute;
+    top: 50%;
     font-family: var(--font-mono);
     font-size: 0.78rem;
     font-weight: 500;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    /* The label swaps LIGHT ⇄ DARK, so reserve the wider string's
-       width or the pill's left edge jumps ~9px on every toggle.
-       6ch ≈ 45px clears LIGHT's 43.7px including its letter-spacing. */
-    display: inline-block;
-    min-width: 6ch;
-    text-align: center;
+    color: currentColor;
+    white-space: nowrap;
+    transition: opacity 220ms ease, transform 220ms ease;
 }
 
-.theme-toggle__dial {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    display: grid;
-    place-items: center;
+.theme-toggle__label--light {
+    left: 18px;
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.theme-toggle__label--dark {
+    right: 18px;
+    opacity: 0;
+    transform: translateY(-50%) translateX(6px);
+}
+
+/* Text begins its swap slightly before the icon settles: the
+   incoming label is delayed, the outgoing leaves immediately. */
+:root[data-theme="dark"] .theme-toggle__label--light {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-6px);
+}
+:root[data-theme="dark"] .theme-toggle__label--dark {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    transition-delay: 90ms;
+}
+:root[data-theme="light"] .theme-toggle__label--light { transition-delay: 90ms; }
+
+.theme-toggle__mover {
+    position: absolute;
+    top: 50%;
+    left: 9px;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-50%) translateX(var(--toggle-travel)) rotate(0deg);
+    transition: transform 380ms cubic-bezier(0.33, 1.28, 0.42, 1);
+    will-change: transform;
+}
+
+:root[data-theme="dark"] .theme-toggle__mover {
+    transform: translateY(-50%) translateX(0) rotate(-205deg);
 }
 
 .theme-toggle__icon {
     position: absolute;
-    width: 11px;
-    height: 11px;
-    transition: opacity var(--dur-base) ease, transform var(--dur-base) var(--ease-snap);
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 180ms ease, transform 180ms ease;
 }
 
-.theme-toggle__icon--sun { opacity: 1; transform: rotate(0deg) scale(1); }
-.theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+.theme-toggle__icon--sun { opacity: 1; transform: scale(1); }
+/* Mirrored on both axes (≡ 180°): the Figma crescent ships
+   upside-down and facing the wrong way, so both axes are negated
+   here rather than touching the artwork. */
+.theme-toggle__icon--moon { opacity: 0; transform: scale(-0.6, -0.6) rotate(45deg); }
 
-:root[data-theme="dark"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg) scale(0.6); }
-:root[data-theme="dark"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0deg) scale(1); }
+/* Midpoint crossfade: the outgoing icon fades fast while the
+   incoming one waits until the mover crosses the middle. The
+   delay lives on the state being entered, which is the delay the
+   transition actually uses. */
+:root[data-theme="dark"] .theme-toggle__icon--sun { opacity: 0; transform: scale(0.6); }
+:root[data-theme="dark"] .theme-toggle__icon--moon { opacity: 1; transform: scale(-1, -1) rotate(45deg); transition-delay: 140ms; }
+:root[data-theme="light"] .theme-toggle__icon--sun { transition-delay: 140ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle,
+    .theme-toggle__mover,
+    .theme-toggle__icon,
+    .theme-toggle__label { transition: none !important; }
+}
 
 .menu {
     list-style: none;
@@ -415,6 +478,7 @@ h2 {
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .js [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .cta-link.cta-pill { transition: none !important; }
 }
 
 /* ── 7. HERO ──────────────────────────────────────────────────── */
@@ -438,8 +502,8 @@ h2 {
     --text:       #F7F4F3;
     --text-muted: rgba(247, 244, 243, 0.88);
     --bg:         #141414;
-    /* The brand red is unusable on a dark surface — #E71D36 lands at
-       2.9:1 on the CTA. The brand yellow clears it comfortably:
+    /* The brand red is unusable on a dark surface — #E20531 lands at
+       ~2.9:1 on the CTA. The brand yellow clears it comfortably:
        8.4:1 on the CTA, 6.5:1 on the italic "logic", measured against
        the actual photo pixels under the scrim. */
     --highlight:  var(--yellow);
@@ -551,6 +615,27 @@ h2 {
 }
 
 .cta-link:hover::after { width: 100%; }
+
+/* Pill variant — currently the homepage hero CTA only. Yellow ring +
+   translucent tint on the dark hero photo. Hover brightens the pill;
+   the arrow rides in its own span so the text–arrow gap is explicit. */
+.cta-link.cta-pill {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.7rem 1.5rem;
+    transition: background-color var(--dur-fast) ease;
+}
+.cta-link.cta-pill::before,
+.cta-link.cta-pill::after { content: none; }
+.cta-link.cta-pill:hover { background: rgba(255, 199, 16, 0.25); }
+.cta-pill__arrow {
+    display: inline-block;
+    /* 8px of inter-word space left with the old literal space, so 28px
+       lands the pill exactly 20px longer than before, all of it here. */
+    margin-left: 28px;
+}
 
 /* ── 9. SERVICE / CARD GRID ───────────────────────────────────── */
 /* These only ever sit inside .section--soft sections in the
@@ -1257,8 +1342,23 @@ footer {
     .footer-nav { justify-content: flex-start; }
     .footer-container { flex-direction: column; }
 
+    /* Mobile keeps an icon-only circle: labels off, mover centred,
+       travel disabled, only the roll + sun/moon crossfade remains. */
+    .theme-toggle { width: 30px; height: 30px; }
+    :root[data-theme="light"] .theme-toggle { border-color: rgb(151, 151, 151); }
     .theme-toggle__label { display: none; }
-    .theme-toggle { padding: 5px; gap: 0; border-radius: 50%; }
+    .theme-toggle__mover {
+        left: 50%;
+        width: 18px;
+        height: 18px;
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    /* Mobile moon sits 30° counter-clockwise from the desktop tilt. */
+    .theme-toggle__icon--moon { transform: scale(-0.6, -0.6) rotate(15deg); }
+    :root[data-theme="dark"] .theme-toggle__icon--moon { transform: scale(-1, -1) rotate(15deg); }
+    :root[data-theme="dark"] .theme-toggle__mover {
+        transform: translate(-50%, -50%) rotate(-180deg);
+    }
 
     .sprite-preview__pill { padding: 8px 18px 8px 8px; gap: 12px; }
     .sprite-preview__text { font-size: 0.86rem; }
