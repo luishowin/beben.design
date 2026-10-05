@@ -366,6 +366,52 @@ translucent black resting fill, yellow-tint brightening on hover (no motion),
 Asset lock moved `4.7` to `5.9` across all four files in lockstep; both
 generators re-ran idempotent, status panel re-stamped, voice and facts clean.
 
+### Homepage refinement pass
+
+**Toggle scaled to the nav rhythm.** `122x38` to `104x32`, icon 24 to 20,
+labels 0.78 to 0.7rem, travel recomputed so the roll and midpoint crossfade
+are untouched. Mirrored in the tool shell and rebuilt. Mobile keeps the 30px
+icon-only circle, still past the 24px AA minimum.
+
+**Services are six, in a bento.** Posters and Print, the AI card and
+Rebranding are gone from the grid; the six that remain carry concise
+second-person descriptions. Layout is a deterministic dense grid
+(`4+2 / 2+4 / 3+3`, `grid-auto-flow: dense`), collapsing to full/half rows on
+tablet and a single column on mobile. No holes, no randomisation.
+
+**CTA pills share one recipe.** The services, case-studies and contact CTAs
+use the hero pill's styling (1px `var(--border)` ring, transparent fill, same
+padding, white fill on hover) with the theme red ink instead of the hero's
+photo yellow. The supplied 22x21 services SVG, 73x67 paper plane (scaled to
+22px wide) and 14x14 arrow are inlined verbatim with strokes re-pointed to
+`currentColor`, because the fixed `#141B34` is invisible in one of the themes.
+Text precedes the icon, per request. Destinations unchanged.
+
+**AI Integration is a banner, not a card.** New plain `#ai` section between
+Services and Work, linking to `/services/` (no `/ai/` page was invented). The
+banner pill carries the supplied 5x5 sparkle SVG at 60px with its blue
+gradient intact, and the 14x14 arrow far right; hover turns border and arrow
+the stars' `#68B1FF`. Copy is second-person and avoids the banned `leverage`.
+Inserting the section flipped every downstream surface one step, preserving
+the strict plain/soft alternation.
+
+**Case studies are editorial.** Sprite, Codex and Arcadia (labelled Arcadia,
+linked to the existing `/beben-arcade/` file) with real project art inside
+geometric masks: rippled circle, pentagon, and a regular hexagon locked at
+`200/173` so it never squeezes. Hover tilts the shape and drifts the image
+(~420ms); `prefers-reduced-motion` disables it; nothing is hover-gated.
+
+**Tooling is five pills, not clickable.** HTML/CSS, React, Python, SQLite and
+Rust (Framer and WordPress removed) using the supplied wordmark WebPs, now in
+`docs/assets/images/tooling/`; the Rust mark inverts in dark mode. Hover gives
+a subtle per-technology tint. Process hover timing moved to 200ms, FAQ gained
+"What is the vibe like?" (homepage answers drop the shared left rule), and
+`.back-to-top` is a pill site-wide.
+
+Asset lock moved `5.9` to `6.1` in lockstep; both generators re-ran
+idempotent, status panel re-stamped, voice and facts clean. Measured at
+commit: 33 pages, 1042 internal links checked and 0 broken.
+
 ---
 
 ## Corrections to brief v2
