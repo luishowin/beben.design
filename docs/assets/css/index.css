@@ -1183,6 +1183,36 @@ footer {
 }
 .next-step .cta-row { margin-top: 2.2rem; }
 
+/* ── Contact CTA backdrop ─────────────────────────────────────
+   Every band whose CTA leads to the contact page shares one
+   photographic backdrop: the Skybound wind farm, dimmed so copy
+   stays legible. That is .next-step site-wide plus the homepage
+   #contact section (marked .contact-cta-bg). Text is forced light
+   in both themes because the overlay darkens the surface; the red
+   headline accent follows the hero precedent and goes yellow. */
+.next-step,
+#contact.contact-cta-bg {
+    background:
+        linear-gradient(rgba(10, 14, 20, 0.58), rgba(10, 14, 20, 0.58)),
+        url("../images/skybound-wind-farm-haven.webp") center / cover no-repeat;
+}
+.next-step .eyebrow,
+#contact.contact-cta-bg .eyebrow { color: rgba(255, 255, 255, 0.75); }
+.next-step h2,
+#contact.contact-cta-bg h2 {
+    color: #FFFFFF;
+    text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5);
+}
+.next-step h2 .highlight-box,
+#contact.contact-cta-bg h2 .highlight-box { color: var(--yellow); }
+.next-step p,
+#contact.contact-cta-bg p {
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5);
+}
+.next-step .cta-link { color: #FFFFFF; }
+.next-step .cta-link::after { background: #FFFFFF; }
+
 .tech-list { list-style: none; margin-top: 1.2rem; }
 .tech-list li {
     font-family: var(--font-mono);

@@ -94,8 +94,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="./assets/css/index.css?v=6.5">
-    <link rel="stylesheet" href="./assets/css/sprite.css?v=6.5">
+    <link rel="stylesheet" href="./assets/css/index.css?v=6.6">
+    <link rel="stylesheet" href="./assets/css/sprite.css?v=6.6">
 
     <!-- The hero photo is a CSS background, so the preload scanner never
          finds it. Without this the hero paints flat #141414 for a beat. -->
@@ -152,47 +152,74 @@
             display: block;
             margin-left: 0.7rem;
         }
-        .cta-link.cta-pill--site .cta-pill__icon--plane { width: 18px; }
         /* #contact a carries an ID selector, so the pill ink needs one too. */
         #contact .cta-link.cta-pill--site,
         #contact .cta-link.cta-pill--site:hover { color: #FFFFFF; }
 
-        /* ── Services bento ──────────────────────────────────────────
-           Deterministic asymmetric grid, dense flow so no holes.
-           Rows: 4+2 / 2+4 / 3+3. */
-        .services-bento {
+        /* ── Services list ─────────────────────────────────────────
+           Numbered rows: grey mono number, title + description,
+           diagonal arrow pinned far right. Whole row is one link. */
+        .services-list {
+            list-style: none;
+            margin: 1rem 0 0;
+            padding: 0;
+            border-top: 1px solid var(--border);
+        }
+        .services-list li { border-bottom: 1px solid var(--border); }
+        .service-row-link {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            grid-auto-flow: dense;
-            gap: 1px;
-            border: 1px solid var(--border);
-            margin-top: 1rem;
-            background: var(--border);
+            grid-template-columns: 64px 1fr auto;
+            gap: 1.25rem;
+            align-items: center;
+            padding: 1.6rem 0.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: padding-left var(--dur-fast) var(--ease-snap),
+                        background var(--dur-fast) ease;
         }
-        .bento-card {
-            background: var(--bg);
-            padding: 2rem;
-            transition: background var(--dur-fast) ease, color var(--dur-fast) ease,
-                        transform var(--dur-fast) var(--ease-snap);
+        .service-row-link:hover,
+        .service-row-link:focus-visible {
+            padding-left: 0.9rem;
+            background: var(--bg-soft);
         }
-        .bento-card:hover {
-            background: var(--headers);
-            color: var(--bg);
-            transform: translateY(-3px);
+        .svc-num {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
         }
-        .bento-card h3 {
+        .svc-main { min-width: 0; }
+        .svc-title {
+            display: block;
             font-family: var(--font-body);
             font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+            color: var(--headers);
+            margin-bottom: 0.35rem;
         }
-        .bento-card p { font-size: 0.86rem; line-height: 1.65; }
-        .bento-card--lg { grid-column: span 4; }
-        .bento-card--md { grid-column: span 3; }
-        .bento-card--sm { grid-column: span 2; }
-        .bento-card--lg { padding: 2.4rem; }
-        .bento-card--lg h3 { font-size: 1.05rem; }
-        .bento-card--lg p { font-size: 0.9rem; max-width: 52ch; }
+        .service-row-link:hover .svc-title,
+        .service-row-link:focus-visible .svc-title { color: var(--highlight-text); }
+        .svc-desc {
+            margin: 0;
+            font-size: 0.88rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+            max-width: 60ch;
+        }
+        .svc-arrow {
+            width: 14px;
+            height: 14px;
+            flex: none;
+            display: block;
+            color: var(--text-muted);
+            transition: transform 200ms var(--ease-snap), color 200ms ease;
+        }
+        .service-row-link:hover .svc-arrow,
+        .service-row-link:focus-visible .svc-arrow {
+            transform: translate(3px, -3px);
+            color: var(--highlight-text);
+        }
 
         /* ── AI banner ─────────────────────────────────────────────── */
         #ai .ai-lead {
@@ -242,89 +269,102 @@
         }
         .ai-pill__icon.stars-enter { animation: ai-stars-nudge 700ms var(--ease-snap); }
 
-        /* ── Case editorial rows ───────────────────────────────────── */
+        /* ── Project cards ─────────────────────────────────────────
+           Rectangular image cards. Photo diffuses into solid black
+           so copy stays legible in both themes. Cards stack
+           vertically, full width. */
         #work .work-intro { font-size: 0.95rem; line-height: 1.7; color: var(--text-muted); max-width: 60ch; }
-        .case-ed {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(1.5rem, 4vw, 3.5rem);
-            align-items: center;
-            border-top: 1px solid var(--border);
-            padding: clamp(2rem, 5vw, 3.5rem) 0;
-            text-decoration: none;
-            color: inherit;
+        .proj-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
         }
-        .case-ed:last-of-type { border-bottom: 1px solid var(--border); }
-        .case-ed--flip .case-ed__visual { order: 2; }
-        .case-ed__visual { display: grid; place-items: center; perspective: 800px; padding: 30px; }
-        .shape {
-            width: min(100%, 380px);
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
+        .proj-card {
             position: relative;
-            background: var(--bg-soft);
+            display: block;
+            overflow: hidden;
+            border-radius: 18px;
             border: 1px solid var(--border);
-            transition: transform 420ms var(--ease-snap);
+            background: #000;
+            min-height: clamp(320px, 38vw, 420px);
+            text-decoration: none;
+            color: #fff;
+            isolation: isolate;
         }
-        .shape img {
+        .proj-card__bg {
             position: absolute;
-            inset: -6%;
-            width: 112%;
-            height: 112%;
-            max-width: none;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            transition: transform 420ms var(--ease-snap);
+            z-index: 0;
+            transition: transform 500ms var(--ease-snap);
         }
-        .shape--sprite {
-            border-radius: 50%;
-            /* Ripples: concentric rings outside the circle edge. The gaps
-               reuse the section surface so only the rings read as lines. */
-            box-shadow: 0 0 0 12px var(--bg-soft),
-                        0 0 0 13px var(--border-strong),
-                        0 0 0 26px var(--bg-soft),
-                        0 0 0 27px var(--border);
+        .proj-card:hover .proj-card__bg,
+        .proj-card:focus-visible .proj-card__bg { transform: scale(1.03); }
+        .proj-card__scrim {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background:
+                linear-gradient(0deg, rgba(0,0,0,0.55), transparent 55%),
+                linear-gradient(100deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.92) 75%, #000 100%);
         }
-        .shape--codex { clip-path: polygon(50% 0%, 100% 38%, 81% 100%, 19% 100%, 0% 38%); aspect-ratio: 4 / 3; }
-        .shape--arcadia {
-            /* Regular pointy-side hexagon: locked aspect so the geometry
-               holds at any viewport width instead of squeezing. */
-            aspect-ratio: 200 / 173;
-            clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+        .proj-card__content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            min-height: inherit;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
         }
-        .shape--codex img { object-fit: contain; background: var(--bg-soft); }
-        .case-ed:hover .shape { transform: rotate(-2deg) scale(1.02); }
-        .case-ed:hover .shape img { transform: scale(1.07) rotate(1deg); }
-        .case-ed__kind {
+        .proj-card__kind {
             display: block;
             font-family: var(--font-mono);
             font-size: 0.68rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.72);
             margin-bottom: 0.6rem;
         }
-        .case-ed h3 {
+        .proj-card h3 {
             font-family: var(--font-title);
             font-weight: 400;
             font-size: clamp(1.6rem, 3vw, 2.2rem);
             line-height: 1.1;
-            color: var(--headers);
-            margin-bottom: 0.8rem;
+            color: #fff;
+            margin-bottom: 0.7rem;
         }
-        .case-ed:hover h3 { color: var(--highlight-text); }
-        .case-ed__body { font-size: 0.92rem; line-height: 1.75; color: var(--text-muted); max-width: 46ch; }
-        .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.1rem; }
-        .tag-pill {
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border: 1px solid var(--border-strong);
+        .proj-card:hover h3,
+        .proj-card:focus-visible h3 { color: #ffd9e1; }
+        .proj-card__body {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.85);
+            max-width: 46ch;
+            margin: 0;
+        }
+        .proj-card__pill {
+            align-self: flex-end;
+            margin-top: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid rgba(255,255,255,0.35);
             border-radius: 999px;
-            color: var(--text-muted);
+            background: rgba(10, 20, 35, 0.72);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+            padding: 0.6rem 1.2rem;
         }
+        .proj-card__pill svg { width: 12px; height: 12px; flex: none; display: block; }
+        .proj-card:hover .proj-card__pill,
+        .proj-card:focus-visible .proj-card__pill { border-color: #ff4e74; }
 
         /* ── Process: hover timing only (200ms) ────────────────────── */
         #process .process-step { transition: padding-left 200ms var(--ease-snap); }
@@ -374,24 +414,23 @@
 
         /* ── Responsive ────────────────────────────────────────────── */
         @media (max-width: 900px) {
-            .bento-card--lg { grid-column: span 6; }
-            .bento-card--md { grid-column: span 3; }
-            .bento-card--sm { grid-column: span 3; }
-            .case-ed { grid-template-columns: 1fr; }
-            .case-ed--flip .case-ed__visual { order: 0; }
-            .shape { width: min(100%, 320px); }
+            .service-row-link { grid-template-columns: 44px 1fr auto; gap: 1rem; }
+            .proj-card { min-height: 420px; }
         }
         @media (max-width: 640px) {
-            .services-bento { grid-template-columns: 1fr; }
-            .bento-card--lg, .bento-card--md, .bento-card--sm { grid-column: span 1; }
+            .service-row-link { padding: 1.3rem 0.25rem; }
+            .service-row-link:hover,
+            .service-row-link:focus-visible { padding-left: 0.5rem; }
+            .svc-title { font-size: 1rem; }
             .tool-pill { width: 100%; justify-content: flex-start; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .shape, .shape img, .ai-pill, .ai-pill__arrow,
+            .proj-card__bg, .ai-pill, .ai-pill__arrow,
             .ai-pill__icon.stars-enter,
             .cta-link.cta-pill--site, .cta-link.cta-pill--site::before,
-            .tool-pill, .bento-card { transition: none !important; animation: none !important; }
-            .case-ed:hover .shape, .case-ed:hover .shape img { transform: none; }
+            .tool-pill, .service-row-link, .svc-arrow { transition: none !important; animation: none !important; }
+            .proj-card:hover .proj-card__bg,
+            .proj-card:focus-visible .proj-card__bg { transform: none; }
         }
     </style>
 </head>
@@ -536,33 +575,69 @@
     <section id="services" class="section--soft">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Services</span>
-            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Design and front-end, built to last</h2>
-            <div class="services-bento">
-                <div class="bento-card bento-card--lg" data-reveal style="--i:2">
-                    <h3>Websites</h3>
-                    <p>High-performance digital homes for brands, products and businesses, designed around clarity, speed and conversion.</p>
-                </div>
-                <div class="bento-card bento-card--sm" data-reveal style="--i:2">
-                    <h3>UX Research</h3>
-                    <p>Evidence-led research that turns uncertain product decisions into clearer direction.</p>
-                </div>
-                <div class="bento-card bento-card--sm" data-reveal style="--i:3">
-                    <h3>Mobile UI</h3>
-                    <p>iOS and Android interfaces designed around real interaction patterns, not just smaller screens.</p>
-                </div>
-                <div class="bento-card bento-card--lg" data-reveal style="--i:3">
-                    <h3>Desktop App UI</h3>
-                    <p>Interfaces for serious software: dense, focused and built for people who use the tool all day.</p>
-                </div>
-                <div class="bento-card bento-card--md" data-reveal style="--i:4">
-                    <h3>HMI</h3>
-                    <p>Interfaces between people and machines, designed for hardware where clarity and response matter.</p>
-                </div>
-                <div class="bento-card bento-card--md" data-reveal style="--i:4">
-                    <h3>Branding</h3>
-                    <p>Visual systems that make a new business or product recognizable, coherent and worth remembering.</p>
-                </div>
-            </div>
+            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">From ideas to tangible products.</h2>
+            <ul class="services-list">
+                <li data-reveal style="--i:2">
+                    <a href="./services/ui-design/" class="service-row-link">
+                        <span class="svc-num">01</span>
+                        <span class="svc-main">
+                            <span class="svc-title">Websites</span>
+                            <span class="svc-desc">High-performance digital homes for brands, products and businesses, designed around clarity, speed and conversion.</span>
+                        </span>
+                        <svg class="svc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </li>
+                <li data-reveal style="--i:2">
+                    <a href="./services/ux-research/" class="service-row-link">
+                        <span class="svc-num">02</span>
+                        <span class="svc-main">
+                            <span class="svc-title">UX Research</span>
+                            <span class="svc-desc">Evidence-led research that turns uncertain product decisions into clearer direction.</span>
+                        </span>
+                        <svg class="svc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </li>
+                <li data-reveal style="--i:3">
+                    <a href="./services/ui-design/" class="service-row-link">
+                        <span class="svc-num">03</span>
+                        <span class="svc-main">
+                            <span class="svc-title">Mobile UI</span>
+                            <span class="svc-desc">iOS and Android interfaces designed around real interaction patterns, not just smaller screens.</span>
+                        </span>
+                        <svg class="svc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </li>
+                <li data-reveal style="--i:3">
+                    <a href="./services/ui-design/" class="service-row-link">
+                        <span class="svc-num">04</span>
+                        <span class="svc-main">
+                            <span class="svc-title">Desktop App UI</span>
+                            <span class="svc-desc">Interfaces for serious software: dense, focused and built for people who use the tool all day.</span>
+                        </span>
+                        <svg class="svc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </li>
+                <li data-reveal style="--i:4">
+                    <a href="./services/ui-design/" class="service-row-link">
+                        <span class="svc-num">05</span>
+                        <span class="svc-main">
+                            <span class="svc-title">HMI</span>
+                            <span class="svc-desc">Interfaces between people and machines, designed for hardware where clarity and response matter.</span>
+                        </span>
+                        <svg class="svc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </li>
+                <li data-reveal style="--i:4">
+                    <a href="./services/brand-identity/" class="service-row-link">
+                        <span class="svc-num">06</span>
+                        <span class="svc-main">
+                            <span class="svc-title">Branding</span>
+                            <span class="svc-desc">Visual systems that make a new business or product recognizable, coherent and worth remembering.</span>
+                        </span>
+                        <svg class="svc-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </li>
+            </ul>
 
             <div class="cta-wrapper" data-reveal style="--i:6">
                 <a href="./services/" class="cta-link cta-pill--site"><span>All services, in depth</span><svg class="cta-pill__icon" width="22" height="21" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.75 12.75V4.75C18.75 2.86438 18.75 1.92157 18.1642 1.33579C17.5784 0.75 16.6356 0.75 14.75 0.75H6.75C4.86438 0.75 3.92157 0.75 3.33579 1.33579C2.75 1.92157 2.75 2.86438 2.75 4.75V12.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.24762 13.7654L2.76953 12.75H18.7018L19.2523 13.7654C20.6952 16.427 21.0546 17.7577 20.5061 18.7539C19.9577 19.75 18.5036 19.75 15.5954 19.75L5.90462 19.75C2.99642 19.75 1.54231 19.75 0.99387 18.7539C0.445427 17.7577 0.804744 16.427 2.24762 13.7654Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.25 5.25L15.1699 6.04289C15.5566 6.37623 15.75 6.54289 15.75 6.75C15.75 6.95711 15.5566 7.12377 15.1699 7.45711L14.25 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.25 5.25L6.33009 6.04289C5.94337 6.37623 5.75 6.54289 5.75 6.75C5.75 6.95711 5.94336 7.12377 6.33009 7.45711L7.25 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.75 4.25L9.75 9.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
@@ -585,46 +660,43 @@
         </div>
     </section>
 
-    <!-- Work - soft. Three editorial case studies with sculptural masks. -->
+    <!-- Work - soft. Three rectangular project cards with photo backgrounds. -->
     <section id="work" class="section--soft">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Case studies</span>
             <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Thinking in pixels</h2>
             <p class="work-intro" data-reveal style="--i:2">Every project here shows its working. Not the final renders, but the decisions, the iterations, and the reasoning that got there.</p>
 
-            <div style="margin-top: 1rem;">
-                <a href="./sprite/" class="case-ed" data-reveal style="--i:3">
-                    <span class="case-ed__visual" aria-hidden="true">
-                        <span class="shape shape--sprite"><img src="./assets/images/sprite%20cover.png" alt="" loading="lazy"></span>
-                    </span>
-                    <span class="case-ed__copy">
-                        <span class="case-ed__kind">AI guide &middot; live on this site</span>
-                        <h3>Sprite</h3>
-                        <span class="case-ed__body">Sprite replaces the generic chat box with a guide that helps visitors find things and get answers, pairing a live AI brain with an offline pattern engine so the site still answers when the network does not.</span>
-                        <span class="tag-row"><span class="tag-pill">AI</span><span class="tag-pill">Widget</span><span class="tag-pill">Website</span><span class="tag-pill">Offline</span></span>
-                    </span>
+            <div class="proj-stack" style="margin-top: 1rem;">
+                <a href="./sprite/" id="proj-1" class="proj-card" data-reveal style="--i:3">
+                    <img class="proj-card__bg" src="./assets/images/projects/sprite-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">AI guide &middot; live on this site</span>
+                        <h3 class="proj-card__title">Sprite</h3>
+                        <p class="proj-card__body">Find answers and get around this site with a guide that pairs a live AI brain with an offline engine, so you still get help when the network drops.</p>
+                        <span class="proj-card__pill"><span>open case study</span><svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </div>
                 </a>
-                <a href="./codex/" class="case-ed case-ed--flip" data-reveal style="--i:4">
-                    <span class="case-ed__visual" aria-hidden="true">
-                        <span class="shape shape--codex"><img src="./assets/images/blog/codex-offline-library/hero.svg" alt="" loading="lazy"></span>
-                    </span>
-                    <span class="case-ed__copy">
-                        <span class="case-ed__kind">Offline search &middot; internal tooling</span>
-                        <h3>Codex</h3>
-                        <span class="case-ed__body">Codex turns a sprawling offline archive into a local library: rebuilt into plain SQLite with ranking tuned for usefulness, so large collections answer in milliseconds without a server.</span>
-                        <span class="tag-row"><span class="tag-pill">SQLite</span><span class="tag-pill">Offline</span><span class="tag-pill">Search</span><span class="tag-pill">Python</span></span>
-                    </span>
+                <a href="./codex/" id="proj-2" class="proj-card" data-reveal style="--i:4">
+                    <img class="proj-card__bg" src="./assets/images/projects/codex-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Offline search &middot; internal tooling</span>
+                        <h3 class="proj-card__title">Codex</h3>
+                        <p class="proj-card__body">Search a sprawling offline archive in milliseconds. Your collection rebuilt into plain SQLite with ranking tuned for usefulness, no server needed.</p>
+                        <span class="proj-card__pill"><span>open case study</span><svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </div>
                 </a>
-                <a href="./beben-arcade/" class="case-ed" data-reveal style="--i:5">
-                    <span class="case-ed__visual" aria-hidden="true">
-                        <span class="shape shape--arcadia"><img src="./assets/images/arcade-cover.webp" alt="" loading="lazy"></span>
-                    </span>
-                    <span class="case-ed__copy">
-                        <span class="case-ed__kind">Offline PWA &middot; case file: Beben Arcade</span>
-                        <h3>Arcadia</h3>
-                        <span class="case-ed__body">Arcadia is an offline-first gaming catalogue: an installable PWA where every game keeps working with the network gone, built cache-first from the first line.</span>
-                        <span class="tag-row"><span class="tag-pill">PWA</span><span class="tag-pill">Gaming</span><span class="tag-pill">Offline</span><span class="tag-pill">JavaScript</span></span>
-                    </span>
+                <a href="./beben-arcade/" id="proj-3" class="proj-card" data-reveal style="--i:5">
+                    <img class="proj-card__bg" src="./assets/images/projects/arcadia-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Offline PWA &middot; case file: Beben Arcade</span>
+                        <h3 class="proj-card__title">Arcadia</h3>
+                        <p class="proj-card__body">Play 20 games offline in one installable catalogue. Every game keeps working with the network gone, built cache-first from the first line.</p>
+                        <span class="proj-card__pill"><span>open case study</span><svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </div>
                 </a>
             </div>
 
@@ -674,8 +746,8 @@
                     <div class="tui__h2">## site</div>
                     <div class="tui__metrics">
                     <div class="tui__metric"><span class="tui__metric-key">pages</span><span>33</span></div>
-                    <div class="tui__metric"><span class="tui__metric-key">internal_links</span><span>1042 checked, 0 broken</span></div>
-                    <div class="tui__metric"><span class="tui__metric-key">css_and_js</span><span>109 KB, uncompressed</span></div>
+                    <div class="tui__metric"><span class="tui__metric-key">internal_links</span><span>1048 checked, 0 broken</span></div>
+                    <div class="tui__metric"><span class="tui__metric-key">css_and_js</span><span>110 KB, uncompressed</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">javascript_deps</span><span>0</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">analytics_scripts</span><span>0</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">cookies_set</span><span>0</span></div>
@@ -807,13 +879,13 @@
     </section>
 
     <!-- Contact - plain -->
-    <section id="contact">
+    <section id="contact" class="contact-cta-bg">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Get in touch</span>
             <h2 data-reveal style="--i:1">Let's talk about your project</h2>
             <p data-reveal style="--i:2">No aggressive sales pitch. Just a technical discussion about your goals.</p>
             <div class="cta-wrapper" data-reveal style="--i:3">
-                <a href="./contact/" class="cta-link cta-pill--site"><span>Start a project</span><svg class="cta-pill__icon cta-pill__icon--plane" width="22" height="20" viewBox="0 0 73 67" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M32.5723 3.54883C34.0784 0.817315 38.0037 0.817258 39.5098 3.54883L70.0684 58.9746C71.8488 62.2044 68.6373 65.9007 65.1904 64.5889L38.5176 54.4365C36.9225 53.8294 35.1595 53.8294 33.5645 54.4365L6.8916 64.5889C3.44459 65.9009 0.232949 62.2045 2.01367 58.9746L32.5723 3.54883Z" stroke="currentColor" stroke-width="3"/></svg></a>
+                <a href="./contact/" class="cta-link cta-pill--site"><span>Start a project</span><svg class="cta-pill__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
         </div>
     </section>
@@ -853,7 +925,7 @@
     </div>
 </footer>
 
-<script src="./assets/JS/index.js?v=6.5"></script>
-<script src="./assets/JS/sprite.js?v=6.5"></script>
+<script src="./assets/JS/index.js?v=6.6"></script>
+<script src="./assets/JS/sprite.js?v=6.6"></script>
 </body>
 </html>

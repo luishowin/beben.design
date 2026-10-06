@@ -113,8 +113,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=6.5">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.5">
+    <link rel="stylesheet" href="../assets/css/index.css?v=6.6">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.6">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -469,8 +469,37 @@
 
         .phone-display:hover { color: var(--highlight); }
 
-        .cta-link.whatsapp { color: var(--whatsapp); }
-        .cta-link.whatsapp::after { background: var(--whatsapp); }
+        /* ── Talk pills: call + WhatsApp as glowing pills ── */
+        .talk-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            background: var(--bg);
+            color: var(--headers);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            padding: 0.8rem 1.8rem;
+            transition: border-color 200ms ease, box-shadow 300ms ease,
+                        transform 200ms var(--ease-snap);
+        }
+        .talk-pill:hover,
+        .talk-pill:focus-visible {
+            border-color: #25D366;
+            box-shadow: 0 0 0 1px rgba(37, 211, 102, 0.55),
+                        0 0 24px rgba(37, 211, 102, 0.35),
+                        0 0 64px rgba(18, 140, 126, 0.28);
+            transform: translateY(-2px);
+        }
+
+        /* ── FAQ instant collapse: applied to the previously open
+           item only, so its close snaps while the new one animates. ── */
+        .faq-answer.faq-instant { transition: none !important; }
+        .faq-trigger.faq-instant::after { transition: none !important; }
 
         .phone-meta {
             font-family: var(--font-mono);
@@ -676,8 +705,8 @@
             <h2 data-reveal style="--i:1">Call or WhatsApp the studio</h2>
             <a class="phone-display" href="tel:+254114728233" data-reveal style="--i:2">+254 114 728 233</a>
             <div class="cta-row" data-reveal style="--i:3">
-                <a href="tel:+254114728233" class="cta-link">Call ↗</a>
-                <a href="https://wa.me/254114728233" class="cta-link whatsapp" target="_blank" rel="noopener">WhatsApp ↗</a>
+                <a href="tel:+254114728233" class="talk-pill">Call ↗</a>
+                <a href="https://wa.me/254114728233" class="talk-pill" target="_blank" rel="noopener">WhatsApp ↗</a>
             </div>
             <p class="phone-meta" data-reveal style="--i:4">Mon&ndash;Fri &middot; 08:00&ndash;18:00 EAT &middot; Westlands, Nairobi</p>
         </div>
@@ -721,6 +750,30 @@
             </div>
         </div>
     </section>
+    <script>
+    /* FAQ: the opened item animates as usual, but every previously
+       open item snaps shut. Runs in the same task as the shared
+       accordion handler, before first paint, so killing the
+       transition here still catches the close. */
+    (function () {
+        var triggers = Array.prototype.slice.call(document.querySelectorAll('.faq-trigger'));
+        if (!triggers.length) return;
+        triggers.forEach(function (trigger) {
+            trigger.addEventListener('click', function () {
+                triggers.forEach(function (other) {
+                    var ans = other.nextElementSibling;
+                    if (other !== trigger) {
+                        other.classList.add('faq-instant');
+                        if (ans) ans.classList.add('faq-instant');
+                    } else {
+                        other.classList.remove('faq-instant');
+                        if (ans) ans.classList.remove('faq-instant');
+                    }
+                });
+            });
+        });
+    })();
+    </script>
 
 </main>
 
@@ -753,8 +806,8 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=6.5"></script>
-<script src="../assets/JS/sprite.js?v=6.5"></script>
+<script src="../assets/JS/index.js?v=6.6"></script>
+<script src="../assets/JS/sprite.js?v=6.6"></script>
 <script>
     /* Situations-first triage (brief v2 section 4.8). Progressive enhancement:
        the form in the HTML is the complete, working, no-script version, and
@@ -906,7 +959,7 @@
                 var next = document.createElement('button');
                 next.type = 'button';
                 next.className = 'form-submit';
-                next.textContent = 'Continue';
+                next.textContent = 'Continue ›';
                 next.addEventListener('click', function () { advance(fs); });
                 nav.appendChild(next);
             }

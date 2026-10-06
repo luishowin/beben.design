@@ -452,6 +452,55 @@ Verified open in light and dark, including a real-hover glow capture.
 Asset lock moved `6.1` to `6.5` in lockstep; blog rebuilt from templates
 (font + version only), status `--check` clean, voice and facts clean.
 
+### Services list, project cards, CTA backdrop (assets `6.6`)
+
+**Homepage Services is a numbered list, not a bento.** Six rows, same
+titles and descriptions, each a full-row link: grey mono number
+(`01`-`06` in `var(--text-muted)`), title plus description, 14x14
+diagonal arrow SVG pinned far right. Header is now eyebrow `Services`
+plus `From ideas to tangible products.` Best-fit detail links:
+Websites, Mobile UI, Desktop App UI and HMI point at
+`/services/ui-design/`, UX Research at `/services/ux-research/`,
+Branding at `/services/brand-identity/`. Duplicates are deliberate:
+UI Design and Component Systems is the system covering all screen UI.
+
+**Work is three rectangular image cards.** The circle/pentagon/hexagon
+masks and tag rows are gone. Full-width black cards (`18px` radius,
+`320-420px` tall): photo at full strength top/right diffusing through
+a double gradient to solid black bottom/left, kind eyebrow plus title
+plus a shortened second-person body, and an `open case study` glass
+pill bottom-right. Whole card links to its case page. A dot/prev/next
+snap nav was built, then removed at the owner's request: plain stacked
+cards. New art from `~/Downloads`, optimized to WebP in
+`docs/assets/images/projects/` (1.1MB of source to 143KB total);
+the Arcadia cover was later swapped for an updated source
+(`arcadia-updated-cover.png`, 2.4MB to 258KB at 1600px).
+
+**Contact CTAs share one photographic backdrop site-wide.** All 11
+`.next-step` bands plus the homepage `#contact` section sit on the
+Skybound wind farm (`skybound-wind-farm-haven.webp`, 2.7MB to 243KB)
+under a `0.58` dark overlay. Copy inside is forced light in both
+themes (white headings with hero-style text-shadow, white at 85%
+body, white text links) and the red headline accent goes yellow per
+the hero precedent. Pills keep their own fills and read as-is.
+
+**Smaller requests in the same run.** Services next-step: pro tip and
+the WhatsApp/email links removed, one `Start a project` pill to
+contact with a WhatsApp-green glow on hover. Pipeline cards carry a
+tiny `›` chip on each divider (wide screens only, where all four sit
+in one row). Contact page: call and WhatsApp are matching green-glow
+pills, triage Continue reads `Continue ›`, and the FAQ keeps its
+expand animation while a previously open item snaps shut (inline
+per-page script toggling a `transition: none` class pre-paint, so the
+shared `index.js` accordion and its version lock are untouched).
+Homepage contact pill: paper-plane SVG replaced with the standard
+14x14 diagonal arrow.
+
+Asset lock moved `6.5` to `6.6` in lockstep (shared CSS changed);
+blog and tools generators re-ran idempotent, status `--check` clean,
+voice and facts clean. Measured at commit: 33 pages, 1048 internal
+links checked and 0 broken, CSS+JS 110KB uncompressed.
+
 ---
 
 ## Corrections to brief v2
@@ -552,10 +601,10 @@ grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html |
 `build_blog.py` needs `markdown`: `python3 -m venv .venv && .venv/bin/pip install markdown`.
 
 Current state, all of it measured rather than remembered: 33 pages served
-excluding the arcade plus `404.html`, 30 sitemap URLs, 1033 internal references
+excluding the arcade plus `404.html`, 30 sitemap URLs, 1048 internal references
 resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
-one asset version (`6.5`) everywhere.
+one asset version (`6.6`) everywhere.
 
 The link figure moved 965 to 1033 with the arcade gameplay pass above: the
 status stamp predates the hub's growth from 12 to 20 games, so the arcade's own
@@ -563,4 +612,7 @@ internal links were counted for the first time since. The figure is lower than
 the 837 recorded before that because the checker now strips script bodies
 first. A URL a page assembles in JavaScript is not a link, and counting the
 arcade's `'./' + last + '/'` as a broken one is how you end up publishing
-"2 broken links" about a site that has none.
+"2 broken links" about a site that has none. It moved 1033 to 1048 with
+the services-list pass: the bento cards carried no links, and each of
+the six new list rows links to a detail page. Same-page `#proj-*`
+fragment links from the short-lived project pager were never counted.
