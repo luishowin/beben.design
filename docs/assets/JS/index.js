@@ -46,16 +46,35 @@ document.documentElement.classList.add('js');
     const overlay   = document.getElementById('mobile-menu-overlay');
     const body      = document.body;
 
+    // Robust scroll-lock: hide overflow on both root and body (some
+    // mobile browsers scroll either one), compensate the disappearing
+    // scrollbar so the page does not jump sideways, and restore the
+    // exact scroll position on close. The overlay itself stays
+    // position:fixed with its own internal scroll.
+    let savedScrollY = 0;
+    function lockScroll() {
+        savedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        if (scrollbarWidth > 0) body.style.paddingRight = scrollbarWidth + 'px';
+        document.documentElement.style.overflow = 'hidden';
+        body.style.overflow = 'hidden';
+    }
+    function unlockScroll() {
+        document.documentElement.style.overflow = '';
+        body.style.overflow = '';
+        body.style.paddingRight = '';
+        window.scrollTo(0, savedScrollY);
+    }
     function openMenu() {
         overlay.classList.add('is-active');
         body.classList.add('menu-open');
-        body.style.overflow = 'hidden';
+        lockScroll();
         hamburger.setAttribute('aria-expanded', 'true');
     }
     function closeMenu() {
         overlay.classList.remove('is-active');
         body.classList.remove('menu-open');
-        body.style.overflow = '';
+        unlockScroll();
         hamburger.setAttribute('aria-expanded', 'false');
     }
     function toggleMenu() {
@@ -107,6 +126,25 @@ document.documentElement.classList.add('js');
             });
         }, { threshold: [0, 0.15] });
         revealEls.forEach((el) => revealObserver.observe(el));
+    }
+
+    // ── 3b. AI STARS ENTRANCE ────────────────────────────────────
+    // One-shot attention cue for the AI banner sparkles: when the icon
+    // scrolls into view, CSS lifts it ~5px with a small wiggle and
+    // settles it back to rest (transform-only, no layout shift, runs
+    // once). Lives here in the shared file rather than as a per-page
+    // observer. Reduced motion: no cue at all.
+    const aiIcon = document.querySelector('.ai-pill__icon');
+    if (aiIcon && !prefersReduced && typeof IntersectionObserver !== 'undefined') {
+        const starsObserver = new IntersectionObserver((entries, obs) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('stars-enter');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.4 });
+        starsObserver.observe(aiIcon);
     }
 
     // ── 4. FAQ ACCORDION ─────────────────────────────────────────

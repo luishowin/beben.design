@@ -412,6 +412,46 @@ Asset lock moved `5.9` to `6.1` in lockstep; both generators re-ran
 idempotent, status panel re-stamped, voice and facts clean. Measured at
 commit: 33 pages, 1042 internal links checked and 0 broken.
 
+### Full-viewport hero, pill system, mobile nav overhaul
+
+**Hero is `100dvh` with a `100vh` fallback.** Content-driven height became
+`min-height` plus flex centering; photo, scrim, grid layers and the
+`--nav-height` tile offset untouched. Verified at 1440x900, 390x844 and
+390x2600 in headless Chrome: no horizontal overflow, no over-cropping.
+
+**Pills share one glass recipe.** Resting fill is translucent with a 10px
+backdrop blur (both prefixes); hover travels a fill in from the left on a
+`::before` layer (`scaleX`, 350ms snap easing, text above at `z-index: 1`,
+focus mirrors hover). Ink is white everywhere: hero keeps its dark photo
+fill, site and AI pills sit on a deep-sea `rgba(10, 20, 35, 0.72)` glass so
+the white clears ~7:1 in both themes. The sweep is `#ff4e74` on hero and
+site pills (~3.2:1, inside the 3:1 fills bar), blue `rgba(104,177,255,0.22)`
+on the AI pill, which additionally blooms a two-layer blue glow
+(`#68B1FF` ring/halo, `#BDDDFF` aura). Reduced motion disables the travel.
+
+**Grid is 20% quieter, relatively.** `--grid-line` `0.04` to `0.032` both
+themes, `--hero-grid-line` `0.06` to `0.048`. Geometry untouched.
+
+**AI is a pill, not a banner.** Stars (20px, gradient intact) + `Put AI to
+work.` (renders uppercase via the shared pill type) + 10px icon gap + 12px
+diagonal arrow with 1rem spacing. The one-shot star nudge
+(`IntersectionObserver` in shared `index.js`, transform-only) survived the
+resize and was observed firing in Playwright.
+
+**Mobile nav fills, locks and leads left.** Overlay is explicit
+`100vh`/`100dvh` at `z-index: 200` with the navbar at 201 so the
+hamburger-turned-close stays reachable; background is translucent
+(`0.82`) with matching blur. Scroll-lock covers root and body, compensates
+the scrollbar, restores scroll position; overlay scrolls internally with
+`overscroll-behavior: contain`. Items are left-aligned in container rhythm,
+cascade from `-10px` at 250/280ms with the existing 50ms stagger, and set
+in Inter 700 at a fixed 32px (Inter URL extended to `:700` on all
+`index.css` pages; tool-shell and arcade standalone surfaces excluded).
+Verified open in light and dark, including a real-hover glow capture.
+
+Asset lock moved `6.1` to `6.5` in lockstep; blog rebuilt from templates
+(font + version only), status `--check` clean, voice and facts clean.
+
 ---
 
 ## Corrections to brief v2
@@ -515,7 +555,7 @@ Current state, all of it measured rather than remembered: 33 pages served
 excluding the arcade plus `404.html`, 30 sitemap URLs, 1033 internal references
 resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
-one asset version (`4.7`) everywhere.
+one asset version (`6.5`) everywhere.
 
 The link figure moved 965 to 1033 with the arcade gameplay pass above: the
 status stamp predates the hub's growth from 12 to 20 games, so the arcade's own

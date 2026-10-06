@@ -76,7 +76,7 @@
          copy, labels), Inter (body + strong). -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
         /* Apply the stored or system theme before first paint. Every page ships
@@ -94,8 +94,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="./assets/css/index.css?v=6.1">
-    <link rel="stylesheet" href="./assets/css/sprite.css?v=6.1">
+    <link rel="stylesheet" href="./assets/css/index.css?v=6.5">
+    <link rel="stylesheet" href="./assets/css/sprite.css?v=6.5">
 
     <!-- The hero photo is a CSS background, so the preload scanner never
          finds it. Without this the hero paints flat #141414 for a beat. -->
@@ -111,23 +111,40 @@
 
         /* ── Shared site pill (non-hero sections) ────────────────────
            Same recipe as the hero pill (.cta-link.cta-pill): 1px
-           var(--border) ring, transparent fill, same padding, yellow
-           tint on hover, no motion. The hero reads dark only because
-           the photo sits behind it; here the text takes the theme's
-           highlight color instead of the hero's photo yellow. */
+           var(--border) ring, same padding, #ff4e74 fill sweeping in
+           from the left on hover, no motion. White ink on a deep-sea
+           glass fill in both themes, so the white text stays readable.
+           The hero reads dark only because the photo sits behind it. */
         .cta-link.cta-pill--site {
             display: inline-flex;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
             border: 1px solid var(--border);
             border-radius: 999px;
-            background: transparent;
-            color: var(--highlight-text);
+            background: rgba(10, 20, 35, 0.72);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #FFFFFF;
             padding: 0.7rem 1.5rem;
-            transition: background-color 200ms ease;
         }
-        .cta-link.cta-pill--site::before,
+        .cta-link.cta-pill--site::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: #ff4e74;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 350ms var(--ease-snap);
+            z-index: 0;
+        }
         .cta-link.cta-pill--site::after { content: none; }
-        .cta-link.cta-pill--site:hover { background: #FFFFFF; }
+        .cta-link.cta-pill--site:hover::before,
+        .cta-link.cta-pill--site:focus-visible::before { transform: scaleX(1); }
+        .cta-link.cta-pill--site > span,
+        .cta-link.cta-pill--site > svg { position: relative; z-index: 1; }
         .cta-link.cta-pill--site .cta-pill__icon {
             width: 16px;
             height: auto;
@@ -138,7 +155,7 @@
         .cta-link.cta-pill--site .cta-pill__icon--plane { width: 18px; }
         /* #contact a carries an ID selector, so the pill ink needs one too. */
         #contact .cta-link.cta-pill--site,
-        #contact .cta-link.cta-pill--site:hover { color: var(--highlight-text); }
+        #contact .cta-link.cta-pill--site:hover { color: #FFFFFF; }
 
         /* ── Services bento ──────────────────────────────────────────
            Deterministic asymmetric grid, dense flow so no holes.
@@ -185,38 +202,45 @@
             max-width: 64ch;
             margin-top: 0.8rem;
         }
+        /* ── AI pill ─────────────────────────────────────────────────
+           Compact pill reusing the site CTA recipe (.cta-link
+           .cta-pill--site supplies size, type and the travelling fill).
+           This block only adds the AI accent: smaller star icon, blue
+           travelling fill instead of white, and a soft blue glow. */
         .ai-pill {
-            display: flex;
-            align-items: center;
-            gap: clamp(1rem, 3vw, 1.8rem);
             margin-top: 2.2rem;
-            padding-block: clamp(0.45rem, calc(3.5vw - 15px), 1.26rem);
-            padding-inline: clamp(1.4rem, 4vw, 2.6rem);
-            border: 1px solid var(--border-strong);
-            border-radius: 999px;
-            background: var(--bg-soft);
-            color: inherit;
-            text-decoration: none;
-            transition: transform 200ms var(--ease-snap), border-color 200ms ease,
-                        background-color 200ms ease;
+            transition: border-color 200ms ease, box-shadow 300ms ease;
         }
-        .ai-pill:hover {
-            transform: translateY(-3px);
+        /* White ink on a deep-sea glass fill, both themes (like the hero
+           pill): the shared near-white resting tint cannot carry white
+           text in light mode, so the AI pill gets its own dark fill. */
+        .cta-link.cta-pill--site.ai-pill {
+            color: #FFFFFF;
+            background: rgba(10, 20, 35, 0.72);
+        }
+        .ai-pill__icon { width: 20px; height: 20px; flex: none; display: block; margin-right: 10px; }
+        .cta-link.cta-pill--site.ai-pill::before { background: rgba(104, 177, 255, 0.22); }
+        .ai-pill__arrow { width: 12px; height: 12px; flex: none; display: block; margin-left: 1rem; color: var(--text-muted); transition: transform 200ms var(--ease-snap), color 200ms ease; }
+        .ai-pill:hover,
+        .ai-pill:focus-visible {
             border-color: #68B1FF;
+            box-shadow: 0 0 0 1px rgba(104, 177, 255, 0.35),
+                        0 0 24px rgba(104, 177, 255, 0.35),
+                        0 0 64px rgba(189, 221, 255, 0.28);
         }
-        .ai-pill__icon { width: 60px; height: 60px; flex: none; display: block; }
-        .ai-pill__text { min-width: 0; flex: 1; }
-        .ai-pill__text strong {
-            display: block;
-            font-family: var(--font-body);
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--headers);
-            margin-bottom: 0.2rem;
+        .ai-pill:hover .ai-pill__arrow,
+        .ai-pill:focus-visible .ai-pill__arrow { transform: translate(3px, -3px); color: #68B1FF; }
+        /* Entrance cue for the AI stars: fired once by the shared
+           IntersectionObserver in index.js when .ai-pill scrolls into
+           view. Rises ~5px with a small wiggle, then settles back to
+           rest. Transform-only so there is no layout shift. */
+        @keyframes ai-stars-nudge {
+            0% { transform: translateY(0) rotate(0deg); }
+            35% { transform: translateY(-5px) rotate(-8deg); }
+            65% { transform: translateY(-5px) rotate(6deg); }
+            100% { transform: translateY(0) rotate(0deg); }
         }
-        .ai-pill__text span { font-size: 0.86rem; line-height: 1.6; color: var(--text-muted); }
-        .ai-pill__arrow { width: 16px; height: 16px; flex: none; display: block; color: var(--text-muted); transition: transform 200ms var(--ease-snap), color 200ms ease; }
-        .ai-pill:hover .ai-pill__arrow { transform: translate(3px, -3px); color: #68B1FF; }
+        .ai-pill__icon.stars-enter { animation: ai-stars-nudge 700ms var(--ease-snap); }
 
         /* ── Case editorial rows ───────────────────────────────────── */
         #work .work-intro { font-size: 0.95rem; line-height: 1.7; color: var(--text-muted); max-width: 60ch; }
@@ -356,19 +380,17 @@
             .case-ed { grid-template-columns: 1fr; }
             .case-ed--flip .case-ed__visual { order: 0; }
             .shape { width: min(100%, 320px); }
-            .ai-pill { border-radius: 28px; flex-wrap: wrap; }
-            .ai-pill__arrow { margin-left: auto; }
         }
         @media (max-width: 640px) {
             .services-bento { grid-template-columns: 1fr; }
             .bento-card--lg, .bento-card--md, .bento-card--sm { grid-column: span 1; }
             .tool-pill { width: 100%; justify-content: flex-start; }
-            .ai-pill { gap: 0.8rem; padding-block: 0.7rem; padding-inline: 1.2rem; }
-            .ai-pill__icon { width: 44px; height: 44px; }
         }
         @media (prefers-reduced-motion: reduce) {
             .shape, .shape img, .ai-pill, .ai-pill__arrow,
-            .cta-link.cta-pill--site, .tool-pill, .bento-card { transition: none !important; }
+            .ai-pill__icon.stars-enter,
+            .cta-link.cta-pill--site, .cta-link.cta-pill--site::before,
+            .tool-pill, .bento-card { transition: none !important; animation: none !important; }
             .case-ed:hover .shape, .case-ed:hover .shape img { transform: none; }
         }
     </style>
@@ -555,9 +577,9 @@
             <h2 data-reveal style="--i:1;">AI where it actually earns its place.</h2>
             <p class="ai-lead" data-reveal style="--i:2">Your website, web app, desktop tool or internal system can use AI to guide visitors, qualify leads, surface answers and take on repetitive work. Sprite, the guide on this site, shows the pattern: an assistant that helps people find things, backed by an offline floor for when the network is gone. AI goes where it removes friction or clears a workflow. Everywhere else, it stays out.</p>
 
-            <a href="./services/" class="ai-pill" data-reveal style="--i:3" aria-label="AI Integration - read the service catalogue">
+            <a href="./services/" class="ai-pill cta-link cta-pill--site" data-reveal style="--i:3">
                 <svg class="ai-pill__icon" width="60" height="60" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0.362305 3.54688C0.424441 3.71465 0.556811 3.84709 0.724609 3.90918C0.556785 3.9713 0.424408 4.10365 0.362305 4.27148C0.300201 4.10365 0.167824 3.9713 0 3.90918C0.167799 3.84709 0.300169 3.71465 0.362305 3.54688ZM1.85254 0.56543C2.17019 1.42388 2.8476 2.10031 3.70605 2.41797C2.8476 2.73562 2.17019 3.41303 1.85254 4.27148C1.53488 3.41303 0.858452 2.73562 0 2.41797C0.858345 2.10031 1.53488 1.42378 1.85254 0.56543ZM3.54199 0C3.63902 0.261885 3.84552 0.468445 4.10742 0.56543C3.84552 0.662414 3.63902 0.868975 3.54199 1.13086C3.44501 0.869008 3.23839 0.662458 2.97656 0.56543C3.23839 0.468402 3.44501 0.261851 3.54199 0Z" fill="url(#paint0_linear_21_15)" fill-opacity="0.8"/><defs><linearGradient id="paint0_linear_21_15" x1="0.431979" y1="4.09015" x2="0.724609" y2="3.51882" gradientUnits="userSpaceOnUse"><stop stop-color="#68B1FF"/><stop offset="1" stop-color="#BDDDFF"/></linearGradient></defs></svg>
-                <span class="ai-pill__text"><strong>AI Integration</strong><span>Site guides, assistants and workflow automation inside real products. Read the service catalogue.</span></span>
+                <span>Put AI to work.</span>
                 <svg class="ai-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
         </div>
@@ -643,7 +665,7 @@
                 <div class="tui__titlebar">
                     <span class="tui__dots"><span></span><span></span><span></span></span>
                     <span class="tui__filename">scripts/build_status.py</span>
-                    <span class="tui__stamp">measured 5 Oct 2026</span>
+                    <span class="tui__stamp">measured 6 Oct 2026</span>
                 </div>
                 <div class="tui__body">
                     <!-- status:start (managed by scripts/build_status.py) -->
@@ -653,7 +675,7 @@
                     <div class="tui__metrics">
                     <div class="tui__metric"><span class="tui__metric-key">pages</span><span>33</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">internal_links</span><span>1042 checked, 0 broken</span></div>
-                    <div class="tui__metric"><span class="tui__metric-key">css_and_js</span><span>105 KB, uncompressed</span></div>
+                    <div class="tui__metric"><span class="tui__metric-key">css_and_js</span><span>109 KB, uncompressed</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">javascript_deps</span><span>0</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">analytics_scripts</span><span>0</span></div>
                     <div class="tui__metric"><span class="tui__metric-key">cookies_set</span><span>0</span></div>
@@ -831,7 +853,7 @@
     </div>
 </footer>
 
-<script src="./assets/JS/index.js?v=6.1"></script>
-<script src="./assets/JS/sprite.js?v=6.1"></script>
+<script src="./assets/JS/index.js?v=6.5"></script>
+<script src="./assets/JS/sprite.js?v=6.5"></script>
 </body>
 </html>

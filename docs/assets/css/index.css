@@ -39,7 +39,7 @@
     --text-muted:    rgba(20, 20, 20, 0.62);
     --border:        rgba(20, 20, 20, 0.18);
     --border-strong: rgba(20, 20, 20, 0.34);
-    --grid-line:     rgba(20, 20, 20, 0.04);
+    --grid-line:     rgba(20, 20, 20, 0.032);
 
     --whatsapp:      #25D366;
     --nav-bg:        rgba(245, 245, 245, 0.7);
@@ -65,7 +65,7 @@
     --text-muted:    rgba(247, 244, 243, 0.62);
     --border:        rgba(247, 244, 243, 0.16);
     --border-strong: rgba(247, 244, 243, 0.32);
-    --grid-line:     rgba(247, 244, 243, 0.04);
+    --grid-line:     rgba(247, 244, 243, 0.032);
 
     --whatsapp:      #25D366;
     --nav-bg:        rgba(20, 20, 20, 0.7);
@@ -88,7 +88,7 @@
        --hero-scrim is the tuning knob for the whole effect: a
        left-weighted ramp, heaviest where the copy sits, lightest on
        the right so the tree and the sunset keep their colour. */
-    --hero-grid-line: rgba(255, 255, 255, 0.06);
+    --hero-grid-line: rgba(255, 255, 255, 0.048);
     --hero-focus:     50% 50%;
     --hero-scrim:     linear-gradient(95deg,
                           rgba(9, 11, 14, 0.88) 0%,
@@ -137,12 +137,15 @@ section[id] { scroll-margin-top: var(--nav-height); }
 }
 
 /* ── 3. NAVBAR ────────────────────────────────────────────────── */
+/* Navbar sits above the mobile overlay so the logo, theme toggle
+   and hamburger (morphing into the close control) stay clickable
+   while the menu is open. */
 nav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 201;
     height: var(--nav-height);
     display: flex;
     align-items: center;
@@ -364,15 +367,31 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
     padding-top: var(--nav-height);
     position: fixed;
     inset: 0;
-    z-index: 99;
-    background: var(--overlay);
+    /* Full-viewport menu: 100dvh preferred for mobile browser chrome,
+       100vh fallback. The nav (z-index 201) stays above this overlay
+       so its hamburger-turned-close control remains reachable; the
+       pair together is the topmost layer over all page content. */
+    height: 100vh;
+    height: 100dvh;
+    z-index: 200;
+    /* Translucent glass over the page: material stays faintly visible
+       underneath, matching the nav/pill blur treatment. Slightly more
+       solid than --nav-bg so the links stay highly readable. */
+    background: rgba(245, 245, 245, 0.82);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.35s ease, visibility 0.35s ease, background 0.3s ease;
+}
+:root[data-theme="dark"] #mobile-menu-overlay {
+    background: rgba(20, 20, 20, 0.82);
 }
 
 #mobile-menu-overlay.is-active {
@@ -381,13 +400,22 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
     pointer-events: auto;
 }
 
-.mobile-menu { list-style: none; text-align: center; }
+/* Editorial left alignment: the menu keeps the site's container
+   rhythm (same inline padding) rather than centering like a modal. */
+.mobile-menu {
+    list-style: none;
+    text-align: left;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 2.5rem clamp(1.2rem, 5vw, 2rem) 3rem;
+}
 
 .mobile-menu li {
-    margin-bottom: 2rem;
+    margin-bottom: 1.4rem;
     opacity: 0;
-    transform: translateY(12px);
-    transition: opacity var(--dur-base) ease, transform var(--dur-base) var(--ease-snap);
+    transform: translateY(-10px);
+    transition: opacity 250ms ease, transform 280ms var(--ease-snap);
 }
 
 #mobile-menu-overlay.is-active .mobile-menu li { opacity: 1; transform: translateY(0); }
@@ -399,11 +427,15 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(5) { transition-delay: 0.25s; }
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(6) { transition-delay: 0.30s; }
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(7) { transition-delay: 0.35s; }
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu li { transition: none; transform: none; }
+    #mobile-menu-overlay.is-active .mobile-menu li { transition-delay: 0s; }
+}
 
 .mobile-menu li a {
-    font-family: var(--font-title);
-    font-size: clamp(1.8rem, 9vw, 3rem);
-    font-weight: 400;
+    font-family: var(--font-body);
+    font-size: 32px;
+    font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--headers);
     transition: color var(--dur-fast) ease;
@@ -514,6 +546,17 @@ h2 {
     padding-top: clamp(110px, 14vw, 150px);
     padding-bottom: 80px;
 
+    /* Full-viewport hero: the fixed nav overlays the top edge, so the
+       panel runs edge to edge behind it. 100dvh preferred for mobile
+       browser chrome, 100vh fallback. Flex centers the copy vertically
+       on tall viewports; content can still grow past 100vh. */
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    overflow-x: clip;
+
     background-color: #141414;   /* holds the panel while the photo loads */
     background-image:
         linear-gradient(to right,  var(--hero-grid-line) 1px, transparent 1px),
@@ -533,7 +576,6 @@ h2 {
     line-height: 1.08;
     margin-bottom: 1.5rem;
 }
-
 .highlight-box {
     color: var(--highlight);
     font-style: italic;
@@ -549,6 +591,7 @@ h2 {
 }
 
 /* Insurance over the brighter cloud areas of the photo. */
+.hero .container { width: 100%; }
 .hero .eyebrow,
 .hero h1,
 .hero p { text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5); }
@@ -616,20 +659,41 @@ h2 {
 
 .cta-link:hover::after { width: 100%; }
 
-/* Pill variant — currently the homepage hero CTA only. Yellow ring +
-   translucent tint on the dark hero photo. Hover brightens the pill;
-   the arrow rides in its own span so the text–arrow gap is explicit. */
+/* Pill variant — currently the homepage hero CTA only. White ink on a
+   translucent dark fill over the hero photo. The hover fill sweeps in
+   from the left on a ::before layer; the arrow rides in its own span
+   so the text–arrow gap is explicit. */
 .cta-link.cta-pill {
     display: inline-block;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     border: 1px solid var(--border);
     border-radius: 999px;
     background: rgba(0, 0, 0, 0.35);
+    color: #FFFFFF;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     padding: 0.7rem 1.5rem;
-    transition: background-color var(--dur-fast) ease;
 }
-.cta-link.cta-pill::before,
+.cta-link.cta-pill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: #ff4e74;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 350ms var(--ease-snap);
+    z-index: 0;
+}
 .cta-link.cta-pill::after { content: none; }
-.cta-link.cta-pill:hover { background: rgba(255, 199, 16, 0.25); }
+.cta-link.cta-pill:hover::before,
+.cta-link.cta-pill:focus-visible::before { transform: scaleX(1); }
+.cta-link.cta-pill > span { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .cta-link.cta-pill::before { transition: none; }
+}
 .cta-pill__arrow {
     display: inline-block;
     /* 8px of inter-word space left with the old literal space, so 28px
