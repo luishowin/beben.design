@@ -71,6 +71,39 @@
            reveal from index.css.
         ───────────────────────────────────────────────────────── */
 
+        /* Cover hero: blueprint-workshop art with a slightly dark
+           left-weighted gradient so the copy stays legible while the
+           dragon and drawings show through on the right. Dark surface
+           in both themes, same recipe as .hero: first layer paints
+           topmost, content paints above every layer. */
+        .page-hero--cover {
+            --headers: #F7F4F3;
+            --text: #F7F4F3;
+            --text-muted: rgba(247, 244, 243, 0.88);
+            --bg: #141414;
+            --highlight: var(--yellow);
+            --highlight-text: var(--yellow);
+
+            background-color: #141414;
+            background-image:
+                linear-gradient(95deg,
+                    rgba(9, 11, 14, 0.91) 0%,
+                    rgba(9, 11, 14, 0.71) 48%,
+                    rgba(9, 11, 14, 0.41) 100%),
+                url("../assets/images/services-blueprint-workshop.webp");
+            background-size: cover;
+            background-position: 50% 30%;
+            background-repeat: no-repeat;
+            /* Cover art runs edge to edge, so drop the 1px rule every
+               other section gets from the global section style. */
+            border-bottom: none;
+        }
+
+        /* Insurance over the brighter drafting-table areas of the art. */
+        .page-hero--cover .eyebrow,
+        .page-hero--cover h1,
+        .page-hero--cover p { text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5); }
+
         /* Pipeline numbers inside the shared service cards */
         .pipeline-num {
             display: block;
@@ -224,6 +257,52 @@
             transform: translateY(-2px);
         }
 
+        /* ── Read-more pill: bordered pill carrying the homepage
+           diagonal-arrow SVG. The arrow is 1em tall so it matches the
+           text height, and the 30px flex gap keeps text and arrow apart. ── */
+        .read-more-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 30px;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            background: var(--bg);
+            color: var(--headers);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 0.7rem 1.5rem;
+            transition: border-color 200ms ease, box-shadow 300ms ease,
+                        transform 200ms var(--ease-snap);
+        }
+        .read-more-pill:hover,
+        .read-more-pill:focus-visible {
+            border-color: var(--highlight-text);
+            box-shadow: 0 0 0 1px var(--highlight-text);
+            transform: translateY(-2px);
+        }
+        .read-more-pill__arrow {
+            height: 1em;
+            width: auto;
+            flex: none;
+            display: block;
+            transition: transform 200ms var(--ease-snap);
+        }
+        .read-more-pill:hover .read-more-pill__arrow,
+        .read-more-pill:focus-visible .read-more-pill__arrow {
+            transform: translate(3px, -3px);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .read-more-pill,
+            .read-more-pill__arrow { transition: none; }
+            .read-more-pill:hover,
+            .read-more-pill:focus-visible { transform: none; }
+        }
+
 
         /* ── Index rows. The four rows link through to a detail page; the
            deliverables and questions now live there. ── */
@@ -286,7 +365,22 @@
         @media (max-width: 900px) {
             .service-row { padding: 3rem 0; }
             .service-row__grid { grid-template-columns: 1fr; gap: 2rem; }
+            /* The index rows pin two columns at a higher specificity, so
+               restate them here: on mobile the Goal // aside wraps under
+               the tagline paragraph instead of sitting beside it. */
+            .service-row--index .service-row__grid { grid-template-columns: 1fr; }
             .edge-block { grid-template-columns: 1fr; gap: 1.5rem; }
+            /* Copy runs full width down here, so the left-weighted ramp
+               would leave line ends under-scrimmed. Go vertical instead. */
+            .page-hero--cover {
+                background-image:
+                    linear-gradient(180deg,
+                        rgba(9, 11, 14, 0.87) 0%,
+                        rgba(9, 11, 14, 0.75) 55%,
+                        rgba(9, 11, 14, 0.91) 100%),
+                    url("../assets/images/services-blueprint-workshop.webp");
+                background-position: 60% 20%;
+            }
         }
     </style>
 </head>
@@ -407,8 +501,8 @@
 ════════════════════════════════════════════ -->
 <main id="main-content">
 
-    <!-- Hero - plain -->
-    <section class="page-hero">
+    <!-- Hero - blueprint workshop cover with dark gradient overlay -->
+    <section class="page-hero page-hero--cover">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Capabilities</span>
             <h1 data-reveal style="--i:1">Design that works<br>before it <em class="highlight-box">looks</em> good.</h1>
@@ -468,7 +562,7 @@
                 </div>
                 <div class="service-row__aside">
                     <p class="service-goal">Turn a concept into a recognisable visual language.</p>
-                    <a href="/services/brand-identity/" class="cta-link">Read more &#x2197;</a>
+                    <a href="/services/brand-identity/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                 </div>
             </div>
         </article>
@@ -483,7 +577,7 @@
                 </div>
                 <div class="service-row__aside">
                     <p class="service-goal">Reduce redesign costs. Build the right thing first.</p>
-                    <a href="/services/ux-research/" class="cta-link">Read more &#x2197;</a>
+                    <a href="/services/ux-research/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                 </div>
             </div>
         </article>
@@ -498,7 +592,7 @@
                 </div>
                 <div class="service-row__aside">
                     <p class="service-goal">Increase development speed. Eliminate design debt.</p>
-                    <a href="/services/ui-design/" class="cta-link">Read more &#x2197;</a>
+                    <a href="/services/ui-design/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                 </div>
             </div>
         </article>
@@ -513,7 +607,7 @@
                 </div>
                 <div class="service-row__aside">
                     <p class="service-goal">Build the right thing in the right order.</p>
-                    <a href="/services/digital-strategy/" class="cta-link">Read more &#x2197;</a>
+                    <a href="/services/digital-strategy/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                 </div>
             </div>
         </article>
@@ -528,7 +622,7 @@
                 </div>
                 <div class="service-row__aside">
                     <p class="service-goal">Keep the traffic. Lose the debt.</p>
-                    <a href="/services/migration-rebuild/" class="cta-link">Read more &#x2197;</a>
+                    <a href="/services/migration-rebuild/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                 </div>
             </div>
         </article>
