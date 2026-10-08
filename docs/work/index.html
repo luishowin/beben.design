@@ -35,8 +35,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=6.6">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.6">
+    <link rel="stylesheet" href="../assets/css/index.css?v=6.8">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.8">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -71,230 +71,170 @@
             max-width: 62ch;
         }
 
-        .projects-grid {
+        .proj-stack {
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
         }
 
-        .project-card {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            border-bottom: 1px solid var(--border);
-            min-height: 420px;
-            text-decoration: none;
-            color: inherit;
-            transition: background var(--dur-fast) ease;
-        }
-        .project-card:last-child { border-bottom: none; }
-        .project-card:hover { background: var(--bg-soft); }
-
-        /* The zigzag. This used to be :nth-child(even), which counts inside
-           one container, so splitting the list into problem groups restarted
-           the count at every heading and put two visuals side by side. The
-           flip is now stated on the card, once, in reading order. */
-        .project-card--flip { direction: rtl; }
-        .project-card--flip > * { direction: ltr; }
-
-        .project-visual {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: clamp(2rem, 4vw, 4rem);
+        /* Homepage card recipe: photo diffuses into solid black so
+           copy stays legible in both themes. Detailed text stays:
+           two paragraphs plus light tag chips. Cards without a photo
+           use the bare black fill. */
+        .proj-card {
             position: relative;
-            overflow: hidden;
-        }
-
-        .project-visual-inner {
-            width: 100%;
-            max-width: 420px;
-            aspect-ratio: 4 / 3;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--bg-soft);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transition: transform var(--dur-base) var(--ease-snap), box-shadow var(--dur-base) ease;
-        }
-        .project-card:hover .project-visual-inner {
-            transform: translateY(-4px);
-        }
-
-        /* Custom visuals for specific projects */
-
-        /* Neopolaris */
-        .project-card[href*="neopolaris.ai"] .project-visual-inner {
-            background-image: url("../assets/images/neopolaris-logo.jpg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .project-card[href*="neopolaris.ai"] .project-placeholder {
-            display: none;
-        }
-
-        /* Sprite */
-        .project-card[href*="beben.design/sprite"] .project-visual-inner {
-            background-image: url("../assets/images/sprite cover.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .project-card[href*="beben.design/sprite"] .project-placeholder {
-            display: none;
-        }
-
-        /* Beben Arcade */
-        .project-card[href*="beben.design/beben-arcade"] .project-visual-inner {
-            background-image: url("../assets/images/arcade-cover.webp");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .project-card[href*="beben.design/beben-arcade"] .project-placeholder {
-            display: none;
-        }
-
-        /* Codex. The hero is 1200x630 against a 4/3 frame, so contain rather
-           than cover, or a third of the labelled diagram is cropped away. */
-        .project-card[href*="beben.design/codex"] .project-visual-inner {
-            background-image: url("../assets/images/blog/codex-offline-library/hero.svg");
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .project-card[href*="beben.design/codex"] .project-placeholder {
-            display: none;
-        }
-
-        .project-card[href*="beben.design/trek-watch"] .project-visual-inner {
-            background-image: url("../assets/images/watch.jpg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .project-card[href*="beben.design/trek-watch"] .project-placeholder {
-            display: none;
-        }
-
-
-        .project-placeholder {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 0.06em;
-            text-align: center;
-            padding: 2rem;
-        }
-        .project-placeholder .placeholder-icon {
             display: block;
-            font-size: 2.4rem;
-            margin-bottom: 0.8rem;
-            opacity: 0.3;
-            filter: grayscale(1);
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: #000;
+            min-height: clamp(320px, 38vw, 420px);
+            text-decoration: none;
+            color: #fff;
+            isolation: isolate;
         }
-
-        .project-info {
+        .proj-card__bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 500ms var(--ease-snap);
+        }
+        .proj-card:hover .proj-card__bg,
+        .proj-card:focus-visible .proj-card__bg { transform: scale(1.03); }
+        .proj-card__scrim {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background:
+                linear-gradient(0deg, rgba(0,0,0,0.55), transparent 55%),
+                linear-gradient(100deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.92) 75%, #000 100%);
+        }
+        .proj-card__content {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: clamp(2rem, 4vw, 4rem);
+            min-height: inherit;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
         }
-
-        .project-info .eyebrow { margin-bottom: 0.6rem; }
-
-        .project-info h2 {
-            font-size: clamp(1.4rem, 2.8vw, 2rem);
-            margin-bottom: 0.8rem;
-        }
-
-        .project-info p {
-            font-size: clamp(0.9rem, 1.2vw, 1rem);
-            line-height: 1.7;
-            color: var(--text-muted);
-            max-width: 42ch;
+        .proj-card__kind {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.72);
             margin-bottom: 0.6rem;
         }
-        .project-info p:last-of-type { margin-bottom: 0; }
-
-        .project-tags {
+        .proj-card h3 {
+            font-family: var(--font-title);
+            font-weight: 400;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            line-height: 1.1;
+            color: #fff;
+            margin-bottom: 0.7rem;
+        }
+        /* Titles stay white on hover; the pill fill is the hover cue. */
+        .proj-card__body {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.85);
+            max-width: 46ch;
+            margin: 0;
+        }
+        .proj-card__body + .proj-card__body { margin-top: 0.6rem; }
+        .proj-card__tags {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 1.2rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .project-tag {
+        .proj-card__tag {
             font-family: var(--font-mono);
             font-size: 0.68rem;
             font-weight: 500;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             padding: 4px 10px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255,255,255,0.35);
             border-radius: 4px;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.85);
+            background: rgba(0, 0, 0, 0.35);
         }
-
-        .project-cta {
+        /* Card pill follows the hero pill: translucent dark fill,
+           black travelling fill on card hover, hero arrow spacing. */
+        .proj-card__pill {
+            align-self: flex-end;
+            margin-top: auto;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.35);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
             font-family: var(--font-mono);
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             font-weight: 500;
             letter-spacing: 0.04em;
-            color: var(--highlight);
-            margin-top: 1.4rem;
-            transition: gap var(--dur-fast) ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+            padding: 0.7rem 1.5rem;
         }
-        .project-card:hover .project-cta { gap: 10px; }
+        .proj-card__pill::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: #000;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 350ms var(--ease-snap);
+            z-index: 0;
+        }
+        .proj-card:hover .proj-card__pill::before,
+        .proj-card:focus-visible .proj-card__pill::before { transform: scaleX(1); }
+        .proj-card__pill > span { position: relative; z-index: 1; }
 
-        /* Sprite pill embed in the visual */
-        .work-sprite-pill {
-            display: inline-flex; align-items: center; gap: 12px;
-            padding: 10px 22px 10px 10px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 9999px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .work-sprite-pill .sprite-face {
-            width: 36px; height: 36px;
-            display: grid; place-items: center;
-        }
-        .work-sprite-pill span {
-            font-family: var(--font-body);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* CTA section */
+        /* CTA section — same Skybound backdrop as the homepage
+           contact band (see .contact-cta-bg in index.css), so copy is
+           forced light in both themes. Kept scoped here so the shared
+           #contact hooks are untouched. */
         .work-cta {
             text-align: center;
+            background:
+                linear-gradient(rgba(10, 14, 20, 0.58), rgba(10, 14, 20, 0.58)),
+                url("../assets/images/skybound-wind-farm-haven.webp") center / cover no-repeat;
+        }
+        .work-cta .eyebrow { color: rgba(255, 255, 255, 0.75); }
+        .work-cta h2 {
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5);
         }
         .work-cta p {
             font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5);
             margin-top: 0.8rem;
         }
         .work-cta .cta-wrapper { display: block; padding-top: 1.5rem; }
 
         @media (max-width: 900px) {
-            .project-card {
-                grid-template-columns: 1fr;
-                min-height: auto;
-            }
-            .project-card:nth-child(even) { direction: ltr; }
-            .project-visual { padding: clamp(1.5rem, 4vw, 2.5rem); }
-            .project-info { padding: clamp(1.5rem, 4vw, 2.5rem); padding-top: 0; }
+            .proj-card { min-height: 420px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .proj-card__bg, .proj-card__pill::before { transition: none !important; }
+            .proj-card:hover .proj-card__bg,
+            .proj-card:focus-visible .proj-card__bg { transform: none; }
         }
     </style>
 </head>
@@ -432,63 +372,40 @@
                         <h2 class="group-title">When a stranger has thirty seconds</h2>
                         <p class="group-note">Somebody lands, works out what this is, and either finds what they came for or leaves. Both of these are about that first half minute.</p>
                     </div>
-                    <div class="projects-grid">
+                    <div class="proj-stack">
                     <!-- Sprite -->
-                <a href="https://beben.design/sprite/" class="project-card" data-reveal style="--i:1">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="work-sprite-pill">
-                                <!-- The real Sprite, same CSS art as the widget (sprite.css). -->
-                                <div class="sprite-face" aria-hidden="true">
-                                    <div class="sprite-character" data-emotion="happy">
-                                        <div class="sprite-body">
-                                            <div class="sprite-eyes">
-                                                <div class="sprite-eye"><div class="sprite-brow"></div></div>
-                                                <div class="sprite-eye"><div class="sprite-brow"></div></div>
-                                            </div>
-                                            <div class="sprite-mouth"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span>Hey, need help?</span>
-                            </div>
+                <a href="https://beben.design/sprite/" class="proj-card" data-reveal style="--i:1">
+                    <img class="proj-card__bg" src="../assets/images/projects/sprite-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Live &middot; Built for this site</span>
+                        <h3 class="proj-card__title">Sprite</h3>
+                        <p class="proj-card__body">A character-driven AI site guide that replaces the generic chatbox with an animated mascot. Built with plain HTML, CSS, and JS. No frameworks, no dependencies.</p>
+                        <p class="proj-card__body">Pattern-matching conversation engine, sentiment-aware expressions, seasonal banners, TTS, and voice input. The MVP is live.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">HTML / CSS / JS</span>
+                            <span class="proj-card__tag">Web Speech API</span>
+                            <span class="proj-card__tag">AI Integration</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">Live &middot; Built for this site</span>
-                        <h2>Sprite</h2>
-                        <p>A character-driven AI site guide that replaces the generic chatbox with an animated mascot. Built with plain HTML, CSS, and JS. No frameworks, no dependencies.</p>
-                        <p>Pattern-matching conversation engine, sentiment-aware expressions, seasonal banners, TTS, and voice input. The MVP is live.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">HTML / CSS / JS</span>
-                            <span class="project-tag">Web Speech API</span>
-                            <span class="project-tag">AI Integration</span>
-                        </div>
-                        <span class="project-cta">Read case study &rarr;</span>
+                        <span class="proj-card__pill"><span>read case study</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
 
                     <!-- Neopolaris -->
-                <a href="https://neopolaris.ai/" class="project-card project-card--flip" data-reveal style="--i:2">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">
-                                <span class="placeholder-icon">&#9670;</span>
-                                Neopolaris visual
-                            </div>
+                <a href="https://neopolaris.ai/" class="proj-card" data-reveal style="--i:2">
+                    <img class="proj-card__bg" src="../assets/images/neopolaris-logo.jpg" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Live &middot; Client build</span>
+                        <h3 class="proj-card__title">Neopolaris</h3>
+                        <p class="proj-card__body">A full website design and build for Neopolaris, a Nairobi-based startup. High-performance, conversion-optimised, and built to communicate brand authority at first glance.</p>
+                        <p class="proj-card__body">Responsive from 320px to 4K, semantic HTML, performance-first CSS, and smooth interaction design that serves the business goals without getting in the way.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">Web Design</span>
+                            <span class="proj-card__tag">Front-end Dev</span>
+                            <span class="proj-card__tag">Brand Identity</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">Live &middot; Client build</span>
-                        <h2>Neopolaris</h2>
-                        <p>A full website design and build for Neopolaris, a Nairobi-based startup. High-performance, conversion-optimised, and built to communicate brand authority at first glance.</p>
-                        <p>Responsive from 320px to 4K, semantic HTML, performance-first CSS, and smooth interaction design that serves the business goals without getting in the way.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">Web Design</span>
-                            <span class="project-tag">Front-end Dev</span>
-                            <span class="project-tag">Brand Identity</span>
-                        </div>
-                        <span class="project-cta">Visit Website &rarr;</span>
+                        <span class="proj-card__pill"><span>visit website</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
                     </div>
@@ -499,46 +416,40 @@
                         <h2 class="group-title">When the network is not there</h2>
                         <p class="group-note">Airplane mode, a dead cell, a machine that was never online. Two projects that had to keep answering anyway, and what drawing that line actually costs.</p>
                     </div>
-                    <div class="projects-grid">
+                    <div class="proj-stack">
                     <!-- Beben Arcade -->
-                <a href="https://beben.design/beben-arcade/" class="project-card" data-reveal style="--i:3">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">Visual coming soon</div>
+                <a href="https://beben.design/beben-arcade/" class="proj-card" data-reveal style="--i:3">
+                    <img class="proj-card__bg" src="../assets/images/projects/arcadia-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Live &middot; Own product</span>
+                        <h3 class="proj-card__title">Beben Arcade</h3>
+                        <p class="proj-card__body">Twelve small games at one address, installable to a home screen. Put the phone in airplane mode and every one of them still opens.</p>
+                        <p class="proj-card__body">A case study in drawing a hard offline boundary and refusing every reference that crosses it, including our own stylesheet, nav and fonts.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">PWA</span>
+                            <span class="proj-card__tag">Service Worker</span>
+                            <span class="proj-card__tag">Canvas</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">Live &middot; Own product</span>
-                        <h2>Beben Arcade</h2>
-                        <p>Twelve small games at one address, installable to a home screen. Put the phone in airplane mode and every one of them still opens.</p>
-                        <p>A case study in drawing a hard offline boundary and refusing every reference that crosses it, including our own stylesheet, nav and fonts.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">PWA</span>
-                            <span class="project-tag">Service Worker</span>
-                            <span class="project-tag">Canvas</span>
-                        </div>
-                        <span class="project-cta">Read case study &rarr;</span>
+                        <span class="proj-card__pill"><span>read case study</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
 
                     <!-- Codex -->
-                <a href="https://beben.design/codex/" class="project-card project-card--flip" data-reveal style="--i:1">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">Visual coming soon</div>
+                <a href="https://beben.design/codex/" class="proj-card" data-reveal style="--i:1">
+                    <img class="proj-card__bg" src="../assets/images/projects/codex-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Running internally &middot; Own tooling</span>
+                        <h3 class="proj-card__title">Codex</h3>
+                        <p class="proj-card__body">An offline library that answers in milliseconds: a large web archive rebuilt into a single portable file you can open without the tool that wrote it.</p>
+                        <p class="proj-card__body">The richest rejection trail of any project here, covering indexing, storage and ranking. Internal tooling, so nothing is downloadable yet, and the page says so.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">Python</span>
+                            <span class="proj-card__tag">SQLite</span>
+                            <span class="proj-card__tag">Search</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">Running internally &middot; Own tooling</span>
-                        <h2>Codex</h2>
-                        <p>An offline library that answers in milliseconds: a large web archive rebuilt into a single portable file you can open without the tool that wrote it.</p>
-                        <p>The richest rejection trail of any project here, covering indexing, storage and ranking. Internal tooling, so nothing is downloadable yet, and the page says so.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">Python</span>
-                            <span class="project-tag">SQLite</span>
-                            <span class="project-tag">Search</span>
-                        </div>
-                        <span class="project-cta">Read case study &rarr;</span>
+                        <span class="proj-card__pill"><span>read case study</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
                     </div>
@@ -549,79 +460,61 @@
                         <h2 class="group-title">When the software lives inside a device</h2>
                         <p class="group-note">A battery, a screen that has to stay readable in the sun, and hardware somebody is holding while the weather happens to them.</p>
                     </div>
-                    <div class="projects-grid">
+                    <div class="proj-stack">
                     <!-- Trek Watch -->
-                <a href="https://beben.design/trek-watch/" class="project-card" data-reveal style="--i:2">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">
-                                <span class="placeholder-icon">&#9201;</span>
-                                Visual coming soon
-                            </div>
+                <a href="https://beben.design/trek-watch/" class="proj-card" data-reveal style="--i:2">
+                    <img class="proj-card__bg" src="../assets/images/watch.jpg" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">In design &middot; Hardware and interface</span>
+                        <h3 class="proj-card__title">Trek Watch</h3>
+                        <p class="proj-card__body">A rugged adventure watch that lives somewhere between the Casio F-91W and the Apple Watch Ultra. Accessible enough for everyday wear, tough enough for the trail.</p>
+                        <p class="proj-card__body">Full product design from industrial design and materials to the interface layer, a watch OS that prioritises legibility, battery life, and one-glance information over feature bloat.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">Industrial Design</span>
+                            <span class="proj-card__tag">UI / UX</span>
+                            <span class="proj-card__tag">Embedded Software</span>
+                            <span class="proj-card__tag">HMI</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">In design &middot; Hardware and interface</span>
-                        <h2>Trek Watch</h2>
-                        <p>A rugged adventure watch that lives somewhere between the Casio F-91W and the Apple Watch Ultra. Accessible enough for everyday wear, tough enough for the trail.</p>
-                        <p>Full product design from industrial design and materials to the interface layer, a watch OS that prioritises legibility, battery life, and one-glance information over feature bloat.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">Industrial Design</span>
-                            <span class="project-tag">UI / UX</span>
-                            <span class="project-tag">Embedded Software</span>
-                            <span class="project-tag">HMI</span>
-                        </div>
-                        <span class="project-cta">Project preview &rarr;</span>
+                        <span class="proj-card__pill"><span>project preview</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
 
                     <!-- Rev Log -->
-                <a href="https://beben.design/rev-log/" class="project-card project-card--flip" data-reveal style="--i:3">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">
-                                <span class="placeholder-icon">&#9881;</span>
-                                Visual coming soon
-                            </div>
+                <a href="https://beben.design/rev-log/" class="proj-card" data-reveal style="--i:3">
+                    <img class="proj-card__bg" src="../assets/images/projects/rev-log-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">Building in public &middot; Open hardware</span>
+                        <h3 class="proj-card__title">Rev Log</h3>
+                        <p class="proj-card__body">An open source telemetry system for motorcycles. Lean, throttle, braking, revs: captured on the bike, visualised in the browser, and owned by the rider.</p>
+                        <p class="proj-card__body">Open hardware, open firmware, and an open ride-data format, built in public before market. Progression telemetry for riders getting better, not just going faster.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">Open Hardware</span>
+                            <span class="proj-card__tag">Embedded Firmware</span>
+                            <span class="proj-card__tag">Data Format</span>
+                            <span class="proj-card__tag">Data Viz</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">Building in public &middot; Open hardware</span>
-                        <h2>Rev Log</h2>
-                        <p>An open source telemetry system for motorcycles. Lean, throttle, braking, revs: captured on the bike, visualised in the browser, and owned by the rider.</p>
-                        <p>Open hardware, open firmware, and an open ride-data format, built in public before market. Progression telemetry for riders getting better, not just going faster.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">Open Hardware</span>
-                            <span class="project-tag">Embedded Firmware</span>
-                            <span class="project-tag">Data Format</span>
-                            <span class="project-tag">Data Viz</span>
-                        </div>
-                        <span class="project-cta">Project preview &rarr;</span>
+                        <span class="proj-card__pill"><span>project preview</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
 
                     <!-- Kilimo Pal -->
-                <a href="https://beben.design/kilimo-pal/" class="project-card" data-reveal style="--i:1">
-                    <div class="project-visual">
-                        <div class="project-visual-inner">
-                            <div class="project-placeholder">
-                                <span class="placeholder-icon">&#127793;</span>
-                                Visual coming soon
-                            </div>
+                <a href="https://beben.design/kilimo-pal/" class="proj-card" data-reveal style="--i:1">
+                    <img class="proj-card__bg" src="../assets/images/projects/kilimo-pal-cover.webp" alt="" loading="lazy">
+                    <span class="proj-card__scrim" aria-hidden="true"></span>
+                    <div class="proj-card__content">
+                        <span class="proj-card__kind">In design &middot; Platform</span>
+                        <h3 class="proj-card__title">Kilimo Pal</h3>
+                        <p class="proj-card__body">An AI-powered agriculture platform that meets farmers where they are: from the absolute basics of what manure is, to managing large-scale onion plantations with sensor data and weather forecasts.</p>
+                        <p class="proj-card__body">Modular hardware and software: start with just the app and AI guidance, add soil sensors, weather stations, and irrigation controllers as you grow. Regular soil test reminders, localised planting calendars, and yield predictions.</p>
+                        <div class="proj-card__tags">
+                            <span class="proj-card__tag">AI Guidance</span>
+                            <span class="proj-card__tag">IoT Sensors</span>
+                            <span class="proj-card__tag">Weather API</span>
+                            <span class="proj-card__tag">Modular Hardware</span>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <span class="eyebrow">In design &middot; Platform</span>
-                        <h2>Kilimo Pal</h2>
-                        <p>An AI-powered agriculture platform that meets farmers where they are: from the absolute basics of what manure is, to managing large-scale onion plantations with sensor data and weather forecasts.</p>
-                        <p>Modular hardware and software: start with just the app and AI guidance, add soil sensors, weather stations, and irrigation controllers as you grow. Regular soil test reminders, localised planting calendars, and yield predictions.</p>
-                        <div class="project-tags">
-                            <span class="project-tag">AI Guidance</span>
-                            <span class="project-tag">IoT Sensors</span>
-                            <span class="project-tag">Weather API</span>
-                            <span class="project-tag">Modular Hardware</span>
-                        </div>
-                        <span class="project-cta">Project preview &rarr;</span>
+                        <span class="proj-card__pill"><span>project preview</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></span>
                     </div>
                 </a>
                     </div>
@@ -636,7 +529,7 @@
             <h2 data-reveal style="--i:1">Let's build something together</h2>
             <p data-reveal style="--i:2">No aggressive sales pitch. Just a technical discussion about your goals.</p>
             <div class="cta-wrapper" data-reveal style="--i:3">
-                <a href="../contact/" class="cta-link">Start a project &#x2197;</a>
+                <a href="../contact/" class="cta-link cta-pill"><span>Start a project</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></a>
             </div>
         </div>
     </section>
@@ -673,7 +566,7 @@
 </footer>
 
 
-<script src="../assets/JS/index.js?v=6.6"></script>
-<script src="../assets/JS/sprite.js?v=6.6"></script>
+<script src="../assets/JS/index.js?v=6.8"></script>
+<script src="../assets/JS/sprite.js?v=6.8"></script>
 </body>
 </html>

@@ -681,7 +681,7 @@ h2 {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: #ff4e74;
+    background: #000;
     transform: scaleX(0);
     transform-origin: left center;
     transition: transform 350ms var(--ease-snap);

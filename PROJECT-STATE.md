@@ -501,6 +501,53 @@ blog and tools generators re-ran idempotent, status `--check` clean,
 voice and facts clean. Measured at commit: 33 pages, 1048 internal
 links checked and 0 broken, CSS+JS 110KB uncompressed.
 
+### Services cover hero (after `6.6`)
+
+Synced from an unpushed MX500 working copy, then deleted: the
+services hub gains a `page-hero--cover` (new
+`services-blueprint-workshop.webp`, 124KB, dark gradient for legibility
+plus a vertical variant on mobile) and all five `Read more` links become
+bordered `read-more-pill`s carrying the diagonal-arrow SVG. Mode-only
+noise from the MX500 mount (`644` to `755` on 201 files) was left behind.
+
+### Pill unification, work cards, asset lock `6.8`
+
+**All homepage pills are the hero pill now.** The `cta-pill--site`
+deep-sea variant is deleted: All services, Put AI to work, All case
+studies and the contact Start a project reuse `.cta-link.cta-pill`
+exactly (translucent black fill, text arrow at 28px). The AI pill keeps
+its blue hover fill plus glow, nothing else. Its star SVG, entrance
+nudge keyframes and observer hook went with the icons; the shared
+`index.js` null-guards, so it no-ops. Restoring the contact pill exposed
+a real bug: shared `#contact a` outranks the pill class and would have
+set dark ink on the dark fill in light mode, so the scoped ink guard is
+back, retargeted at `.cta-pill`.
+
+**Hover fill is black.** Pink `#ff4e74` to brand yellow `#ffc710` and
+then to `#000`, per request, in shared `index.css`, so hero and all
+four pills moved together. The yellow interlude measured ~1.4:1 white on
+yellow and is recorded so nobody restores it as a fix.
+
+**Card pills match.** The `open case study` pills take the same
+translucent fill, black travelling fill on card hover, and hero arrow
+spacing. Titles stay white: the `#ffd9e1` hover tint is removed on home
+and work, the pill fill being the hover cue.
+
+**`/work/` is seven photo cards.** The zigzag two-column rows, visual
+frames and Sprite-face embed are gone; each project is a
+homepage-recipe card (photo, black scrim, kind, title, both paragraphs,
+light tag chips, pill) with the three problem groups kept. Project
+titles dropped to `h3` under the group `h2`s. Rev Log and Kilimo Pal
+had no art: `~/Downloads` masters optimized to WebP in
+`docs/assets/images/projects/` (2.8MB PNG to 209KB at 1280px, 157KB
+JPEG to 74KB). The closing CTA band takes the Skybound backdrop plus
+hero pill, scoped so the shared `#contact` hooks are untouched.
+
+Asset lock `6.6` to `6.8` in two steps (shared CSS changed twice); blog
+and tools generators re-ran idempotent, status re-stamped 8 Oct 2026,
+voice and facts clean. Measured at commit: 33 pages, 1055 internal
+links checked and 0 broken.
+
 ---
 
 ## Corrections to brief v2
@@ -601,10 +648,10 @@ grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html |
 `build_blog.py` needs `markdown`: `python3 -m venv .venv && .venv/bin/pip install markdown`.
 
 Current state, all of it measured rather than remembered: 33 pages served
-excluding the arcade plus `404.html`, 30 sitemap URLs, 1048 internal references
+excluding the arcade plus `404.html`, 30 sitemap URLs, 1055 internal references
 resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
-one asset version (`6.6`) everywhere.
+one asset version (`6.8`) everywhere.
 
 The link figure moved 965 to 1033 with the arcade gameplay pass above: the
 status stamp predates the hub's growth from 12 to 20 games, so the arcade's own
