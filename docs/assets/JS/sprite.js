@@ -451,7 +451,7 @@ const SpriteChat = (() => {
     if (p.indexOf('/tools') === 0)    return ["What can the tools do?", "Services", "Tell me a joke"];
     if (p.indexOf('/contact') === 0)  return ["Pricing", "How long do projects take?", "Show me work"];
     if (p.indexOf('/work') === 0 || p.indexOf('/sprite') === 0 || p.indexOf('/kilimo-pal') === 0 ||
-        p.indexOf('/trek-watch') === 0 || p.indexOf('/rev-log') === 0)
+        p.indexOf('/essential-watch') === 0 || p.indexOf('/rev-log') === 0)
       return ["Tell me about the projects", "Services", "Start a project"];
     if (p.indexOf('/blog') === 0)     return ["What does the studio do?", "Show me work", "Start a project"];
     return ["Services", "Work", "Pricing", "Tell me a joke"];
@@ -632,7 +632,7 @@ const SpriteChat = (() => {
     // Keep this in step with docs/sprite.md: the model learns paths from
     // there, and any path it knows but this misses renders as dead text.
     // The services branch covers the five detail pages and how-we-work.
-    text = text.replace(/(^|\s)(\/(?:services(?:\/[a-z-]+)?|blog(?:\/[a-z0-9-]+)?|tools|shop|work|contact|sprite|codex|beben-arcade|games|kilimo-pal|trek-watch|rev-log|qr-code-generator|contrast-grid|dither-machine|character-counter|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
+    text = text.replace(/(^|\s)(\/(?:services(?:\/[a-z-]+)?|blog(?:\/[a-z0-9-]+)?|tools|shop|work|contact|sprite|codex|beben-arcade|games|kilimo-pal|essential-watch|rev-log|qr-code-generator|contrast-grid|dither-machine|character-counter|legal|privacy|credits)\/)(?=[\s.,!?)]|$)/g,
       '$1<a class="nav-link-inline" href="$2">$2</a>');
     // bare WhatsApp URLs become tappable too
     text = text.replace(/(^|\s)(https:\/\/wa\.me\/\d+)(?=[\s.,!?)]|$)/g,

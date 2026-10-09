@@ -64,7 +64,7 @@ ZONES = {
     "codex/": CASE_STUDY,
     "beben-arcade/": CASE_STUDY,
     "kilimo-pal/": CASE_STUDY,
-    "trek-watch/": CASE_STUDY,
+    "essential-watch/": CASE_STUDY,
     "rev-log/": CASE_STUDY,
     "credits/": CASE_STUDY,
     "legal/": LEGAL,

@@ -6,19 +6,19 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Codex, an offline library in plain SQLite</title>
-    <meta name="description" content="180GB of offline archives that worked and could not be queried. Codex rebuilds them into plain SQLite, searchable in milliseconds. The decisions behind it.">
+    <title>Corpus, a small library you can carry | Beben Design</title>
+    <meta name="description" content="Corpus v2.0, formerly Codex: a portable offline library in plain SQLite. 13 subjects, 7.3M documents, answers in milliseconds with no network. For students, remote researchers, schools, and local AI helpers.">
     <link rel="canonical" href="https://beben.design/codex/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/codex/">
-    <meta property="og:title" content="Codex, an offline library in plain SQLite">
-    <meta property="og:description" content="180GB of offline archives that worked and could not be queried. Codex rebuilds them into plain SQLite, searchable in milliseconds. The decisions behind it.">
-    <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
+    <meta property="og:title" content="Corpus, a small library you can carry">
+    <meta property="og:description" content="Corpus v2.0, formerly Codex: a portable offline library in plain SQLite. 13 subjects, 7.3M documents, answers in milliseconds with no network.">
+    <meta property="og:image" content="https://beben.design/assets/images/projects/corpus-cover.webp">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Codex, an offline library in plain SQLite">
-    <meta name="twitter:description" content="180GB of offline archives that worked and could not be queried. Codex rebuilds them into plain SQLite, searchable in milliseconds. The decisions behind it.">
-    <meta name="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
+    <meta name="twitter:title" content="Corpus, a small library you can carry">
+    <meta name="twitter:description" content="Corpus v2.0, formerly Codex: a portable offline library in plain SQLite. 13 subjects, 7.3M documents, answers in milliseconds with no network.">
+    <meta name="twitter:image" content="https://beben.design/assets/images/projects/corpus-cover.webp">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,9 +51,9 @@
 {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
-    "name": "Codex",
-    "headline": "Codex, an offline library in plain SQLite",
-    "description": "180GB of offline archives that worked and could not be queried. Codex rebuilds them into plain SQLite, searchable in milliseconds. The decisions behind it.",
+    "name": "Corpus",
+    "headline": "Corpus, a small library you can carry",
+    "description": "Corpus v2.0, formerly Codex: a portable offline library in plain SQLite. 13 subjects, 7.3M documents, answers in milliseconds with no network.",
     "url": "https://beben.design/codex/",
     "author": {
         "@id": "https://beben.design/#organization"
@@ -84,12 +84,36 @@
         {
             "@type": "ListItem",
             "position": 3,
-            "name": "Codex",
+            "name": "Corpus",
             "item": "https://beben.design/codex/"
         }
     ]
 }
     </script>
+
+    <style>
+        .corpus-hero-figure {
+            margin: 2.5rem 0 0;
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: #000;
+        }
+        .corpus-hero-figure img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+        .corpus-hero-figure figcaption {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0.7rem 1rem;
+            background: var(--bg);
+        }
+    </style>
 
 </head>
 
@@ -208,9 +232,13 @@
     <!-- Hero - plain -->
     <section class="page-hero">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Internal tooling · Offline search · Case study</span>
-            <h1 data-reveal style="--i:1">An offline library that answers in <em class="highlight-box">milliseconds</em></h1>
-            <p data-reveal style="--i:2">About 180GB of offline archives sit on a drive here: Wikipedia, iFixit, a few others, downloaded for exactly the situation this studio keeps designing around. They open fine. Nobody could ask them anything. Codex is the rebuild that made the knowledge queryable, and it is internal tooling, so there is nothing on this page to download.</p>
+            <span class="eyebrow" data-reveal style="--i:0">Corpus Project v2.0 · Formerly Codex · Offline library</span>
+            <h1 data-reveal style="--i:1">A small library you can <em class="highlight-box">carry</em></h1>
+            <p data-reveal style="--i:2">About 180GB of offline archives sit on a drive here: Wikipedia, iFixit, field medicine manuals, a few others, kept for exactly the situation we keep designing around. They opened fine. Nobody could ask them anything. Corpus is the rebuild that made that knowledge queryable: one portable file per subject, fast to search once running, readable without the tool that wrote it. It is our own reference library first, and it is internal tooling, so there is nothing on this page to download.</p>
+            <figure class="corpus-hero-figure" data-reveal style="--i:3">
+                <img src="../assets/images/projects/corpus-cover.webp" alt="A domed reading room with scroll shelves and scholars gathered around a map table" width="1600" height="678" loading="eager">
+                <figcaption>Corpus v2.0 cover: a working library, not an archive. 13 subjects on disk, answers in milliseconds.</figcaption>
+            </figure>
         </div>
     </section>
 
@@ -220,9 +248,9 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">The constraint</span>
                 <h2 data-reveal style="--i:1">Owning the knowledge is not the same as reaching it</h2>
-                <p data-reveal style="--i:2">A ZIM archive is the offline internet in a box, and as a distribution format it is superb. As a knowledge store it is close to unusable. The reader is slow, the search index that ships inside cannot be reranked, and nothing can query the contents programmatically. You have the knowledge and no good way to ask it a question.</p>
-                <p data-reveal style="--i:3">The commercial shape of that matters more than the technical one. This studio sells offline-first work: tools that are one HTML file with zero external requests, an arcade that runs installed with no network at all. Selling that while our own reference library could not answer a question is a credibility problem before it is an engineering one. It is also a practical one, because the archives exist for the moments when the connection is not there, which are precisely the moments you cannot go and look something up instead.</p>
-                <p data-reveal style="--i:4">The budget was one laptop. Six cores, 16GB of RAM, no usable GPU, and no server to lean on, because a hosted index would defeat the entire point of an offline library. Every option below had to survive that machine. Several of them did not, and the interesting part is which ones, and how far in they got before they fell over.</p>
+                <p data-reveal style="--i:2">A ZIM archive is the offline internet in a box, and as a distribution format it is superb. As a knowledge store it is close to unusable. The reader is slow, the search index that ships inside cannot be reranked, and nothing can query the contents programmatically. We had the knowledge and no good way to ask it a question.</p>
+                <p data-reveal style="--i:3">We rebuilt it because the ZIM design is aged and because the tools we use shape how we work. Patching the reader would keep the same shape: files you open and scroll. We wanted to redo the idea around asking questions: type a few words, get a ranked answer in milliseconds, follow the links, stay offline the whole time.</p>
+                <p data-reveal style="--i:4">The budget was one laptop. Six cores, 16GB of RAM, no usable GPU, and no server to lean on, because a hosted index would defeat the entire point of an offline library. Every approach below had to survive that machine.</p>
             </div>
         </div>
     </section>
@@ -232,8 +260,8 @@
         <div class="container">
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What was rejected</span>
-                <h2 data-reveal style="--i:1">Eleven things that got built and then deleted</h2>
-                <p data-reveal style="--i:2">None of these were dismissed on paper. Each one was built, measured, and then removed, and the measurement is the reason it lost. The list of things that failed is longer than the list of things that survived, which is normal and usually goes unpublished.</p>
+                <h2 data-reveal style="--i:1">Three things we built and then deleted</h2>
+                <p data-reveal style="--i:2">None of these were dismissed on paper. Each one was built, measured, and then removed, and the measurement is the reason it lost. The full trail lives in the project notes. These three shaped what Corpus became.</p>
             </div>
             <div class="decisions">
                 <div class="decision" data-reveal style="--i:2">
@@ -242,43 +270,11 @@
                 </div>
                 <div class="decision" data-reveal style="--i:3">
                     <h3>A custom container format, a proprietary framing, or a compiled extension for the rebuilt store.</h3>
-                    <p>Plain SQLite cost nothing and bought everything. Any SQLite binding in any language opens a codex, and the only thing beyond standard SQL a reader needs to know is that the document body is zstd-compressed JSON with the dictionary sitting in its own table. A clever container would have made the output depend on the project that wrote it, and the point of an offline library is that it outlives its own tooling.</p>
+                    <p>Plain SQLite cost nothing and bought everything. Any SQLite binding in any language opens a Corpus roll, and the output outlives the project that made it. A clever container would have tied every reader to our tooling, which is the opposite of a library you can carry.</p>
                 </div>
                 <div class="decision" data-reveal style="--i:4">
                     <h3>Keep the images. Version 0.1 already shipped them.</h3>
-                    <p>Version 0.1 stored 408,876 images in a 2GB sidecar, and a sample killed it. Across the full Wikipedia archive the median image is 0.05 megapixels, the largest found was 0.395, and not one of 220 sampled reached 2MP. Kiwix downsamples everything on the way in, so the archives cannot supply a usable picture at any price. Gigabytes were being paid for thumbnails nobody could read, so the sidecar went, along with its pipeline, its storage, its schema and its UI.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>One regular expression that strips any sentence mentioning an image.</h3>
-                    <p>This one got built before it got rejected, and it destroyed spec sheets wholesale, because 'Image Resolution: 1920x1080' is a field, 'Figure out how to' is not a figure, 'picture-perfect' is an idiom, and 'bootable images' are disks. The replacement runs in tiers instead: a pure pointer is dropped, a parenthetical clause is excised and the punctuation repaired, and a sentence that still tells a technician something real is kept verbatim with the document flagged. The loss became visible and queryable rather than silent.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>BM25 alone as the ranking function.</h3>
-                    <p>BM25 answers which document contains these words most densely, which across a corpus of millions surfaces obscure stubs with total confidence. Codex multiplies it by an importance score computed offline from the archive's own link graph. No usage data, no telemetry, no network, because an offline library has access to none of those.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>Read the link graph from the raw HTML tree.</h3>
-                    <p>Links collected before navboxes and citations are stripped hand Wikipedia's ranking to The New York Times and the Wayback Machine outright: cited by everything, about nothing. Links are now read from cleaned prose only. A second rule excludes anything linked from more than 15% of the corpus, because iFixit's 404 interstitial page had 58,721 inbound links and ranked first before that rule existed.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>Return nothing when a query matches no title.</h3>
-                    <p>'nintendo switch joycon drift' matches no single title, and returning nothing is the worst possible answer in a library you cannot supplement with a web search. Search relaxes progressively instead: title index with all terms, then full body with all terms, then either index with any term, with a coverage boost so three of four terms beats one of four.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>Twelve worker processes, on the assumption that more parallelism is better.</h3>
-                    <p>Measured throughput on a six-core laptop was 212, 283, 320, 384 and 370 documents per second at four, six, eight, ten and twelve workers. Ten is the plateau and twelve is slower than ten. The same measurement killed an earlier calibration that had projected the Wikipedia build at 2.1 hours by dividing a single-core rate by ten and assuming linear scaling. Ten workers buy 5.6 times one core, not ten, so the real projection is about six hours.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>zstd level 19, on the assumption that maximum compression is worth paying for.</h3>
-                    <p>Level 19 costs 0.94ms per document against 0.55, which is a tenth of the entire per-document budget for the longest pass in the build. It bought 31.05% of the JSON stored against 31.19%, roughly 30MB on a 7.9GB body store. On iFixit, where the dictionary is trained at the same level it compresses at, level 15 actually came out 0.13% smaller than 19.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>np.add.at everywhere in the PageRank pass, since it is the fast path in one part of it.</h3>
-                    <p>The same call is right in one place and wrong in another. For the float-weighted accumulation it runs at 0.42 seconds per 32 million edges. For the integer degree counts it takes 4.74 seconds against 0.61 for bincount, eight times slower. Nothing about reading the code tells you that, which is why the comment explaining it now sits directly above both call sites.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>A dictionary of per-source candidate lists for the related-links pass, trimmed as it goes.</h3>
-                    <p>The obvious implementation is fine at iFixit's 104,000 edges and fatal at Wikipedia's 170 million. 6.9KB per source is 46GB at seven million sources, on a 16GB machine. It does not even fail quickly: it fails about five hours in, after the expensive pass has already been paid for. The replacement sorts each slice and folds the top twelve per group down as it goes, at 1.14 million edges per second and a flat 0.65GB, and it is exact rather than approximate.</p>
+                    <p>Version 0.1 stored 408,876 images in a 2GB sidecar, and a sample killed it. Across the full Wikipedia archive the median image is 0.05 megapixels, and not one of 220 sampled reached 2MP. Kiwix downsamples everything on the way in, so the archives cannot supply a usable picture at any price. Gigabytes were being paid for thumbnails nobody could read, so the sidecar went. A small curated picture set lives in its own file instead, and the text stands on its own.</p>
                 </div>
             </div>
         </div>
@@ -288,26 +284,21 @@
     <section class="section--soft">
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What shipped</span>
-                <h2 data-reveal style="--i:1">Two files, four passes, and a hotkey</h2>
-                <p data-reveal style="--i:2">A codex is two SQLite files. codex.db holds the documents, lead text, redirects, the link-derived neighbours and a quick title index, and it is self-sufficient: copy that one file to a stick and it works. codex-deep.db holds the full-body index and an embedding table, and is attached only if it happens to be there. Bodies are zstd-compressed JSON against a shared dictionary trained in pass 0 and stored in its own table, so a few lines of Python read a codex without importing the project at all.</p>
-                <p data-reveal style="--i:3">The build runs in four passes. Pass 0 samples the archive and trains that dictionary, because compressing small documents individually wastes most of the compression window. Pass 1 extracts with ten worker processes, each holding its own archive handle, and this is where the per-source adapters earn their place: iFixit User/ pages are 56% of all HTML entries with a median length of three words, so they are rejected by path before anything is decompressed, and iFixit's duplicated desktop and mobile guide steps had inflated the corpus to 67.8M words against the 49.1M it holds once deduplicated. Pass 2 resolves the edges, drops dead ends, runs PageRank, and writes the importance scores and related lists. Pass 3 builds the search indexes. Every pass checkpoints every 50,000 documents or every two minutes, whichever comes first, because an overnight job that cannot resume is an overnight job you run twice.</p>
-                <p data-reveal style="--i:4">The interface is deliberately not a web app. A small daemon serves the codex files over local HTTP with a JSON API, and a launcher registers a global hotkey through the Win32 API using ctypes rather than a keyboard hook, so it needs no admin rights and gives antivirus nothing to object to. The hotkey is negotiated at startup rather than hardcoded, because Ctrl+Alt+Space was already taken on the machine it was built on, and the launcher prints whatever combination it got. Serving a codex to a phone or a Pi on the same network is one flag, with no authentication at all, which the README states plainly: trusted networks only.</p>
-                <p data-reveal style="--i:4">What is incomplete is written down rather than quietly omitted. The iFixit codex is the one that has actually been built. Wikipedia is calibrated and has never been run, projected at 6.89 million documents and roughly 19GB across about six hours, and every build now prints that projection and checks the disk can hold it before starting. Embeddings are scaffolded and empty, with a plan to binary-quantise a small model to 48 bytes per document over the top 500,000 by importance. A terminal client and an MCP server are designed and unwritten, and both are clients of the daemon's JSON API, which is exactly why that API was built before either of them. The rough edges are labelled rather than forgotten: 2.2% of leads still carry byline text, 5.9% have no lead at all so results show no preview, and 4.4% of documents are orphans that nothing links to. And Codex itself is internal tooling, so there is no public repository, no demo, and nothing on this site to click.</p>
-                <p data-reveal style="--i:4">The two things worth stealing from it are not code. The first is the format position: rebuilding into plain SQLite rather than a clever container cost nothing and means the output outlives the project that made it, and every decision after that got easier because the answer to 'how will we read this in five years' was already settled. The second is writing the measurement next to the decision. Every rule above looks arbitrary until you know the number behind it, and a rule whose reason has been forgotten is a rule the next person deletes.</p>
+                <span class="eyebrow" data-reveal style="--i:0">What is running now</span>
+                <h2 data-reveal style="--i:1">Film, projector, canvas</h2>
+                <p data-reveal style="--i:2">Think of Corpus as a small local library with three parts, each replaceable without touching the others. Film is the rolls: one self-contained SQLite file per subject, Wikipedia, iFixit, field medicine manuals, thirteen in all. Loading a subject means loading a roll, and one roll on a stick still works on its own. Projector is the librarian: a small daemon that holds the rolls open and answers one stable API over local HTTP, in milliseconds once running. Canvas is the reading desk: a plain web page, a global hotkey that gives a search box from anywhere, an A to Z shelf for browsing, and permalinks that survive.</p>
+                <p data-reveal style="--i:3">We built it for students, for researchers who wander far from the signal, and for anyone who values self sustenance, including with information. A school or a learning center can keep one copy as a reference source that needs no subscription and no connection. Copy the files over, start the projector, ask questions. Running needs stock Python and SQLite and nothing else. Building new rolls is the only part that needs extra packages.</p>
+                <p data-reveal style="--i:4">Version 2.0 is the Corpus rename and three changes worth naming. The projector is now standard library only, so reading takes no third party code at all. The funnel accepts a ZIM archive or a folder of markdown notes and lands both in the same shape, so personal notes become a roll beside Wikipedia. And browsing sits beside ranked search: an alphabetical door through every title, plus a curated shelf of pictures with credits, for the moments when wandering beats querying.</p>
+                <p data-reveal style="--i:4">The same API serves people and local AI agents. Small models carry little information on their own, but pointed at a good source they help with learning: definitions, steps, context, follow up questions. Both the page and an agent ask the daemon the same way, over the same frozen v1 endpoints, with no cloud and no upload. A terminal client and an agent bridge are the natural next clients, which is why the API was built before either of them.</p>
             </div>
             <ul class="tech-list" data-reveal style="--i:4">
-                <li>A four-pass build pipeline: dictionary training, parallel extraction, edge resolution with PageRank, then index build</li>
-                <li>codex.db, a self-sufficient file holding documents, lead text, redirects, link-derived neighbours and a title index</li>
-                <li>codex-deep.db, holding the full-body index and an embedding table, attached only when present</li>
-                <li>zstd-compressed JSON bodies against a trained shared dictionary that lives in its own table, readable with standard SQL</li>
-                <li>Per-source adapters that reject junk by path before decompression and deduplicate repeated guide steps</li>
-                <li>Hybrid ranking: BM25 multiplied by an offline PageRank importance score, with progressive query relaxation and a coverage boost</li>
-                <li>A local HTTP daemon exposing a JSON API, built before the clients that will consume it</li>
-                <li>A launcher that negotiates a global hotkey at startup through the Win32 API, no admin rights required</li>
-                <li>Checkpointing every 50,000 documents or two minutes, so a six-hour build resumes instead of restarting</li>
-                <li>A preflight that projects document count, size and runtime, and refuses to start if the disk cannot hold the result</li>
-                <li>Known-defect flags queryable in SQL: image-reference documents, missing leads, byline noise and orphans</li>
+                <li>Film: one self-sufficient SQLite file per subject, plus an optional deep file for full body search, plus one shared picture file</li>
+                <li>Projector: a small daemon on local HTTP with a frozen v1 JSON API, standard library only to run, no auth so trusted networks only</li>
+                <li>Canvas: a plain web page, a global hotkey search box, A to Z browse with permalinks, and a curated shelf with credits</li>
+                <li>Ranking: text match multiplied by an offline importance score from the archive link graph, with progressive relaxation when titles match nothing</li>
+                <li>Funnel: ZIM archives and folders of markdown notes both build to the same shape, so personal notes sit beside Wikipedia</li>
+                <li>Same API for people and local agents, so a small model pointed at a good roll helps with learning offline</li>
+                <li>Checkpointing every 50,000 documents or two minutes, plus a preflight that projects size and refuses to start when the disk cannot hold it</li>
             </ul>
         </div>
     </section>
@@ -318,14 +309,14 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What it produced</span>
                 <h2 data-reveal style="--i:1">Build measurements, and what they are not</h2>
-                <p data-reveal style="--i:2">This site runs no analytics, so there are no traffic, engagement or enquiry numbers on this page and none have been estimated. What follows are build and engineering measurements taken on the machine that ran the pipeline and reported in the source write-up. They should be read as stated measurements rather than proven ones, for the reason given directly underneath them.</p>
+                <p data-reveal style="--i:2">This site runs no analytics, so there are no traffic, engagement or enquiry numbers on this page and none have been estimated. What follows are build and engineering measurements taken on the machine that ran the pipeline. They should be read as stated measurements rather than proven ones, for the reason given directly underneath them.</p>
             </div>
             <div class="metrics">
                 <div class="metric" data-reveal style="--i:2">
                     <span class="metric-value">133MB</span>
                     <div class="metric-body">
-                        <span class="metric-label">The iFixit codex</span>
-                        <p class="metric-note">Rebuilt from a 3.3GB archive of 894,836 entries into 82,269 documents, in about three minutes. Stated measurement from the build, not verifiable from this repo.</p>
+                        <span class="metric-label">The iFixit roll</span>
+                        <p class="metric-note">Rebuilt from a 3.3GB archive of 894,836 entries into 82,269 documents, in about three minutes. Stated measurement from the build.</p>
                     </div>
                 </div>
                 <div class="metric" data-reveal style="--i:3">
@@ -343,10 +334,10 @@
                     </div>
                 </div>
                 <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">384 per second</span>
+                    <span class="metric-value">7.3M</span>
                     <div class="metric-body">
-                        <span class="metric-label">Extraction throughput at ten workers</span>
-                        <p class="metric-note">Against 370 at twelve and 212 at four, on a six-core laptop. Ten is the plateau, and it buys 5.6 times one core rather than ten. Stated measurement.</p>
+                        <span class="metric-label">Documents across 13 rolls</span>
+                        <p class="metric-note">Wikipedia, iFixit, medicine, travel, manuals and more: 4.36 billion words in 33.9GB from 68.5GB of source. Stated measurement.</p>
                     </div>
                 </div>
                 <div class="metric" data-reveal style="--i:5">
@@ -366,14 +357,14 @@
                 <div class="metric" data-reveal style="--i:5">
                     <span class="metric-value">0</span>
                     <div class="metric-body">
-                        <span class="metric-label">Codex files in this repository</span>
-                        <p class="metric-note">The one number here you can check yourself. Codex appears on this site only as a written account. There is no code, no repository link and no download.</p>
+                        <span class="metric-label">Corpus files in this repository</span>
+                        <p class="metric-note">The one number here you can check yourself. Corpus appears on this site only as a written account. There is no public code, no sample file and no download.</p>
                     </div>
                 </div>
             </div>
             <div class="honesty" data-reveal style="--i:5">
                 <span class="honesty-label">What is not measured here</span>
-                <p>Everything above except the last figure is a measurement taken on one laptop and reported by the person who took it. A reader cannot reproduce a single one of them, because Codex is internal tooling: there is no public repository, no demo, no sample file and nothing downloadable anywhere on this site. That is the opposite of Sprite and the Arcade, which a visitor can open and poke at directly, and it is worth saying plainly rather than dressing the page to imply otherwise. No visitor-side outcome could be reported even if we wanted to, because this site runs no analytics at all. The fix, and it is an owner action rather than a claim: publish the codex schema and one small sample .db file, so a reader can open it with any SQLite binding and verify the central claim, that the format is plain and readable without the tool that wrote it. Until that exists, the format position is an argument, not a demonstration.</p>
+                <p>Everything above except the last figure is a measurement taken on one laptop and reported by the person who took it. A reader cannot reproduce a single one of them, because Corpus is internal tooling: there is no public repository, no demo, no sample file and nothing downloadable anywhere on this site. That is the opposite of Sprite and the Arcade, which a visitor can open and poke at directly, and it is worth saying plainly rather than dressing the page to imply otherwise. No visitor-side outcome could be reported even if we wanted to, because this site runs no analytics at all. The fix, and it is an owner action rather than a claim: publish the roll schema and one small sample file, so a reader can open it with any SQLite binding and verify the central claim, that the format is plain and readable without the tool that wrote it. Until that exists, the format position is an argument, not a demonstration.</p>
             </div>
         </div>
     </section>
@@ -385,9 +376,9 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What is still wrong</span>
                 <h2 data-reveal style="--i:1">None of this can be checked by the person reading it</h2>
-                <p data-reveal style="--i:2">Every figure in the section above was measured. Not one of them can be verified by anyone else. Codex is internal tooling: there is no download, no sample file and no published schema, so the claim this page rests on, that a large archive becomes one portable file that answers in milliseconds, has to be taken on trust. On a site whose argument is that numbers should be checkable, this is the weakest page here, and it is weakest exactly where it is loudest.</p>
-                <p data-reveal style="--i:3">The measurements are also one machine and one run. They were taken on the machine that ran the pipeline and reported from the source write-up, which the section above says in as many words. That makes them stated rather than proven. A different disk would move the build times, and a different corpus would move everything.</p>
-                <p data-reveal style="--i:4">The rejection list has the opposite problem. Eleven approaches were built and deleted, and that is the most useful thing on the page, but the evidence for each one is a sentence describing a measurement rather than the measurement itself.</p>
+                <p data-reveal style="--i:2">Every figure in the section above was measured. Not one of them can be verified by anyone else. Corpus is internal tooling: there is no download, no sample file and no published schema, so the claim this page rests on, that a large archive becomes small portable rolls that answer in milliseconds, has to be taken on trust. On a site whose argument is that numbers should be checkable, this is the weakest page here, and it is weakest exactly where it is loudest.</p>
+                <p data-reveal style="--i:3">The measurements are also one machine and one run. They were taken on the machine that ran the pipeline, which the section above says in as many words. That makes them stated rather than proven. A different disk would move the build times, and a different corpus would move everything.</p>
+                <p data-reveal style="--i:4">The rejection trail has the opposite problem. Three approaches were built and deleted, and that is useful, but the evidence for each one is a sentence describing a measurement rather than the measurement itself. The full list with numbers lives in the project notes, not here, because this page should read as a library first and a build log second.</p>
             </div>
         </div>
     </section>
@@ -402,8 +393,8 @@
             </div>
 
             <ul class="tech-list" data-reveal style="--i:4">
-                <li>Publish the schema for codex.db, so the shape of the thing is inspectable without the pipeline</li>
-                <li>Publish one small codex built from a public source, so the milliseconds can be run rather than read</li>
+                <li>Publish the schema for a Corpus roll, so the shape of the thing is inspectable without the pipeline</li>
+                <li>Publish one small roll built from a public source, so the milliseconds can be run rather than read</li>
                 <li>Report the build figures from a second machine, so they stop being one measurement</li>
             </ul>
         </div>
@@ -414,8 +405,7 @@
             <span class="eyebrow" data-reveal style="--i:0">Next step</span>
             <h2 data-reveal style="--i:1">This kind of thinking, on your product.</h2>
             <div class="cta-row" data-reveal style="--i:2">
-                <a href="../contact/" class="cta-link">Start a project ↗</a>
-                <a href="../work/" class="cta-link">← Back to work</a>
+                <a href="../contact/" class="cta-link cta-pill"><span>Start a project</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></a>
             </div>
         </div>
     </section>

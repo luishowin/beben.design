@@ -585,6 +585,42 @@ No shared CSS touched, asset lock stays `6.8`. Measured at commit:
 Sprite hero +1, CTA link removal -1; the two contact covers are CSS
 backgrounds and uncounted), voice and facts clean.
 
+### Corpus v2.0 rewrite, Essential Watch move (after `6.8`)
+
+**`/codex/` is now Corpus, v2.0, formerly Codex.** The 11-item technical
+rejection trail became 3 (ZIM direct, custom container, images), and the
+shipped section is now the plain-language library model from the project
+README: film (one SQLite roll per subject), projector (stdlib-only local
+daemon, frozen v1 API), canvas (web page, hotkey, A to Z browse, shelf).
+Audience stated on the page: students, remote researchers, self
+sustenance, schools as reference source, plus local AI agents on the
+same API. Metrics reframed to the v2 corpus: 13 rolls, 7.3M documents,
+4.36B words, 33.9GB from 68.5GB of source. Hero figure uses
+`corpus-hero.jpeg` from `~/Downloads` as `corpus-cover.webp` (1600px,
+131KB), also on the home and work cards. URL stays `/codex/`, display
+renamed, `og:image` points at the new cover. Closing CTA matches the
+Sprite cleanup: single hero-recipe pill, `Back to work` removed.
+
+**`/trek-watch/` moved to `/essential-watch/` and is indexed.** The
+`noindex` placeholder became a rich preview written from
+`github.com/luishowin/essential-watch`: calm thesis (attention is the
+resource), three rules, spec v6 digest (42x36x9mm, 30g, 10 ATM, mono
+OLED, nRF52840, Hall-effect input, 30-day target), emulator-first
+method, outbound pills to the live site, emulator, hardware digest,
+journal, and repo. Swimmer art from `~/Downloads` as
+`essential-watch-cover.webp` (1600px, 154KB) on hero and work card;
+`watch-render.jpeg` as `essential-watch-detail.webp` (1280px, 99KB) in
+the spec section. Old slug kept as a meta-refresh stub (canonical to
+the new URL, `noindex`), since Pages has no server redirects. All
+inbound refs moved: work card, `sprite.md`, both `sprite.js` spots,
+`check_voice.py` zone key, README structure note, sitemap entry
+(`2026-10-09`). Workbench links stacked as vertical pills; closing
+`Meanwhile` links converted to pills.
+
+No shared CSS touched, asset lock stays `6.8`. Measured at commit:
+voice clean, facts agree across 34 files, `sprite.js` parses,
+status `--check` clean.
+
 ---
 
 ## Corrections to brief v2

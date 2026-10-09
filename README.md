@@ -17,7 +17,8 @@ docs/                  the published site
   tools/ shop/ work/ contact/              main pages
   sprite/ beben-arcade/ codex/             case studies (four-part, verifiable numbers)
   rev-log/             open project page, indexed
-  kilimo-pal/ trek-watch/                  project placeholders (noindex; not case studies)
+  kilimo-pal/                            project placeholder (noindex; not a case study)
+  essential-watch/                       open project page, indexed
   blog/                GENERATED blog pages + feed.xml (never hand-edit; see The blog)
   legal/ privacy/ credits/ 404.html        support pages
   qr-code-generator/ contrast-grid/ character-counter/ dither-machine/

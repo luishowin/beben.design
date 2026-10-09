@@ -91,12 +91,15 @@ Three finished case studies, three previews, two client sites.
   /games/. It refuses every reference that crosses the offline boundary,
   including the studio's own stylesheet, nav and fonts. Case study at
   /beben-arcade/.
-- Codex: an offline library that answers in milliseconds, with no network
-  call. Case study at /codex/. Its numbers are self-reported, because nothing
-  about it is publicly verifiable yet, and the page says so.
-- Trek Watch: a rugged adventure watch that sits between the Casio F-91W
-  and the Apple Watch Ultra. Industrial design through to the watch OS. A
-  preview at /trek-watch/, not yet a full case study.
+- Corpus: a small portable library you can carry, formerly Codex, now v2.0 with
+  film, projector and canvas. Thirteen subjects, 7.3M documents, answers in
+  milliseconds with no network call. Case study at /codex/. Its numbers are
+  self-reported, because nothing about it is publicly verifiable yet, and the
+  page says so.
+- Essential Watch: a calm, repairable wrist instrument that sits between the
+  Casio F-91W and the Apple Watch Ultra. Formerly Trek Watch, now with spec
+  v6 in the open and a live emulator. Industrial design through to the watch
+  OS. A preview at /essential-watch/, building in public.
 - Rev Log: an open source motorcycle telemetry project. Open hardware,
   open firmware, and an open ride-data format, built in public. It measures
   progression, not just speed. Its project page is at /rev-log/.
