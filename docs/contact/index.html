@@ -126,6 +126,67 @@
            Tokens, nav, footer, page-hero, FAQ, reveal from index.css.
         ───────────────────────────────────────────────────────── */
 
+        /* ── Hero cover: the Skybound wind farm, the same photo behind
+           the homepage contact band (.contact-cta-bg in index.css).
+           Dark surface in both themes, same recipe as the services
+           cover hero: art runs edge to edge under a left-weighted
+           gradient, copy forced light with text-shadow insurance. */
+        .page-hero--cover {
+            --headers: #F7F4F3;
+            --text: #F7F4F3;
+            --text-muted: rgba(247, 244, 243, 0.88);
+            --bg: #141414;
+            --highlight: var(--yellow);
+            --highlight-text: var(--yellow);
+
+            background-color: #141414;
+            background-image:
+                linear-gradient(95deg,
+                    rgba(9, 11, 14, 0.92) 0%,
+                    rgba(9, 11, 14, 0.75) 48%,
+                    rgba(9, 11, 14, 0.50) 100%),
+                url("../assets/images/skybound-wind-farm-haven.webp");
+            background-size: cover;
+            background-position: 50% 30%;
+            background-repeat: no-repeat;
+            border-bottom: none;
+        }
+        .page-hero--cover .eyebrow,
+        .page-hero--cover h1,
+        .page-hero--cover p { text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5); }
+
+        /* ── Talk section cover: wildflower meadow under a transparent
+           dark overlay. Dark surface in both themes, same forced-light
+           copy recipe as the hero cover above. */
+        .talk-cover {
+            --headers: #F7F4F3;
+            --text: #F7F4F3;
+            --text-muted: rgba(247, 244, 243, 0.88);
+            --bg: #141414;
+            --highlight: var(--yellow);
+            --highlight-text: var(--yellow);
+
+            background-color: #141414;
+            background-image:
+                linear-gradient(rgba(10, 14, 20, 0.58), rgba(10, 14, 20, 0.58)),
+                url("../assets/images/wildflower-meadow-biodome.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-bottom: none;
+        }
+        .talk-cover .eyebrow,
+        .talk-cover h2,
+        .talk-cover .phone-display,
+        .talk-cover .phone-meta { text-shadow: 0 1px 2px rgba(9, 11, 14, 0.5); }
+        /* Pills sit on the photo, so they take the photo-pill recipe:
+           light ring and translucent dark fill in both themes. */
+        .talk-cover .talk-pill {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.35);
+            color: #FFFFFF;
+        }
+
         /* ── Project form — the primary channel ── */
         .form-intro {
             font-size: 0.95rem;
@@ -495,6 +556,14 @@
                         0 0 64px rgba(18, 140, 126, 0.28);
             transform: translateY(-2px);
         }
+        /* Call glows light sky blue instead of WhatsApp green. */
+        .talk-pill--call:hover,
+        .talk-pill--call:focus-visible {
+            border-color: #87CEFA;
+            box-shadow: 0 0 0 1px rgba(135, 206, 250, 0.55),
+                        0 0 24px rgba(135, 206, 250, 0.35),
+                        0 0 64px rgba(135, 206, 250, 0.28);
+        }
 
         /* ── FAQ instant collapse: applied to the previously open
            item only, so its close snaps while the new one animates. ── */
@@ -507,6 +576,21 @@
             letter-spacing: 0.04em;
             color: var(--text-muted);
             margin-top: 2rem;
+        }
+
+        /* Cover copy runs full width on small screens, so the
+           left-weighted ramp would leave line ends under-scrimmed.
+           Go vertical instead, same as the services cover hero. */
+        @media (max-width: 900px) {
+            .page-hero--cover {
+                background-image:
+                    linear-gradient(180deg,
+                        rgba(9, 11, 14, 0.89) 0%,
+                        rgba(9, 11, 14, 0.78) 55%,
+                        rgba(9, 11, 14, 0.92) 100%),
+                    url("../assets/images/skybound-wind-farm-haven.webp");
+                background-position: 50% 20%;
+            }
         }
     </style>
 </head>
@@ -623,8 +707,8 @@
 <!-- MAIN -->
 <main id="main-content">
 
-    <!-- Hero - plain -->
-    <section class="page-hero">
+    <!-- Hero - Skybound cover, same photo as the homepage contact band -->
+    <section class="page-hero page-hero--cover">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Get in touch</span>
             <h1 data-reveal style="--i:1">Design <em class="highlight-box">logic</em> starts with a conversation.</h1>
@@ -698,14 +782,14 @@
         </div>
     </section>
 
-    <!-- Phone - plain, secondary channel -->
-    <section>
+    <!-- Phone - wildflower cover, secondary channel -->
+    <section class="talk-cover">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Prefer to talk?</span>
             <h2 data-reveal style="--i:1">Call or WhatsApp the studio</h2>
             <a class="phone-display" href="tel:+254114728233" data-reveal style="--i:2">+254 114 728 233</a>
             <div class="cta-row" data-reveal style="--i:3">
-                <a href="tel:+254114728233" class="talk-pill">Call ↗</a>
+                <a href="tel:+254114728233" class="talk-pill talk-pill--call">Call ↗</a>
                 <a href="https://wa.me/254114728233" class="talk-pill" target="_blank" rel="noopener">WhatsApp ↗</a>
             </div>
             <p class="phone-meta" data-reveal style="--i:4">Mon&ndash;Fri &middot; 08:00&ndash;18:00 EAT &middot; Westlands, Nairobi</p>

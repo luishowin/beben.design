@@ -83,7 +83,7 @@ The page at /services/how-we-work/ publishes this, which almost nobody does.
 
 ## Current projects
 
-Three finished case studies, three previews, one client site.
+Three finished case studies, three previews, two client sites.
 
 - Sprite: the animated AI site guide you are talking to right now. Built
   with plain HTML, CSS, and JS, no frameworks. Case study at /sprite/.
@@ -105,6 +105,9 @@ Three finished case studies, three previews, one client site.
   preview at /kilimo-pal/.
 - Neopolaris: a full website design and build for a Nairobi startup, live
   at neopolaris.ai.
+- Nanyuki Country Home: pitch, design and build for a private holiday
+  house in Nanyuki, live at nanyukicountryhome.com with direct WhatsApp
+  and email enquiries.
 
 ## The tools
 

@@ -6,18 +6,18 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Sprite - a chat widget with two brains | Beben Design</title>
-    <meta name="description" content="A case study on putting a chat guide on a static site with no server and no key in the repo. Two files, zero dependencies, and an offline floor.">
+    <title>Sprite, a tour guide for the site | Beben Design</title>
+    <meta name="description" content="Meet Sprite, a light site guide that shows you around, answers questions and collects nothing. Live across beben.design.">
     <link rel="canonical" href="https://beben.design/sprite/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/sprite/">
-    <meta property="og:title" content="Sprite - a chat widget with two brains | Beben Design">
-    <meta property="og:description" content="A case study on putting a chat guide on a static site with no server and no key in the repo. Two files, zero dependencies, and an offline floor.">
+    <meta property="og:title" content="Sprite, a tour guide for the site | Beben Design">
+    <meta property="og:description" content="Meet Sprite, a light site guide that shows you around, answers questions and collects nothing.">
     <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Sprite - a chat widget with two brains | Beben Design">
-    <meta name="twitter:description" content="A case study on putting a chat guide on a static site with no server and no key in the repo. Two files, zero dependencies, and an offline floor.">
+    <meta name="twitter:title" content="Sprite, a tour guide for the site | Beben Design">
+    <meta name="twitter:description" content="Meet Sprite, a light site guide that shows you around, answers questions and collects nothing.">
     <meta name="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <script type="application/ld+json">
@@ -25,8 +25,8 @@
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     "name": "Sprite",
-    "headline": "Sprite - a chat widget with two brains",
-    "description": "A case study on putting a chat guide on a static site with no server and no key in the repo. Two files, zero dependencies, and an offline floor.",
+    "headline": "Sprite, a tour guide for the site",
+    "description": "Meet Sprite, a light site guide that shows you around, answers questions and collects nothing.",
     "url": "https://beben.design/sprite/",
     "author": {
         "@id": "https://beben.design/#organization"
@@ -108,8 +108,23 @@
             color: var(--text-muted);
         }
 
+        .sprite-hero-figure {
+            margin: 2.5rem 0 0;
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: #000;
+        }
+        .sprite-hero-figure img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 2;
+            object-fit: cover;
+            transform: scale(1.05);
+        }
         .sprite-demo-embed {
-            margin-top: 3rem;
+            margin-top: 2rem;
             display: flex;
             justify-content: center;
         }
@@ -174,36 +189,6 @@
         .roadmap-item p {
             font-size: 0.9rem;
             line-height: 1.6;
-            color: var(--text-muted);
-        }
-
-        .credits-section {
-            text-align: center;
-            padding-top: clamp(48px, 6vw, 80px);
-            padding-bottom: clamp(48px, 6vw, 80px);
-        }
-        .credits-grid {
-            display: flex;
-            justify-content: center;
-            gap: clamp(2rem, 6vw, 5rem);
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-        .credit-card {
-            text-align: center;
-        }
-        .credit-card .credit-name {
-            font-family: var(--font-title);
-            font-size: 1.3rem;
-            color: var(--headers);
-            margin-bottom: 0.25rem;
-        }
-        .credit-card .credit-role {
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
             color: var(--text-muted);
         }
 
@@ -327,7 +312,11 @@
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Thinking in pixels</span>
             <h1 data-reveal style="--i:1">Meet <em class="highlight-box">Sprite</em></h1>
-            <p class="lead" data-reveal style="--i:2">A little AI guide with a lot of character. Sprite replaces the generic website chatbox with an animated mascot that helps visitors navigate, answers questions, and adds warmth to a very technical website.</p>
+            <p class="lead" data-reveal style="--i:2">Sprite is the guide on this site. He shows visitors around, answers questions in plain language and keeps the tone warm on a technical site. He is one example of the smart interactive components we build: small, light and modular.</p>
+
+            <figure class="sprite-hero-figure" data-reveal style="--i:3">
+                <img src="../assets/images/projects/sprite-cover.webp" alt="" fetchpriority="high">
+            </figure>
 
             <div class="sprite-demo-embed" data-reveal style="--i:3">
                 <div class="sprite-demo-pill">
@@ -346,86 +335,57 @@
         </div>
     </section>
 
-    <!-- 1. The constraint - soft -->
+    <!-- 1. What Sprite is - soft -->
     <section class="section--soft">
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">The constraint</span>
-                <h2 data-reveal style="--i:1">A widget with nowhere to put a key</h2>
-                <p data-reveal style="--i:2">This site is static HTML on GitHub Pages. No build step, no server, no database, nothing running between the repository and the visitor. Twenty pages carry the widget. That was not a limitation to design around, it was the brief: whatever Sprite became had to ship as two files and keep working on the day everything else did not.</p>
-                <p data-reveal style="--i:3">A chat widget in that setting has three problems, and none of them are design problems. There is nowhere to put an API key, because anything in a public repository is public and anything the browser downloads is public. There is nowhere to hide a slow failure, because a static site has no ops page, no queue and no retry worker behind an error message; the widget itself has to decide what happens next, immediately, in front of whoever is looking. And there is no defensible reason to put a dependency tree behind a mascot.</p>
-                <p data-reveal style="--i:4">The commercial constraint is blunter than any of that. This is the studio's own site, so Sprite is a shop window, and a shop window that dies during a client demo costs more than the feature is worth. It also sits on a metered API behind a public page with no login, which makes every architectural choice a spending choice. An uncapped proxy is an open tap, and a per-message cost attached to a portfolio mascot is a bill with no revenue standing behind it.</p>
+                <span class="eyebrow" data-reveal style="--i:0">What it is</span>
+                <h2 data-reveal style="--i:1">A tour guide, not a chatbox</h2>
+                <p data-reveal style="--i:2">Sprite lives on every page of this site. He replaces the generic support chatbox with a small animated character that helps you find things and answers questions where you are, without sending you to a help page.</p>
+                <p data-reveal style="--i:3">He is built as a smart interactive component: two small files, no framework, no account, no tracking. He collects nothing and stores nothing beyond the open tab, so there is nothing to opt out of.</p>
+                <p data-reveal style="--i:4">If you are considering something similar for your product, this page is the short version. The full build notes live in the public repo, linked below.</p>
             </div>
         </div>
     </section>
 
-    <!-- 2. What was rejected - plain. This section carries the value. -->
+    <!-- 2. What he does - plain -->
     <section>
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What lost</span>
-                <h2 data-reveal style="--i:1">The versions that did not ship</h2>
-                <p data-reveal style="--i:2">None of these were straw men. Each was the obvious answer to one of the three problems, and each lost for a reason that can still be pointed at in the source.</p>
+                <span class="eyebrow" data-reveal style="--i:0">What he does</span>
+                <h2 data-reveal style="--i:1">Helpful on purpose</h2>
+                <p data-reveal style="--i:2">Sprite does a small set of things well. He points you to the right page, answers questions about services, process and projects, and keeps answers short, pointing to a page when a page says it better.</p>
             </div>
-            <div class="decisions">
-                <div class="decision" data-reveal style="--i:2">
-                    <h3>Call the model directly from the browser, with the API key in sprite.js</h3>
-                    <p>It is the shortest path and it is unshippable. GitHub Pages serves the repository, so the key would sit in view-source on twenty public pages, readable by anyone and spendable until the credits ran out. No obfuscation survives a devtools tab, so this was never a hardening problem to solve later. It is a hosting model that cannot hold a secret at all.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:3">
-                    <h3>Drop in a chat SDK and the framework it expects</h3>
-                    <p>The vendor widget brings a bundle, a build step and a runtime to a site that deliberately has none of the three, and it would land on all twenty pages so that a portfolio could have a mascot. It also puts the personality behind somebody else's theming layer, which is the one part of this that had to be ours. Written by hand instead, the entire widget is 1,165 lines and 52.0 KB with no external runtime dependency at all.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:4">
-                    <h3>Let the LLM be the only brain and show an error state when it is down</h3>
-                    <p>An error state is a promise that somebody is watching, and on a static site nobody is: no queue, no retry worker, no ops page behind the apology. A model-only widget also has no floor under what it says about money, and this one gets asked about pricing. The pattern engine costs nothing per message, answers in zero network round trips, and cannot invent a discount, so it became the primary experience rather than the consolation prize.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>Stand up a small backend of our own to hold the key and the prompt</h3>
-                    <p>A server is the correct answer to the key problem and the wrong answer to everything else here. It reintroduces uptime, deploys, patching and a monthly line item for a feature whose job is to say hello, and it ends the hosting story where publishing is just a push to a branch. The Cloudflare Worker that shipped is 154 lines on a free tier of 100,000 requests a day: the smallest thing that can hold a secret without becoming a system to run.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>Render the model's markdown links exactly as it writes them</h3>
-                    <p>Give a language model a markdown renderer and it will eventually emit an href you did not want on the page. The failure mode is not a bad answer, it is a live anchor with the studio's name wrapped around it. The renderer escapes everything first and then linkifies against five explicit rules: site-relative paths, beben.design, wa.me, mailto and tel. Anything else stays plain text. The model is trusted with tone and never with a destination.</p>
-                </div>
-                <div class="decision" data-reveal style="--i:5">
-                    <h3>Persist the conversation in localStorage so Sprite remembers returning visitors</h3>
-                    <p>Memory across visits sounds like the better feature and is the wrong lifespan for a site guide. Somebody returning next week does not want last week's half-finished question sitting there waiting, and keeping it turns a navigation aid into something that has to be described in the privacy policy. sessionStorage delivers the useful half: the chat follows a visitor from the services page to the contact page and dies with the tab.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 3. What shipped - soft -->
-    <section class="section--soft">
-        <div class="container">
-            <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What shipped</span>
-                <h2 data-reveal style="--i:1">What is running now</h2>
-                <p data-reveal style="--i:2">A page adds two includes, both carrying a version query string, and gets the whole widget. sprite.js injects its own DOM, so no page carries markup for it and no page can quietly drift out of sync with the others. Twenty pages on this site include it.</p>
-                <p data-reveal style="--i:3">The offline brain is a dialogue table that ships inside the script: 24 intents, each a regular expression mapped to a pool of replies written by hand in Sprite's voice, 46 of them counting the three fallbacks that admit ignorance and offer the sections it does know. Replies carry suggestion chips so a visitor can keep moving with one tap. The character is 11 emotion states drawn entirely in CSS, keyframes on a few nested divs, so an expression costs no image request.</p>
-                <p data-reveal style="--i:4">The live brain is a 154 line Cloudflare Worker sitting between the site and Fireworks AI. It holds the key as a Worker secret, assembles the system prompt, and caps what any visitor can spend: 12 messages of history, 1,000 characters each, 450 tokens of reply. CORS is locked to four origins, one of them the local preview port, so the live brain works while building and nowhere else. What Sprite knows beyond the baked-in prompt is docs/sprite.md, a markdown file served like any other page, fetched by the Worker and cached for five minutes under an 8,000 character ceiling. Teaching the mascot something new is a git push, the same motion as editing any page.</p>
-                <p data-reveal style="--i:4">The join between the two is a single catch. Any failure of the live brain routes the message to the pattern engine and logs one console warning, once. There is no error state anywhere in the interface, because the offline brain means there was never a moment that needed one. One ordering detail is worth stating precisely, because it is the opposite of how it looks: at runtime the proxy is tried first and the pattern engine catches, but in design the sequence is reversed. The offline answers were written first and treated as the product, and the model is the upgrade layered on top of them.</p>
-            </div>
-            <ul class="tech-list" data-reveal style="--i:4">
-                <li>sprite.js and sprite.css, 1,165 lines and 52.0 KB combined, with zero external runtime dependencies</li>
-                <li>A 24-intent offline dialogue engine, 46 hand-written replies, suggestion chips on the ones that need them</li>
-                <li>11 emotion states drawn in CSS, no sprite sheet and no image request per expression</li>
-                <li>A 154 line Cloudflare Worker holding the Fireworks key, CORS locked to four origins, history and tokens capped at the proxy</li>
-                <li>A git-pushable knowledge base at docs/sprite.md, cached five minutes, capped at 8,000 characters</li>
-                <li>A five-rule link allowlist that renders model-written hrefs only for this site, WhatsApp, mailto and tel</li>
-                <li>Deploy documentation in cloudflare-worker/README.md, so the proxy is reproducible by somebody who is not us</li>
+            <ul class="tech-list" data-reveal style="--i:3">
+                <li>Shows you around, with links to the page you actually need</li>
+                <li>Answers questions in plain language, in his own voice</li>
+                <li>Reacts with expressions that match the tone of the reply</li>
+                <li>Speaks and listens through the browser voice tools</li>
+                <li>Offers suggestion chips, so you can keep moving with one tap</li>
             </ul>
         </div>
     </section>
 
-    <!-- 4. What it produced - plain. Numbers only where they exist. -->
+    <!-- 3. How he works - soft -->
+    <section class="section--soft">
+        <div class="container">
+            <div class="content-block">
+                <span class="eyebrow" data-reveal style="--i:0">How he works</span>
+                <h2 data-reveal style="--i:1">Offline first, AI when it helps</h2>
+                <p data-reveal style="--i:2">Sprite answers from a small set of hand-written replies first. That set ships with the site files, costs nothing to run and keeps working when the network drops, so there is always something helpful on screen.</p>
+                <p data-reveal style="--i:3">When the network is there, a tiny proxy adds a live AI brain on top. The key stays in the proxy, never in the repo, and any failure falls back to the offline replies with no error shown. The chat follows you across pages in the tab session and dies with the tab, and links he renders are limited to this site, WhatsApp, email and phone.</p>
+                <p data-reveal style="--i:4">The technical detail lives where it belongs: the Sprite section of the <a href="https://github.com/luishowin/beben.design">public repo</a> and the proxy notes in <a href="https://github.com/luishowin/beben.design/tree/main/cloudflare-worker">cloudflare-worker</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Current state - plain. Numbers only where they exist. -->
     <section>
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What it produced</span>
-                <h2 data-reveal style="--i:1">What can actually be counted</h2>
-                <p data-reveal style="--i:2">This site runs no analytics, so what follows is engineering measurement rather than visitor measurement. Every figure below was read out of a file with a shell command, and the commands are on the record.</p>
+                <span class="eyebrow" data-reveal style="--i:0">Current state</span>
+                <h2 data-reveal style="--i:1">Live here today</h2>
+                <p data-reveal style="--i:2">Sprite is live across this site now, running the tour guide role described above. This site carries no analytics, so there are no visitor counts here by design. What we can say is structural: he is stable as a guide and in progress as a reusable component other sites can theme without forking the engine.</p>
             </div>
             <div class="metrics">
                 <div class="metric" data-reveal style="--i:2">
@@ -436,142 +396,54 @@
                     </div>
                 </div>
                 <div class="metric" data-reveal style="--i:3">
-                    <span class="metric-value">1,165</span>
-                    <div class="metric-body">
-                        <span class="metric-label">lines across both files</span>
-                        <p class="metric-note">787 in sprite.js, 378 in sprite.css. 52.0 KB uncompressed, before any transfer encoding.</p>
-                    </div>
-                </div>
-                <div class="metric" data-reveal style="--i:4">
                     <span class="metric-value">0</span>
                     <div class="metric-body">
-                        <span class="metric-label">external runtime dependencies</span>
-                        <p class="metric-note">No import, no require, no script tag, no CDN host, no @import in either file. The repository has no package.json.</p>
+                        <span class="metric-label">accounts, tracking and stored chats</span>
+                        <p class="metric-note">No login, no analytics, no saved history. The chat follows the open tab and ends with it.</p>
                     </div>
                 </div>
-                <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">24</span>
-                    <div class="metric-body">
-                        <span class="metric-label">offline intents</span>
-                        <p class="metric-note">24 regular expressions mapped to a pool of 46 replies, 43 in the dialogue table plus 3 fallbacks, all written by hand.</p>
-                    </div>
-                </div>
-                <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">11</span>
-                    <div class="metric-body">
-                        <span class="metric-label">emotion states, drawn in CSS</span>
-                        <p class="metric-note">Every expression is keyframes on nested divs. No sprite sheet, no image request, themes for free.</p>
-                    </div>
-                </div>
-                <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">154</span>
-                    <div class="metric-body">
-                        <span class="metric-label">lines in the entire proxy</span>
-                        <p class="metric-note">The whole live brain. It holds the key, builds the prompt, caps the request, and returns one JSON field.</p>
-                    </div>
-                </div>
-                <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">12 / 1,000 / 450</span>
-                    <div class="metric-body">
-                        <span class="metric-label">history, chars, reply tokens</span>
-                        <p class="metric-note">MAX_HISTORY, MAX_MSG_CHARS and MAX_TOKENS in sprite-proxy.js. The caps live at the proxy, where a visitor cannot move them.</p>
-                    </div>
-                </div>
-                <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">5 min</span>
-                    <div class="metric-body">
-                        <span class="metric-label">knowledge base refresh</span>
-                        <p class="metric-note">KNOWLEDGE_TTL_MS. Editing docs/sprite.md, currently 97 lines, and pushing changes what Sprite knows within five minutes.</p>
-                    </div>
-                </div>
-                <div class="metric" data-reveal style="--i:5">
-                    <span class="metric-value">20</span>
-                    <div class="metric-body">
-                        <span class="metric-label">pages carrying the widget</span>
-                        <p class="metric-note">Every page of the main site. The arcade is the deliberate exception: it ships no Sprite so it runs fully offline.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="honesty" data-reveal style="--i:5">
-                <span class="honesty-label">What is not measured here</span>
-                <p>This site runs no analytics. There is no gtag, no Tag Manager, no Plausible, no Umami, no PostHog, so there are no visitor numbers on this page and there will not be any: no sessions, no conversations opened, no enquiries attributed to Sprite. The proxy is just as quiet, logging one line on an upstream error and nothing else, which means the number that would be most interesting, how often the live brain answers versus how often the pattern engine catches it, is not measured either. Everything above is a file on disk or a constant in source, read with a command before it was written down.</p>
             </div>
         </div>
     </section>
 
-    <!-- 5 and 6. What is still wrong, then what happens next. Both live in
-         one soft section on purpose: the surfaces alternate strictly down the
-         page, so adding a section here would invert every surface below it,
-         including the shared .next-step component. -->
+    <!-- 5. Roadmap - soft -->
     <section class="section--soft">
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What is still wrong</span>
-                <h2 data-reveal style="--i:1">Two files that have to agree, and a Worker nobody can deploy</h2>
-                <p data-reveal style="--i:2">Changing what Sprite knows is a git push. The Worker fetches docs/sprite.md every five minutes, so the facts ship with the site. The Worker itself does not. cloudflare-worker/sprite-proxy.js is pasted into a dashboard by hand, and nothing would notice if it were not. That is not a hypothetical: the deployed Worker turned out to be an older generation of the file than the repository's, with no runtime knowledge fetch in it at all. The site's pricing was corrected and the Worker was never re-pasted, so the live Sprite went on quoting the old number to anyone who asked.</p>
-                <p data-reveal style="--i:3">The knowledge file is sliced at a character cap, from the tail, with no error. The cap is written in two places, as KNOWLEDGE_MAX_CHARS in the Worker and SPRITE_MAX_CHARS in scripts/build_tools.py, and the two stay equal because a person remembers. The build now refuses to write a sprite.md past the limit, which closes half of it. The other half is that raising one number without the other puts the cliff back. The file currently runs 7,950 characters against 12,000.</p>
-                <p data-reveal style="--i:4">The seasonal banners are eight images drawn as one set, 760px wide, published as WebP. Summer is not one of them. It is sprite-profile-banner.jpg, 34,478 bytes at a different size and a different aspect, left alone because replacing it was never asked for. It will look like the odd one out the first time anyone compares two seasons.</p>
-            </div>
-
-            <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What's next</span>
+                <span class="eyebrow" data-reveal style="--i:0">What happens next</span>
                 <h2 data-reveal style="--i:1">Roadmap</h2>
-                <p data-reveal style="--i:2">The current MVP is live and working. Here's what's coming.</p>
+                <p data-reveal style="--i:2">The guide role is done and live. What follows turns the same engine into a component other sites can pick up.</p>
 
                 <div class="roadmap" data-reveal style="--i:3">
                     <div class="roadmap-item">
                         <span class="roadmap-label roadmap-label--done">Done</span>
-                        <h3>AI-powered live chat</h3>
-                        <p>Shipped. Sprite now runs on a real AI backend: it understands context, remembers the conversation as you move between pages, and answers questions it was never explicitly programmed for, personality intact. The pattern engine stays on as an offline fallback.</p>
+                        <h3>Live guide on this site</h3>
+                        <p>Sprite shows visitors around, answers questions and keeps working when the network drops, personality intact.</p>
                     </div>
                     <div class="roadmap-item">
                         <span class="roadmap-label roadmap-label--next">Next</span>
                         <h3>Customisable sprites</h3>
-                        <p>A configuration layer that lets site owners choose their sprite's appearance, personality, colour, and default expressions. Different sites get different characters: same engine, unique identity.</p>
+                        <p>A configuration layer for appearance, personality and expressions, so different sites get different characters on the same engine.</p>
                     </div>
                     <div class="roadmap-item">
                         <span class="roadmap-label roadmap-label--planned">Planned</span>
-                        <h3>Voice conversations with AI</h3>
-                        <p>Full two-way voice chat. Talk to Sprite, hear it respond in a synthesised voice, and watch its expressions match the conversation in real time. The current Web Speech API foundation will be upgraded to support continuous, natural dialogue.</p>
-                    </div>
-                    <div class="roadmap-item">
-                        <span class="roadmap-label roadmap-label--planned">Planned</span>
-                        <h3>Advanced TTS with emotion</h3>
-                        <p>Moving beyond the browser's default speech synthesis to an expressive TTS engine that adjusts tone, pace, and inflection based on the sprite's emotional state, so it sounds as alive as it looks.</p>
+                        <h3>Voice conversations with emotion</h3>
+                        <p>Full two-way voice with expressions that match the reply, moving beyond the browser default speech tools.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Credits -->
-    <section class="credits-section">
-        <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Credits</span>
-            <h2 data-reveal style="--i:1">Built by</h2>
-            <div class="credits-grid" data-reveal style="--i:2">
-                <div class="credit-card">
-                    <p class="credit-name">Luis Howin</p>
-                    <p class="credit-role">Creative Director</p>
-                </div>
-                <div class="credit-card">
-                    <p class="credit-name">Claude Code</p>
-                    <p class="credit-role">Technical Lead</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA - soft -->
-    <section class="next-step section--soft">
+    <!-- CTA -->
+    <section class="next-step">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Next step</span>
             <h2 data-reveal style="--i:1">One of these, for your product.</h2>
             <p data-reveal style="--i:2">Sprite was built for this site, but the thinking behind it travels. Tell us what
                 your users keep asking for.</p>
             <div class="cta-row" data-reveal style="--i:3">
-                <a href="../contact/" class="cta-link">Start a project ↗</a>
-                <a href="../work/" class="cta-link">← Back to work</a>
+                <a href="../contact/" class="cta-link cta-pill"><span>Start a project</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></a>
             </div>
         </div>
     </section>

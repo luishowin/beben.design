@@ -548,6 +548,43 @@ and tools generators re-ran idempotent, status re-stamped 8 Oct 2026,
 voice and facts clean. Measured at commit: 33 pages, 1055 internal
 links checked and 0 broken.
 
+### Nanyuki card, Sprite rework, contact covers (after `6.8`)
+
+**`/work/` is eight photo cards.** New Nanyuki Country Home card in group
+1 after Neopolaris, same external-site recipe (`Live · Client build`,
+`visit website` pill to `https://nanyukicountryhome.com/`): pitch, design
+and build for a private Nanyuki holiday house, seven bedrooms for up to
+16, WhatsApp and email enquiry flow with no booking fees. Cover from
+`~/Downloads/nanyukicountryhome-cover.avif` (2400px, 313KB) converted to
+`docs/assets/images/projects/nanyuki-country-home-cover.webp` (1600x900,
+180KB). Hero count `Seven` to `Eight`. Sprite knowledge gained the second
+client site; file at 8,116 against the 12,000 cap.
+
+**`/sprite/` is a five-minute read.** The six-part technical case study
+(~4,200 words: constraint, six rejected versions, internals, nine
+metrics, faults, roadmap plus credits) became four short sections
+(~680 words): what Sprite is, what he does, how he works, current state
+with a three-item roadmap. Full build notes now live only in the README
+and `cloudflare-worker/`, linked from the page. Hero carries the Work
+card cover (`sprite-cover.webp`, 30KB) in a rounded figure cropped 5% by
+a `scale(1.05)`. CTA trimmed to one hero-recipe `Start a project` pill;
+`Back to work` removed, credits section dropped, CTA band plain to keep
+the strict plain/soft alternation.
+
+**`/contact/` has two photographic bands.** Hero takes the Skybound wind
+farm (same photo as the homepage contact band, no new asset) as a
+`page-hero--cover` in the services recipe, vertical gradient under
+900px. The talk section takes `Futuristic Wildflower Meadow and
+Biodome.png` (2.6MB) as `wildflower-meadow-biodome.webp` (1590px, 310KB)
+under a `0.58` dark overlay, pills switched to the photo recipe. Call
+glows light sky blue (`#87CEFA` via `talk-pill--call`); WhatsApp keeps
+its green.
+
+No shared CSS touched, asset lock stays `6.8`. Measured at commit:
+33 pages, 1056 internal links checked and 0 broken (Nanyuki cover +1,
+Sprite hero +1, CTA link removal -1; the two contact covers are CSS
+backgrounds and uncounted), voice and facts clean.
+
 ---
 
 ## Corrections to brief v2
