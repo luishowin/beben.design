@@ -621,6 +621,27 @@ No shared CSS touched, asset lock stays `6.8`. Measured at commit:
 voice clean, facts agree across 34 files, `sprite.js` parses,
 status `--check` clean.
 
+### Frontier Moto card (after `6.8`)
+
+**`/work/` is nine photo cards.** New Frontier Moto card in group 1
+after Nanyuki Country Home, same external-site recipe (`visit
+website` pill to `https://luishowin.github.io/frontier-moto/`):
+pitch, design and build for a motorcycle knowledge, equipment and
+support hub for riders across East Africa, with guides library, used
+market, spares shop and workshop. Kind line reads `Live · Design
+and build` rather than `Client build`, since the footer credits
+design work by name rather than naming a client. Cover from
+`~/Downloads/frontier-cover.avif` (2400x1350, 169KB) converted to
+`docs/assets/images/projects/frontier-moto-cover.webp` (1600x900,
+80KB). Hero count `Eight` to `Nine`. Group 1 note `Both of these`
+to `All of these`, which was already stale at three cards and is
+now count-proof. Sprite knowledge gained the third client site;
+file at 8,523 against the 12,000 cap.
+
+No shared CSS touched, asset lock stays `6.8`. Measured at commit:
+34 pages, 1061 internal links checked and 0 broken (Frontier cover
++1), voice and facts clean, status `--check` clean.
+
 ---
 
 ## Corrections to brief v2

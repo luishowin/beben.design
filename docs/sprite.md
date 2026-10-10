@@ -83,7 +83,7 @@ The page at /services/how-we-work/ publishes this, which almost nobody does.
 
 ## Current projects
 
-Three finished case studies, three previews, two client sites.
+Three finished case studies, three previews, three client sites.
 
 - Sprite: the animated AI site guide you are talking to right now. Built
   with plain HTML, CSS, and JS, no frameworks. Case study at /sprite/.
@@ -111,6 +111,9 @@ Three finished case studies, three previews, two client sites.
 - Nanyuki Country Home: pitch, design and build for a private holiday
   house in Nanyuki, live at nanyukicountryhome.com with direct WhatsApp
   and email enquiries.
+- Frontier Moto: design and build for a motorcycle knowledge, equipment
+  and support hub for riders across East Africa, live at
+  luishowin.github.io/frontier-moto with guides, market, shop and workshop.
 
 ## The tools
 
