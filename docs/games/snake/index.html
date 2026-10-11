@@ -27,20 +27,40 @@
     'use strict';
 
     var COLS = 21, ROWS = 21;
-    var START_STEP = 120, MIN_STEP = 60, STEP_PER_FOOD = 2;
+    var SPEEDS = {
+        slow:   { start: 160, min: 90 },
+        normal: { start: 120, min: 60 },
+        fast:   { start: 85,  min: 42 }
+    };
+    var SPEED_KEY = 'beben-arcade-snake-speed';
+    var STEP_PER_FOOD = 2;
 
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 480 });
 
-    var snake, dir, queue, food, score, stepMs, acc, alive;
+    var snake, dir, queue, food, score, stepMs, minStep, acc, alive, speed, selEl;
 
-    function reset() {
+    /* ── speed preference (Safari private mode throws) ────────────── */
+    function readSpeed() {
+        try {
+            var s = localStorage.getItem(SPEED_KEY);
+            return SPEEDS[s] ? s : 'normal';
+        } catch (e) { return 'normal'; }
+    }
+    function saveSpeed(s) {
+        try { localStorage.setItem(SPEED_KEY, s); } catch (e) { /* ignore */ }
+    }
+
+    function reset(s) {
+        if (s) speed = s;
+        var cfg = SPEEDS[speed] || SPEEDS.normal;
         var cx = Math.floor(COLS / 2), cy = Math.floor(ROWS / 2);
         snake = [{ x: cx, y: cy }, { x: cx - 1, y: cy }, { x: cx - 2, y: cy }];
         dir = { x: 1, y: 0 };
         queue = [];
         score = 0;
-        stepMs = START_STEP;
+        stepMs = cfg.start;
+        minStep = cfg.min;
         acc = 0;
         alive = true;
         spawnFood();
@@ -59,7 +79,7 @@
     }
 
     function pushDir(d) {
-        if (!alive) return;
+        if (!alive || selEl) return;
         var last = queue.length ? queue[queue.length - 1] : dir;
         if (d.x === -last.x && d.y === -last.y) return;   // no 180s
         if (d.x === last.x && d.y === last.y) return;
@@ -101,7 +121,7 @@
         snake.unshift(head);
         if (head.x === food.x && head.y === food.y) {
             score++;
-            stepMs = Math.max(MIN_STEP, stepMs - STEP_PER_FOOD);
+            stepMs = Math.max(minStep, stepMs - STEP_PER_FOOD);
             Arcade.ui.setScore(String(score).padStart(3, '0'));
             Arcade.audio.play('coin');
             Arcade.haptics.buzz('light');
@@ -119,8 +139,44 @@
         loop.pause();
         Arcade.ui.gameOver({
             score: score, best: res.best, isNew: res.isNew,
-            onReplay: function () { reset(); loop.resume(); }
+            onReplay: function () { showSelect(); }
         });
+    }
+
+    /* ── speed picker (Slow / Normal / Fast) ──────────────────────── */
+    function showSelect() {
+        if (selEl) return;
+        selEl = document.createElement('div');
+        selEl.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        panel.style.textAlign = 'center';
+        panel.innerHTML = '<div class="arc-panel-title">Snake</div>' +
+            '<div class="arc-over-label">Pick your speed</div>';
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        actions.style.flexDirection = 'column';
+        actions.appendChild(speedButton('Slow', 'slow'));
+        actions.appendChild(speedButton('Normal', 'normal'));
+        actions.appendChild(speedButton('Fast', 'fast'));
+        panel.appendChild(actions);
+        selEl.appendChild(panel);
+        document.body.appendChild(selEl);
+    }
+    function speedButton(label, s) {
+        var btn = document.createElement('button');
+        btn.className = 'arc-action' + (s === speed ? ' arc-action--primary' : '');
+        btn.textContent = label;
+        btn.addEventListener('click', function () { chooseSpeed(s); });
+        return btn;
+    }
+    function chooseSpeed(s) {
+        speed = s;
+        saveSpeed(s);
+        Arcade.audio.play('select');
+        if (selEl) { selEl.remove(); selEl = null; }
+        reset(s);
+        loop.resume();
     }
 
     function render() {
@@ -240,8 +296,10 @@
         onResume: function () { loop.resume(); }
     });
 
-    reset();
+    reset(readSpeed());
     loop.start();
+    loop.pause();
+    showSelect();
 })();
 </script>
 

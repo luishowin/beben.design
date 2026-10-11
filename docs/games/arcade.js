@@ -20,8 +20,9 @@
     var SCORES_KEY = 'beben-arcade-scores';
     var ACH_KEY = 'beben-arcade-achievements';
     var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: true };
-    var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat', 'mines',
-        'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row'];
+    var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat',
+        'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row',
+        'five-letter'];
 
     /* ── storage helpers (Safari private mode throws) ─────────── */
     function readJSON(key, fallback) {

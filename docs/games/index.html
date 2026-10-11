@@ -328,13 +328,7 @@
             background: var(--ac);
         }
 
-        .game-card--soon {
-            opacity: 0.72;
-        }
-
-        .game-card--soon:hover {
-            opacity: 1;
-        }
+        /* prototype cards paint at full brightness, same as live cards */
 
         /* ── Footer ── */
         .footer-manifesto {
@@ -436,7 +430,7 @@
     </section>
     <p class="hub-tagline">
         <span>tiny games &middot; big scores &middot; zero ads</span>
-        <span>v15</span>
+        <span>v24</span>
     </p>
 
     <div id="installSlot"></div>
@@ -490,16 +484,6 @@
                 <span class="game-genre">&gt; ACTION</span>
             </span>
             <span class="game-best" data-best="wingbeat"></span>
-        </a>
-        <a class="game-card" href="./mines/" style="--ac: var(--neon-red)">
-            <span class="game-icon"><img src="./icons/games/mines.png" alt="Mines icon" loading="lazy"></span>
-            <span class="game-name">Mines</span>
-            <span class="game-desc">Clear the field. Trust no number.</span>
-            <span class="game-genres">
-                <span class="game-genre">&gt; PUZZLE</span>
-                <span class="game-genre">&gt; LOGIC</span>
-            </span>
-            <span class="game-best" data-best="mines-easy" data-suffix="s"></span>
         </a>
         <a class="game-card" href="./pixel-dash/" style="--ac: var(--neon-pink)">
             <span class="game-icon"><img src="./icons/games/pixel-dash.png" alt="Pixel Dash icon" loading="lazy"></span>
@@ -560,19 +544,19 @@
             </span>
             <span class="game-best" data-best="four-in-a-row"></span>
         </a>
+        <a class="game-card" href="./five-letter/" style="--ac: var(--neon-yellow)">
+            <span class="game-icon"><img src="./icons/games/five-letter.png" alt="Five Letter icon" loading="lazy"></span>
+            <span class="game-name">Five Letter</span>
+            <span class="game-desc">Six tries to guess the hidden word.</span>
+            <span class="game-genres">
+                <span class="game-genre">&gt; PUZZLE</span>
+                <span class="game-genre">&gt; WORD</span>
+            </span>
+            <span class="game-best" data-best="five-letter"></span>
+        </a>
     </div>
 
     <div class="game-grid" id="soonGrid">
-        <a class="game-card game-card--soon" href="./rockfield/" style="--ac: var(--neon-orange)">
-            <span class="pix-badge">New</span>
-            <span class="game-icon"><img src="./icons/games/rockfield.png" alt="Rockfield icon" loading="lazy"></span>
-            <span class="game-name">Rockfield</span>
-            <span class="game-desc">Smash rocks. Mine gems. Beat the clock.</span>
-            <span class="game-genres">
-                <span class="game-genre">&gt; ARCADE</span>
-            </span>
-            <span class="game-best"></span>
-        </a>
         <a class="game-card game-card--soon" href="./void-dodger/" style="--ac: var(--neon-blue)">
             <span class="pix-badge">New</span>
             <span class="game-icon"><img src="./icons/games/void-dodger.png" alt="Void Dodger icon" loading="lazy"></span>

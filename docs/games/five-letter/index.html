@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-yellow); --accent-glow: rgba(255,213,51,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Five Letter — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+    <style>
+        .wl {
+            width: min(380px, 94vw);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.7rem;
+            user-select: none;
+        }
+        .wl-board {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 5px;
+        }
+        .wl-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .wl-tile {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-pixel);
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--headers);
+            border: 2px solid #2A2A3E;
+            border-radius: 4px;
+            background: #000;
+        }
+        .wl-tile--filled { border-color: #565670; }
+        .wl-tile--pop { animation: wl-pop 0.12s ease; }
+        @keyframes wl-pop { 50% { transform: scale(1.1); } }
+        .wl-row--shake { animation: wl-shake 0.4s ease; }
+        @keyframes wl-shake {
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        .wl-tile--hit { background: #538D4E; border-color: #538D4E; }
+        .wl-tile--near { background: #B59F3B; border-color: #B59F3B; }
+        .wl-tile--miss { background: #23232E; border-color: #23232E; color: rgba(234, 242, 255, 0.55); }
+        .wl-keys { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .wl-krow { display: flex; gap: 5px; justify-content: center; }
+        .wl-key {
+            flex: 1 1 0;
+            max-width: 44px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--headers);
+            background: #3A3A4C;
+            border-radius: 4px;
+        }
+        .wl-key:active { transform: translateY(1px); }
+        .wl-key--wide { max-width: 66px; font-size: 0.66rem; }
+        .wl-key--hit { background: #538D4E; }
+        .wl-key--near { background: #B59F3B; }
+        .wl-key--miss { background: #1E1E28; color: rgba(234, 242, 255, 0.4); }
+        .wl-hint {
+            min-height: 1.2rem;
+            font-size: 0.66rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        @media (max-height: 700px) {
+            .wl-tile { width: 46px; height: 46px; font-size: 0.85rem; }
+            .wl-key { height: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage">
+    <div class="wl">
+        <div class="wl-board" id="board"></div>
+        <p class="wl-hint" id="hint">Guess the hidden 5-letter word</p>
+        <div class="wl-keys" id="keys"></div>
+    </div>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* FIVE LETTER
+       Six tries to guess the hidden 5-letter word. Green = right spot,
+       gold = in the word, dark = not in it. Streak persists on device. */
+
+    var WORDS = [
+        'about','above','abuse','actor','acute','admit','adopt','adult','after','again',
+        'agent','agree','ahead','alarm','album','alert','algae','alike','alive','allow',
+        'alone','along','aloud','alter','angel','anger','angle','ankle','apart','apple',
+        'apply','arena','argue','arise','array','arrow','aside','asset','attic','audio',
+        'audit','avoid','awake','award','aware','awful','bacon','badge','badly','basic',
+        'basin','beach','beard','begin','berry','birth','black','blade','blame','blank',
+        'blast','blend','bless','blind','block','blood','bloom','board','boast','bonus',
+        'boost','booth','bound','brain','brand','brave','bread','break','brick','bride',
+        'brief','bring','broad','broke','brown','brush','build','bunch','buyer','cabin',
+        'cable','candy','cargo','carry','catch','cause','chain','chair','charm','chart',
+        'chase','cheap','check','cheek','chest','chief','child','chill','choir','chose',
+        'chunk','civic','civil','claim','clash','class','clean','clear','clerk',
+        'click','cliff','climb','clock','clone','close','cloth','cloud','coach','coast',
+        'color','comic','comma','could','count','court','cover','crack','craft','crane',
+        'crash','crazy','cream','crime','crisp','cross','crowd','crown','crude','crush',
+        'crust','curve','cycle','daily','dairy','dance','death','delay','depth','diary',
+        'dirty','dodge','donor','doubt','dough','draft','drain','drama','drank','dream',
+        'dress','drink','drive','drone','drove','drunk','dryer','early','earth',
+        'elect','elite','empty','enjoy','enter','entry','equal','error','essay',
+        'event','every','exact','exist','extra','fable','faith','fancy','fatal','fault',
+        'favor','feast','fence','ferry','fever','field','fifth','fifty','fight','final',
+        'first','flame','flash','flesh','float','flood','floor','flour','fluid',
+        'focus','force','forth','forty','forum','found','frame','fresh','front',
+        'frost','fruit','funny','giant','given','glass','globe','glory','glove','going',
+        'grace','grade','grain','grand','grant','grass','grave','great','green','greet',
+        'grief','grill','grind','gross','group','grove','guard','guess','guest','guide',
+        'guild','habit','happy','harsh','heart','heavy','hello','hobby','honey','honor',
+        'horse','hotel','house','human','humor','hurry','ideal','image','index','inner',
+        'input','issue','ivory','jeans','joint','judge','juice','knife','knock','known',
+        'label','labor','large','laser','later','laugh','layer','learn','least','leave',
+        'legal','lemon','level','light','limit','lobby','local','logic','loose','lover',
+        'lower','loyal','lucky','lunch','magic','major','maker','march','match','maybe',
+        'mayor','medal','media','metal','meter','might','minor','minus','model',
+        'money','month','moral','motor','mount','mouse','mouth','movie','muddy','music',
+        'nasty','nerve','never','night','noble','noise','north','novel','nurse',
+        'ocean','offer','often','older','olive','onion','opera','order','other','ought',
+        'outer','owner','paint','panel','panic','paper','party','pasta','patch','pause',
+        'peace','penny','phase','phone','photo','piano','piece','pilot','pitch','pizza',
+        'place','plain','plane','plant','plate','point','polar','power','press','price',
+        'pride','prime','print','prize','proof','proud','prove','pulse','punch','pupil',
+        'puppy','purse','queen','query','quest','queue','quick','quiet','quite','quota',
+        'quote','radar','radio','raise','range','rapid','ratio','reach','ready','rebel',
+        'refer','reply','rider','right','rigid','rival','river','roast','robot',
+        'rough','round','route','royal','ruler','rural','sadly','salad','sandy',
+        'scale','scare','scene','scent','scope','score','scout','scrap','screw',
+        'sense','serve','seven','shade','shake','shall','shame','shape','share',
+        'shark','sharp','sheep','sheet','shelf','shell','shift','shine','shirt','shock',
+        'shore','short','shout','shown','sight','silly','since','sixth','sixty','skill',
+        'skirt','sleep','slice','slide','small','smell','smile','smoke','snack',
+        'snake','solar','solid','solve','sorry','sound','south','space','spare','spark',
+        'speak','speed','spell','spend','spice','spill','spine','split','spoil','spoke',
+        'sport','staff','stage','stain','stair','stand','start','state','steam','steel',
+        'steep','stick','stiff','sting','stock','stole','stone','stood','store','storm',
+        'story','stove','straw','stray','study','stuff','style','sugar','suite',
+        'sunny','super','swear','sweat','sweep','sweet','swift','swing','sword',
+        'table','taken','taste','teach','teeth','thank','their','theme','there','thick',
+        'thief','thing','think','third','those','three','threw','throw','thumb','tiger',
+        'tight','timer','title','today','token','tooth','topic','torch','total','touch',
+        'tough','towel','tower','track','trade','trail','train','trait','trash',
+        'treat','trend','trial','tribe','trick','truck','truly','trust','truth','twice',
+        'twist','uncle','under','union','unite','until','upper','upset','urban','usage',
+        'usual','vague','valid','value','venue','verse','video','visit','vista',
+        'vital','vivid','vocal','voice','voter','vowel','wagon','waste','watch','water',
+        'weave','whale','wheat','wheel','where','which','while','white','whole','whose',
+        'widen','width','weird','woman','world','worry','worth','would','wound','wreck',
+        'wrist','write','wrong','yacht','young','youth','zebra'
+    ];
+
+    var ROWS = 6, COLS = 5;
+    var SAVE_KEY = 'beben-arcade-five-letter-game';
+    var STREAK_KEY = 'beben-arcade-five-letter-streak';
+
+    var answer, guesses, cur, over, streak, keyState;
+
+    function readStreak() {
+        try { return parseInt(localStorage.getItem(STREAK_KEY), 10) || 0; }
+        catch (e) { return 0; }
+    }
+    function saveStreak() {
+        try { localStorage.setItem(STREAK_KEY, String(streak)); } catch (e) { /* ignore */ }
+    }
+    function pickAnswer(except) {
+        var w = except;
+        while (w === except) w = WORDS[Math.floor(Math.random() * WORDS.length)];
+        return w;
+    }
+    function save() {
+        try { localStorage.setItem(SAVE_KEY, JSON.stringify({ a: answer, g: guesses })); }
+        catch (e) { /* ignore */ }
+    }
+    function load() {
+        try {
+            var raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) return null;
+            var o = JSON.parse(raw);
+            if (!o || WORDS.indexOf(o.a) === -1 || !Array.isArray(o.g)) return null;
+            o.g = o.g.filter(function (w) { return WORDS.indexOf(w) !== -1; }).slice(0, ROWS);
+            return o;
+        } catch (e) { return null; }
+    }
+
+    function reset(next) {
+        var saved = next ? null : load();
+        if (saved && saved.g.length < ROWS && !saved.g.some(function (w) { return w === saved.a; })) {
+            answer = saved.a;
+            guesses = saved.g;
+        } else {
+            answer = pickAnswer(answer);
+            guesses = [];
+            save();
+        }
+        cur = '';
+        over = false;
+        streak = readStreak();
+        keyState = {};
+        buildBoard();
+        buildKeys();
+        paint();
+        Arcade.ui.setScore(String(streak).padStart(3, '0'));
+        setHint(guesses.length ? 'Welcome back — keep guessing' : 'Guess the hidden 5-letter word');
+    }
+
+    function buildBoard() {
+        var board = document.getElementById('board');
+        board.innerHTML = '';
+        for (var r = 0; r < ROWS; r++) {
+            var row = document.createElement('div');
+            row.className = 'wl-row';
+            row.id = 'wl-row-' + r;
+            for (var c = 0; c < COLS; c++) {
+                var t = document.createElement('div');
+                t.className = 'wl-tile';
+                row.appendChild(t);
+            }
+            board.appendChild(row);
+        }
+    }
+
+    function buildKeys() {
+        var layouts = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+        var wrap = document.getElementById('keys');
+        wrap.innerHTML = '';
+        for (var r = 0; r < layouts.length; r++) {
+            var kr = document.createElement('div');
+            kr.className = 'wl-krow';
+            if (r === 2) kr.appendChild(makeKey('ENTER', true));
+            for (var i = 0; i < layouts[r].length; i++) kr.appendChild(makeKey(layouts[r][i], false));
+            if (r === 2) kr.appendChild(makeKey('BACK', true));
+            wrap.appendChild(kr);
+        }
+    }
+    function makeKey(label, wide) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'wl-key' + (wide ? ' wl-key--wide' : '');
+        b.textContent = label === 'BACK' ? '⌫' : label;
+        b.dataset.key = label;
+        b.setAttribute('aria-label', label === 'BACK' ? 'Backspace' : label);
+        b.addEventListener('click', function () { onKey(label); });
+        return b;
+    }
+
+    /* standard two-pass scoring: greens first, then golds with counts */
+    function scoreWord(word) {
+        var res = ['miss', 'miss', 'miss', 'miss', 'miss'];
+        var counts = {};
+        var i, ch;
+        for (i = 0; i < COLS; i++) {
+            ch = answer[i];
+            counts[ch] = (counts[ch] || 0) + 1;
+        }
+        for (i = 0; i < COLS; i++) {
+            if (word[i] === answer[i]) { res[i] = 'hit'; counts[word[i]]--; }
+        }
+        for (i = 0; i < COLS; i++) {
+            if (res[i] === 'hit') continue;
+            ch = word[i];
+            if (counts[ch] > 0) { res[i] = 'near'; counts[ch]--; }
+        }
+        return res;
+    }
+
+    function rank(s) { return s === 'hit' ? 3 : s === 'near' ? 2 : 1; }
+
+    function paint() {
+        for (var r = 0; r < ROWS; r++) {
+            var row = document.getElementById('wl-row-' + r);
+            var tiles = row.children;
+            var word = guesses[r] || (r === guesses.length ? cur : '');
+            var states = guesses[r] ? scoreWord(guesses[r]) : null;
+            for (var c = 0; c < COLS; c++) {
+                var t = tiles[c];
+                var ch = word[c] || '';
+                t.textContent = ch.toUpperCase();
+                t.className = 'wl-tile' + (ch ? ' wl-tile--filled' : '') +
+                    (states ? ' wl-tile--' + states[c] : '');
+            }
+        }
+        var keys = document.querySelectorAll('.wl-key');
+        for (var k = 0; k < keys.length; k++) {
+            var kb = keys[k], L = kb.dataset.key;
+            if (L === 'ENTER' || L === 'BACK') continue;
+            var st = keyState[L.toLowerCase()];
+            kb.className = 'wl-key' + (st ? ' wl-key--' + st : '');
+        }
+    }
+
+    function popTile() {
+        var row = document.getElementById('wl-row-' + guesses.length);
+        if (!row || !cur.length) return;
+        var t = row.children[cur.length - 1];
+        t.classList.remove('wl-tile--pop');
+        void t.offsetWidth;
+        t.classList.add('wl-tile--pop');
+    }
+
+    function setHint(msg) {
+        document.getElementById('hint').textContent = msg;
+    }
+
+    function deny(msg) {
+        var row = document.getElementById('wl-row-' + guesses.length);
+        if (row) {
+            row.classList.remove('wl-row--shake');
+            void row.offsetWidth;
+            row.classList.add('wl-row--shake');
+        }
+        setHint(msg);
+        Arcade.audio.play('denied');
+    }
+
+    function onKey(k) {
+        if (over) return;
+        if (k === 'ENTER') { submit(); return; }
+        if (k === 'BACK') {
+            if (cur.length) { cur = cur.slice(0, -1); paint(); Arcade.audio.play('tap'); }
+            return;
+        }
+        if (!/^[A-Z]$/.test(k) || cur.length >= COLS) return;
+        cur += k.toLowerCase();
+        paint();
+        popTile();
+        Arcade.audio.play('move');
+    }
+
+    function submit() {
+        if (cur.length < COLS) { deny('Not enough letters'); return; }
+        if (WORDS.indexOf(cur) === -1) { deny('Not in word list'); return; }
+        var states = scoreWord(cur);
+        for (var i = 0; i < COLS; i++) {
+            var L = cur[i];
+            if (!keyState[L] || rank(states[i]) > rank(keyState[L])) keyState[L] = states[i];
+        }
+        guesses.push(cur);
+        cur = '';
+        var won = states.every(function (s) { return s === 'hit'; });
+        save();
+        paint();
+        if (won) {
+            Arcade.audio.play('merge');
+            Arcade.haptics.buzz('light');
+            win();
+        } else if (guesses.length >= ROWS) {
+            lose();
+        } else {
+            Arcade.audio.play('bounce');
+        }
+    }
+
+    function win() {
+        over = true;
+        streak++;
+        saveStreak();
+        var res = Arcade.scores.submit('five-letter', streak);
+        Arcade.audio.play('fanfare');
+        Arcade.haptics.buzz('success');
+        Arcade.ui.setScore(String(streak).padStart(3, '0'));
+        Arcade.ui.gameOver({
+            title: 'FIVE LETTER',
+            label: 'Solved in ' + guesses.length + ' of 6 · streak',
+            score: streak,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(true); }
+        });
+    }
+
+    function lose() {
+        over = true;
+        streak = 0;
+        saveStreak();
+        try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ignore */ }
+        Arcade.audio.play('boom');
+        Arcade.ui.setScore('000');
+        Arcade.ui.gameOver({
+            title: 'FIVE LETTER',
+            label: 'The word was ' + answer.toUpperCase(),
+            score: '0/' + ROWS,
+            best: Arcade.scores.best('five-letter'),
+            isNew: false,
+            onReplay: function () { reset(true); }
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.key === 'Enter') { e.preventDefault(); onKey('ENTER'); }
+        else if (e.key === 'Backspace') { e.preventDefault(); onKey('BACK'); }
+        else if (/^[a-zA-Z]$/.test(e.key)) onKey(e.key.toUpperCase());
+    });
+
+    Arcade.init({
+        slug: 'five-letter',
+        title: 'Five Letter',
+        accent: 'yellow',
+        onPause: function () {},
+        onResume: function () {}
+    });
+
+    reset(false);
+})();
+</script>
+
+</body>
+</html>

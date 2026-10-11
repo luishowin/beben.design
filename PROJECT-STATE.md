@@ -741,9 +741,74 @@ grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html |
 
 `build_blog.py` needs `markdown`: `python3 -m venv .venv && .venv/bin/pip install markdown`.
 
+### Arcade removals + hub brightness (11 Oct 2026, cache `v18`)
+
+**Mines and Rockfield removed.** `docs/games/mines/`, `docs/games/rockfield/`
+and their `icons/games/` PNGs deleted; hub cards, all four `sw.js` precache
+entries, and `'mines'` in the `arcade.js` `SLUGS` array (rockfield was a
+prototype, never listed) removed. Hub label and `CACHE` moved `v17` to `v18`
+in lockstep; the old `v15` hub label drift is closed. Homepage counts moved
+20 to 18 games in both spots. Verified: hub 200 with zero console errors,
+both deleted slugs 404, voice/facts clean, status re-stamped (`games 18`).
+
+**Prototype cards uniformly bright.** The `.game-card--soon` `0.72` opacity
+(brightening only on hover) dimmed all 8 prototype cards starting at
+rockfield. Rules deleted; the 7 remaining prototype cards paint at full
+brightness like the live grid. Same `v18` bump, no extra release.
+
+Arcade is now 18 games: 11 live, 7 prototypes.
+
+### Batch 2: snake picker, void anti-camp, solitaire fixes (11 Oct 2026, cache `v22`)
+
+**Snake speed picker.** `snake/index.html` had hardcoded `START_STEP=120`.
+Now Slow (160/90ms) / Normal (120/60) / Fast (85/42), same checkers-style
+overlay picker, persisted in `localStorage`, shown on boot and on replay.
+Eating still accelerates toward the speed's floor. Verified live with a real
+click: picker shows, Fast saves, game runs, zero console errors.
+
+**Void Dodger anti-camp.** Score was pure survival (`dt*10`), spawns uniform,
+so edge-sitting farmed points. Now ~45% of roids spawn near the ship and most
+drift toward it; survival trickles at `dt*5` while a near-miss (roid passing
+within 52px of the ship) pays +15 with a light haptic. Verified live: 030
+after 6s unattended, roids visibly converging on the ship, no errors.
+
+**Solitaire Sprint hardening (kept simple, per owner).** Three fixes: Diamonds
+rendered black and Clubs red (suit-index swap, card + empty-slot tint now
+red for Hearts/Diamonds); redeal reversed the deck order (`reverse()` dropped,
+draw order now stable across a full 52-card recycle, verified by drawing all
+52 twice and comparing); waste top was a mouse-only `div`, now focusable with
+Enter/Space. Illegal taps still shake + `denied` (verified: Q♦ on empty
+foundations stays put, score 000); legal play verified (A♦ to foundation,
+score 015).
+
+Cache `v18` to `v22` across the batch (one bump per edit round, hub label in
+lockstep). Dev note: the local `python http.server` sends no cache headers,
+so the test browser's heuristic HTTP cache kept re-poisoning reinstalls with
+pre-edit bytes (diagnosed via cached response `Date` headers). Verified final
+bytes through the Cache API before playtesting. Production serves real cache
+headers, unaffected; no product change from this.
+
+### Five Letter word game (11 Oct 2026, cache `v24`)
+
+New live game at `docs/games/five-letter/`: six tries to guess a hidden
+5-letter word, green/gold/dark tiles, on-screen + physical keyboard, key
+colour tracking, resume-in-progress via `localStorage`, streak persisted and
+submitted to `Arcade.scores` (hub BEST chip shows best streak). 641-word list
+validated by script (all 5 letters, unique); 17 six-letter slips caught and
+removed during authoring. Hub card in the live grid (12 live now), `SLUGS`
+entry, icon drawn with PIL (WORDS/GUESS tiles), precache entries, homepage
+19 games. Verified live: invalid word shaken and rejected, MONEY vs FUNNY
+paints miss/miss/hit/miss/hit, win panel "SOLVED IN 2 OF 6 · STREAK / BEST 1",
+replay deals a new word, hub BEST 1 chip, zero console errors.
+
+Two wasted bumps (`v23` precached a stale hub) from the same dev-cache cause
+above: prime-then-bump discipline fixed it, `v24` verified byte-level through
+the Cache API (hub=v24 with card, all games NEW) before playtesting.
+
 Current state, all of it measured rather than remembered: 33 pages served
-excluding the arcade plus `404.html`, 30 sitemap URLs, 1055 internal references
-resolve and 0 break, all JSON-LD valid, no duplicate titles or descriptions, no
+excluding the arcade plus `404.html`, 30 sitemap URLs, 1054 internal references
+resolve and 0 break (1055 before the mines/rockfield removal, 1047 after,
++7 with the Five Letter hub card and game page), all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
 one asset version (`6.8`) everywhere.
 

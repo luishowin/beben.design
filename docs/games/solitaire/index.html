@@ -167,7 +167,7 @@
 
     function cardEl(card) {
         var el = document.createElement('div');
-        el.className = 'sol-card ' + (card.suit === 0 || card.suit === 2 ? 'blk' : 'red');
+        el.className = 'sol-card ' + (card.suit === 0 || card.suit === 3 ? 'blk' : 'red');
         el.innerHTML = '<span class="rk">' + RANKS[card.rank - 1] + '</span><span class="st">' + SUITS[card.suit] + '</span>';
         return el;
     }
@@ -180,7 +180,7 @@
             slot.className = 'sol-slot';
             if (found[s] === 0) {
                 slot.textContent = SUITS[s];
-                slot.style.color = s === 1 || s === 3 ? 'rgba(211,38,59,0.55)' : 'rgba(234,242,255,0.35)';
+                slot.style.color = s === 1 || s === 2 ? 'rgba(211,38,59,0.55)' : 'rgba(234,242,255,0.35)';
             } else {
                 slot.style.fontSize = '0';
                 slot.appendChild(cardEl({ suit: s, rank: found[s] }));
@@ -197,7 +197,13 @@
         if (waste.length) {
             var top = waste[waste.length - 1];
             var el = cardEl(top);
+            el.setAttribute('tabindex', '0');
+            el.setAttribute('role', 'button');
+            el.setAttribute('aria-label', 'Play ' + RANKS[top.rank - 1] + ' of ' + SUITS[top.suit]);
             el.addEventListener('click', function () { playWasteTop(el); });
+            el.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playWasteTop(el); }
+            });
             wasteEl.appendChild(el);
         }
     }
@@ -251,7 +257,6 @@
         } else if (waste.length) {
             // recycle waste back into the stock (same order — unlimited redeals)
             while (waste.length) stock.push(waste.pop());
-            stock.reverse();
             Arcade.audio.play('select');
         }
         paint();

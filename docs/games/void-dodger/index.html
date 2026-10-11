@@ -49,15 +49,26 @@
 
     function spawnRoid() {
         var r = 8 + Math.random() * 14;
+        // anti-camp: ~45% of roids spawn near the ship, and most drift
+        // toward it, so sitting on an edge is no longer safe
+        var sx = shipX();
+        var x;
+        if (roids.length && Math.random() < 0.45) {
+            x = sx + (Math.random() - 0.5) * 150;
+        } else {
+            x = 20 + Math.random() * (view.w - 40);
+        }
+        x = Math.max(20, Math.min(view.w - 20, x));
         roids.push({
-            x: 20 + Math.random() * (view.w - 40),
+            x: x,
             y: -r * 2,
             r: r,
             vy: 60 + Math.random() * 60,
-            vx: (Math.random() - 0.5) * 40,
+            vx: (sx - x) * (0.25 + Math.random() * 0.5) + (Math.random() - 0.5) * 20,
             rot: Math.random() * Math.PI * 2,
             vr: (Math.random() - 0.5) * 3,
-            bumps: Math.floor(4 + Math.random() * 4)
+            bumps: Math.floor(4 + Math.random() * 4),
+            counted: false
         });
     }
 
@@ -162,7 +173,9 @@
         update: function (dt) {
             if (over) return;
             t += dt;
-            score += dt * 10;
+            // survival trickles; the real points are near-misses, so
+            // camping an edge farms almost nothing
+            score += dt * 5;
             invuln = Math.max(0, invuln - dt);
 
             for (var i = 0; i < stars.length; i++) {
@@ -186,6 +199,15 @@
                 if (dx * dx + dy * dy < rr * rr) {
                     roids.splice(i, 1);
                     if (invuln <= 0) hit();
+                    continue;
+                }
+                // near-miss: roid slipped past the ship close by — pays +15
+                if (!a.counted && a.y > shipY() + 14) {
+                    a.counted = true;
+                    if (Math.abs(dx) < 52) {
+                        score += 15;
+                        Arcade.haptics.buzz('light');
+                    }
                 }
             }
 
