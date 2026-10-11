@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-orange); --accent-glow: rgba(255,155,33,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Powder Run — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Beta</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* POWDER RUN (endless snowboard, alto-style)
+       The mountain never ends. Hold to jump higher, hold in the air to
+       backflip, land on your board. Rocks and chasms end the run. */
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 3 / 4, maxW: 480 });
+
+    var GRAV = 1500, SEG = 140;
+
+    var camX, rideX, rideY, rideVY, grounded, slopeDeg, rot, flips, flipBase;
+    var runSpeed, dist, coins, bonus, over, t, holding, holdT, hBase;
+    var heights, lastX, chasms, rocks, coinSets, buntings;
+
+    function reset() {
+        camX = 0;
+        rideX = 0; rideY = 0; rideVY = 0;
+        grounded = true; slopeDeg = 0; rot = 0; flips = 0; flipBase = 0;
+        runSpeed = 220;
+        dist = 0; coins = 0; bonus = 0;
+        over = false; t = 0;
+        holding = false; holdT = 0;
+        hBase = view.h;
+        heights = [{ x: -SEG * 2, h: view.h * 0.55 }, { x: -SEG, h: view.h * 0.55 }, { x: 0, h: view.h * 0.55 }];
+        lastX = 0;
+        chasms = [];
+        rocks = [];
+        coinSets = [];
+        buntings = [];
+        ensureAhead(view.w * 2);
+        rideY = groundAt(0) - 6;
+        Arcade.ui.setScore('000');
+    }
+
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+
+    function ensureAhead(upto) {
+        while (lastX < upto) {
+            var prev = heights[heights.length - 1];
+            // occasional chasm: no ground for a span
+            if (lastX > 600 && Math.random() < 0.09) {
+                var gw = rnd(90, 170);
+                chasms.push({ x0: lastX, w: gw });
+                lastX += gw;
+                heights.push({ x: lastX, h: prev.h + rnd(-40, 40) });
+                continue;
+            }
+            var nh = prev.h + rnd(-66, 66);
+            nh = Math.max(view.h * 0.3, Math.min(view.h * 0.8, nh));
+            lastX += SEG;
+            heights.push({ x: lastX, h: nh });
+            // rock obstacle on the surface
+            if (lastX > 900 && Math.random() < 0.10) {
+                rocks.push({ x: lastX - SEG / 2, r: rnd(10, 16) });
+            }
+            // coin arc over the crest
+            if (Math.random() < 0.35) {
+                var coinsArr = [];
+                for (var i = 0; i < 5; i++) {
+                    coinsArr.push({ dx: -50 + i * 25, dy: -70 - Math.sin(i / 4 * Math.PI) * 34, taken: false });
+                }
+                coinSets.push({ x: lastX - SEG / 2, list: coinsArr });
+            }
+            // pennant bunting strung across the slope
+            if (lastX > 500 && Math.random() < 0.16) {
+                buntings.push({ x: lastX - SEG / 2 });
+            }
+        }
+        // prune far behind
+        while (heights.length && heights[0].x < camX - SEG * 3) heights.shift();
+        chasms = chasms.filter(function (c) { return c.x0 + c.w > camX - 100; });
+        rocks = rocks.filter(function (r) { return r.x > camX - 100; });
+        coinSets = coinSets.filter(function (c) { return c.x > camX - 200; });
+        buntings = buntings.filter(function (b) { return b.x > camX - 200; });
+    }
+
+    function segAt(x) {
+        for (var i = 0; i < heights.length - 1; i++) {
+            if (x >= heights[i].x && x <= heights[i + 1].x) return i;
+        }
+        return heights.length - 2;
+    }
+
+    function inChasm(x) {
+        for (var i = 0; i < chasms.length; i++) {
+            if (x >= chasms[i].x0 && x <= chasms[i].x0 + chasms[i].w) return true;
+        }
+        return false;
+    }
+
+    function groundAt(x) {
+        if (inChasm(x)) return null;
+        var i = segAt(x);
+        var a = heights[i], b = heights[i + 1];
+        var f = (x - a.x) / (b.x - a.x || 1);
+        var s = (1 - Math.cos(f * Math.PI)) / 2;
+        return a.h + (b.h - a.h) * s;
+    }
+
+    function slopeAt(x) {
+        var h0 = groundAt(x - 6), h1 = groundAt(x + 6);
+        if (h0 === null || h1 === null) return 0;
+        return Math.atan2(h1 - h0, 12) * 180 / Math.PI;
+    }
+
+    function endGame(why) {
+        over = true;
+        var pts = Math.floor(dist / 50) + coins * 10 + bonus;
+        var res = Arcade.scores.submit('powder-run', pts);
+        loop.pause();
+        Arcade.ui.gameOver({
+            title: 'POWDER RUN',
+            label: why,
+            score: pts + ' pts',
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function crash(why) {
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        endGame(why);
+    }
+
+    /* ── input: hold to jump / flip ─────────────────────────────── */
+    function press(e) {
+        if (e) e.preventDefault();
+        if (over || holding) return;
+        holding = true;
+        holdT = 0;
+        if (grounded) {
+            grounded = false;
+            rideVY = -620;
+            flips = 0;
+            flipBase = rot;
+            Arcade.audio.play('flap');
+        }
+    }
+    function release() { holding = false; }
+    canvas.addEventListener('pointerdown', press);
+    window.addEventListener('pointerup', release);
+    window.addEventListener('pointercancel', release);
+    document.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); press(); }
+    });
+    document.addEventListener('keyup', function (e) {
+        if (e.key === ' ' || e.key === 'ArrowUp') release();
+    });
+
+    function normDeg(d) {
+        d = ((d % 360) + 360) % 360;
+        return d > 180 ? d - 360 : d;
+    }
+
+    function update(dt) {
+        if (over) return;
+        t += dt;
+        // the stage box grows after first layout (bar + safe areas);
+        // rescale stored heights so the slope keeps its proportions
+        if (view.h !== hBase) {
+            var f = view.h / hBase;
+            for (var hi = 0; hi < heights.length; hi++) heights[hi].h *= f;
+            if (!grounded) rideY *= f;
+            hBase = view.h;
+        }
+        runSpeed = Math.min(380, runSpeed + dt * 4);
+        rideX += runSpeed * dt;
+        dist = rideX;
+        camX = rideX - view.w * 0.35;
+        ensureAhead(camX + view.w * 1.6);
+
+        if (holding) holdT += dt;
+
+        if (!grounded) {
+            // variable jump: holding extends the rise briefly
+            if (holding && holdT < 0.22 && rideVY < 0) rideVY -= 1500 * dt;
+            rideVY += GRAV * dt;
+            rideY += rideVY * dt;
+            // holding in the air rotates into a backflip
+            if (holding) {
+                rot -= 400 * dt;
+                var turned = Math.abs(normDeg(rot - flipBase));
+                if (turned > 300 && flips === 0) {
+                    flips = 1;
+                    bonus += 100;
+                    Arcade.audio.play('coinup');
+                    Arcade.haptics.buzz('light');
+                }
+            }
+            var g = groundAt(rideX);
+            if (g !== null && rideY >= g - 6 && rideVY > 0) {
+                var sl = slopeAt(rideX);
+                var off = Math.abs(normDeg(rot) - sl);
+                if (off > 75) { crash('Bad landing'); return; }
+                rideY = g - 6;
+                rideVY = 0;
+                grounded = true;
+                rot = sl;
+                slopeDeg = sl;
+                if (flips > 0) Arcade.audio.play('clear');
+            } else if (rideY > view.h + 240) {
+                crash('Swallowed by the chasm');
+                return;
+            }
+        } else {
+            var gg = groundAt(rideX);
+            if (gg === null) {
+                grounded = false;   // rode off a chasm edge
+            } else {
+                rideY = gg - 6;
+                slopeDeg = slopeAt(rideX);
+                rot = slopeDeg;
+            }
+        }
+
+        // rocks
+        for (var i = 0; i < rocks.length; i++) {
+            var rk = rocks[i];
+            var gy = groundAt(rk.x);
+            if (gy === null) continue;
+            if (Math.hypot(rk.x - rideX, (gy - rk.r) - (rideY - 8)) < rk.r + 12) {
+                crash('Clipped a rock');
+                return;
+            }
+        }
+
+        // coins
+        for (var c = 0; c < coinSets.length; c++) {
+            var cs = coinSets[c];
+            for (var k = 0; k < cs.list.length; k++) {
+                var cn = cs.list[k];
+                if (cn.taken) continue;
+                if (Math.hypot(cs.x + cn.dx - rideX, groundAt(cs.x) + cn.dy - rideY) < 24) {
+                    cn.taken = true;
+                    coins++;
+                    Arcade.audio.play('coin');
+                    Arcade.haptics.buzz('light');
+                }
+            }
+        }
+
+        Arcade.ui.setScore(String(Math.floor(dist / 50) + coins * 10 + bonus).padStart(3, '0'));
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+
+        // sunset sky
+        var sky = ctx.createLinearGradient(0, 0, 0, view.h);
+        sky.addColorStop(0, '#1B1035');
+        sky.addColorStop(0.55, '#4A1E4F');
+        sky.addColorStop(0.8, '#B4503F');
+        sky.addColorStop(1, '#E08A4E');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // sun
+        var sunX = view.w * 0.72, sunY = view.h * 0.62;
+        ctx.fillStyle = '#FFD533';
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 26, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,213,51,0.25)';
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 38, 0, Math.PI * 2);
+        ctx.fill();
+
+        // parallax peaks
+        for (var L = 0; L < 2; L++) {
+            var f = L === 0 ? 0.2 : 0.45;
+            ctx.fillStyle = L === 0 ? '#2A1B4A' : '#3A2560';
+            ctx.beginPath();
+            ctx.moveTo(0, view.h);
+            for (var x = 0; x <= view.w; x += 12) {
+                var wx = camX * f + x;
+                var y = view.h * (0.42 + L * 0.12) + Math.sin(wx / 130 + L * 2) * 26 + Math.sin(wx / 47) * 9;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(view.w, view.h);
+            ctx.closePath();
+            ctx.fill();
+            // snowcaps
+            ctx.fillStyle = L === 0 ? 'rgba(234,242,255,0.16)' : 'rgba(234,242,255,0.22)';
+            ctx.beginPath();
+            ctx.moveTo(0, view.h);
+            for (var x2 = 0; x2 <= view.w; x2 += 12) {
+                var wx2 = camX * f + x2;
+                var y2 = view.h * (0.42 + L * 0.12) + Math.sin(wx2 / 130 + L * 2) * 26 + Math.sin(wx2 / 47) * 9;
+                ctx.lineTo(x2, y2 - 12);
+            }
+            ctx.lineTo(view.w, view.h);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function sx(x) { return x - camX; }
+
+        // bunting strings
+        for (var bi = 0; bi < buntings.length; bi++) {
+            var b = buntings[bi];
+            var g0 = groundAt(b.x - 70), g1 = groundAt(b.x + 70);
+            if (g0 === null || g1 === null) continue;
+            var y0 = g0 - 120, y1 = g1 - 120;
+            ctx.strokeStyle = 'rgba(234,242,255,0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(sx(b.x - 70), y0);
+            ctx.quadraticCurveTo(sx(b.x), Math.max(y0, y1) + 26, sx(b.x + 70), y1);
+            ctx.stroke();
+            for (var fi = 1; fi < 7; fi++) {
+                var fx = b.x - 70 + fi * 20;
+                var ft = fi / 7;
+                var fy = (1 - ft) * (1 - ft) * y0 + 2 * (1 - ft) * ft * (Math.max(y0, y1) + 26) + ft * ft * y1;
+                ctx.fillStyle = ['#FF4B5C', '#FFD533', '#19C6FF', '#8EFF2A'][fi % 4];
+                ctx.beginPath();
+                ctx.moveTo(sx(fx) - 5, fy);
+                ctx.lineTo(sx(fx) + 5, fy);
+                ctx.lineTo(sx(fx), fy + 9);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        // terrain: one filled run per unbroken stretch of ground, so
+        // chasms stay open to the sky
+        var run = [];
+        function flushRun() {
+            if (run.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(run[0][0], run[0][1]);
+                for (var q = 1; q < run.length; q++) ctx.lineTo(run[q][0], run[q][1]);
+                ctx.strokeStyle = '#DCE6F5';
+                ctx.lineWidth = 7;
+                ctx.stroke();
+                ctx.lineTo(run[run.length - 1][0], view.h + 40);
+                ctx.lineTo(run[0][0], view.h + 40);
+                ctx.closePath();
+                ctx.fillStyle = '#2B2B3D';
+                ctx.fill();
+            }
+            run = [];
+        }
+        for (var x = camX - 20; x <= camX + view.w + 20; x += 8) {
+            if (inChasm(x)) { flushRun(); continue; }
+            var y = groundAt(x);
+            if (y === null) { flushRun(); continue; }
+            run.push([sx(x), y]);
+        }
+        flushRun();
+
+        // chasm edge caps
+        for (var ci = 0; ci < chasms.length; ci++) {
+            var ch = chasms[ci];
+            var gl = groundAt(ch.x0 - 2), gr = groundAt(ch.x0 + ch.w + 2);
+            ctx.fillStyle = '#DCE6F5';
+            if (gl !== null) ctx.fillRect(sx(ch.x0) - 4, gl - 4, 5, 26);
+            if (gr !== null) ctx.fillRect(sx(ch.x0 + ch.w) - 1, gr - 4, 5, 26);
+        }
+
+        // rocks
+        for (var i = 0; i < rocks.length; i++) {
+            var rk = rocks[i];
+            var rgy = groundAt(rk.x);
+            if (rgy === null) continue;
+            ctx.fillStyle = '#4A5266';
+            ctx.beginPath();
+            ctx.arc(sx(rk.x), rgy - rk.r + 4, rk.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath();
+            ctx.arc(sx(rk.x) - rk.r * 0.3, rgy - rk.r * 1.2, rk.r * 0.35, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // coins
+        for (var c = 0; c < coinSets.length; c++) {
+            var cs = coinSets[c];
+            var cgy = groundAt(cs.x);
+            if (cgy === null) continue;
+            for (var k = 0; k < cs.list.length; k++) {
+                var cn = cs.list[k];
+                if (cn.taken) continue;
+                ctx.fillStyle = p.neon.yellow;
+                ctx.beginPath();
+                ctx.arc(sx(cs.x + cn.dx), cgy + cn.dy, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#7A5B00';
+                ctx.beginPath();
+                ctx.arc(sx(cs.x + cn.dx), cgy + cn.dy, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // rider
+        var rx = sx(rideX);
+        ctx.save();
+        ctx.translate(rx, rideY);
+        ctx.rotate(rot * Math.PI / 180);
+        // board
+        ctx.fillStyle = p.accent;
+        ctx.fillRect(-18, 2, 36, 5);
+        // body leaning into the slope
+        ctx.strokeStyle = p.headers;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(3, -16);
+        ctx.stroke();
+        // head
+        ctx.fillStyle = p.headers;
+        ctx.beginPath();
+        ctx.arc(4, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+        // scarf
+        ctx.strokeStyle = p.red;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(2, -16);
+        ctx.quadraticCurveTo(-8, -14 + Math.sin(t * 10) * 3, -14, -10);
+        ctx.stroke();
+        ctx.restore();
+
+        // distance marker
+        ctx.fillStyle = 'rgba(234,242,255,0.6)';
+        ctx.font = '10px ui-monospace, monospace';
+        ctx.fillText(Math.floor(dist / 50) + 'm', 10, view.h - 12);
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'powder-run',
+        title: 'Powder Run',
+        accent: 'orange',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-red); --accent-glow: rgba(255,75,92,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Super Hop — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+    <style>
+        .arc-stage { position: relative; }
+        .sh-touch {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: calc(0.6rem + env(safe-area-inset-bottom));
+            z-index: 5;
+            display: none;
+            justify-content: space-between;
+            padding: 0 0.8rem;
+            pointer-events: none;
+        }
+        .sh-touch--on { display: flex; }
+        .sh-tbtn {
+            pointer-events: auto;
+            min-width: 64px;
+            min-height: 64px;
+            padding: 0 1rem;
+            font-family: var(--font-pixel);
+            font-size: 0.8rem;
+            color: var(--headers);
+            background: rgba(20, 24, 40, 0.6);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+        }
+        .sh-tbtn:active { background: var(--accent); color: #080813; }
+        .sh-move { display: flex; gap: 0.6rem; }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Beta</span>
+    <div class="sh-touch" id="touch">
+        <div class="sh-move">
+            <button class="sh-tbtn" id="tLeft" type="button" aria-label="Move left">&#9664;</button>
+            <button class="sh-tbtn" id="tRight" type="button" aria-label="Move right">&#9654;</button>
+        </div>
+        <button class="sh-tbtn" id="tJump" type="button" aria-label="Jump">JUMP</button>
+    </div>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* SUPER HOP (single-course platformer, mario-style)
+       Run right, bump blocks for coins, stomp walkers, mind the pits,
+       touch the flag. 3 lives. */
+
+    var TILE = 32;
+    var LEVEL = [
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                          CCCC                          CCCC                                            ',
+        '                  ?       B?BB                                 ?  B?BB                                  ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '               E                E                           E     E                     E               ',
+        '######################    ####################    ####################    ##############################',
+        '######################    ####################    ####################    ##############################',
+        '######################    ####################    ####################    ##############################'
+    ];
+    // stairs + flag are stamped below (kept out of the ASCII for clarity)
+
+    var ROWS = LEVEL.length, COLS = LEVEL[0].length;
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 16 / 10, maxW: 560 });
+
+    var GRAV = 1800, MOVE = 215, JUMP_V = 700;
+
+    var solids, usedBlocks, coins, walkers, pops;
+    var player, lives, score, coinCount, over, clear, started, elapsed;
+    var camX, keys, coyote, buffer, jumpsDown;
+
+    function tileAt(tx, ty) {
+        if (tx < 0 || tx >= COLS) return '#';   // walls at the ends
+        if (ty < 0 || ty >= ROWS) return ' ';
+        return solids[ty][tx];
+    }
+    function solidAt(tx, ty) {
+        var t = tileAt(tx, ty);
+        return t === '#' || t === 'B' || t === '?' || t === 'U' || t === 'S';
+    }
+
+    function buildLevel() {
+        solids = [];
+        coins = [];
+        walkers = [];
+        pops = [];
+        var flagX = 0;
+        for (var y = 0; y < ROWS; y++) {
+            solids[y] = [];
+            for (var x = 0; x < COLS; x++) {
+                var ch = LEVEL[y][x];
+                if (ch === 'C') { coins.push({ x: x * TILE + TILE / 2, y: y * TILE + TILE / 2, taken: false, ph: x }); ch = ' '; }
+                if (ch === 'E') { walkers.push({ x: x * TILE, y: y * TILE, w: 26, h: 24, vx: -55, vy: 0, alive: true, squash: 0 }); ch = ' '; }
+                solids[y][x] = ch;
+            }
+        }
+        // staircase up then down before the flag (cols 80-87)
+        var stair = [[80, 11], [81, 10], [81, 11], [82, 9], [82, 10], [82, 11], [83, 9], [83, 10], [83, 11], [84, 10], [84, 11], [85, 11]];
+        for (var s = 0; s < stair.length; s++) solids[stair[s][1]][stair[s][0]] = 'S';
+        // flagpole at col 90, rows 4-11, standing on the ground
+        for (var f = 4; f <= 11; f++) solids[f][90] = 'F';
+        flagX = 90 * TILE + TILE / 2;
+        return flagX;
+    }
+    var FLAG_X = 0;
+
+    function spawnPlayer() {
+        player = { x: 3 * TILE, y: 8 * TILE, w: 22, h: 28, vx: 0, vy: 0, face: 1, invuln: 2, dead: false };
+        coyote = 0; buffer = 0;
+    }
+
+    function reset() {
+        FLAG_X = buildLevel();
+        lives = 3;
+        score = 0;
+        coinCount = 0;
+        over = false;
+        clear = false;
+        elapsed = 0;
+        started = Date.now();
+        camX = 0;
+        keys = {};
+        jumpsDown = false;
+        spawnPlayer();
+        paintScore();
+    }
+
+    function paintScore() {
+        Arcade.ui.setScore(String(score).padStart(3, '0'));
+    }
+
+    function addScore(n) {
+        score += n;
+        paintScore();
+    }
+
+    function endGame(cleared, why) {
+        over = true;
+        var bonus = 0;
+        if (cleared) {
+            bonus = Math.max(0, Math.floor(200 - elapsed)) * 5;
+            score += bonus;
+            paintScore();
+        }
+        var res = Arcade.scores.submit('super-hop', score);
+        loop.pause();
+        Arcade.audio.play(cleared ? 'fanfare' : 'boom');
+        Arcade.ui.gameOver({
+            title: cleared ? 'COURSE CLEAR' : 'SUPER HOP',
+            label: cleared ? 'Time bonus +' + bonus : (why || 'Game over'),
+            score: score + ' pts',
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+    }
+
+    function hurt(why) {
+        if (player.invuln > 0 || over) return;
+        lives--;
+        Arcade.audio.play('boom');
+        Arcade.haptics.buzz('error');
+        if (lives <= 0) { endGame(false, why); return; }
+        spawnPlayer();
+        Arcade.ui.setScore(String(score).padStart(3, '0'));
+    }
+
+    /* ── input ────────────────────────────────────────────────── */
+    document.addEventListener('keydown', function (e) {
+        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        if (k === 'ArrowLeft' || k === 'a') { keys.left = true; e.preventDefault(); }
+        else if (k === 'ArrowRight' || k === 'd') { keys.right = true; e.preventDefault(); }
+        else if (k === ' ' || k === 'ArrowUp' || k === 'w') {
+            if (!jumpsDown) { buffer = 0.12; jumpsDown = true; }
+            e.preventDefault();
+        }
+    });
+    document.addEventListener('keyup', function (e) {
+        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        if (k === 'ArrowLeft' || k === 'a') keys.left = false;
+        else if (k === 'ArrowRight' || k === 'd') keys.right = false;
+        else if (k === ' ' || k === 'ArrowUp' || k === 'w') {
+            jumpsDown = false;
+            // jump cut: release early, rise less
+            if (player && player.vy < -200) player.vy = -200;
+        }
+    });
+    function bindHold(id, down, up) {
+        var el = document.getElementById(id);
+        el.addEventListener('pointerdown', function (e) { e.preventDefault(); down(); });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+            el.addEventListener(ev, function (e) { e.preventDefault(); up(); });
+        });
+    }
+    bindHold('tLeft', function () { keys.left = true; }, function () { keys.left = false; });
+    bindHold('tRight', function () { keys.right = true; }, function () { keys.right = false; });
+    bindHold('tJump', function () { if (!jumpsDown) { buffer = 0.12; jumpsDown = true; } }, function () {
+        jumpsDown = false;
+        if (player && player.vy < -200) player.vy = -200;
+    });
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        document.getElementById('touch').classList.add('sh-touch--on');
+    }
+
+    /* ── physics ──────────────────────────────────────────────── */
+    function moveBody(b, dt, isPlayer) {
+        // horizontal
+        b.x += b.vx * dt;
+        var dir = b.vx > 0 ? 1 : -1;
+        if (b.vx !== 0) {
+            var edge = dir > 0 ? b.x + b.w : b.x;
+            var tx = Math.floor(edge / TILE);
+            var hit = false;
+            for (var ty = Math.floor(b.y / TILE); ty <= Math.floor((b.y + b.h - 1) / TILE); ty++) {
+                if (solidAt(tx, ty)) { hit = true; break; }
+            }
+            if (hit) {
+                b.x = dir > 0 ? tx * TILE - b.w - 0.01 : (tx + 1) * TILE + 0.01;
+                b.vx = 0;
+                if (!isPlayer) b.turn = true;
+            }
+        }
+        // vertical
+        b.y += b.vy * dt;
+        b.grounded = false;
+        var ty2 = b.vy >= 0 ? Math.floor((b.y + b.h) / TILE) : Math.floor(b.y / TILE);
+        for (var tx2 = Math.floor(b.x / TILE); tx2 <= Math.floor((b.x + b.w - 1) / TILE); tx2++) {
+            if (solidAt(tx2, ty2)) {
+                if (b.vy >= 0) { b.y = ty2 * TILE - b.h; b.grounded = true; }
+                else {
+                    b.y = (ty2 + 1) * TILE + 0.01;
+                    if (isPlayer) bumpHead(tx2, ty2);
+                }
+                b.vy = 0;
+                break;
+            }
+        }
+    }
+
+    function bumpHead(tx, ty) {
+        var t = tileAt(tx, ty);
+        if (t === '?') {
+            solids[ty][tx] = 'U';
+            coinCount++;
+            addScore(50);
+            pops.push({ x: tx * TILE + TILE / 2, y: ty * TILE - 10, t: 0 });
+            Arcade.audio.play('coin');
+            Arcade.haptics.buzz('light');
+        } else if (t === 'B' || t === 'U' || t === '#' || t === 'S') {
+            Arcade.audio.play('bounce');
+        }
+    }
+
+    function update(dt) {
+        if (over) return;
+        elapsed = (Date.now() - started) / 1000;
+
+        // player horizontal
+        var ax = 0;
+        if (keys.left) ax -= 1;
+        if (keys.right) ax += 1;
+        player.vx = ax * MOVE;
+        if (ax !== 0) player.face = ax;
+
+        // jumping: buffer + coyote
+        player.vy += GRAV * dt;
+        if (player.grounded) coyote = 0.1; else coyote = Math.max(0, coyote - dt);
+        buffer = Math.max(0, buffer - dt);
+        if (buffer > 0 && coyote > 0) {
+            player.vy = -JUMP_V;
+            player.grounded = false;
+            coyote = 0; buffer = 0;
+            Arcade.audio.play('flap');
+        }
+        if (player.vy > 900) player.vy = 900;
+
+        moveBody(player, dt, true);
+        player.invuln = Math.max(0, player.invuln - dt);
+
+        // fell in a pit
+        if (player.y > ROWS * TILE + 80) { hurt('Fell in a pit'); if (over) return; }
+
+        // walkers
+        for (var i = 0; i < walkers.length; i++) {
+            var w = walkers[i];
+            if (!w.alive) {
+                w.squash += dt;
+                continue;
+            }
+            w.vy = Math.min(900, w.vy + GRAV * dt);
+            w.turn = false;
+            moveBody(w, dt, false);
+            if (w.turn) w.vx = w.vx >= 0 ? -55 : 55;
+            // ledge check: turn around at drops
+            var aheadX = w.vx < 0 ? w.x - 4 : w.x + w.w + 4;
+            var atx = Math.floor(aheadX / TILE), aty = Math.floor((w.y + w.h + 4) / TILE);
+            if (w.grounded && !solidAt(atx, aty)) w.vx = -w.vx;
+            if (w.y > ROWS * TILE + 80) { w.alive = false; continue; }
+
+            // player interaction
+            if (player.invuln <= 0 &&
+                player.x < w.x + w.w && player.x + player.w > w.x &&
+                player.y < w.y + w.h && player.y + player.h > w.y) {
+                var stomp = player.vy > 0 && (player.y + player.h - w.y) < 18;
+                if (stomp) {
+                    w.alive = false;
+                    w.squash = 0;
+                    player.vy = jumpsDown ? -720 : -520;
+                    player.grounded = false;
+                    addScore(100);
+                    Arcade.audio.play('merge');
+                    Arcade.haptics.buzz('medium');
+                } else {
+                    hurt('Bumped a crawler');
+                    if (over) return;
+                }
+            }
+        }
+
+        // coins
+        for (var c = 0; c < coins.length; c++) {
+            var cn = coins[c];
+            if (cn.taken) continue;
+            cn.ph += dt * 4;
+            var cx = player.x + player.w / 2, cy = player.y + player.h / 2;
+            if (Math.hypot(cn.x - cx, cn.y - cy) < 26) {
+                cn.taken = true;
+                coinCount++;
+                addScore(50);
+                Arcade.audio.play('coin');
+                Arcade.haptics.buzz('light');
+            }
+        }
+
+        // coin pops
+        for (var pi = pops.length - 1; pi >= 0; pi--) {
+            pops[pi].t += dt;
+            pops[pi].y -= 120 * dt;
+            if (pops[pi].t > 0.5) pops.splice(pi, 1);
+        }
+
+        // flag: touch the pole
+        if (Math.abs(player.x + player.w / 2 - FLAG_X) < 20) {
+            endGame(true);
+            return;
+        }
+
+        // camera
+        var maxCam = COLS * TILE - view.w;
+        camX = Math.max(0, Math.min(maxCam, player.x + player.w / 2 - view.w * 0.4));
+
+        paintScore();
+    }
+
+    /* ── render ───────────────────────────────────────────────── */
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+
+        var sky = ctx.createLinearGradient(0, 0, 0, view.h);
+        sky.addColorStop(0, '#2E7CD6');
+        sky.addColorStop(1, '#9FD4FF');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        // clouds + hills (parallax)
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        for (var c = 0; c < 6; c++) {
+            var cx = ((c * 397 + 80 - camX * 0.3) % (view.w + 200) + view.w + 200) % (view.w + 200) - 100;
+            var cy = 30 + (c * 53) % 70;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+            ctx.arc(cx + 16, cy + 3, 12, 0, Math.PI * 2);
+            ctx.arc(cx - 16, cy + 4, 11, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.fillStyle = '#5FA84E';
+        for (var h = 0; h < 4; h++) {
+            var hx = ((h * 521 - camX * 0.5) % (view.w + 300) + view.w + 300) % (view.w + 300) - 150;
+            ctx.beginPath();
+            ctx.arc(hx, view.h + 40, 130, Math.PI, 0);
+            ctx.fill();
+        }
+
+        function X(x) { return x - camX; }
+
+        // tiles
+        var x0 = Math.max(0, Math.floor(camX / TILE) - 1);
+        var x1 = Math.min(COLS - 1, Math.ceil((camX + view.w) / TILE) + 1);
+        for (var ty = 0; ty < ROWS; ty++) {
+            for (var tx = x0; tx <= x1; tx++) {
+                var t = solids[ty][tx];
+                if (t === ' ' || t === 'C' || t === 'E') continue;
+                var dx = X(tx * TILE), dy = ty * TILE;
+                if (t === '#' || t === 'S') {
+                    ctx.fillStyle = '#B5651D';
+                    ctx.fillRect(dx, dy, TILE, TILE);
+                    ctx.fillStyle = '#3FA34D';
+                    ctx.fillRect(dx, dy, TILE, 8);
+                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                    ctx.fillRect(dx, dy + TILE - 4, TILE, 4);
+                } else if (t === 'B') {
+                    ctx.fillStyle = '#C1442E';
+                    ctx.fillRect(dx, dy, TILE, TILE);
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.fillRect(dx, dy + TILE / 2 - 1, TILE, 2);
+                    ctx.fillRect(dx + TILE / 2 - 1, dy, 2, TILE);
+                    ctx.strokeStyle = '#7A2A1C';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(dx + 1, dy + 1, TILE - 2, TILE - 2);
+                } else if (t === '?') {
+                    var glow = 0.75 + 0.25 * Math.sin(Date.now() / 280 + tx);
+                    ctx.fillStyle = 'rgba(255,213,51,' + glow.toFixed(2) + ')';
+                    ctx.fillRect(dx, dy, TILE, TILE);
+                    ctx.fillStyle = '#7A5B00';
+                    ctx.font = 'bold 18px ui-monospace, monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('?', dx + TILE / 2, dy + 23);
+                    ctx.textAlign = 'left';
+                } else if (t === 'U') {
+                    ctx.fillStyle = '#8A6B3A';
+                    ctx.fillRect(dx, dy, TILE, TILE);
+                    ctx.strokeStyle = '#5C451F';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(dx + 1, dy + 1, TILE - 2, TILE - 2);
+                } else if (t === 'F') {
+                    ctx.fillStyle = '#2E7D32';
+                    ctx.fillRect(dx + TILE / 2 - 3, dy, 6, TILE);
+                    if (ty === 4) {
+                        ctx.fillStyle = p.neon.yellow;
+                        ctx.beginPath();
+                        ctx.arc(dx + TILE / 2, dy - 2, 7, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+
+        // flag cloth
+        ctx.fillStyle = p.red;
+        var fy = 4 * TILE + 8;
+        ctx.beginPath();
+        ctx.moveTo(X(90 * TILE + TILE / 2 + 3), fy);
+        ctx.lineTo(X(90 * TILE + TILE / 2 + 30), fy + 8 + Math.sin(Date.now() / 200) * 2);
+        ctx.lineTo(X(90 * TILE + TILE / 2 + 3), fy + 16);
+        ctx.closePath();
+        ctx.fill();
+
+        // coins
+        for (var ci = 0; ci < coins.length; ci++) {
+            var cn = coins[ci];
+            if (cn.taken) continue;
+            var sq = Math.abs(Math.sin(cn.ph));
+            ctx.fillStyle = p.neon.yellow;
+            ctx.beginPath();
+            ctx.ellipse(X(cn.x), cn.y, 4 + 6 * sq, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // coin pops
+        ctx.fillStyle = p.neon.yellow;
+        ctx.font = 'bold 13px ui-monospace, monospace';
+        for (var pi = 0; pi < pops.length; pi++) {
+            ctx.globalAlpha = Math.max(0, 1 - pops[pi].t * 2);
+            ctx.fillText('+50', X(pops[pi].x) - 12, pops[pi].y);
+        }
+        ctx.globalAlpha = 1;
+
+        // walkers (spiky crawlers)
+        for (var wi = 0; wi < walkers.length; wi++) {
+            var w = walkers[wi];
+            var wx = X(w.x);
+            if (wx < -40 || wx > view.w + 40) continue;
+            if (!w.alive) {
+                if (w.squash > 0.6) continue;
+                ctx.fillStyle = '#5C3A21';
+                ctx.fillRect(wx, w.y + w.h - 6, w.w, 6);
+                continue;
+            }
+            var wob = Math.sin(Date.now() / 130 + w.x / 20) * 2;
+            ctx.fillStyle = '#8A5A2B';
+            ctx.beginPath();
+            ctx.ellipse(wx + w.w / 2, w.y + w.h / 2 + wob * 0.3, w.w / 2, w.h / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // spikes
+            ctx.fillStyle = '#3E2A12';
+            for (var sp = 0; sp < 3; sp++) {
+                var sxp = wx + 5 + sp * 8;
+                ctx.beginPath();
+                ctx.moveTo(sxp - 4, w.y + 4);
+                ctx.lineTo(sxp, w.y - 5);
+                ctx.lineTo(sxp + 4, w.y + 4);
+                ctx.closePath();
+                ctx.fill();
+            }
+            // angry eyes face travel direction
+            var ex = w.vx < 0 ? -1 : 1;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(wx + w.w / 2 - 6 + ex * 3, w.y + 6, 5, 6);
+            ctx.fillRect(wx + w.w / 2 + 1 + ex * 3, w.y + 6, 5, 6);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(wx + w.w / 2 - 5 + ex * 4, w.y + 8, 3, 3);
+            ctx.fillRect(wx + w.w / 2 + 2 + ex * 4, w.y + 8, 3, 3);
+        }
+
+        // player (blink while invulnerable)
+        var blink = player.invuln > 0 && Math.floor(player.invuln * 8) % 2 === 0;
+        if (!blink && !over) {
+            var rx = X(player.x), ry = player.y;
+            var run = player.grounded && player.vx !== 0 ? Math.sin(Date.now() / 90) * 3 : 0;
+            // legs
+            ctx.strokeStyle = '#2B50AA';
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(rx + 11, ry + 14);
+            ctx.lineTo(rx + 11 + (player.vx !== 0 ? player.face * 4 : 0), ry + player.h);
+            ctx.moveTo(rx + 11, ry + 14);
+            ctx.lineTo(rx + 11 - (player.vx !== 0 ? player.face * 4 : 0), ry + player.h);
+            ctx.stroke();
+            // body
+            ctx.fillStyle = '#FF8C42';
+            ctx.fillRect(rx + 4, ry + 6, 14, 12);
+            // head
+            ctx.fillStyle = '#F2C19B';
+            ctx.beginPath();
+            ctx.arc(rx + 11, ry + 2 + run * 0.3, 7, 0, Math.PI * 2);
+            ctx.fill();
+            // cap
+            ctx.fillStyle = p.neon.yellow;
+            ctx.fillRect(rx + 4, ry - 6 + run * 0.3, 14, 5);
+            ctx.fillRect(rx + 14, ry - 4 + run * 0.3, 7, 3);
+        }
+
+        // lives as caps
+        ctx.fillStyle = p.neon.yellow;
+        for (var li = 0; li < lives; li++) ctx.fillRect(10 + li * 14, 10, 10, 6);
+
+        // progress to flag
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fillRect(view.w - 86, 12, 76, 6);
+        ctx.fillStyle = p.accent;
+        var prog = Math.max(0, Math.min(1, player.x / FLAG_X));
+        ctx.fillRect(view.w - 86, 12, 76 * prog, 6);
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'super-hop',
+        title: 'Super Hop',
+        accent: 'red',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>

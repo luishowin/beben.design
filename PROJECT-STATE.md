@@ -805,8 +805,77 @@ Two wasted bumps (`v23` precached a stale hub) from the same dev-cache cause
 above: prime-then-bump discipline fixed it, `v24` verified byte-level through
 the Cache API (hub=v24 with card, all games NEW) before playtesting.
 
+### Smarter checkers bot (11 Oct 2026, cache `v25`)
+
+`checkers/index.html` AI was random-move with a jump preference. Now a
+depth-2 minimax with alpha-beta over the existing single-move rules: material
+(man 100, king 140) plus light advancement, home-rank guard and centre terms,
+with a small jitter so lines vary. Also fixed two small things on the way:
+AI captures now count to `caps.light` and play the capture sound (previously
+silent and uncounted). Verified live: full player-move/AI-reply round trip on
+canvas with real pointer events, status back to "Your move", zero errors; and
+in node: free capture taken over a quiet move, opening search ~1ms against
+the 550ms think pause. Prime-then-bump held, no wasted versions this time.
+
+### Wave Rider Edge-ify (11 Oct 2026, cache `v26`)
+
+`wave-rider/index.html` was a sine-wave-follow prototype with the rider
+locked at one x. Rebuilt as a top-down endless surfer: roam anywhere by drag
+or arrows/WASD, rocks and bobbing buoys stream in from the right, stars pay
+50, rare hearts add a life up to 5, speed ramps 130 to 340, 3 lives with
+2s invulnerability. Same shell (score submit, pause/resume, HUD). Verified
+live holding Right+Down: surfer roams, water/foam/rocks/buoys/stars all
+paint, score ticks, zero console errors. Prime-then-bump held (primed both
+files uncontrolled before bumping).
+
+### Powder Run snowboard runner (11 Oct 2026, cache `v28`)
+
+New live game at `docs/games/powder-run/`, alto-style: endless procedural
+slope (smoothed random walk, chasms, rocks, coin arcs, pennant bunting),
+hold to jump higher, hold in air to backflip (+100 landing bonus, bad
+landings crash), sunset gradient with parallax snowcaps. Live grid now 13,
+homepage 20 games. Verified live: clean riding render, jump run ending in a
+rock crash with correct game-over panel and BEST 64, hub BEST 64 chip.
+
+Caught by screenshot before shipping: the first build read `view.h` once at
+reset, but the stage grows after first layout, so the slope rendered near
+the top of a tall canvas. Fixed by rescaling stored heights when `view.h`
+changes (same class of issue void-dodger/wave-rider snap around). Cost one
+extra bump (`v27` broken layout, `v28` fixed).
+
+### Super Hop platformer (11 Oct 2026, cache `v30`)
+
+New live game at `docs/games/super-hop/`, mario-style single course:
+104x15 ASCII tilemap (script-validated: uniform rows, pits at 22-25/46-49/
+70-73, all enemy/stair/flag footing checked), ?-blocks and bricks, floating
+coins, patrolling spiky crawlers with edge detection, flagpole finish with
+time bonus, 3 lives, coyote time + jump buffer + jump cut, touch buttons on
+mobile. Live grid now 14, homepage 21 games. Verified live (run+jump: coin
+bump, three pit deaths into the game-over panel, no errors) and by a node
+sim harness driving the real update loop: 32s run with 3 stomps, 2 coins,
+400 pts game over; teleport-to-flag run gives COURSE CLEAR +995 bonus.
+Root-scope priming (outside `/games/`, immune to worker interception) is now
+the fixed discipline; `v30` verified NEW throughout, no waste.
+
+### Pocket Putt minigolf (11 Oct 2026, cache `v31`)
+
+New live game at `docs/games/pocket-putt/`, imessage-style: 15 holes
+authored (open, corridor, dogleg, island bridge, sand, pinball, ring,
+gap, slalom, moat, bank shot, cross, pillars, lake, gauntlet), 5 drawn at
+random per round, drag-back-from-ball aiming with arrow + power, wall bounces
+at 0.72 restitution, sand traps, water hazards (+1 stroke, ball replaced),
+lip-outs above 330 px/s, max par+5 pickup, per-hole panels and a final
+total-vs-par card submitted lower-wins. Also tagged the three new games plus
+the rebuilt Wave Rider with in-game Beta chips (checkers precedent). Live
+grid now 15, homepage 22 games. Verified by a node sim driving the real
+pointer handlers: hole-in-1 via drag path, wall bounce, splash recovery,
+full 5-hole round to +19 with a dumb policy. Live: boot, real putt (H1 1),
+zero errors. Screenshots were unavailable (desktop window hidden), so no
+visual pass this time; render follows the same canvas patterns as the rest.
+Root-scope priming held, `v31` verified NEW, no waste.
+
 Current state, all of it measured rather than remembered: 33 pages served
-excluding the arcade plus `404.html`, 30 sitemap URLs, 1054 internal references
+excluding the arcade plus `404.html`, 30 sitemap URLs, 1075 internal references
 resolve and 0 break (1055 before the mines/rockfield removal, 1047 after,
 +7 with the Five Letter hub card and game page), all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and

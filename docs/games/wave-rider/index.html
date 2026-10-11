@@ -19,23 +19,27 @@
 <body>
 
 <main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
-    <span class="arc-proto">Prototype &middot; full game coming soon</span>
+    <span class="arc-proto">Beta</span>
 </main>
 
 <script>
 (function () {
     'use strict';
 
-    /* WAVE RIDER (prototype)
-       Stay on the wave, catch stars, dodge the rocks. Wipeout = lost life. */
+    /* WAVE RIDER (endless surf, edge-surf style)
+       Top-down water. You are the surfer: roam anywhere, outrun the
+       current, dodge rocks and buoys, grab stars for points and hearts
+       for extra lives. Speed ramps until it gets you. */
 
-    var LIVES = 3;
+    var LIVES = 3, MAX_LIVES = 5;
 
     var canvas = document.getElementById('game');
-    var view = Arcade.fitCanvas(canvas, { aspect: 16 / 10, maxW: 520 });
+    var view = Arcade.fitCanvas(canvas, { aspect: 3 / 4, maxW: 480 });
 
-    var speed, dist, score, lives, over, invuln, riderY, wavePhase, riderSnap;
-    var stars, rocks, spawnStar, spawnRock;
+    var speed, dist, score, lives, over, invuln, t;
+    var px, py, pvx, pvy, keys;
+    var rocks, buoys, stars, hearts, foam;
+    var spawnRock, spawnBuoy, spawnStar, spawnHeart;
 
     function reset() {
         speed = 130;
@@ -44,18 +48,21 @@
         lives = LIVES;
         over = false;
         invuln = 0;
-        riderY = view.h / 2;
-        riderSnap = true;   // view.h may grow after layout; snap on first frame
-        wavePhase = 0;
-        stars = [];
+        t = 0;
+        px = view.w * 0.3;
+        py = view.h * 0.5;
+        pvx = 0; pvy = 0;
+        keys = {};
         rocks = [];
-        spawnStar = 1.2;
-        spawnRock = 2.4;
+        buoys = [];
+        stars = [];
+        hearts = [];
+        foam = [];
+        spawnRock = 1.2;
+        spawnBuoy = 2.5;
+        spawnStar = 1.0;
+        spawnHeart = 18;
         Arcade.ui.setScore('000');
-    }
-
-    function waveY(x) {
-        return view.h / 2 + Math.sin(x / 70 + wavePhase) * view.h * 0.18 + Math.sin(x / 150 + wavePhase * 1.7) * 12;
     }
 
     function endGame() {
@@ -79,68 +86,149 @@
         if (lives <= 0) endGame();
     }
 
-    canvas.addEventListener('pointermove', function (e) {
+    /* ── input: drag anywhere + arrows/WASD ─────────────────────── */
+    var dragging = false;
+    function pointTo(e) {
         var r = canvas.getBoundingClientRect();
-        riderY = Math.max(20, Math.min(view.h - 20, (e.clientY - r.top) / r.height * view.h));
+        return {
+            x: (e.clientX - r.left) / r.width * view.w,
+            y: (e.clientY - r.top) / r.height * view.h
+        };
+    }
+    canvas.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        dragging = true;
+        var p = pointTo(e);
+        px = clampX(p.x); py = clampY(p.y);
     });
+    canvas.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        e.preventDefault();
+        var p = pointTo(e);
+        px = clampX(p.x); py = clampY(p.y);
+    });
+    window.addEventListener('pointerup', function () { dragging = false; });
+    window.addEventListener('pointercancel', function () { dragging = false; });
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowUp') riderY -= 26;
-        if (e.key === 'ArrowDown') riderY += 26;
-        riderY = Math.max(20, Math.min(view.h - 20, riderY));
+        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].indexOf(k) === -1) return;
+        e.preventDefault();
+        keys[k] = true;
     });
+    document.addEventListener('keyup', function (e) {
+        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        keys[k] = false;
+    });
+
+    function clampX(x) { return Math.max(24, Math.min(view.w - 24, x)); }
+    function clampY(y) { return Math.max(24, Math.min(view.h - 24, y)); }
+
+    function spawnOffscreen() { return view.w + 30; }
 
     function update(dt) {
         if (over) return;
-        if (riderSnap) { riderSnap = false; riderY = view.h / 2; }
-        riderY = Math.max(20, Math.min(view.h - 20, riderY));
+        t += dt;
         dist += speed * dt;
-        speed = Math.min(320, speed + dt * 3.5);
-        wavePhase += dt * 2.4;
+        speed = Math.min(340, speed + dt * 3.5);
+        score += dt * 5;
         invuln = Math.max(0, invuln - dt);
 
-        // stars
+        // keyboard velocity (drag sets position directly)
+        var ax = 0, ay = 0;
+        if (keys.ArrowLeft || keys.a) ax -= 1;
+        if (keys.ArrowRight || keys.d) ax += 1;
+        if (keys.ArrowUp || keys.w) ay -= 1;
+        if (keys.ArrowDown || keys.s) ay += 1;
+        if (ax || ay) {
+            var n = Math.hypot(ax, ay);
+            px = clampX(px + ax / n * 270 * dt);
+            py = clampY(py + ay / n * 270 * dt);
+        }
+        pvx = ax; pvy = ay;
+
+        // foam streaks for a sense of speed
+        if (Math.random() < 0.5) {
+            foam.push({ x: view.w + 10, y: Math.random() * view.h, len: 20 + Math.random() * 40 });
+        }
+        for (var fi = foam.length - 1; fi >= 0; fi--) {
+            foam[fi].x -= speed * 1.6 * dt;
+            if (foam[fi].x + foam[fi].len < -10) foam.splice(fi, 1);
+        }
+
+        // rocks: hardGrey lumps, straight at you
+        spawnRock -= dt;
+        if (spawnRock <= 0) {
+            spawnRock = Math.max(0.5, 1.5 - dist / 9000 + Math.random() * 0.9);
+            rocks.push({ x: spawnOffscreen(), y: 30 + Math.random() * (view.h - 60), r: 10 + Math.random() * 10 });
+        }
+        for (var i = rocks.length - 1; i >= 0; i--) {
+            var rk = rocks[i];
+            rk.x -= speed * dt;
+            if (rk.x < -40) { rocks.splice(i, 1); continue; }
+            if (invuln <= 0 && Math.hypot(rk.x - px, rk.y - py) < rk.r + 12) {
+                rocks.splice(i, 1);
+                wipeout();
+                if (over) return;
+            }
+        }
+
+        // buoys: bob up and down as they drift in
+        spawnBuoy -= dt;
+        if (spawnBuoy <= 0) {
+            spawnBuoy = 2 + Math.random() * 2.2;
+            buoys.push({ x: spawnOffscreen(), y: 40 + Math.random() * (view.h - 80), ph: Math.random() * 6 });
+        }
+        for (var bi = buoys.length - 1; bi >= 0; bi--) {
+            var b = buoys[bi];
+            b.x -= speed * 0.9 * dt;
+            b.ph += dt * 3;
+            if (b.x < -30) { buoys.splice(bi, 1); continue; }
+            var by = b.y + Math.sin(b.ph) * 14;
+            if (invuln <= 0 && Math.hypot(b.x - px, by - py) < 22) {
+                buoys.splice(bi, 1);
+                wipeout();
+                if (over) return;
+            }
+        }
+
+        // stars: +50 and a blip
         spawnStar -= dt;
         if (spawnStar <= 0) {
             spawnStar = 1 + Math.random() * 1.6;
-            stars.push({ x: view.w + 20, y: Math.random() * view.h });
+            stars.push({ x: spawnOffscreen(), y: 30 + Math.random() * (view.h - 60), ph: Math.random() * 6 });
         }
-        for (var i = stars.length - 1; i >= 0; i--) {
-            stars[i].x -= speed * dt;
-            stars[i].y += Math.sin(stars[i].x / 40 + wavePhase) * 18 * dt;
-            if (stars[i].x < -20) { stars.splice(i, 1); continue; }
-            var dx = stars[i].x - view.w * 0.28, dy = stars[i].y - riderY;
-            if (dx * dx + dy * dy < 26 * 26) {
-                stars.splice(i, 1);
+        for (var si = stars.length - 1; si >= 0; si--) {
+            var st = stars[si];
+            st.x -= speed * dt;
+            st.ph += dt * 4;
+            if (st.x < -20) { stars.splice(si, 1); continue; }
+            if (Math.hypot(st.x - px, st.y - py) < 26) {
+                stars.splice(si, 1);
                 score += 50;
                 Arcade.audio.play('coin');
                 Arcade.haptics.buzz('light');
-                Arcade.ui.setScore(String(Math.floor(score)).padStart(3, '0'));
             }
         }
 
-        // rocks (on the wave)
-        spawnRock -= dt;
-        if (spawnRock <= 0) {
-            spawnRock = 1.6 + Math.random() * 1.8;
-            rocks.push({ x: view.w + 30 });
+        // hearts: rare extra life, capped
+        spawnHeart -= dt;
+        if (spawnHeart <= 0) {
+            spawnHeart = 22 + Math.random() * 14;
+            if (lives < MAX_LIVES) hearts.push({ x: spawnOffscreen(), y: 40 + Math.random() * (view.h - 80) });
         }
-        for (var i = rocks.length - 1; i >= 0; i--) {
-            rocks[i].x -= speed * dt;
-            if (rocks[i].x < -40) { rocks.splice(i, 1); continue; }
-            var ry = waveY(rocks[i].x);
-            if (invuln <= 0) {
-                var ddx = rocks[i].x - view.w * 0.28, ddy = ry - riderY;
-                if (ddx * ddx + ddy * ddy < 22 * 22) {
-                    rocks.splice(i, 1);
-                    wipeout();
-                    if (over) return;
-                }
+        for (var hi = hearts.length - 1; hi >= 0; hi--) {
+            var h = hearts[hi];
+            h.x -= speed * 0.85 * dt;
+            if (h.x < -20) { hearts.splice(hi, 1); continue; }
+            if (Math.hypot(h.x - px, h.y - py) < 26) {
+                hearts.splice(hi, 1);
+                if (lives < MAX_LIVES) lives++;
+                score += 25;
+                Arcade.audio.play('fanfare');
+                Arcade.haptics.buzz('success');
             }
         }
 
-        // staying on the wave scores; falling off stalls it
-        var wy = waveY(view.w * 0.28);
-        if (Math.abs(riderY - wy) < 46) score += dt * 5;
         Arcade.ui.setScore(String(Math.floor(score)).padStart(3, '0'));
     }
 
@@ -148,67 +236,77 @@
         var p = Arcade.palette();
         var ctx = view.ctx;
 
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, view.w, view.h);
-
-        // sky band
+        // deep water
         var grad = ctx.createLinearGradient(0, 0, 0, view.h);
-        grad.addColorStop(0, '#0B1224');
-        grad.addColorStop(0.6, '#101B38');
-        grad.addColorStop(1, '#06080F');
+        grad.addColorStop(0, '#0A2440');
+        grad.addColorStop(0.5, '#0E3157');
+        grad.addColorStop(1, '#081A30');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // stars in the sky
-        ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        for (var i = 0; i < 24; i++) {
-            var sx = ((i * 97 + 31) % Math.floor(view.w));
-            var sy = ((i * 53 + 17) % Math.floor(view.h * 0.45));
-            ctx.fillRect(sx, sy, 2, 2);
-        }
-
-        // the wave
-        ctx.beginPath();
-        ctx.moveTo(0, waveY(0));
-        for (var x = 0; x <= view.w; x += 8) ctx.lineTo(x, waveY(x));
-        ctx.lineTo(view.w, view.h);
-        ctx.lineTo(0, view.h);
-        ctx.closePath();
-        ctx.fillStyle = p.accent;
-        ctx.globalAlpha = 0.22;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-
-        // wave crest
-        ctx.beginPath();
-        for (var x = 0; x <= view.w; x += 6) {
-            var y = waveY(x);
-            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = p.accent;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        // rocks
-        for (var i = 0; i < rocks.length; i++) {
-            var r = rocks[i];
-            var ry = waveY(r.x);
-            ctx.fillStyle = '#4A5266';
+        // drifting swell bands
+        ctx.strokeStyle = 'rgba(25,198,255,0.10)';
+        ctx.lineWidth = 2;
+        for (var w = 0; w < 4; w++) {
             ctx.beginPath();
-            ctx.arc(r.x, ry - 8, 9, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = p.muted;
-            ctx.lineWidth = 1.5;
+            var yb = ((w * 97 + t * speed * 0.7) % (view.h + 80)) - 40;
+            for (var x = 0; x <= view.w; x += 10) {
+                var y = yb + Math.sin(x / 60 + t * 2 + w * 1.7) * 8;
+                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
             ctx.stroke();
         }
 
-        // stars to collect
-        for (var i = 0; i < stars.length; i++) {
-            var s = stars[i];
+        // foam streaks
+        ctx.strokeStyle = 'rgba(234,242,255,0.28)';
+        ctx.lineWidth = 2;
+        for (var fi = 0; fi < foam.length; fi++) {
+            var f = foam[fi];
+            ctx.beginPath();
+            ctx.moveTo(f.x, f.y);
+            ctx.lineTo(f.x + f.len, f.y);
+            ctx.stroke();
+        }
+
+        // rocks
+        for (var i = 0; i < rocks.length; i++) {
+            var rk = rocks[i];
+            ctx.fillStyle = '#4A5266';
+            ctx.beginPath();
+            ctx.arc(rk.x, rk.y, rk.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(234,242,255,0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.beginPath();
+            ctx.arc(rk.x - rk.r * 0.3, rk.y - rk.r * 0.3, rk.r * 0.35, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // buoys (red/white striped)
+        for (var bi = 0; bi < buoys.length; bi++) {
+            var b = buoys[bi];
+            var by = b.y + Math.sin(b.ph) * 14;
+            ctx.fillStyle = 'rgba(25,198,255,0.25)';
+            ctx.beginPath();
+            ctx.ellipse(b.x, by + 14, 12, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#D3263B';
+            ctx.fillRect(b.x - 7, by - 12, 14, 24);
+            ctx.fillStyle = '#F4F1E8';
+            ctx.fillRect(b.x - 7, by - 4, 14, 8);
+            ctx.fillStyle = '#FFD533';
+            ctx.fillRect(b.x - 2, by - 17, 4, 5);
+        }
+
+        // stars
+        for (var si = 0; si < stars.length; si++) {
+            var st = stars[si];
             ctx.fillStyle = p.neon.yellow;
             ctx.save();
-            ctx.translate(s.x, s.y);
-            ctx.rotate(Math.sin(s.x / 30 + wavePhase * 3) * 0.4);
+            ctx.translate(st.x, st.y);
+            ctx.rotate(Math.sin(st.ph) * 0.4);
             ctx.beginPath();
             for (var k = 0; k < 4; k++) {
                 var a = (k / 4) * Math.PI * 2;
@@ -221,28 +319,50 @@
             ctx.restore();
         }
 
-        // surfer
-        var sx = view.w * 0.28;
+        // hearts
+        for (var hi = 0; hi < hearts.length; hi++) {
+            var h = hearts[hi];
+            ctx.fillStyle = p.red;
+            ctx.beginPath();
+            ctx.arc(h.x - 5, h.y - 3, 6, 0, Math.PI * 2);
+            ctx.arc(h.x + 5, h.y - 3, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(h.x - 10, h.y);
+            ctx.lineTo(h.x, h.y + 10);
+            ctx.lineTo(h.x + 10, h.y);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // surfer (blinks while invulnerable)
         var blink = invuln > 0 && Math.floor(invuln * 8) % 2 === 0;
         if (!blink) {
-            var lean = (riderY - waveY(sx)) * 0.4;
+            var lean = (pvx || 0) * 0.15 + (pvy || 0) * 0.1;
+            ctx.save();
+            ctx.translate(px, py);
+            // wake
+            ctx.fillStyle = 'rgba(234,242,255,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(-16, 4, 12, 5, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            // board
+            ctx.rotate(lean);
+            ctx.fillStyle = p.neon.blue;
+            ctx.fillRect(-14, -2, 28, 5);
+            // rider
             ctx.fillStyle = p.headers;
             ctx.beginPath();
-            ctx.arc(sx, riderY - 9, 6.5, 0, Math.PI * 2);
+            ctx.arc(0, -9, 6.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = p.accent;
-            ctx.fillRect(sx - 3, riderY - 5, 6, 14);
-            ctx.fillStyle = p.neon.blue;
-            ctx.save();
-            ctx.translate(sx, riderY + 7);
-            ctx.rotate(lean / 60);
-            ctx.fillRect(-14, 0, 28, 4);
+            ctx.fillRect(-3, -5, 6, 12);
             ctx.restore();
         }
 
         // lives
         ctx.fillStyle = p.accent;
-        for (var i = 0; i < lives; i++) ctx.fillRect(10 + i * 14, 10, 8, 8);
+        for (var li = 0; li < lives; li++) ctx.fillRect(10 + li * 14, 10, 8, 8);
     }
 
     var loop = Arcade.loop({ update: update, render: render });

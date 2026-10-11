@@ -187,17 +187,99 @@
         if (mode === 'cpu' && turn < 0) aiTimer = setTimeout(aiMove, 550);
     }
 
+    /* ── AI: depth-2 minimax with alpha-beta over single moves ────
+       Material leads (man 100, king 140), plus small positional terms:
+       light advances down (+3 per rank), holds the home ranks (+5),
+       and likes the centre (+3). Jitter keeps it from playing the same
+       line every game. Search runs synchronously; branching is small
+       enough that it finishes in well under the 550ms think pause. */
+    function aiEval(b) {
+        var s = 0;
+        for (var y = 0; y < N; y++) {
+            for (var x = 0; x < N; x++) {
+                var p = b[y][x];
+                if (!p) continue;
+                var king = Math.abs(p) === 2;
+                var v = king ? 140 : 100;
+                if (!king) {
+                    if (p < 0) v += y * 3 + (y < 2 ? 5 : 0);   // light: advance, guard home
+                    else v += (N - 1 - y) * 3 + (y > N - 3 ? 5 : 0);
+                }
+                if (x >= 2 && x <= 5) v += 3;
+                s += p < 0 ? v : -v;
+            }
+        }
+        return s;
+    }
+
+    function aiStaticMoves(b, sign) {
+        var saved = board;
+        board = b;
+        var out = [];
+        for (var y = 0; y < N; y++) {
+            for (var x = 0; x < N; x++) {
+                if (Math.sign(b[y][x]) !== sign) continue;
+                var m = movesFor(x, y);
+                for (var j = 0; j < m.jumps.length; j++) {
+                    out.push({ from: { x: x, y: y }, to: m.jumps[j], jump: true });
+                }
+                for (var s2 = 0; s2 < m.steps.length; s2++) {
+                    out.push({ from: { x: x, y: y }, to: m.steps[s2], jump: false });
+                }
+            }
+        }
+        board = saved;
+        // jumps first: better pruning, and captures usually lead
+        out.sort(function (a, b2) { return (b2.jump ? 1 : 0) - (a.jump ? 1 : 0); });
+        return out;
+    }
+
+    function aiApply(b, mv) {
+        var nb = [];
+        for (var y = 0; y < N; y++) nb[y] = b[y].slice();
+        var p = nb[mv.from.y][mv.from.x];
+        nb[mv.to.y][mv.to.x] = p;
+        nb[mv.from.y][mv.from.x] = 0;
+        if (mv.to.via) nb[mv.to.via.y][mv.to.via.x] = 0;
+        if (p === 1 && mv.to.y === 0) nb[mv.to.y][mv.to.x] = 2;
+        if (p === -1 && mv.to.y === N - 1) nb[mv.to.y][mv.to.x] = -2;
+        return nb;
+    }
+
+    function aiSearch(b, depth, alpha, beta, maximizing) {
+        var sign = maximizing ? -1 : 1;
+        var moves = aiStaticMoves(b, sign);
+        if (!depth || !moves.length) return aiEval(b);
+        if (maximizing) {
+            for (var i = 0; i < moves.length; i++) {
+                var v = aiSearch(aiApply(b, moves[i]), depth - 1, alpha, beta, false);
+                if (v > alpha) alpha = v;
+                if (alpha >= beta) break;
+            }
+            return alpha;
+        }
+        for (var j = 0; j < moves.length; j++) {
+            var u = aiSearch(aiApply(b, moves[j]), depth - 1, alpha, beta, true);
+            if (u < beta) beta = u;
+            if (alpha >= beta) break;
+        }
+        return beta;
+    }
+
     function aiMove() {
         if (over || mode !== 'cpu' || turn > 0) return;
-        var list = allMovesFor(-1);
-        if (!list.length) { endGame(1); return; }
-        // prefer jumps, else random
-        var withJumps = list.filter(function (m) { return m.from && movesFor(m.from.x, m.from.y).jumps.length; });
-        var pool = withJumps.length ? withJumps : list;
-        var pick = pool[Math.floor(Math.random() * pool.length)];
-        var to = pick.to[Math.floor(Math.random() * pick.to.length)];
-        applyMove(pick.from, to, to.via || null);
-        Arcade.audio.play('bounce');
+        var moves = aiStaticMoves(board, -1);
+        if (!moves.length) { endGame(1); return; }
+        var scored = moves.map(function (mv) {
+            var v = aiSearch(aiApply(board, mv), 1, -Infinity, Infinity, false);
+            return { mv: mv, v: v + Math.random() * 6 };
+        });
+        scored.sort(function (a, b) { return b.v - a.v; });
+        var pick = scored[0].mv;
+        var via = pick.to.via || null;
+        if (via) caps.light++;
+        applyMove(pick.from, pick.to, via);
+        Arcade.audio.play(via ? 'merge' : 'bounce');
         afterMove(-1);
     }
 

@@ -22,7 +22,7 @@
     var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: true };
     var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat',
         'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row',
-        'five-letter'];
+        'five-letter', 'powder-run', 'super-hop', 'pocket-putt'];
 
     /* ── storage helpers (Safari private mode throws) ─────────── */
     function readJSON(key, fallback) {

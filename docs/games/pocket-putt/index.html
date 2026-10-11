@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" style="--accent: var(--neon-lime); --accent-glow: rgba(142,255,42,0.3)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Pocket Putt — ARCADIA</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARCADIA">
+    <link rel="manifest" href="/games/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon-180.png">
+    <link rel="icon" href="/games/icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="../arcade.css">
+    <script src="../arcade.js"></script>
+    <style>
+        .arc-stage { position: relative; }
+        .pp-hint {
+            position: absolute;
+            bottom: 0.55rem;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            text-align: center;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<main class="arc-stage"><canvas id="game" class="arc-surface"></canvas>
+    <span class="arc-proto">Beta</span>
+    <span class="pp-hint">Drag back from the ball to aim &middot; release to putt</span>
+</main>
+
+<script>
+(function () {
+    'use strict';
+
+    /* POCKET PUTT (minigolf, imessage-style)
+       15 holes authored, 5 drawn at random per round. Drag back from the
+       ball to aim, release to putt. Fewest strokes wins. */
+
+    var WORLD_W = 420, WORLD_H = 560;
+    var BALL_R = 8, HOLE_R = 12;
+    var MAX_POWER = 760, GRAB_R = 85;
+
+    // walls/blocks: [x,y,w,h] · sand: [x,y,r] circles · water: [x,y,w,h] rects
+    var HOLES = [
+        { name: 'First Tee', par: 2, start: [210, 480], hole: [210, 100], walls: [], sand: [], water: [] },
+        { name: 'Corridor', par: 2, start: [210, 480], hole: [210, 100],
+          walls: [[120, 60, 16, 440], [284, 60, 16, 440]], sand: [], water: [] },
+        { name: 'Dogleg', par: 3, start: [110, 480], hole: [310, 100],
+          walls: [[150, 200, 140, 180]], sand: [], water: [] },
+        { name: 'Island Hop', par: 3, start: [210, 500], hole: [210, 80],
+          walls: [], sand: [], water: [[0, 150, 188, 260], [232, 150, 188, 260]] },
+        { name: 'Sandy', par: 3, start: [210, 480], hole: [210, 100],
+          walls: [], sand: [[140, 300, 62], [280, 235, 62]], water: [] },
+        { name: 'Pinball', par: 3, start: [210, 480], hole: [210, 100],
+          walls: [[90, 330, 44, 44], [286, 330, 44, 44], [188, 220, 44, 44]], sand: [], water: [] },
+        { name: 'Around', par: 4, start: [80, 480], hole: [80, 100],
+          walls: [[150, 140, 190, 280]], sand: [], water: [] },
+        { name: 'The Gap', par: 2, start: [210, 480], hole: [210, 100],
+          walls: [[0, 280, 178, 16], [242, 280, 178, 16]], sand: [], water: [] },
+        { name: 'Slalom', par: 3, start: [210, 480], hole: [210, 100],
+          walls: [[0, 380, 260, 16], [160, 290, 260, 16], [0, 200, 260, 16]], sand: [], water: [] },
+        { name: 'Moat', par: 3, start: [210, 480], hole: [210, 140],
+          walls: [], sand: [], water: [[120, 60, 40, 160], [260, 60, 40, 160], [120, 180, 180, 40]] },
+        { name: 'Bank Job', par: 3, start: [80, 480], hole: [340, 480],
+          walls: [[210, 220, 16, 260]], sand: [], water: [] },
+        { name: 'Crossroads', par: 4, start: [80, 480], hole: [340, 80],
+          walls: [[120, 250, 180, 16], [202, 168, 16, 180]], sand: [], water: [] },
+        { name: 'Pillars', par: 3, start: [210, 480], hole: [210, 100],
+          walls: [[193, 340, 34, 60], [193, 230, 34, 60], [193, 120, 34, 34]], sand: [], water: [] },
+        { name: 'Lakeview', par: 4, start: [90, 480], hole: [330, 100],
+          walls: [], sand: [], water: [[0, 150, 240, 260]] },
+        { name: 'Gauntlet', par: 4, start: [210, 500], hole: [210, 80],
+          walls: [[0, 420, 250, 16], [170, 330, 250, 16], [0, 240, 250, 16]], sand: [[210, 150, 52]], water: [] }
+    ];
+
+    var canvas = document.getElementById('game');
+    var view = Arcade.fitCanvas(canvas, { aspect: 3 / 4, maxW: 460 });
+
+    var order, holeIdx, hole, parTotal, strokesTotal;
+    var ball, state, strokes, aiming, aimPt, shotStart, over, panelEl;
+
+    function shuffle(a) {
+        for (var i = a.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+    }
+
+    function reset() {
+        var idx = [];
+        for (var i = 0; i < HOLES.length; i++) idx.push(i);
+        order = shuffle(idx).slice(0, 5);
+        holeIdx = 0;
+        parTotal = 0;
+        strokesTotal = 0;
+        over = false;
+        closePanel();
+        loadHole();
+    }
+
+    function loadHole() {
+        hole = HOLES[order[holeIdx]];
+        parTotal += hole.par;
+        ball = { x: hole.start[0], y: hole.start[1], vx: 0, vy: 0 };
+        shotStart = { x: ball.x, y: ball.y };
+        state = 'aim';
+        strokes = 0;
+        aiming = false;
+        closePanel();
+        paintScore();
+        Arcade.ui.toast('HOLE ' + (holeIdx + 1) + ' OF 5 · ' + hole.name.toUpperCase() + ' · PAR ' + hole.par);
+    }
+
+    function paintScore() {
+        Arcade.ui.setScore('H' + (holeIdx + 1) + ' ' + strokes);
+    }
+
+    function maxStrokes() { return hole.par + 5; }
+
+    function holeDone(pickedUp) {
+        state = 'done';
+        var scored = pickedUp ? maxStrokes() : strokes;
+        strokesTotal += scored;
+        var msg = pickedUp ? 'Picked up (max ' + maxStrokes() + ')' :
+            (strokes === 1 ? 'HOLE IN ONE!' :
+            strokes < hole.par ? 'Birdie!' :
+            strokes === hole.par ? 'Par.' :
+            strokes === hole.par + 1 ? 'Bogey.' : '+' + (strokes - hole.par) + '.');
+        Arcade.audio.play(pickedUp ? 'denied' : 'fanfare');
+        Arcade.haptics.buzz(pickedUp ? 'error' : 'success');
+        showPanel(hole.name.toUpperCase(), msg, scored + ' strokes · par ' + hole.par,
+            holeIdx < 4 ? 'Next hole' : 'See results', nextHole);
+    }
+
+    function nextHole() {
+        closePanel();
+        if (holeIdx >= 4) return finishRound();
+        holeIdx++;
+        loadHole();
+    }
+
+    function finishRound() {
+        over = true;
+        var diff = strokesTotal - parTotal;
+        var label = diff === 0 ? 'EVEN PAR' : diff < 0 ? diff + ' UNDER PAR' : '+' + diff + ' OVER PAR';
+        var res = Arcade.scores.submit('pocket-putt', strokesTotal, { lowerIsBetter: true });
+        Arcade.audio.play('fanfare');
+        Arcade.ui.gameOver({
+            title: 'POCKET PUTT',
+            label: strokesTotal + ' strokes · par ' + parTotal + ' · ' + label,
+            score: strokesTotal,
+            best: res.best, isNew: res.isNew,
+            onReplay: function () { reset(); loop.resume(); }
+        });
+        loop.pause();
+    }
+
+    /* ── overlay panel (per-hole card) ────────────────────────── */
+    function closePanel() {
+        if (panelEl) { panelEl.remove(); panelEl = null; }
+    }
+    function showPanel(title, sub, scoreLine, btnLabel, onNext) {
+        closePanel();
+        panelEl = document.createElement('div');
+        panelEl.className = 'arc-overlay';
+        var panel = document.createElement('div');
+        panel.className = 'arc-panel';
+        panel.style.textAlign = 'center';
+        panel.innerHTML = '<div class="arc-over-title">' + title + '</div>' +
+            '<div class="arc-over-label">' + sub + '</div>' +
+            '<div class="arc-over-score">' + scoreLine + '</div>';
+        var actions = document.createElement('div');
+        actions.className = 'arc-actions';
+        var next = document.createElement('button');
+        next.className = 'arc-action arc-action--primary';
+        next.textContent = btnLabel;
+        next.addEventListener('click', function () { Arcade.audio.play('tap'); onNext(); });
+        actions.appendChild(next);
+        panel.appendChild(actions);
+        panelEl.appendChild(panel);
+        document.body.appendChild(panelEl);
+    }
+
+    /* ── world <-> screen ─────────────────────────────────────── */
+    function scale() {
+        var r = canvas.getBoundingClientRect();
+        var sc = Math.min(r.width / WORLD_W, r.height / WORLD_H);
+        return {
+            sc: sc,
+            ox: (r.width - WORLD_W * sc) / 2,
+            oy: (r.height - WORLD_H * sc) / 2,
+            rect: r
+        };
+    }
+    function toWorld(e) {
+        var s = scale();
+        return {
+            x: (e.clientX - s.rect.left - s.ox) / s.sc,
+            y: (e.clientY - s.rect.top - s.oy) / s.sc
+        };
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        if (over || state !== 'aim') return;
+        var p = toWorld(e);
+        if (Math.hypot(p.x - ball.x, p.y - ball.y) < GRAB_R) {
+            aiming = true;
+            aimPt = p;
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (!aiming) return;
+        e.preventDefault();
+        aimPt = toWorld(e);
+    });
+    function releaseAim() {
+        if (!aiming) return;
+        aiming = false;
+        var dx = ball.x - aimPt.x, dy = ball.y - aimPt.y;
+        var len = Math.hypot(dx, dy);
+        if (len < 14) return;   // accidental tap, stay aimed
+        var power = Math.min(len, 240) / 240;
+        var sp = 150 + power * (MAX_POWER - 150);
+        ball.vx = dx / len * sp;
+        ball.vy = dy / len * sp;
+        shotStart = { x: ball.x, y: ball.y };
+        strokes++;
+        paintScore();
+        state = 'roll';
+        Arcade.audio.play('bounce');
+    }
+    window.addEventListener('pointerup', releaseAim);
+    window.addEventListener('pointercancel', function () { aiming = false; });
+
+    function inWater(x, y) {
+        for (var i = 0; i < hole.water.length; i++) {
+            var w = hole.water[i];
+            if (x > w[0] && x < w[0] + w[2] && y > w[1] && y < w[1] + w[3]) return true;
+        }
+        return false;
+    }
+    function inSand(x, y) {
+        for (var i = 0; i < hole.sand.length; i++) {
+            var s = hole.sand[i];
+            if (Math.hypot(x - s[0], y - s[1]) < s[2]) return true;
+        }
+        return false;
+    }
+
+    function collideAxis(isX) {
+        for (var i = 0; i < hole.walls.length; i++) {
+            var w = hole.walls[i];
+            var nx = Math.max(w[0], Math.min(ball.x, w[0] + w[2]));
+            var ny = Math.max(w[1], Math.min(ball.y, w[1] + w[3]));
+            if (Math.hypot(ball.x - nx, ball.y - ny) < BALL_R) {
+                if (isX) {
+                    ball.x = ball.vx > 0 ? w[0] - BALL_R - 0.1 : w[0] + w[2] + BALL_R + 0.1;
+                    ball.vx = -ball.vx * 0.72;
+                } else {
+                    ball.y = ball.vy > 0 ? w[1] - BALL_R - 0.1 : w[1] + w[3] + BALL_R + 0.1;
+                    ball.vy = -ball.vy * 0.72;
+                }
+                Arcade.audio.play('bounce');
+            }
+        }
+    }
+
+    function update(dt) {
+        if (over || state !== 'roll') return;
+
+        var fric = inSand(ball.x, ball.y) ? 3.4 : 1.1;
+        var damp = Math.exp(-fric * dt);
+        ball.vx *= damp;
+        ball.vy *= damp;
+
+        // axis-separated move + collide (stable at any step size)
+        ball.x += ball.vx * dt;
+        if (ball.x < BALL_R) { ball.x = BALL_R; ball.vx = Math.abs(ball.vx) * 0.72; }
+        if (ball.x > WORLD_W - BALL_R) { ball.x = WORLD_W - BALL_R; ball.vx = -Math.abs(ball.vx) * 0.72; }
+        collideAxis(true);
+        ball.y += ball.vy * dt;
+        if (ball.y < BALL_R) { ball.y = BALL_R; ball.vy = Math.abs(ball.vy) * 0.72; }
+        if (ball.y > WORLD_H - BALL_R) { ball.y = WORLD_H - BALL_R; ball.vy = -Math.abs(ball.vy) * 0.72; }
+        collideAxis(false);
+
+        // splash
+        if (inWater(ball.x, ball.y)) {
+            ball.x = shotStart.x; ball.y = shotStart.y;
+            ball.vx = 0; ball.vy = 0;
+            strokes++;
+            paintScore();
+            state = 'aim';
+            Arcade.audio.play('drop');
+            Arcade.haptics.buzz('error');
+            Arcade.ui.toast('Splash! +1 stroke');
+            if (strokes >= maxStrokes()) { holeDone(true); }
+            return;
+        }
+
+        // holed? fast balls lip out and roll over
+        var dh = Math.hypot(ball.x - hole.hole[0], ball.y - hole.hole[1]);
+        var sp = Math.hypot(ball.vx, ball.vy);
+        if (dh < HOLE_R) {
+            if (sp < 330) {
+                ball.x = hole.hole[0]; ball.y = hole.hole[1];
+                ball.vx = 0; ball.vy = 0;
+                Arcade.audio.play('merge');
+                Arcade.haptics.buzz('light');
+                holeDone(false);
+                return;
+            }
+            ball.vx *= 0.985;
+            ball.vy *= 0.985;
+        }
+
+        if (sp < 10) {
+            ball.vx = 0; ball.vy = 0;
+            state = 'aim';
+            if (strokes >= maxStrokes()) holeDone(true);
+        }
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, view.w, view.h);
+
+        ctx.save();
+        // map world -> view: uniform scale, centred
+        var k = Math.min(view.w / WORLD_W, view.h / WORLD_H);
+        var tx = (view.w - WORLD_W * k) / 2, ty = (view.h - WORLD_H * k) / 2;
+        ctx.translate(tx, ty);
+        ctx.scale(k, k);
+
+        // felt with mowed stripes
+        ctx.fillStyle = '#2E7D3A';
+        ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        for (var s = 0; s < WORLD_H; s += 56) ctx.fillRect(0, s, WORLD_W, 28);
+        ctx.strokeStyle = '#1E5226';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(0, 0, WORLD_W, WORLD_H);
+
+        // water
+        for (var wi = 0; wi < hole.water.length; wi++) {
+            var w = hole.water[wi];
+            ctx.fillStyle = '#1B6FA8';
+            ctx.fillRect(w[0], w[1], w[2], w[3]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(w[0] + 8, w[1] + 12);
+            ctx.lineTo(w[0] + 30, w[1] + 12);
+            ctx.moveTo(w[0] + w[2] - 30, w[1] + w[3] - 12);
+            ctx.lineTo(w[0] + w[2] - 8, w[1] + w[3] - 12);
+            ctx.stroke();
+        }
+
+        // sand
+        for (var si = 0; si < hole.sand.length; si++) {
+            var sd = hole.sand[si];
+            ctx.fillStyle = '#D9BE7A';
+            ctx.beginPath();
+            ctx.arc(sd[0], sd[1], sd[2], 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(0,0,0,0.12)';
+            ctx.beginPath();
+            ctx.arc(sd[0], sd[1], sd[2] * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // walls (timber)
+        for (var bi = 0; bi < hole.walls.length; bi++) {
+            var b = hole.walls[bi];
+            ctx.fillStyle = '#7A5230';
+            ctx.fillRect(b[0], b[1], b[2], b[3]);
+            ctx.fillStyle = '#A37648';
+            ctx.fillRect(b[0], b[1], b[2], 4);
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.fillRect(b[0], b[1] + b[3] - 4, b[2], 4);
+        }
+
+        // start marker
+        ctx.strokeStyle = 'rgba(234,242,255,0.5)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(hole.start[0], hole.start[1], BALL_R + 5, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // cup + flag
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(hole.hole[0], hole.hole[1], HOLE_R, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#F4F1E8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.strokeStyle = '#C5C7D0';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(hole.hole[0], hole.hole[1]);
+        ctx.lineTo(hole.hole[0], hole.hole[1] - 52);
+        ctx.stroke();
+        ctx.fillStyle = p.red;
+        ctx.beginPath();
+        ctx.moveTo(hole.hole[0], hole.hole[1] - 52);
+        ctx.lineTo(hole.hole[0] + 26, hole.hole[1] - 44);
+        ctx.lineTo(hole.hole[0], hole.hole[1] - 36);
+        ctx.closePath();
+        ctx.fill();
+
+        // aim arrow
+        if (aiming && state === 'aim') {
+            var dx = ball.x - aimPt.x, dy = ball.y - aimPt.y;
+            var len = Math.hypot(dx, dy);
+            if (len > 4) {
+                var pw = Math.min(len, 240) / 240;
+                var alen = 30 + pw * 130;
+                var nx = dx / len, ny = dy / len;
+                ctx.strokeStyle = pw > 0.8 ? p.red : p.neon.yellow;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(ball.x + nx * (BALL_R + 6), ball.y + ny * (BALL_R + 6));
+                ctx.lineTo(ball.x + nx * alen, ball.y + ny * alen);
+                ctx.stroke();
+                // dotted extension
+                ctx.fillStyle = 'rgba(234,242,255,0.6)';
+                for (var d = 1; d <= 6; d++) {
+                    ctx.beginPath();
+                    ctx.arc(ball.x + nx * (alen + d * 16), ball.y + ny * (alen + d * 16), 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        // ball with shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(ball.x + 2, ball.y + 4, BALL_R, BALL_R * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#F4F1E8';
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+
+        // hole + round line
+        ctx.fillStyle = 'rgba(234,242,255,0.65)';
+        ctx.font = '10px ui-monospace, monospace';
+        ctx.fillText('HOLE ' + (holeIdx + 1) + '/5 · ' + hole.name.toUpperCase() + ' · PAR ' + hole.par +
+            '   TOTAL ' + strokesTotal + '/' + parTotal, 10, view.h - 12);
+    }
+
+    var loop = Arcade.loop({ update: update, render: render });
+
+    Arcade.init({
+        slug: 'pocket-putt',
+        title: 'Pocket Putt',
+        accent: 'lime',
+        onPause: function () { loop.pause(); },
+        onResume: function () { loop.resume(); }
+    });
+
+    reset();
+    loop.start();
+})();
+</script>
+
+</body>
+</html>
