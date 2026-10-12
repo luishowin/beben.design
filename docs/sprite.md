@@ -40,6 +40,11 @@ Five services, each with its own page under /services/:
   rankings move with you. The studio inherits a client's content, not another
   builder's code. Bring the mess, keep what is worth keeping, rebuild the rest
   properly.
+- Business intelligence and custom business tools
+  (/business-intelligence/): CRMs, inventory systems, workflow
+  automation and reporting for growing businesses in Kenya, built
+  around how each business operates. Interest registers through
+  /contact/.
 - Front-end development: HTML/CSS, React, Framer, and WordPress builds,
   responsive from 320px to 4K.
 - Also: mobile UI, desktop app UI, human-machine interfaces (HMI) for

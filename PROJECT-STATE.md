@@ -891,3 +891,39 @@ arcade's `'./' + last + '/'` as a broken one is how you end up publishing
 the services-list pass: the bento cards carried no links, and each of
 the six new list rows links to a detail page. Same-page `#proj-*`
 fragment links from the short-lived project pager were never counted.
+
+### Business Intelligence page (12 Oct 2026)
+
+**New `/business-intelligence/` service landing.** `docs/business-intelligence/index.html`,
+scaffolded from `/contact/` (verbatim nav, footer, theme scripts, no nav item
+marked active). Three sections only: a `page-hero--cover` over the supplied
+blue eye macro (`~/Downloads/Hyper-Realistic Blue Eye Macro Portrait.png`,
+1270px, published as `docs/assets/images/business-intelligence-eye.webp`,
+184KB, left-weighted gradient at `72% 62%` so the iris stays visible), a
+`section--soft` with the three mandated categories in the shared
+`.grid`/`.service-card`, and the shared `.next-step` band as the closing CTA.
+Both CTAs are hero-recipe pills to `/contact/?service=business-intelligence`.
+Scoped `<style>` only; `index.css`/`index.js` untouched, asset lock stays
+`6.8`.
+
+**Contact integration is hidden context, not a second form.** `/contact/`
+gained 16 lines: `?service=business-intelligence` retitles the hidden
+`_subject` and prefixes the triage-assembled brief with an `Interest:`
+line the visitor can still edit. No new field, no validation change, links
+without the parameter behave identically (verified in headless Chrome both
+ways, zero console errors).
+
+**Voice: rephrased, not exempted.** The mandated `We/Tell us/We'll/Let's`
+and `solution` fail the selling zone, so the page ships second-person
+paraphrases with the same meaning (`purpose-built tool`, `The right problem,
+solved properly.`). `business-intelligence/` added to `ZONES`; checker clean.
+
+**Homepage AI pill remapped.** `Put AI to work.` pointed at `/services/`
+because no dedicated page existed; it now points at `/business-intelligence/`.
+Copy and blue hover untouched. Status stamp unchanged (a link swap moves no
+counts).
+
+Measured at commit: 35 pages, 1103 internal links checked and 0 broken,
+voice clean, facts agree across 35 files, one asset version (`6.8`).
+`sitemap.xml`, `llms.txt` and `sprite.md` (8,779 chars against the 12,000
+worker cap) each carry the new page. Live Formspree submission not tested.

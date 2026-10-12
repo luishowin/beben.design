@@ -58,6 +58,7 @@ ZONES = {
     "tools/": SELLING,
     "shop/": SELLING,
     "contact/": UI,
+    "business-intelligence/": SELLING,
     "404.html": UI,
     "work/": CASE_STUDY,
     "sprite/": CASE_STUDY,

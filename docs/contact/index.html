@@ -903,6 +903,21 @@
         var form = document.querySelector('.contact-form');
         if (!form) return;
 
+        /* Interest carried in from /business-intelligence/ through
+           ?service=business-intelligence. Hidden context only: no new
+           field, no validation change, and links without the parameter
+           behave exactly as before. */
+        var biInterest = null;
+        try {
+            if (new URLSearchParams(window.location.search).get('service') === 'business-intelligence') {
+                biInterest = 'Business Intelligence';
+            }
+        } catch (e) { /* keep the default */ }
+        if (biInterest) {
+            var subject = form.querySelector('input[name="_subject"]');
+            if (subject) subject.value = 'Business Intelligence interest from beben.design';
+        }
+
         var SITUATIONS = [
             {
                 label: 'You have a business and no website',
@@ -1168,6 +1183,7 @@
         function assemble() {
             var sit = form.querySelector('input[name="Situation"]:checked');
             var out = [];
+            if (biInterest) out.push('Interest: ' + biInterest + ' (via /business-intelligence/).');
             if (sit) out.push('Situation: ' + sit.value + '.');
             branchSteps.forEach(function (fs) {
                 var a = fs._collect();
