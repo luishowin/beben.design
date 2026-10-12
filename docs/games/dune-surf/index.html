@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Powder Run — ARCADIA</title>
+    <title>Dune Surf — ARCADIA</title>
     <meta name="robots" content="noindex">
     <meta name="theme-color" content="#000000">
     <meta name="mobile-web-app-capable" content="yes">
@@ -26,18 +26,19 @@
 (function () {
     'use strict';
 
-    /* POWDER RUN (endless snowboard, alto-style)
-       The mountain never ends. Hold to jump higher, hold in the air to
-       backflip, land on your board. Rocks and chasms end the run. */
+    /* DUNE SURF (endless desert carve, 16:9)
+       The dune never ends. The ride floats and carves rather than pops:
+       low gravity, a gentle glide while holding, soft landings. Rocks,
+       cacti, crevasses and low-flying birds end the run. */
 
     var canvas = document.getElementById('game');
-    var view = Arcade.fitCanvas(canvas, { aspect: 3 / 4, maxW: 480 });
+    var view = Arcade.fitCanvas(canvas, { aspect: 16 / 9, maxW: 900 });
 
-    var GRAV = 1500, SEG = 140;
+    var GRAV = 1150, SEG = 140;
 
     var camX, rideX, rideY, rideVY, grounded, slopeDeg, rot, flips, flipBase;
     var runSpeed, dist, coins, bonus, over, t, holding, holdT, hBase;
-    var heights, lastX, chasms, rocks, coinSets, buntings;
+    var heights, lastX, chasms, rocks, cacti, birds, coinSets, buntings;
 
     function reset() {
         camX = 0;
@@ -48,10 +49,12 @@
         over = false; t = 0;
         holding = false; holdT = 0;
         hBase = view.h;
-        heights = [{ x: -SEG * 2, h: view.h * 0.55 }, { x: -SEG, h: view.h * 0.55 }, { x: 0, h: view.h * 0.55 }];
+        heights = [{ x: -SEG * 2, h: view.h * 0.68 }, { x: -SEG, h: view.h * 0.68 }, { x: 0, h: view.h * 0.68 }];
         lastX = 0;
         chasms = [];
         rocks = [];
+        cacti = [];
+        birds = [];
         coinSets = [];
         buntings = [];
         ensureAhead(view.w * 2);
@@ -64,21 +67,27 @@
     function ensureAhead(upto) {
         while (lastX < upto) {
             var prev = heights[heights.length - 1];
-            // occasional chasm: no ground for a span
+            // occasional crevasse: no ground for a span
             if (lastX > 600 && Math.random() < 0.09) {
-                var gw = rnd(90, 170);
+                var gw = rnd(100, 190);
                 chasms.push({ x0: lastX, w: gw });
                 lastX += gw;
                 heights.push({ x: lastX, h: prev.h + rnd(-40, 40) });
                 continue;
             }
-            var nh = prev.h + rnd(-66, 66);
-            nh = Math.max(view.h * 0.3, Math.min(view.h * 0.8, nh));
+            var nh = prev.h + rnd(-60, 60);
+            nh = Math.max(view.h * 0.55, Math.min(view.h * 0.82, nh));
             lastX += SEG;
             heights.push({ x: lastX, h: nh });
-            // rock obstacle on the surface
-            if (lastX > 900 && Math.random() < 0.10) {
-                rocks.push({ x: lastX - SEG / 2, r: rnd(10, 16) });
+            // ground hurdles: rocks and cacti
+            if (lastX > 900 && Math.random() < 0.12) {
+                if (Math.random() < 0.5) rocks.push({ x: lastX - SEG / 2, r: rnd(9, 15) });
+                else cacti.push({ x: lastX - SEG / 2, h: rnd(20, 30) });
+            }
+            // birds: low fliers you must not jump into
+            if (lastX > 1400 && Math.random() < 0.16) {
+                var bg = heights[heights.length - 1];
+                birds.push({ x: lastX - SEG / 2, y: bg.h - rnd(56, 88), fl: Math.random() * 6, taken: false });
             }
             // coin arc over the crest
             if (Math.random() < 0.35) {
@@ -89,7 +98,7 @@
                 coinSets.push({ x: lastX - SEG / 2, list: coinsArr });
             }
             // pennant bunting strung across the slope
-            if (lastX > 500 && Math.random() < 0.16) {
+            if (lastX > 500 && Math.random() < 0.14) {
                 buntings.push({ x: lastX - SEG / 2 });
             }
         }
@@ -97,6 +106,8 @@
         while (heights.length && heights[0].x < camX - SEG * 3) heights.shift();
         chasms = chasms.filter(function (c) { return c.x0 + c.w > camX - 100; });
         rocks = rocks.filter(function (r) { return r.x > camX - 100; });
+        cacti = cacti.filter(function (c) { return c.x > camX - 100; });
+        birds = birds.filter(function (b) { return b.x > camX - 100; });
         coinSets = coinSets.filter(function (c) { return c.x > camX - 200; });
         buntings = buntings.filter(function (b) { return b.x > camX - 200; });
     }
@@ -133,10 +144,10 @@
     function endGame(why) {
         over = true;
         var pts = Math.floor(dist / 50) + coins * 10 + bonus;
-        var res = Arcade.scores.submit('powder-run', pts);
+        var res = Arcade.scores.submit('dune-surf', pts);
         loop.pause();
         Arcade.ui.gameOver({
-            title: 'POWDER RUN',
+            title: 'DUNE SURF',
             label: why,
             score: pts + ' pts',
             best: res.best, isNew: res.isNew,
@@ -158,7 +169,7 @@
         holdT = 0;
         if (grounded) {
             grounded = false;
-            rideVY = -620;
+            rideVY = -540;
             flips = 0;
             flipBase = rot;
             Arcade.audio.play('flap');
@@ -191,7 +202,7 @@
             if (!grounded) rideY *= f;
             hBase = view.h;
         }
-        runSpeed = Math.min(380, runSpeed + dt * 4);
+        runSpeed = Math.min(360, runSpeed + dt * 3.4);
         rideX += runSpeed * dt;
         dist = rideX;
         camX = rideX - view.w * 0.35;
@@ -200,13 +211,15 @@
         if (holding) holdT += dt;
 
         if (!grounded) {
-            // variable jump: holding extends the rise briefly
-            if (holding && holdT < 0.22 && rideVY < 0) rideVY -= 1500 * dt;
-            rideVY += GRAV * dt;
+            // floaty glide: holding early softens gravity instead of adding a
+            // hard pop, so the arc reads as carving through air
+            var g = GRAV;
+            if (holding && holdT < 0.35) g *= 0.62;
+            rideVY += g * dt;
             rideY += rideVY * dt;
             // holding in the air rotates into a backflip
             if (holding) {
-                rot -= 400 * dt;
+                rot -= 360 * dt;
                 var turned = Math.abs(normDeg(rot - flipBase));
                 if (turned > 300 && flips === 0) {
                     flips = 1;
@@ -215,39 +228,62 @@
                     Arcade.haptics.buzz('light');
                 }
             }
-            var g = groundAt(rideX);
-            if (g !== null && rideY >= g - 6 && rideVY > 0) {
+            var gg = groundAt(rideX);
+            if (gg !== null && rideY >= gg - 6 && rideVY > 0) {
                 var sl = slopeAt(rideX);
                 var off = Math.abs(normDeg(rot) - sl);
-                if (off > 75) { crash('Bad landing'); return; }
-                rideY = g - 6;
+                if (off > 90) { crash('Bad landing'); return; }
+                rideY = gg - 6;
+                // soft landing: shed a little speed instead of a hard stop
                 rideVY = 0;
                 grounded = true;
                 rot = sl;
                 slopeDeg = sl;
                 if (flips > 0) Arcade.audio.play('clear');
             } else if (rideY > view.h + 240) {
-                crash('Swallowed by the chasm');
+                crash('Swallowed by the crevasse');
                 return;
             }
         } else {
-            var gg = groundAt(rideX);
-            if (gg === null) {
-                grounded = false;   // rode off a chasm edge
+            var gg2 = groundAt(rideX);
+            if (gg2 === null) {
+                grounded = false;   // rode off a crevasse edge
             } else {
-                rideY = gg - 6;
+                // smooth slope follow: ease toward the surface
+                var target = gg2 - 6;
+                rideY += (target - rideY) * Math.min(1, dt * 18);
                 slopeDeg = slopeAt(rideX);
                 rot = slopeDeg;
             }
         }
 
-        // rocks
+        // rocks + cacti
         for (var i = 0; i < rocks.length; i++) {
             var rk = rocks[i];
             var gy = groundAt(rk.x);
             if (gy === null) continue;
             if (Math.hypot(rk.x - rideX, (gy - rk.r) - (rideY - 8)) < rk.r + 12) {
                 crash('Clipped a rock');
+                return;
+            }
+        }
+        for (var c2 = 0; c2 < cacti.length; c2++) {
+            var ct = cacti[c2];
+            var cgy = groundAt(ct.x);
+            if (cgy === null) continue;
+            if (Math.hypot(ct.x - rideX, (cgy - ct.h * 0.6) - (rideY - 8)) < ct.h * 0.6 + 12) {
+                crash('Cactus!');
+                return;
+            }
+        }
+        // birds: level fliers at head height — jump only when clear
+        for (var b2 = 0; b2 < birds.length; b2++) {
+            var bd = birds[b2];
+            bd.x -= runSpeed * 0.12 * dt;   // drift toward the rider
+            bd.fl += dt * 6;
+            if (bd.taken) continue;
+            if (Math.hypot(bd.x - rideX, bd.y - (rideY - 12)) < 20) {
+                crash('Hit a bird');
                 return;
             }
         }
@@ -276,51 +312,56 @@
 
         // sunset sky
         var sky = ctx.createLinearGradient(0, 0, 0, view.h);
-        sky.addColorStop(0, '#1B1035');
-        sky.addColorStop(0.55, '#4A1E4F');
-        sky.addColorStop(0.8, '#B4503F');
-        sky.addColorStop(1, '#E08A4E');
+        sky.addColorStop(0, '#241242');
+        sky.addColorStop(0.15, '#5A2350');
+        sky.addColorStop(0.30, '#A8434A');
+        sky.addColorStop(0.42, '#E07B44');
+        sky.addColorStop(0.5, '#F0B45C');
+        sky.addColorStop(1, '#F0B45C');
         ctx.fillStyle = sky;
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // sun
-        var sunX = view.w * 0.72, sunY = view.h * 0.62;
-        ctx.fillStyle = '#FFD533';
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, 26, 0, Math.PI * 2);
-        ctx.fill();
+        // setting sun near the horizon
+        var sunX = view.w * 0.72, sunY = view.h * 0.22;
         ctx.fillStyle = 'rgba(255,213,51,0.25)';
         ctx.beginPath();
-        ctx.arc(sunX, sunY, 38, 0, Math.PI * 2);
+        ctx.arc(sunX, sunY, 46, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FFD533';
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 30, 0, Math.PI * 2);
         ctx.fill();
 
-        // parallax peaks
-        for (var L = 0; L < 2; L++) {
-            var f = L === 0 ? 0.2 : 0.45;
-            ctx.fillStyle = L === 0 ? '#2A1B4A' : '#3A2560';
+        // receding parallax layers: mesas, then dunes getting nearer/darker
+        function layer(f, base, amp, col, capCol, seed) {
+            ctx.fillStyle = col;
             ctx.beginPath();
             ctx.moveTo(0, view.h);
             for (var x = 0; x <= view.w; x += 12) {
-                var wx = camX * f + x;
-                var y = view.h * (0.42 + L * 0.12) + Math.sin(wx / 130 + L * 2) * 26 + Math.sin(wx / 47) * 9;
+                var wx = camX * f + x + seed;
+                var y = view.h * base + Math.sin(wx / 150) * amp + Math.sin(wx / 53) * (amp * 0.35);
                 ctx.lineTo(x, y);
             }
             ctx.lineTo(view.w, view.h);
             ctx.closePath();
             ctx.fill();
-            // snowcaps
-            ctx.fillStyle = L === 0 ? 'rgba(234,242,255,0.16)' : 'rgba(234,242,255,0.22)';
+            ctx.fillStyle = capCol;
             ctx.beginPath();
             ctx.moveTo(0, view.h);
             for (var x2 = 0; x2 <= view.w; x2 += 12) {
-                var wx2 = camX * f + x2;
-                var y2 = view.h * (0.42 + L * 0.12) + Math.sin(wx2 / 130 + L * 2) * 26 + Math.sin(wx2 / 47) * 9;
-                ctx.lineTo(x2, y2 - 12);
+                var wx2 = camX * f + x2 + seed;
+                var y2 = view.h * base + Math.sin(wx2 / 150) * amp + Math.sin(wx2 / 53) * (amp * 0.35);
+                ctx.lineTo(x2, y2 - amp * 0.28);
             }
             ctx.lineTo(view.w, view.h);
             ctx.closePath();
             ctx.fill();
         }
+        var la = view.h * 0.06;
+        layer(0.08, 0.30, la * 0.8, '#3A2560', 'rgba(255,190,150,0.24)', 0);    // far mesas
+        layer(0.16, 0.38, la * 1.0, '#452855', 'rgba(255,175,140,0.20)', 140);  // mid dunes
+        layer(0.30, 0.46, la * 1.2, '#522A4C', 'rgba(255,160,120,0.16)', 300);  // near dunes
+        layer(0.48, 0.54, la * 1.4, '#3F2140', 'rgba(255,150,110,0.12)', 520);  // nearest band
 
         function sx(x) { return x - camX; }
 
@@ -351,20 +392,23 @@
         }
 
         // terrain: one filled run per unbroken stretch of ground, so
-        // chasms stay open to the sky
+        // crevasses stay open to the sky
         var run = [];
         function flushRun() {
             if (run.length > 1) {
                 ctx.beginPath();
                 ctx.moveTo(run[0][0], run[0][1]);
                 for (var q = 1; q < run.length; q++) ctx.lineTo(run[q][0], run[q][1]);
-                ctx.strokeStyle = '#DCE6F5';
+                ctx.strokeStyle = '#F0C98A';
                 ctx.lineWidth = 7;
                 ctx.stroke();
                 ctx.lineTo(run[run.length - 1][0], view.h + 40);
                 ctx.lineTo(run[0][0], view.h + 40);
                 ctx.closePath();
-                ctx.fillStyle = '#2B2B3D';
+                var tgrad = ctx.createLinearGradient(0, view.h * 0.5, 0, view.h);
+                tgrad.addColorStop(0, '#3A3350');
+                tgrad.addColorStop(1, '#221F30');
+                ctx.fillStyle = tgrad;
                 ctx.fill();
             }
             run = [];
@@ -377,11 +421,11 @@
         }
         flushRun();
 
-        // chasm edge caps
+        // crevasse edge caps
         for (var ci = 0; ci < chasms.length; ci++) {
             var ch = chasms[ci];
             var gl = groundAt(ch.x0 - 2), gr = groundAt(ch.x0 + ch.w + 2);
-            ctx.fillStyle = '#DCE6F5';
+            ctx.fillStyle = '#F0C98A';
             if (gl !== null) ctx.fillRect(sx(ch.x0) - 4, gl - 4, 5, 26);
             if (gr !== null) ctx.fillRect(sx(ch.x0 + ch.w) - 1, gr - 4, 5, 26);
         }
@@ -401,52 +445,108 @@
             ctx.fill();
         }
 
+        // cacti
+        for (var c3 = 0; c3 < cacti.length; c3++) {
+            var ct = cacti[c3];
+            var cgy = groundAt(ct.x);
+            if (cgy === null) continue;
+            var cx = sx(ct.x);
+            ctx.fillStyle = '#2F8F3E';
+            ctx.fillRect(cx - 5, cgy - ct.h, 10, ct.h);
+            ctx.fillRect(cx - 14, cgy - ct.h * 0.8, 10, 6);
+            ctx.fillRect(cx - 14, cgy - ct.h * 0.8, 6, 18);
+            ctx.fillRect(cx + 4, cgy - ct.h * 0.6, 10, 6);
+            ctx.fillRect(cx + 8, cgy - ct.h * 0.6, 6, 16);
+            ctx.fillStyle = 'rgba(0,0,0,0.22)';
+            ctx.fillRect(cx - 5, cgy - 3, 10, 3);
+        }
+
+        // birds
+        for (var b3 = 0; b3 < birds.length; b3++) {
+            var bd = birds[b3];
+            var bxp = sx(bd.x);
+            if (bxp < -40 || bxp > view.w + 40) continue;
+            var flap = Math.sin(bd.fl) * 5;
+            ctx.strokeStyle = '#1B1035';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(bxp - 9, bd.y - flap);
+            ctx.lineTo(bxp, bd.y);
+            ctx.lineTo(bxp + 9, bd.y - flap);
+            ctx.stroke();
+        }
+
         // coins
         for (var c = 0; c < coinSets.length; c++) {
             var cs = coinSets[c];
-            var cgy = groundAt(cs.x);
-            if (cgy === null) continue;
+            var cgy2 = groundAt(cs.x);
+            if (cgy2 === null) continue;
             for (var k = 0; k < cs.list.length; k++) {
                 var cn = cs.list[k];
                 if (cn.taken) continue;
                 ctx.fillStyle = p.neon.yellow;
                 ctx.beginPath();
-                ctx.arc(sx(cs.x + cn.dx), cgy + cn.dy, 7, 0, Math.PI * 2);
+                ctx.arc(sx(cs.x + cn.dx), cgy2 + cn.dy, 7, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.fillStyle = '#7A5B00';
                 ctx.beginPath();
-                ctx.arc(sx(cs.x + cn.dx), cgy + cn.dy, 3, 0, Math.PI * 2);
+                ctx.arc(sx(cs.x + cn.dx), cgy2 + cn.dy, 3, 0, Math.PI * 2);
                 ctx.fill();
             }
         }
 
-        // rider
+        // rider: a tiny dude with a red scarf on a board
         var rx = sx(rideX);
         ctx.save();
         ctx.translate(rx, rideY);
         ctx.rotate(rot * Math.PI / 180);
+        ctx.scale(1.35, 1.35);
         // board
+        ctx.fillStyle = '#2B2B3D';
+        ctx.beginPath();
+        ctx.moveTo(-18, 0);
+        ctx.quadraticCurveTo(0, -6, 18, 0);
+        ctx.quadraticCurveTo(0, 6, -18, 0);
+        ctx.closePath();
+        ctx.fill();
         ctx.fillStyle = p.accent;
-        ctx.fillRect(-18, 2, 36, 5);
-        // body leaning into the slope
-        ctx.strokeStyle = p.headers;
-        ctx.lineWidth = 5;
+        ctx.fillRect(-14, -1, 28, 2);
+        // legs
+        ctx.strokeStyle = '#1F2937';
+        ctx.lineWidth = 4;
         ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(3, -16);
+        ctx.moveTo(-3, -1); ctx.lineTo(-5, -10);
+        ctx.moveTo(4, -1); ctx.lineTo(5, -10);
         ctx.stroke();
-        // head
-        ctx.fillStyle = p.headers;
+        // torso
+        ctx.fillStyle = '#2E7CD6';
         ctx.beginPath();
-        ctx.arc(4, -22, 6, 0, Math.PI * 2);
+        ctx.ellipse(0, -15, 7, 6, 0, 0, Math.PI * 2);
         ctx.fill();
-        // scarf
+        // arms
+        ctx.strokeStyle = '#2E7CD6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-4, -14); ctx.lineTo(-11, -16);
+        ctx.moveTo(4, -14); ctx.lineTo(11, -16);
+        ctx.stroke();
+        // head + beanie
+        ctx.fillStyle = '#F2C19B';
+        ctx.beginPath();
+        ctx.arc(0, -24, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = p.neon.yellow;
+        ctx.beginPath();
+        ctx.arc(0, -26, 5, Math.PI, 0);
+        ctx.fill();
+        // red scarf trailing in the wind
         ctx.strokeStyle = p.red;
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(2, -16);
-        ctx.quadraticCurveTo(-8, -14 + Math.sin(t * 10) * 3, -14, -10);
+        ctx.moveTo(-3, -20);
+        ctx.quadraticCurveTo(-12, -18 + Math.sin(t * 12) * 3, -20, -12 + Math.sin(t * 12) * 2);
         ctx.stroke();
         ctx.restore();
 
@@ -459,8 +559,8 @@
     var loop = Arcade.loop({ update: update, render: render });
 
     Arcade.init({
-        slug: 'powder-run',
-        title: 'Powder Run',
+        slug: 'dune-surf',
+        title: 'Dune Surf',
         accent: 'orange',
         onPause: function () { loop.pause(); },
         onResume: function () { loop.resume(); }

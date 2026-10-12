@@ -193,6 +193,10 @@
             color: #FFFFFF;
         }
 
+        :root[data-theme="light"] #theme-toggle {
+            border-color: #dedede;
+        }
+
         #theme-toggle:hover { border-color: currentColor; }
         #theme-toggle:active { transform: scale(0.98); }
 
@@ -655,7 +659,7 @@
 
         @media (max-width: 480px) {
             #theme-toggle { width: 30px; height: 30px; }
-            :root[data-theme="light"] #theme-toggle { border-color: rgb(151, 151, 151); }
+            :root[data-theme="light"] #theme-toggle { border-color: #dedede; }
             #theme-toggle .theme-toggle__label { display: none; }
             #theme-toggle .theme-toggle__mover {
                 left: 50%;

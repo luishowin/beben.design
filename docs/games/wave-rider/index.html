@@ -28,18 +28,20 @@
 
     /* WAVE RIDER (endless surf, edge-surf style)
        Top-down water. You are the surfer: roam anywhere, outrun the
-       current, dodge rocks and buoys, grab stars for points and hearts
-       for extra lives. Speed ramps until it gets you. */
+       current, dodge islets and buoys, grab stars for points and hearts
+       for extra lives. Some islets carry a ramp — ride it to launch over
+       the coral. Speed ramps until it gets you. */
 
     var LIVES = 3, MAX_LIVES = 5;
+    var AIR_DUR = 1.0, AIR_H = 26;
 
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 3 / 4, maxW: 480 });
 
     var speed, dist, score, lives, over, invuln, t;
-    var px, py, pvx, pvy, keys;
-    var rocks, buoys, stars, hearts, foam;
-    var spawnRock, spawnBuoy, spawnStar, spawnHeart;
+    var px, py, pvx, pvy, keys, airT;
+    var islets, corals, buoys, stars, hearts, foam;
+    var spawnIslet, spawnCoral, spawnBuoy, spawnStar, spawnHeart;
 
     function reset() {
         speed = 130;
@@ -49,17 +51,20 @@
         over = false;
         invuln = 0;
         t = 0;
+        airT = 0;
         px = view.w * 0.3;
         py = view.h * 0.5;
         pvx = 0; pvy = 0;
         keys = {};
-        rocks = [];
+        islets = [];
+        corals = [];
         buoys = [];
         stars = [];
         hearts = [];
         foam = [];
-        spawnRock = 1.2;
-        spawnBuoy = 2.5;
+        spawnIslet = 1.2;
+        spawnCoral = 2.2;
+        spawnBuoy = 3.5;
         spawnStar = 1.0;
         spawnHeart = 18;
         Arcade.ui.setScore('000');
@@ -81,9 +86,17 @@
     function wipeout() {
         lives--;
         invuln = 2;
+        airT = 0;
         Arcade.audio.play('boom');
         Arcade.haptics.buzz('error');
         if (lives <= 0) endGame();
+    }
+
+    function launch() {
+        airT = AIR_DUR;
+        score += 25;
+        Arcade.audio.play('flap');
+        Arcade.haptics.buzz('light');
     }
 
     /* ── input: drag anywhere + arrows/WASD ─────────────────────── */
@@ -125,6 +138,17 @@
 
     function spawnOffscreen() { return view.w + 30; }
 
+    // irregular island silhouette, cached radius r; points are local
+    function blob(r) {
+        var pts = [], n = 9;
+        for (var i = 0; i < n; i++) {
+            var a = (i / n) * Math.PI * 2;
+            var rr = r * (0.82 + Math.random() * 0.34);
+            pts.push([Math.cos(a) * rr, Math.sin(a) * rr]);
+        }
+        return pts;
+    }
+
     function update(dt) {
         if (over) return;
         t += dt;
@@ -132,6 +156,8 @@
         speed = Math.min(340, speed + dt * 3.5);
         score += dt * 5;
         invuln = Math.max(0, invuln - dt);
+        airT = Math.max(0, airT - dt);
+        var airborne = airT > 0;
 
         // keyboard velocity (drag sets position directly)
         var ax = 0, ay = 0;
@@ -155,18 +181,49 @@
             if (foam[fi].x + foam[fi].len < -10) foam.splice(fi, 1);
         }
 
-        // rocks: hardGrey lumps, straight at you
-        spawnRock -= dt;
-        if (spawnRock <= 0) {
-            spawnRock = Math.max(0.5, 1.5 - dist / 9000 + Math.random() * 0.9);
-            rocks.push({ x: spawnOffscreen(), y: 30 + Math.random() * (view.h - 60), r: 10 + Math.random() * 10 });
+        // islets: solid little islands; some carry a ramp you can launch from
+        spawnIslet -= dt;
+        if (spawnIslet <= 0) {
+            spawnIslet = Math.max(1.1, 2.6 - dist / 9000 + Math.random() * 1.1);
+            var ir = 15 + Math.random() * 14;
+            islets.push({
+                x: spawnOffscreen() + ir,
+                y: 40 + Math.random() * (view.h - 80),
+                r: ir, pts: blob(ir), ramp: Math.random() < 0.55, ph: Math.random() * 6
+            });
         }
-        for (var i = rocks.length - 1; i >= 0; i--) {
-            var rk = rocks[i];
-            rk.x -= speed * dt;
-            if (rk.x < -40) { rocks.splice(i, 1); continue; }
-            if (invuln <= 0 && Math.hypot(rk.x - px, rk.y - py) < rk.r + 12) {
-                rocks.splice(i, 1);
+        for (var ii = islets.length - 1; ii >= 0; ii--) {
+            var isl = islets[ii];
+            isl.x -= speed * dt;
+            isl.ph += dt * 2;
+            if (isl.x < -50) { islets.splice(ii, 1); continue; }
+            if (airborne || invuln > 0) continue;
+            // ramp zone sits on the islet's leading (left) edge
+            if (isl.ramp && px > isl.x - isl.r - 26 && px < isl.x - isl.r + 8 &&
+                Math.abs(isl.y - py) < isl.r * 0.8) {
+                launch();
+                continue;
+            }
+            if (Math.hypot(isl.x - px, isl.y - py) < isl.r + 11) {
+                islets.splice(ii, 1);
+                wipeout();
+                if (over) return;
+            }
+        }
+
+        // coral: only a hazard while you are not airborne
+        spawnCoral -= dt;
+        if (spawnCoral <= 0) {
+            spawnCoral = 1.5 + Math.random() * 1.7;
+            corals.push({ x: spawnOffscreen(), y: 34 + Math.random() * (view.h - 68), r: 9 + Math.random() * 5, ph: Math.random() * 6 });
+        }
+        for (var ci = corals.length - 1; ci >= 0; ci--) {
+            var co = corals[ci];
+            co.x -= speed * 1.05 * dt;
+            co.ph += dt * 3;
+            if (co.x < -30) { corals.splice(ci, 1); continue; }
+            if (!airborne && invuln <= 0 && Math.hypot(co.x - px, co.y - py) < co.r + 11) {
+                corals.splice(ci, 1);
                 wipeout();
                 if (over) return;
             }
@@ -175,7 +232,7 @@
         // buoys: bob up and down as they drift in
         spawnBuoy -= dt;
         if (spawnBuoy <= 0) {
-            spawnBuoy = 2 + Math.random() * 2.2;
+            spawnBuoy = 2.4 + Math.random() * 2.2;
             buoys.push({ x: spawnOffscreen(), y: 40 + Math.random() * (view.h - 80), ph: Math.random() * 6 });
         }
         for (var bi = buoys.length - 1; bi >= 0; bi--) {
@@ -184,7 +241,7 @@
             b.ph += dt * 3;
             if (b.x < -30) { buoys.splice(bi, 1); continue; }
             var by = b.y + Math.sin(b.ph) * 14;
-            if (invuln <= 0 && Math.hypot(b.x - px, by - py) < 22) {
+            if (!airborne && invuln <= 0 && Math.hypot(b.x - px, by - py) < 22) {
                 buoys.splice(bi, 1);
                 wipeout();
                 if (over) return;
@@ -268,26 +325,103 @@
             ctx.stroke();
         }
 
-        // rocks
-        for (var i = 0; i < rocks.length; i++) {
-            var rk = rocks[i];
-            ctx.fillStyle = '#4A5266';
+        // islets (sand ring, green crown, optional ramp + palm)
+        for (var ii = 0; ii < islets.length; ii++) {
+            var isl = islets[ii];
+            var iy = isl.y + Math.sin(isl.ph) * 2;
+            ctx.save();
+            ctx.translate(isl.x, iy);
+            // surf wash around the shore
+            ctx.fillStyle = 'rgba(234,242,255,0.22)';
             ctx.beginPath();
-            ctx.arc(rk.x, rk.y, rk.r, 0, Math.PI * 2);
+            ctx.arc(0, 0, isl.r + 5, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(234,242,255,0.5)';
-            ctx.lineWidth = 1.5;
+            // sand
+            ctx.fillStyle = '#D9BE7A';
+            ctx.beginPath();
+            ctx.moveTo(isl.pts[0][0], isl.pts[0][1]);
+            for (var k = 1; k < isl.pts.length; k++) ctx.lineTo(isl.pts[k][0], isl.pts[k][1]);
+            ctx.closePath();
+            ctx.fill();
+            // green crown
+            ctx.fillStyle = '#3FA34D';
+            ctx.beginPath();
+            ctx.moveTo(isl.pts[0][0] * 0.6, isl.pts[0][1] * 0.6);
+            for (var k2 = 1; k2 < isl.pts.length; k2++) ctx.lineTo(isl.pts[k2][0] * 0.6, isl.pts[k2][1] * 0.6);
+            ctx.closePath();
+            ctx.fill();
+            // palm
+            ctx.strokeStyle = '#6B4A2B';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 2);
+            ctx.lineTo(-1, -8);
             ctx.stroke();
-            ctx.fillStyle = 'rgba(255,255,255,0.25)';
-            ctx.beginPath();
-            ctx.arc(rk.x - rk.r * 0.3, rk.y - rk.r * 0.3, rk.r * 0.35, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = '#2F8F3E';
+            for (var pl = 0; pl < 4; pl++) {
+                var pa = -Math.PI / 2 + (pl - 1.5) * 0.7;
+                ctx.beginPath();
+                ctx.ellipse(-1 + Math.cos(pa) * 5, -8 + Math.sin(pa) * 3, 6, 2.4, pa, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            // ramp on the leading edge
+            if (isl.ramp) {
+                ctx.fillStyle = '#C9A24B';
+                ctx.beginPath();
+                ctx.moveTo(-isl.r - 20, 11);
+                ctx.lineTo(-isl.r + 3, -3);
+                ctx.lineTo(-isl.r + 3, 15);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-isl.r - 20, 11);
+                ctx.lineTo(-isl.r + 3, -3);
+                ctx.stroke();
+            }
+            ctx.restore();
         }
 
-        // buoys (red/white striped)
+        // coral (grounded hazard)
+        for (var ci = 0; ci < corals.length; ci++) {
+            var co = corals[ci];
+            var sway = Math.sin(co.ph) * 2;
+            ctx.save();
+            ctx.translate(co.x, co.y);
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.beginPath();
+            ctx.ellipse(0, co.r * 0.7, co.r, co.r * 0.45, 0, 0, Math.PI * 2);
+            ctx.fill();
+            var cols = ['#FF6B8A', '#FF9B21', '#FF2DAA'];
+            for (var cb = 0; cb < 5; cb++) {
+                var a = (cb / 5) * Math.PI * 2;
+                ctx.fillStyle = cols[cb % cols.length];
+                ctx.beginPath();
+                ctx.arc(Math.cos(a) * co.r * 0.6, Math.sin(a) * co.r * 0.6 + sway * 0.2, co.r * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#C2185B';
+            ctx.beginPath();
+            ctx.arc(0, sway * 0.2, co.r * 0.42, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // buoys (red/white striped) with a ring of tiny waves
         for (var bi = 0; bi < buoys.length; bi++) {
             var b = buoys[bi];
             var by = b.y + Math.sin(b.ph) * 14;
+            // tiny waves: expanding ripple rings
+            for (var rw = 0; rw < 3; rw++) {
+                var rr = 10 + ((b.ph * 8 + rw * 14) % 30);
+                var al = Math.max(0, 0.32 - rr / 90);
+                ctx.strokeStyle = 'rgba(180,225,255,' + al.toFixed(3) + ')';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.ellipse(b.x, by + 14, rr, rr * 0.4, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
             ctx.fillStyle = 'rgba(25,198,255,0.25)';
             ctx.beginPath();
             ctx.ellipse(b.x, by + 14, 12, 4, 0, 0, Math.PI * 2);
@@ -308,11 +442,11 @@
             ctx.translate(st.x, st.y);
             ctx.rotate(Math.sin(st.ph) * 0.4);
             ctx.beginPath();
-            for (var k = 0; k < 4; k++) {
-                var a = (k / 4) * Math.PI * 2;
-                var a2 = a + Math.PI / 4;
-                ctx.lineTo(Math.cos(a) * 10, Math.sin(a) * 10);
-                ctx.lineTo(Math.cos(a2) * 4.5, Math.sin(a2) * 4.5);
+            for (var k3 = 0; k3 < 4; k3++) {
+                var a2 = (k3 / 4) * Math.PI * 2;
+                var a3 = a2 + Math.PI / 4;
+                ctx.lineTo(Math.cos(a2) * 10, Math.sin(a2) * 10);
+                ctx.lineTo(Math.cos(a3) * 4.5, Math.sin(a3) * 4.5);
             }
             ctx.closePath();
             ctx.fill();
@@ -335,28 +469,67 @@
             ctx.fill();
         }
 
-        // surfer (blinks while invulnerable)
+        // surfer (blinks while invulnerable); rides a jump arc when airborne
         var blink = invuln > 0 && Math.floor(invuln * 8) % 2 === 0;
+        var jumpH = airT > 0 ? Math.sin(Math.PI * (1 - airT / AIR_DUR)) * AIR_H : 0;
         if (!blink) {
-            var lean = (pvx || 0) * 0.15 + (pvy || 0) * 0.1;
-            ctx.save();
-            ctx.translate(px, py);
-            // wake
+            // wake + shadow stay on the water
             ctx.fillStyle = 'rgba(234,242,255,0.3)';
             ctx.beginPath();
-            ctx.ellipse(-16, 4, 12, 5, 0.3, 0, Math.PI * 2);
+            ctx.ellipse(px - 16, py + 4, 12, 5, 0.3, 0, Math.PI * 2);
             ctx.fill();
-            // board
+            if (jumpH > 0.5) {
+                ctx.fillStyle = 'rgba(0,0,0,0.28)';
+                ctx.beginPath();
+                ctx.ellipse(px, py + 4, 15, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            var lean = (pvx || 0) * 0.15 + (pvy || 0) * 0.1;
+            ctx.save();
+            ctx.translate(px, py - jumpH);
             ctx.rotate(lean);
+            ctx.scale(1.25, 1.25);
+            // board
             ctx.fillStyle = p.neon.blue;
-            ctx.fillRect(-14, -2, 28, 5);
-            // rider
-            ctx.fillStyle = p.headers;
             ctx.beginPath();
-            ctx.arc(0, -9, 6.5, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, 17, 5.5, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = p.accent;
-            ctx.fillRect(-3, -5, 6, 12);
+            ctx.fillStyle = 'rgba(255,255,255,0.65)';
+            ctx.fillRect(-15, -1, 30, 1.6);
+            // legs + shorts
+            ctx.strokeStyle = '#F2C19B';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-4, -3); ctx.lineTo(-12, -4);
+            ctx.moveTo(-4, 3); ctx.lineTo(-12, 4);
+            ctx.stroke();
+            ctx.fillStyle = '#FF6B35';
+            ctx.beginPath();
+            ctx.ellipse(-4, 0, 5, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // torso
+            ctx.fillStyle = '#F2C19B';
+            ctx.beginPath();
+            ctx.ellipse(2, 0, 6, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // arms out for balance
+            ctx.strokeStyle = '#F2C19B';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(2, -3); ctx.lineTo(4, -10);
+            ctx.moveTo(2, 3); ctx.lineTo(4, 10);
+            ctx.stroke();
+            // head + hair
+            ctx.fillStyle = '#F2C19B';
+            ctx.beginPath();
+            ctx.arc(8, 0, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#2B2B3D';
+            ctx.beginPath();
+            ctx.arc(8, 0, 5, Math.PI * 0.55, Math.PI * 1.45);
+            ctx.fill();
             ctx.restore();
         }
 

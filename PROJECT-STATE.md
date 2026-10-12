@@ -879,7 +879,7 @@ excluding the arcade plus `404.html`, 30 sitemap URLs, 1075 internal references
 resolve and 0 break (1055 before the mines/rockfield removal, 1047 after,
 +7 with the Five Letter hub card and game page), all JSON-LD valid, no duplicate titles or descriptions, no
 em dashes in visitor-facing copy, voice clean, facts agree across 33 files, and
-one asset version (`6.8`) everywhere.
+one asset version everywhere (since moved to `6.9`).
 
 The link figure moved 965 to 1033 with the arcade gameplay pass above: the
 status stamp predates the hub's growth from 12 to 20 games, so the arcade's own
@@ -927,3 +927,82 @@ Measured at commit: 35 pages, 1103 internal links checked and 0 broken,
 voice clean, facts agree across 35 files, one asset version (`6.8`).
 `sitemap.xml`, `llms.txt` and `sprite.md` (8,779 chars against the 12,000
 worker cap) each carry the new page. Live Formspree submission not tested.
+
+### Theme toggle, navbar, service cards (asset lock `6.9`)
+
+**Toggle ring.** Light mode's theme toggle border is `#dedede` (dark keeps
+`#3F3F3F`); the mobile override that forced `rgb(151, 151, 151)` now matches.
+The tool shell carries its own standalone `#theme-toggle`, so it got the same
+rule and the four tool pages were regenerated.
+
+**Active nav link.** It is `#ff001d` and carries brackets — `[ SERVICES ]` —
+generated in CSS (`::before` / `::after`), so all 32 pages get it without a
+markup edit. Hover keeps `--highlight-text` and no longer underlines; the
+active link keeps the brackets and loses its underline. Desktop nav only; the
+mobile menu is untouched. Note: `#ff001d` measures ~3.97:1 on the light nav,
+under AA for that text size — recorded so nobody "fixes" it back.
+
+**Service catalogue is filled cards.** The six `<article>` rows on
+`/services/` are now 280px tall with a `--bg-soft` fill, 1px border, square
+corners and 30px between cards, the copy condensed (smaller serif names,
+tighter tagline and aside). `// Before you commit` takes the same `--bg-soft`
+fill; the inverted custom-scope band stays transparent. Detail pages are
+unaffected (the rules are page-scoped).
+
+Asset lock `6.8` to `6.9` in lockstep across the 30 docs pages and two blog
+templates; both generators re-ran idempotent.
+
+### Arcade batch (cache `v32`)
+
+**Super Hop had a real bug.** The level is 15 rows (480px) tall, but
+`fitCanvas` caps `view.h` at 350px (~230px on a phone) and the camera only
+scrolled horizontally, so the grounded player drew *below* the canvas and
+appeared only mid-jump. A vertical camera now eases the player into the lower
+third; the world layer rides it on a single translate. The player body draws at
+y262–274 inside a 350px canvas (checked across 240 frames; the gaps are the 2s
+spawn blink).
+
+**Pocket Putt.** Water is now organic jittered polygons (point-in-polygon)
+instead of rects; the aim guide is 1.5px with an arrowhead; the per-hole
+`N strokes · par N` line is smaller and single-line; the flag climbs the pole
+as the ball nears; a drag captures the pointer so a ball on the edge can still
+be pulled past the green; and three non-rectangular holes were added — Atoll
+(bumpers over a lake), Zigzag (angled walls), Pinwheel (crossed walls + a
+bumper). All verified rendering; 8 of 8 runs survive past 3s.
+
+**Wave Rider.** Circle rocks became irregular islets; some carry a ramp that
+launches ~1s of air-time, during which the surfer clears the new coral
+hazards. Buoys gained expanding ripple rings, and the surfer is redrawn as a
+rider in shorts on a board. Verified: ramps fire, air-time is immune, coins
+still collect.
+
+**Powder Run is now Dune Surf.** Display name and slug both moved
+(`/games/dune-surf/`, icon, hub card, `sw.js` precache, `SLUGS`). The canvas is
+16:9 landscape; the physics float and glide rather than pop; the rider is a
+tiny dude with a red scarf on a board; rocks, cacti, crevasses and low-flying
+birds are the hurdles; and the background is four parallax bands receding
+toward a visible setting sun. The old best-score key resets.
+
+**Five Letter rebuilt as a mini crossword.** The Wordle-style colour feedback
+is gone: it is now 5×5 interlocking minis with across and down clues at the
+bottom (grids found by search over the old word list, clues hand-written), the
+on-screen keyboard kept, and a row or column glowing green when its word is
+solved. Solving all entries advances the streak and loads the next puzzle.
+
+Cache `v31` to `v32` with the hub label in lockstep; all 57 precache entries
+and the 15 `SLUGS` resolve. Verification used an in-page harness that re-runs
+each game's own script against the real canvas — the desktop window was hidden,
+so `requestAnimationFrame` was throttled and live screenshots were blocked. All
+22 game scripts parse, and canvas captures confirmed each game's render.
+
+### Website Audit page (pre-existing, committed here)
+
+`/services/website-audit/` (491 lines) and its services-hub row, meta
+description, JSON-LD `serviceType`, sitemap URL, `llms.txt` and `sprite.md`
+entries were sitting uncommitted in the working tree from an earlier session;
+this commit publishes them. Voice clean, and the page links only shared assets
+that exist.
+
+Measured at commit: 36 pages, 1135 internal references checked and 0 broken,
+voice clean, facts agree across 36 files, one asset version (`6.9`), status
+`--check` clean, all JSON-LD valid.

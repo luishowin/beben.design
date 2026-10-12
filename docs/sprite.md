@@ -20,7 +20,7 @@ talks to is whoever builds the thing.
 
 ## What the studio does
 
-Five services, each with its own page under /services/:
+Six services, each with its own page under /services/:
 
 - Brand identity and visual design (/services/brand-identity/): logo systems,
   brand guides, colour systems with WCAG-compliant contrast, typography
@@ -40,6 +40,9 @@ Five services, each with its own page under /services/:
   rankings move with you. The studio inherits a client's content, not another
   builder's code. Bring the mess, keep what is worth keeping, rebuild the rest
   properly.
+- Website audit (/services/website-audit/): speed, structure, content
+  and conversion checked and scored, with a prioritised fix list
+  ordered by impact. Diagnosis only, no fix bundled in.
 - Business intelligence and custom business tools
   (/business-intelligence/): CRMs, inventory systems, workflow
   automation and reporting for growing businesses in Kenya, built

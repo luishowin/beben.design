@@ -213,6 +213,12 @@ nav {
     color: #FFFFFF;
 }
 
+/* Light theme: white pill on the light nav. The ring is deliberately
+   faint (#dedede) — the fill carries the shape, not the border. */
+:root[data-theme="light"] .theme-toggle {
+    border-color: #dedede;
+}
+
 .theme-toggle:hover { border-color: currentColor; }
 .theme-toggle:active { transform: scale(0.98); }
 
@@ -321,19 +327,28 @@ nav {
     text-transform: uppercase;
     color: var(--text);
     border-bottom: 2px solid transparent;
-    /* mirrors the 3px padding + 2px hover underline reserved below, so
-       the text sits centred in its own box — then centring the boxes
-       centres the text */
+    /* the 2px bottom border and the 3px/5px padding together keep the
+       text centred in its own box; centring the boxes centres the text */
     padding-top: 5px;
     padding-bottom: 3px;
     transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
 }
 
-.menu li a:hover,
-.menu li a.active {
+.menu li a:hover {
     color: var(--highlight-text);
-    border-bottom-color: var(--highlight);
 }
+
+/* The current page. Brighter red than the accessible --highlight-text
+   pair, by request; the underline stays --highlight. */
+.menu li a.active {
+    color: #ff001d;
+    border-bottom-color: transparent;
+}
+
+/* Brackets on the current page, e.g. [ SERVICES ]. Done as generated
+   content rather than markup, so all 32 pages get it without an edit. */
+.menu li a.active::before { content: "[ "; }
+.menu li a.active::after  { content: " ]"; }
 
 /* Hamburger button */
 #hamburger {
@@ -1440,7 +1455,7 @@ footer {
     /* Mobile keeps an icon-only circle: labels off, mover centred,
        travel disabled, only the roll + sun/moon crossfade remains. */
     .theme-toggle { width: 30px; height: 30px; }
-    :root[data-theme="light"] .theme-toggle { border-color: rgb(151, 151, 151); }
+    :root[data-theme="light"] .theme-toggle { border-color: #dedede; }
     .theme-toggle__label { display: none; }
     .theme-toggle__mover {
         left: 50%;

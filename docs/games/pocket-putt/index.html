@@ -81,14 +81,23 @@
         { name: 'Lakeview', par: 4, start: [90, 480], hole: [330, 100],
           walls: [], sand: [], water: [[0, 150, 240, 260]] },
         { name: 'Gauntlet', par: 4, start: [210, 500], hole: [210, 80],
-          walls: [[0, 420, 250, 16], [170, 330, 250, 16], [0, 240, 250, 16]], sand: [[210, 150, 52]], water: [] }
+          walls: [[0, 420, 250, 16], [170, 330, 250, 16], [0, 240, 250, 16]], sand: [[210, 150, 52]], water: [] },
+        { name: 'Atoll', par: 3, start: [210, 500], hole: [210, 110],
+          walls: [], sand: [[210, 110, 30]], water: [[40, 190, 140, 190], [240, 190, 140, 190]],
+          bumpers: [[120, 140, 20], [300, 140, 20]], diags: [] },
+        { name: 'Zigzag', par: 3, start: [210, 500], hole: [210, 80],
+          walls: [], sand: [], water: [], bumpers: [],
+          diags: [[40, 410, 190, 300], [380, 410, 230, 300], [40, 230, 190, 120], [380, 230, 230, 120]] },
+        { name: 'Pinwheel', par: 4, start: [210, 500], hole: [210, 90],
+          walls: [], sand: [], water: [], bumpers: [[210, 290, 26]],
+          diags: [[110, 380, 310, 200], [310, 380, 110, 200]] }
     ];
 
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 3 / 4, maxW: 460 });
 
     var order, holeIdx, hole, parTotal, strokesTotal;
-    var ball, state, strokes, aiming, aimPt, shotStart, over, panelEl;
+    var ball, state, strokes, aiming, aimPt, shotStart, over, panelEl, flagT;
 
     function shuffle(a) {
         for (var i = a.length - 1; i > 0; i--) {
@@ -112,12 +121,16 @@
 
     function loadHole() {
         hole = HOLES[order[holeIdx]];
+        hole.bumpers = hole.bumpers || [];
+        hole.diags = hole.diags || [];
+        hole.waterPolys = buildWaterPolys(hole.water);
         parTotal += hole.par;
         ball = { x: hole.start[0], y: hole.start[1], vx: 0, vy: 0 };
         shotStart = { x: ball.x, y: ball.y };
         state = 'aim';
         strokes = 0;
         aiming = false;
+        flagT = 0;
         closePanel();
         paintScore();
         Arcade.ui.toast('HOLE ' + (holeIdx + 1) + ' OF 5 · ' + hole.name.toUpperCase() + ' · PAR ' + hole.par);
@@ -181,6 +194,14 @@
         panel.innerHTML = '<div class="arc-over-title">' + title + '</div>' +
             '<div class="arc-over-label">' + sub + '</div>' +
             '<div class="arc-over-score">' + scoreLine + '</div>';
+        // the per-hole line ("N strokes · par N") is longer than the big
+        // game-over score, so it gets a smaller, single-line treatment
+        var scoreEl = panel.querySelector('.arc-over-score');
+        if (scoreEl) {
+            scoreEl.style.fontSize = '0.8rem';
+            scoreEl.style.whiteSpace = 'nowrap';
+            scoreEl.style.letterSpacing = '0.04em';
+        }
         var actions = document.createElement('div');
         actions.className = 'arc-actions';
         var next = document.createElement('button');
@@ -219,6 +240,10 @@
         if (Math.hypot(p.x - ball.x, p.y - ball.y) < GRAB_R) {
             aiming = true;
             aimPt = p;
+            // Capture the pointer so a drag keeps tracking even once it
+            // leaves the canvas: a ball near the edge can then be pulled
+            // past the green (the aim point is not clamped to the world).
+            try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
         }
     });
     canvas.addEventListener('pointermove', function (e) {
@@ -245,12 +270,47 @@
     window.addEventListener('pointerup', releaseAim);
     window.addEventListener('pointercancel', function () { aiming = false; });
 
+    /* ── organic water: each rect becomes a jittered polygon so lakes read
+       as natural shapes rather than blocks. The jitter is capped so narrow
+       land bridges between adjacent lakes stay open and playable. ── */
+    function makeBlob(x, y, w, h, seed) {
+        var amp = Math.min(9, 0.18 * Math.min(w, h));
+        var per = 5, pts = [], i, f;
+        function jr() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+        for (i = 0; i <= per; i++) { f = i / per; pts.push([x + w * f, y + (jr() - 0.5) * 2 * amp]); }
+        for (i = 1; i <= per; i++) { f = i / per; pts.push([x + w + (jr() - 0.5) * 2 * amp, y + h * f]); }
+        for (i = 1; i <= per; i++) { f = 1 - i / per; pts.push([x + w * f, y + h + (jr() - 0.5) * 2 * amp]); }
+        for (i = 1; i < per; i++) { f = 1 - i / per; pts.push([x + (jr() - 0.5) * 2 * amp, y + h * f]); }
+        return pts;
+    }
+    function buildWaterPolys(rects) {
+        var out = [];
+        for (var i = 0; i < rects.length; i++) {
+            var w = rects[i];
+            out.push(makeBlob(w[0], w[1], w[2], w[3], (w[0] + 7) * 131 + (w[1] + 3) * 17 + w[2]));
+        }
+        return out;
+    }
+    function inPoly(x, y, poly) {
+        var inside = false;
+        for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+            var xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+            if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+        }
+        return inside;
+    }
     function inWater(x, y) {
-        for (var i = 0; i < hole.water.length; i++) {
-            var w = hole.water[i];
-            if (x > w[0] && x < w[0] + w[2] && y > w[1] && y < w[1] + w[3]) return true;
+        for (var i = 0; i < hole.waterPolys.length; i++) {
+            if (inPoly(x, y, hole.waterPolys[i])) return true;
         }
         return false;
+    }
+    function distToSeg(px, py, ax, ay, bx, by) {
+        var dx = bx - ax, dy = by - ay;
+        var l2 = dx * dx + dy * dy;
+        var t = l2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / l2)) : 0;
+        var cx = ax + t * dx, cy = ay + t * dy;
+        return { d: Math.hypot(px - cx, py - cy), nx: px - cx, ny: py - cy };
     }
     function inSand(x, y) {
         for (var i = 0; i < hole.sand.length; i++) {
@@ -278,8 +338,51 @@
         }
     }
 
+    /* circle bumpers and angled walls: non-rectangular obstacles */
+    function collideBumpers() {
+        for (var i = 0; i < hole.bumpers.length; i++) {
+            var b = hole.bumpers[i];
+            var dx = ball.x - b[0], dy = ball.y - b[1];
+            var d = Math.hypot(dx, dy) || 0.0001;
+            var min = b[2] + BALL_R;
+            if (d < min) {
+                var nx = dx / d, ny = dy / d;
+                ball.x = b[0] + nx * (min + 0.1);
+                ball.y = b[1] + ny * (min + 0.1);
+                var dot = ball.vx * nx + ball.vy * ny;
+                ball.vx = (ball.vx - 2 * dot * nx) * 0.72;
+                ball.vy = (ball.vy - 2 * dot * ny) * 0.72;
+                Arcade.audio.play('bounce');
+            }
+        }
+    }
+    function collideDiags() {
+        for (var i = 0; i < hole.diags.length; i++) {
+            var s = hole.diags[i];
+            var hit = distToSeg(ball.x, ball.y, s[0], s[1], s[2], s[3]);
+            if (hit.d < BALL_R) {
+                var nx = hit.nx, ny = hit.ny;
+                var d = Math.hypot(nx, ny) || 0.0001;
+                nx /= d; ny /= d;
+                ball.x += nx * (BALL_R - hit.d + 0.1);
+                ball.y += ny * (BALL_R - hit.d + 0.1);
+                var dot = ball.vx * nx + ball.vy * ny;
+                ball.vx = (ball.vx - 2 * dot * nx) * 0.72;
+                ball.vy = (ball.vy - 2 * dot * ny) * 0.72;
+                Arcade.audio.play('bounce');
+            }
+        }
+    }
+
     function update(dt) {
-        if (over || state !== 'roll') return;
+        if (over) return;
+
+        // flag lifts out of the cup as the ball closes in (both states)
+        var near = Math.hypot(ball.x - hole.hole[0], ball.y - hole.hole[1]);
+        var ftarget = near < 150 ? 1 : 0;
+        flagT += (ftarget - flagT) * Math.min(1, dt * 6);
+
+        if (state !== 'roll') return;
 
         var fric = inSand(ball.x, ball.y) ? 3.4 : 1.1;
         var damp = Math.exp(-fric * dt);
@@ -295,6 +398,8 @@
         if (ball.y < BALL_R) { ball.y = BALL_R; ball.vy = Math.abs(ball.vy) * 0.72; }
         if (ball.y > WORLD_H - BALL_R) { ball.y = WORLD_H - BALL_R; ball.vy = -Math.abs(ball.vy) * 0.72; }
         collideAxis(false);
+        collideBumpers();
+        collideDiags();
 
         // splash
         if (inWater(ball.x, ball.y)) {
@@ -356,18 +461,17 @@
         ctx.lineWidth = 6;
         ctx.strokeRect(0, 0, WORLD_W, WORLD_H);
 
-        // water
-        for (var wi = 0; wi < hole.water.length; wi++) {
-            var w = hole.water[wi];
-            ctx.fillStyle = '#1B6FA8';
-            ctx.fillRect(w[0], w[1], w[2], w[3]);
-            ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-            ctx.lineWidth = 2;
+        // water — organic polygons with a bright shoreline
+        for (var wi = 0; wi < hole.waterPolys.length; wi++) {
+            var poly = hole.waterPolys[wi];
             ctx.beginPath();
-            ctx.moveTo(w[0] + 8, w[1] + 12);
-            ctx.lineTo(w[0] + 30, w[1] + 12);
-            ctx.moveTo(w[0] + w[2] - 30, w[1] + w[3] - 12);
-            ctx.lineTo(w[0] + w[2] - 8, w[1] + w[3] - 12);
+            ctx.moveTo(poly[0][0], poly[0][1]);
+            for (var pv = 1; pv < poly.length; pv++) ctx.lineTo(poly[pv][0], poly[pv][1]);
+            ctx.closePath();
+            ctx.fillStyle = '#1B6FA8';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(180,225,255,0.55)';
+            ctx.lineWidth = 2;
             ctx.stroke();
         }
 
@@ -395,6 +499,42 @@
             ctx.fillRect(b[0], b[1] + b[3] - 4, b[2], 4);
         }
 
+        // round bumpers
+        for (var bp2 = 0; bp2 < hole.bumpers.length; bp2++) {
+            var bp = hole.bumpers[bp2];
+            ctx.fillStyle = '#6B7280';
+            ctx.beginPath();
+            ctx.arc(bp[0], bp[1], bp[2], 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#9AA3B2';
+            ctx.beginPath();
+            ctx.arc(bp[0] - bp[2] * 0.3, bp[1] - bp[2] * 0.3, bp[2] * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(bp[0], bp[1], bp[2], 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // angled walls
+        ctx.lineCap = 'round';
+        for (var di = 0; di < hole.diags.length; di++) {
+            var sg = hole.diags[di];
+            ctx.strokeStyle = '#7A5230';
+            ctx.lineWidth = 9;
+            ctx.beginPath();
+            ctx.moveTo(sg[0], sg[1]);
+            ctx.lineTo(sg[2], sg[3]);
+            ctx.stroke();
+            ctx.strokeStyle = '#A37648';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(sg[0], sg[1]);
+            ctx.lineTo(sg[2], sg[3]);
+            ctx.stroke();
+        }
+
         // start marker
         ctx.strokeStyle = 'rgba(234,242,255,0.5)';
         ctx.lineWidth = 2;
@@ -402,25 +542,27 @@
         ctx.arc(hole.start[0], hole.start[1], BALL_R + 5, 0, Math.PI * 2);
         ctx.stroke();
 
-        // cup + flag
+        // cup + flag — the flag climbs the pole as the ball nears
+        var hx = hole.hole[0], hy = hole.hole[1];
         ctx.fillStyle = '#000';
         ctx.beginPath();
-        ctx.arc(hole.hole[0], hole.hole[1], HOLE_R, 0, Math.PI * 2);
+        ctx.arc(hx, hy, HOLE_R, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#F4F1E8';
         ctx.lineWidth = 2;
         ctx.stroke();
+        var poleH = 40 + 30 * flagT;
         ctx.strokeStyle = '#C5C7D0';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(hole.hole[0], hole.hole[1]);
-        ctx.lineTo(hole.hole[0], hole.hole[1] - 52);
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(hx, hy - poleH);
         ctx.stroke();
         ctx.fillStyle = p.red;
         ctx.beginPath();
-        ctx.moveTo(hole.hole[0], hole.hole[1] - 52);
-        ctx.lineTo(hole.hole[0] + 26, hole.hole[1] - 44);
-        ctx.lineTo(hole.hole[0], hole.hole[1] - 36);
+        ctx.moveTo(hx, hy - poleH);
+        ctx.lineTo(hx + 26, hy - poleH + 8);
+        ctx.lineTo(hx, hy - poleH + 16);
         ctx.closePath();
         ctx.fill();
 
@@ -433,16 +575,25 @@
                 var alen = 30 + pw * 130;
                 var nx = dx / len, ny = dy / len;
                 ctx.strokeStyle = pw > 0.8 ? p.red : p.neon.yellow;
-                ctx.lineWidth = 5;
+                ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 ctx.moveTo(ball.x + nx * (BALL_R + 6), ball.y + ny * (BALL_R + 6));
                 ctx.lineTo(ball.x + nx * alen, ball.y + ny * alen);
                 ctx.stroke();
+                // arrowhead
+                var ax2 = ball.x + nx * alen, ay2 = ball.y + ny * alen;
+                ctx.fillStyle = ctx.strokeStyle;
+                ctx.beginPath();
+                ctx.moveTo(ax2 + nx * 7, ay2 + ny * 7);
+                ctx.lineTo(ax2 - ny * 4, ay2 + nx * 4);
+                ctx.lineTo(ax2 + ny * 4, ay2 - nx * 4);
+                ctx.closePath();
+                ctx.fill();
                 // dotted extension
                 ctx.fillStyle = 'rgba(234,242,255,0.6)';
                 for (var d = 1; d <= 6; d++) {
                     ctx.beginPath();
-                    ctx.arc(ball.x + nx * (alen + d * 16), ball.y + ny * (alen + d * 16), 2.5, 0, Math.PI * 2);
+                    ctx.arc(ball.x + nx * (alen + d * 16), ball.y + ny * (alen + d * 16), 1.5, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }

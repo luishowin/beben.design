@@ -16,53 +16,90 @@
     <link rel="stylesheet" href="../arcade.css">
     <script src="../arcade.js"></script>
     <style>
-        .wl {
-            width: min(380px, 94vw);
+        .cw {
+            width: min(440px, 96vw);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.7rem;
+            gap: 0.55rem;
             user-select: none;
         }
-        .wl-board {
+        .cw-board {
             display: grid;
-            grid-template-rows: repeat(6, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
         }
-        .wl-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .wl-tile {
-            width: 56px;
-            height: 56px;
+        .cw-cell {
+            position: relative;
+            width: 58px;
+            height: 58px;
+            border-radius: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-pixel);
             font-size: 1rem;
             text-transform: uppercase;
-            color: var(--headers);
-            border: 2px solid #2A2A3E;
-            border-radius: 4px;
-            background: #000;
         }
-        .wl-tile--filled { border-color: #565670; }
-        .wl-tile--pop { animation: wl-pop 0.12s ease; }
-        @keyframes wl-pop { 50% { transform: scale(1.1); } }
-        .wl-row--shake { animation: wl-shake 0.4s ease; }
-        @keyframes wl-shake {
-            20% { transform: translateX(-6px); }
-            40% { transform: translateX(6px); }
-            60% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
+        .cw-cell--block { background: #05060F; }
+        .cw-cell--open {
+            background: #EAF2FF;
+            color: #12162A;
+            border: 1px solid #9FB0C8;
         }
-        .wl-tile--hit { background: #538D4E; border-color: #538D4E; }
-        .wl-tile--near { background: #B59F3B; border-color: #B59F3B; }
-        .wl-tile--miss { background: #23232E; border-color: #23232E; color: rgba(234, 242, 255, 0.55); }
+        .cw-cell--word { background: #CDE6FF; }
+        .cw-cell--active { box-shadow: inset 0 0 0 3px var(--accent); }
+        .cw-cell--done { background: #BEE6C0; }
+        .cw-cell--glow { animation: cw-glow 1.1s ease; }
+        @keyframes cw-glow {
+            0% { background: #538D4E; color: #fff; }
+            100% { background: #BEE6C0; color: #12162A; }
+        }
+        .cw-num {
+            position: absolute;
+            top: 1px;
+            left: 3px;
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: #5A6B85;
+        }
+        .cw-clues {
+            width: 100%;
+            max-height: 32vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.15rem 1rem;
+            font-size: 0.72rem;
+            line-height: 1.4;
+        }
+        .cw-clue {
+            display: flex;
+            gap: 0.4rem;
+            color: var(--text-muted);
+            padding: 0.12rem 0.2rem;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .cw-clue--active { color: var(--headers); background: rgba(255, 213, 51, 0.12); }
+        .cw-clue b { color: var(--accent); font-weight: 700; flex: none; }
+        .cw-head {
+            grid-column: 1 / -1;
+            font-family: var(--font-pixel);
+            font-size: 0.5rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
         .wl-keys { display: flex; flex-direction: column; gap: 6px; width: 100%; }
         .wl-krow { display: flex; gap: 5px; justify-content: center; }
         .wl-key {
             flex: 1 1 0;
             max-width: 44px;
-            height: 52px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,21 +111,10 @@
             border-radius: 4px;
         }
         .wl-key:active { transform: translateY(1px); }
-        .wl-key--wide { max-width: 66px; font-size: 0.66rem; }
-        .wl-key--hit { background: #538D4E; }
-        .wl-key--near { background: #B59F3B; }
-        .wl-key--miss { background: #1E1E28; color: rgba(234, 242, 255, 0.4); }
-        .wl-hint {
-            min-height: 1.2rem;
-            font-size: 0.66rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            text-align: center;
-        }
-        @media (max-height: 700px) {
-            .wl-tile { width: 46px; height: 46px; font-size: 0.85rem; }
-            .wl-key { height: 44px; }
+        .wl-key--wide { max-width: 60px; font-size: 0.8rem; }
+        @media (max-height: 720px) {
+            .cw-cell { width: 48px; height: 48px; font-size: 0.85rem; }
+            .wl-key { height: 42px; }
         }
     </style>
 </head>
@@ -96,9 +122,9 @@
 
 <main class="arc-stage">
     <span class="arc-proto">Beta</span>
-    <div class="wl">
-        <div class="wl-board" id="board"></div>
-        <p class="wl-hint" id="hint">Guess the hidden 5-letter word</p>
+    <div class="cw">
+        <div class="cw-board" id="board"></div>
+        <div class="cw-clues" id="clues"></div>
         <div class="wl-keys" id="keys"></div>
     </div>
 </main>
@@ -108,83 +134,41 @@
     'use strict';
 
     /* FIVE LETTER
-       Six tries to guess the hidden 5-letter word. Green = right spot,
-       gold = in the word, dark = not in it. Streak persists on device. */
+       A newspaper mini crossword. Read the clues, fill the grid with the
+       on-screen (or physical) keyboard. A row or column glows green when
+       its word is correct. Solve them all for the next puzzle. */
 
-    var WORDS = [
-        'about','above','abuse','actor','acute','admit','adopt','adult','after','again',
-        'agent','agree','ahead','alarm','album','alert','algae','alike','alive','allow',
-        'alone','along','aloud','alter','angel','anger','angle','ankle','apart','apple',
-        'apply','arena','argue','arise','array','arrow','aside','asset','attic','audio',
-        'audit','avoid','awake','award','aware','awful','bacon','badge','badly','basic',
-        'basin','beach','beard','begin','berry','birth','black','blade','blame','blank',
-        'blast','blend','bless','blind','block','blood','bloom','board','boast','bonus',
-        'boost','booth','bound','brain','brand','brave','bread','break','brick','bride',
-        'brief','bring','broad','broke','brown','brush','build','bunch','buyer','cabin',
-        'cable','candy','cargo','carry','catch','cause','chain','chair','charm','chart',
-        'chase','cheap','check','cheek','chest','chief','child','chill','choir','chose',
-        'chunk','civic','civil','claim','clash','class','clean','clear','clerk',
-        'click','cliff','climb','clock','clone','close','cloth','cloud','coach','coast',
-        'color','comic','comma','could','count','court','cover','crack','craft','crane',
-        'crash','crazy','cream','crime','crisp','cross','crowd','crown','crude','crush',
-        'crust','curve','cycle','daily','dairy','dance','death','delay','depth','diary',
-        'dirty','dodge','donor','doubt','dough','draft','drain','drama','drank','dream',
-        'dress','drink','drive','drone','drove','drunk','dryer','early','earth',
-        'elect','elite','empty','enjoy','enter','entry','equal','error','essay',
-        'event','every','exact','exist','extra','fable','faith','fancy','fatal','fault',
-        'favor','feast','fence','ferry','fever','field','fifth','fifty','fight','final',
-        'first','flame','flash','flesh','float','flood','floor','flour','fluid',
-        'focus','force','forth','forty','forum','found','frame','fresh','front',
-        'frost','fruit','funny','giant','given','glass','globe','glory','glove','going',
-        'grace','grade','grain','grand','grant','grass','grave','great','green','greet',
-        'grief','grill','grind','gross','group','grove','guard','guess','guest','guide',
-        'guild','habit','happy','harsh','heart','heavy','hello','hobby','honey','honor',
-        'horse','hotel','house','human','humor','hurry','ideal','image','index','inner',
-        'input','issue','ivory','jeans','joint','judge','juice','knife','knock','known',
-        'label','labor','large','laser','later','laugh','layer','learn','least','leave',
-        'legal','lemon','level','light','limit','lobby','local','logic','loose','lover',
-        'lower','loyal','lucky','lunch','magic','major','maker','march','match','maybe',
-        'mayor','medal','media','metal','meter','might','minor','minus','model',
-        'money','month','moral','motor','mount','mouse','mouth','movie','muddy','music',
-        'nasty','nerve','never','night','noble','noise','north','novel','nurse',
-        'ocean','offer','often','older','olive','onion','opera','order','other','ought',
-        'outer','owner','paint','panel','panic','paper','party','pasta','patch','pause',
-        'peace','penny','phase','phone','photo','piano','piece','pilot','pitch','pizza',
-        'place','plain','plane','plant','plate','point','polar','power','press','price',
-        'pride','prime','print','prize','proof','proud','prove','pulse','punch','pupil',
-        'puppy','purse','queen','query','quest','queue','quick','quiet','quite','quota',
-        'quote','radar','radio','raise','range','rapid','ratio','reach','ready','rebel',
-        'refer','reply','rider','right','rigid','rival','river','roast','robot',
-        'rough','round','route','royal','ruler','rural','sadly','salad','sandy',
-        'scale','scare','scene','scent','scope','score','scout','scrap','screw',
-        'sense','serve','seven','shade','shake','shall','shame','shape','share',
-        'shark','sharp','sheep','sheet','shelf','shell','shift','shine','shirt','shock',
-        'shore','short','shout','shown','sight','silly','since','sixth','sixty','skill',
-        'skirt','sleep','slice','slide','small','smell','smile','smoke','snack',
-        'snake','solar','solid','solve','sorry','sound','south','space','spare','spark',
-        'speak','speed','spell','spend','spice','spill','spine','split','spoil','spoke',
-        'sport','staff','stage','stain','stair','stand','start','state','steam','steel',
-        'steep','stick','stiff','sting','stock','stole','stone','stood','store','storm',
-        'story','stove','straw','stray','study','stuff','style','sugar','suite',
-        'sunny','super','swear','sweat','sweep','sweet','swift','swing','sword',
-        'table','taken','taste','teach','teeth','thank','their','theme','there','thick',
-        'thief','thing','think','third','those','three','threw','throw','thumb','tiger',
-        'tight','timer','title','today','token','tooth','topic','torch','total','touch',
-        'tough','towel','tower','track','trade','trail','train','trait','trash',
-        'treat','trend','trial','tribe','trick','truck','truly','trust','truth','twice',
-        'twist','uncle','under','union','unite','until','upper','upset','urban','usage',
-        'usual','vague','valid','value','venue','verse','video','visit','vista',
-        'vital','vivid','vocal','voice','voter','vowel','wagon','waste','watch','water',
-        'weave','whale','wheat','wheel','where','which','while','white','whole','whose',
-        'widen','width','weird','woman','world','worry','worth','would','wound','wreck',
-        'wrist','write','wrong','yacht','young','youth','zebra'
+    var STREAK_KEY = 'beben-arcade-five-letter-streak';
+    var ROWS = 5, COLS = 5;
+
+    var PUZZLES = [
+        { grid: ['#vat#', 'salad', 'alike', 'given', '#den#'], clues: {
+            '1A': 'Big brewing tub', '1D': 'Legally acceptable', '2D': 'Not dead',
+            '3D': 'Already claimed', '4A': 'Bowl of raw greens', '4D': 'Droop in the middle',
+            '5D': 'Cozy room', '6A': 'Similar in kind', '7A': 'Already assumed', '8A': "Bear's lair" } },
+        { grid: ['#sap#', 'straw', 'arise', 'taste', '#yea#'], clues: {
+            '1A': 'Tree fluid', '1D': 'Wander off', '2D': 'Get out of bed',
+            '3D': 'Spaghetti, e.g.', '4A': 'Drinking tube', '4D': 'Took a chair',
+            '5D': 'Tiny', '6A': 'Come up', '7A': 'Sample a flavour', '8A': 'Old-time yes' } },
+        { grid: ['#sap#', 'straw', 'arise', 'waste', '#yea#'], clues: {
+            '1A': 'Tree fluid', '1D': 'Wander off', '2D': 'Get out of bed',
+            '3D': 'Spaghetti, e.g.', '4A': 'Drinking tube', '4D': 'Cutting tool',
+            '5D': 'Tiny', '6A': 'Come up', '7A': 'Throw away', '8A': 'Old-time yes' } },
+        { grid: ['#tar#', 'throw', 'argue', 'bound', '#wed#'], clues: {
+            '1A': 'Road goo', '1D': 'Toss', '2D': 'Bicker', '3D': 'Circular',
+            '4A': 'Toss', '4D': 'Bar bill', '5D': 'Marry', '6A': 'Bicker',
+            '7A': 'Tied up', '8A': 'Marry' } },
+        { grid: ['#sag#', 'silly', 'algae', 'class', '#yes#'], clues: {
+            '1A': 'Droop', '1D': 'Goofy', '2D': 'Pond scum', '3D': 'Drinking vessel',
+            '4A': 'Goofy', '4D': 'Biological pouch', '5D': 'Affirmative', '6A': 'Pond scum',
+            '7A': 'School period', '8A': 'Affirmative' } },
+        { grid: ['#sat#', 'sorry', 'argue', 'crust', '#yet#'], clues: {
+            '1A': 'Took a chair', '1D': 'Apologetic', '2D': 'Bicker', '3D': 'Rely on',
+            '4A': 'Apologetic', '4D': 'Biological pouch', '5D': 'Up to now', '6A': 'Bicker',
+            '7A': 'Pizza edge', '8A': 'Up to now' } }
     ];
 
-    var ROWS = 6, COLS = 5;
-    var SAVE_KEY = 'beben-arcade-five-letter-game';
-    var STREAK_KEY = 'beben-arcade-five-letter-streak';
-
-    var answer, guesses, cur, over, streak, keyState;
+    var puz, cells, entries, nums, letters, solved, glowing, active, dir, over, streak, cellEls, puzzleIdx;
 
     function readStreak() {
         try { return parseInt(localStorage.getItem(STREAK_KEY), 10) || 0; }
@@ -193,61 +177,117 @@
     function saveStreak() {
         try { localStorage.setItem(STREAK_KEY, String(streak)); } catch (e) { /* ignore */ }
     }
-    function pickAnswer(except) {
-        var w = except;
-        while (w === except) w = WORDS[Math.floor(Math.random() * WORDS.length)];
-        return w;
-    }
-    function save() {
-        try { localStorage.setItem(SAVE_KEY, JSON.stringify({ a: answer, g: guesses })); }
-        catch (e) { /* ignore */ }
-    }
-    function load() {
-        try {
-            var raw = localStorage.getItem(SAVE_KEY);
-            if (!raw) return null;
-            var o = JSON.parse(raw);
-            if (!o || WORDS.indexOf(o.a) === -1 || !Array.isArray(o.g)) return null;
-            o.g = o.g.filter(function (w) { return WORDS.indexOf(w) !== -1; }).slice(0, ROWS);
-            return o;
-        } catch (e) { return null; }
+
+    function key(r, c) { return r + ',' + c; }
+    function entryKey(e) { return e.n + e.dir; }
+
+    /* derive the numbered across/down entries from the solution grid */
+    function buildEntries(grid) {
+        var cs = grid.map(function (row) { return row.split(''); });
+        var list = [], n = 0, numbers = {};
+        for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+                if (cs[r][c] === '#') continue;
+                var startsA = (c === 0 || cs[r][c - 1] === '#') && (c + 2 < COLS && cs[r][c + 1] !== '#' && cs[r][c + 2] !== '#');
+                var startsD = (r === 0 || cs[r - 1][c] === '#') && (r + 2 < ROWS && cs[r + 1][c] !== '#' && cs[r + 2][c] !== '#');
+                if (startsA || startsD) { n++; numbers[key(r, c)] = n; }
+                if (startsA) {
+                    var la = 0; while (c + la < COLS && cs[r][c + la] !== '#') la++;
+                    list.push({ n: n, dir: 'A', r: r, c: c, len: la });
+                }
+                if (startsD) {
+                    var ld = 0; while (r + ld < ROWS && cs[r + ld][c] !== '#') ld++;
+                    list.push({ n: n, dir: 'D', r: r, c: c, len: ld });
+                }
+            }
+        }
+        return { cs: cs, list: list, numbers: numbers };
     }
 
-    function reset(next) {
-        var saved = next ? null : load();
-        if (saved && saved.g.length < ROWS && !saved.g.some(function (w) { return w === saved.a; })) {
-            answer = saved.a;
-            guesses = saved.g;
-        } else {
-            answer = pickAnswer(answer);
-            guesses = [];
-            save();
+    function entryCells(e) {
+        var out = [];
+        for (var i = 0; i < e.len; i++) out.push(e.dir === 'A' ? { r: e.r, c: e.c + i } : { r: e.r + i, c: e.c });
+        return out;
+    }
+    function entryAt(r, c, d) {
+        for (var i = 0; i < entries.length; i++) {
+            var e = entries[i];
+            if (e.dir !== d) continue;
+            var cs = entryCells(e);
+            for (var j = 0; j < cs.length; j++) if (cs[j].r === r && cs[j].c === c) return e;
         }
-        cur = '';
-        over = false;
-        streak = readStreak();
-        keyState = {};
+        return null;
+    }
+    function currentEntry() { return entryAt(active.r, active.c, dir); }
+
+    function load(idx) {
+        puzzleIdx = idx;
+        puz = PUZZLES[idx];
+        var built = buildEntries(puz.grid);
+        cells = built.cs; entries = built.list; nums = built.numbers;
+        letters = {}; solved = {}; glowing = {};
+        active = null; dir = 'A'; over = false;
+        // first open cell
+        for (var r = 0; r < ROWS && !active; r++) for (var c = 0; c < COLS; c++) if (cells[r][c] !== '#') { active = { r: r, c: c }; break; }
         buildBoard();
+        buildClues();
         buildKeys();
         paint();
         Arcade.ui.setScore(String(streak).padStart(3, '0'));
-        setHint(guesses.length ? 'Welcome back — keep guessing' : 'Guess the hidden 5-letter word');
+    }
+
+    function nextPuzzle() {
+        var idx = puzzleIdx;
+        while (idx === puzzleIdx && PUZZLES.length > 1) idx = Math.floor(Math.random() * PUZZLES.length);
+        load(idx);
     }
 
     function buildBoard() {
         var board = document.getElementById('board');
         board.innerHTML = '';
+        cellEls = [];
         for (var r = 0; r < ROWS; r++) {
-            var row = document.createElement('div');
-            row.className = 'wl-row';
-            row.id = 'wl-row-' + r;
+            cellEls[r] = [];
             for (var c = 0; c < COLS; c++) {
-                var t = document.createElement('div');
-                t.className = 'wl-tile';
-                row.appendChild(t);
+                var el = document.createElement('div');
+                el.className = 'cw-cell';
+                (function (rr, cc) {
+                    el.addEventListener('click', function () { onCell(rr, cc); });
+                })(r, c);
+                board.appendChild(el);
+                cellEls[r][c] = el;
             }
-            board.appendChild(row);
         }
+    }
+
+    function buildClues() {
+        var wrap = document.getElementById('clues');
+        wrap.innerHTML = '';
+        ['A', 'D'].forEach(function (d) {
+            var head = document.createElement('div');
+            head.className = 'cw-head';
+            head.textContent = d === 'A' ? 'Across' : 'Down';
+            wrap.appendChild(head);
+        });
+        // interleave into two columns: across items then down items
+        var cols = { A: document.createElement('div'), D: document.createElement('div') };
+        cols.A.style.display = 'flex'; cols.A.style.flexDirection = 'column';
+        cols.D.style.display = 'flex'; cols.D.style.flexDirection = 'column';
+        entries.filter(function (e) { return e.dir === 'A'; }).forEach(function (e) { cols.A.appendChild(clueEl(e)); });
+        entries.filter(function (e) { return e.dir === 'D'; }).forEach(function (e) { cols.D.appendChild(clueEl(e)); });
+        wrap.appendChild(cols.A);
+        wrap.appendChild(cols.D);
+    }
+
+    function clueEl(e) {
+        var d = document.createElement('div');
+        d.className = 'cw-clue';
+        d.id = 'clue-' + entryKey(e);
+        d.innerHTML = '<b>' + e.n + (e.dir === 'A' ? 'A' : 'D') + '</b><span>' + puz.clues[entryKey(e)] + '</span>';
+        d.addEventListener('click', function () {
+            active = { r: e.r, c: e.c }; dir = e.dir; paint();
+        });
+        return d;
     }
 
     function buildKeys() {
@@ -257,7 +297,7 @@
         for (var r = 0; r < layouts.length; r++) {
             var kr = document.createElement('div');
             kr.className = 'wl-krow';
-            if (r === 2) kr.appendChild(makeKey('ENTER', true));
+            if (r === 2) kr.appendChild(makeKey('DIR', true));
             for (var i = 0; i < layouts[r].length; i++) kr.appendChild(makeKey(layouts[r][i], false));
             if (r === 2) kr.appendChild(makeKey('BACK', true));
             wrap.appendChild(kr);
@@ -267,117 +307,141 @@
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'wl-key' + (wide ? ' wl-key--wide' : '');
-        b.textContent = label === 'BACK' ? '⌫' : label;
+        b.textContent = label === 'BACK' ? '\u232B' : label === 'DIR' ? '\u21C4' : label;
         b.dataset.key = label;
-        b.setAttribute('aria-label', label === 'BACK' ? 'Backspace' : label);
+        b.setAttribute('aria-label', label === 'BACK' ? 'Backspace' : label === 'DIR' ? 'Toggle direction' : label);
         b.addEventListener('click', function () { onKey(label); });
         return b;
     }
 
-    /* standard two-pass scoring: greens first, then golds with counts */
-    function scoreWord(word) {
-        var res = ['miss', 'miss', 'miss', 'miss', 'miss'];
-        var counts = {};
-        var i, ch;
-        for (i = 0; i < COLS; i++) {
-            ch = answer[i];
-            counts[ch] = (counts[ch] || 0) + 1;
-        }
-        for (i = 0; i < COLS; i++) {
-            if (word[i] === answer[i]) { res[i] = 'hit'; counts[word[i]]--; }
-        }
-        for (i = 0; i < COLS; i++) {
-            if (res[i] === 'hit') continue;
-            ch = word[i];
-            if (counts[ch] > 0) { res[i] = 'near'; counts[ch]--; }
-        }
-        return res;
-    }
-
-    function rank(s) { return s === 'hit' ? 3 : s === 'near' ? 2 : 1; }
-
     function paint() {
+        var ae = currentEntry();
+        var aeCells = ae ? entryCells(ae) : [];
+        function inActiveWord(r, c) {
+            for (var i = 0; i < aeCells.length; i++) if (aeCells[i].r === r && aeCells[i].c === c) return true;
+            return false;
+        }
+        function inSolvedWord(r, c) {
+            for (var i = 0; i < entries.length; i++) {
+                if (!solved[entryKey(entries[i])]) continue;
+                var cs = entryCells(entries[i]);
+                for (var j = 0; j < cs.length; j++) if (cs[j].r === r && cs[j].c === c) return true;
+            }
+            return false;
+        }
+        function inGlowingWord(r, c) {
+            for (var i = 0; i < entries.length; i++) {
+                if (!glowing[entryKey(entries[i])]) continue;
+                var cs = entryCells(entries[i]);
+                for (var j = 0; j < cs.length; j++) if (cs[j].r === r && cs[j].c === c) return true;
+            }
+            return false;
+        }
         for (var r = 0; r < ROWS; r++) {
-            var row = document.getElementById('wl-row-' + r);
-            var tiles = row.children;
-            var word = guesses[r] || (r === guesses.length ? cur : '');
-            var states = guesses[r] ? scoreWord(guesses[r]) : null;
             for (var c = 0; c < COLS; c++) {
-                var t = tiles[c];
-                var ch = word[c] || '';
-                t.textContent = ch.toUpperCase();
-                t.className = 'wl-tile' + (ch ? ' wl-tile--filled' : '') +
-                    (states ? ' wl-tile--' + states[c] : '');
+                var el = cellEls[r][c];
+                if (cells[r][c] === '#') { el.className = 'cw-cell cw-cell--block'; el.innerHTML = ''; continue; }
+                var cls = 'cw-cell cw-cell--open';
+                if (inSolvedWord(r, c)) cls += ' cw-cell--done';
+                else if (inActiveWord(r, c)) cls += ' cw-cell--word';
+                if (inGlowingWord(r, c)) cls += ' cw-cell--glow';
+                if (active && active.r === r && active.c === c) cls += ' cw-cell--active';
+                el.className = cls;
+                var num = nums[key(r, c)];
+                var L = letters[key(r, c)] || '';
+                el.innerHTML = (num ? '<span class="cw-num">' + num + '</span>' : '') + L.toUpperCase();
             }
         }
-        var keys = document.querySelectorAll('.wl-key');
-        for (var k = 0; k < keys.length; k++) {
-            var kb = keys[k], L = kb.dataset.key;
-            if (L === 'ENTER' || L === 'BACK') continue;
-            var st = keyState[L.toLowerCase()];
-            kb.className = 'wl-key' + (st ? ' wl-key--' + st : '');
+        // active clue highlight
+        var all = document.querySelectorAll('.cw-clue');
+        for (var k = 0; k < all.length; k++) all[k].classList.remove('cw-clue--active');
+        if (ae) {
+            var ce = document.getElementById('clue-' + entryKey(ae));
+            if (ce) { ce.classList.add('cw-clue--active'); ce.scrollIntoView({ block: 'nearest' }); }
         }
     }
 
-    function popTile() {
-        var row = document.getElementById('wl-row-' + guesses.length);
-        if (!row || !cur.length) return;
-        var t = row.children[cur.length - 1];
-        t.classList.remove('wl-tile--pop');
-        void t.offsetWidth;
-        t.classList.add('wl-tile--pop');
-    }
-
-    function setHint(msg) {
-        document.getElementById('hint').textContent = msg;
-    }
-
-    function deny(msg) {
-        var row = document.getElementById('wl-row-' + guesses.length);
-        if (row) {
-            row.classList.remove('wl-row--shake');
-            void row.offsetWidth;
-            row.classList.add('wl-row--shake');
+    function onCell(r, c) {
+        if (over || cells[r][c] === '#') return;
+        if (active && active.r === r && active.c === c) {
+            // same cell: toggle direction if both exist
+            var other = dir === 'A' ? 'D' : 'A';
+            if (entryAt(r, c, other)) dir = other;
+        } else {
+            active = { r: r, c: c };
+            if (!entryAt(r, c, dir)) dir = dir === 'A' ? 'D' : 'A';
         }
-        setHint(msg);
-        Arcade.audio.play('denied');
+        Arcade.audio.play('tap');
+        paint();
+    }
+
+    function advance() {
+        var e = currentEntry();
+        if (!e) return;
+        var cs = entryCells(e);
+        for (var i = 0; i < cs.length; i++) {
+            if (cs[i].r === active.r && cs[i].c === active.c && i < cs.length - 1) {
+                active = { r: cs[i + 1].r, c: cs[i + 1].c };
+                return;
+            }
+        }
     }
 
     function onKey(k) {
         if (over) return;
-        if (k === 'ENTER') { submit(); return; }
+        if (k === 'DIR') { toggleDir(); return; }
         if (k === 'BACK') {
-            if (cur.length) { cur = cur.slice(0, -1); paint(); Arcade.audio.play('tap'); }
+            var kk = key(active.r, active.c);
+            if (letters[kk]) { delete letters[kk]; }
+            else {
+                var e = currentEntry(); if (e) { var cs = entryCells(e); for (var i = 0; i < cs.length; i++) { if (cs[i].r === active.r && cs[i].c === active.c && i > 0) { active = { r: cs[i - 1].r, c: cs[i - 1].c }; delete letters[key(active.r, active.c)]; break; } } }
+            }
+            paint();
+            Arcade.audio.play('tap');
             return;
         }
-        if (!/^[A-Z]$/.test(k) || cur.length >= COLS) return;
-        cur += k.toLowerCase();
+        if (!/^[A-Z]$/.test(k)) return;
+        letters[key(active.r, active.c)] = k.toLowerCase();
         paint();
-        popTile();
         Arcade.audio.play('move');
+        checkSolved();
+        advance();
+        paint();
     }
 
-    function submit() {
-        if (cur.length < COLS) { deny('Not enough letters'); return; }
-        if (WORDS.indexOf(cur) === -1) { deny('Not in word list'); return; }
-        var states = scoreWord(cur);
-        for (var i = 0; i < COLS; i++) {
-            var L = cur[i];
-            if (!keyState[L] || rank(states[i]) > rank(keyState[L])) keyState[L] = states[i];
+    function toggleDir() {
+        var other = dir === 'A' ? 'D' : 'A';
+        if (entryAt(active.r, active.c, other)) { dir = other; paint(); Arcade.audio.play('tap'); }
+    }
+
+    function checkSolved() {
+        var newly = [];
+        for (var i = 0; i < entries.length; i++) {
+            var e = entries[i];
+            if (solved[entryKey(e)]) continue;
+            var cs = entryCells(e), ok = true;
+            for (var j = 0; j < cs.length; j++) {
+                var L = letters[key(cs[j].r, cs[j].c)] || '';
+                if (L !== cells[cs[j].r][cs[j].c]) { ok = false; break; }
+            }
+            if (ok) {
+                solved[entryKey(e)] = true;
+                newly.push(e);
+            }
         }
-        guesses.push(cur);
-        cur = '';
-        var won = states.every(function (s) { return s === 'hit'; });
-        save();
-        paint();
-        if (won) {
+        if (newly.length) {
             Arcade.audio.play('merge');
             Arcade.haptics.buzz('light');
-            win();
-        } else if (guesses.length >= ROWS) {
-            lose();
-        } else {
-            Arcade.audio.play('bounce');
+            for (var n = 0; n < newly.length; n++) {
+                var ek = entryKey(newly[n]);
+                glowing[ek] = true;
+                (function (k) {
+                    setTimeout(function () { delete glowing[k]; paint(); }, 1100);
+                })(ek);
+            }
+            paint();
+            var allSolved = entries.every(function (en) { return solved[entryKey(en)]; });
+            if (allSolved) win();
         }
     }
 
@@ -390,37 +454,33 @@
         Arcade.haptics.buzz('success');
         Arcade.ui.setScore(String(streak).padStart(3, '0'));
         Arcade.ui.gameOver({
-            title: 'FIVE LETTER',
-            label: 'Solved in ' + guesses.length + ' of 6 · streak',
+            title: 'SOLVED',
+            label: 'Mini complete · streak',
             score: streak,
             best: res.best, isNew: res.isNew,
-            onReplay: function () { reset(true); }
-        });
-    }
-
-    function lose() {
-        over = true;
-        streak = 0;
-        saveStreak();
-        try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ignore */ }
-        Arcade.audio.play('boom');
-        Arcade.ui.setScore('000');
-        Arcade.ui.gameOver({
-            title: 'FIVE LETTER',
-            label: 'The word was ' + answer.toUpperCase(),
-            score: '0/' + ROWS,
-            best: Arcade.scores.best('five-letter'),
-            isNew: false,
-            onReplay: function () { reset(true); }
+            onReplay: function () { nextPuzzle(); }
         });
     }
 
     document.addEventListener('keydown', function (e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
-        if (e.key === 'Enter') { e.preventDefault(); onKey('ENTER'); }
-        else if (e.key === 'Backspace') { e.preventDefault(); onKey('BACK'); }
+        if (e.key === 'Backspace') { e.preventDefault(); onKey('BACK'); }
+        else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onKey('DIR'); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); move(-1, 0); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); move(1, 0); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); move(0, -1); }
+        else if (e.key === 'ArrowDown') { e.preventDefault(); move(0, 1); }
         else if (/^[a-zA-Z]$/.test(e.key)) onKey(e.key.toUpperCase());
     });
+
+    function move(dr, dc) {
+        if (over) return;
+        var r = active.r + dr, c = active.c + dc;
+        while (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
+            if (cells[r][c] !== '#') { active = { r: r, c: c }; paint(); return; }
+            r += dr; c += dc;
+        }
+    }
 
     Arcade.init({
         slug: 'five-letter',
@@ -430,7 +490,8 @@
         onResume: function () {}
     });
 
-    reset(false);
+    streak = readStreak();
+    load(Math.floor(Math.random() * PUZZLES.length));
 })();
 </script>
 
