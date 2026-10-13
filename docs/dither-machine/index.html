@@ -166,6 +166,20 @@
             color: var(--nav-text);
             opacity: 0.6;
             transition: opacity 0.2s ease, color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-back svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
         }
 
         .nav-back:hover { opacity: 1; color: var(--accent); }
@@ -670,10 +684,6 @@
             #theme-toggle .theme-toggle__icon--moon { transform: scale(-0.6, -0.6) rotate(15deg); }
             :root[data-theme="dark"] #theme-toggle .theme-toggle__icon--moon { transform: scale(-1, -1) rotate(15deg); }
         }
-            :root[data-theme="dark"] #theme-toggle .theme-toggle__mover {
-                transform: translate(-50%, -50%) rotate(-180deg);
-            }
-        }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -716,7 +726,7 @@
 <nav>
     <a href="https://beben.design" class="logo">Beben Design</a>
     <div class="nav-right">
-        <a href="https://beben.design/tools/" class="nav-back">&larr; Tools</a>
+        <a href="https://beben.design/tools/" class="nav-back"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Tools</a>
         <button id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
             <span class="theme-toggle__label theme-toggle__label--light" aria-hidden="true">LIGHT</span>
             <span class="theme-toggle__label theme-toggle__label--dark" aria-hidden="true">DARK</span>

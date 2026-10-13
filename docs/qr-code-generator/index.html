@@ -7,19 +7,19 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>QR Code Generator - Beben Design Tools</title>
-    <meta name="description" content="Generate clean, watermark-free QR codes. Export as SVG at 1000x1000px. Free browser tool by Beben Design: no server, no sign-up, works offline.">
+    <title>Free QR Code Generator, Customizable and Unlimited - Beben Design</title>
+    <meta name="description" content="Make unlimited free QR codes with custom colors, patterns, frames, and logos. Export SVG or PNG. No sign-up, no watermark, works offline.">
     <link rel="canonical" href="https://beben.design/qr-code-generator/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/qr-code-generator/">
-    <meta property="og:title" content="QR Code Generator - Beben Design Tools">
-    <meta property="og:description" content="Generate clean, watermark-free QR codes. Export as SVG at 1000x1000px. Free browser tool by Beben Design: no server, no sign-up, works offline.">
+    <meta property="og:title" content="Free QR Code Generator, Customizable and Unlimited - Beben Design">
+    <meta property="og:description" content="Make unlimited free QR codes with custom colors, patterns, frames, and logos. Export SVG or PNG. No sign-up, no watermark, works offline.">
     <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="QR Code Generator - Beben Design Tools">
-    <meta property="twitter:description" content="Generate clean, watermark-free QR codes. Export as SVG at 1000x1000px. Free browser tool by Beben Design: no server, no sign-up, works offline.">
+    <meta property="twitter:title" content="Free QR Code Generator, Customizable and Unlimited - Beben Design">
+    <meta property="twitter:description" content="Make unlimited free QR codes with custom colors, patterns, frames, and logos. Export SVG or PNG. No sign-up, no watermark, works offline.">
     <meta property="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <!-- Absolute so a downloaded copy still resolves them when online. -->
@@ -166,6 +166,20 @@
             color: var(--nav-text);
             opacity: 0.6;
             transition: opacity 0.2s ease, color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-back svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
         }
 
         .nav-back:hover { opacity: 1; color: var(--accent); }
@@ -670,10 +684,6 @@
             #theme-toggle .theme-toggle__icon--moon { transform: scale(-0.6, -0.6) rotate(15deg); }
             :root[data-theme="dark"] #theme-toggle .theme-toggle__icon--moon { transform: scale(-1, -1) rotate(15deg); }
         }
-            :root[data-theme="dark"] #theme-toggle .theme-toggle__mover {
-                transform: translate(-50%, -50%) rotate(-180deg);
-            }
-        }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -686,29 +696,373 @@
         /* ════════════════════════════════════════════════════════════
            TOOL-SPECIFIC STYLES
         ════════════════════════════════════════════════════════════ */
-        /* The QR itself stays black on off-white in both themes: scanners need
-           the contrast, and inverted codes fail on a lot of phone cameras. */
-        .qr-frame {
-            background: #F7F4F3;
-            padding: 2rem;
-            min-height: 220px;
+        /* QR customization editor. Page-scoped overrides plus editor controls.
+           The shared shell stays untouched. The QR ink is user controlled, so the
+           old forced black on off-white preview rules are gone. */
+
+        /* Hero layout: the info column opens as a full-width hero band,
+           the editor sits below it. The shared shell stays untouched. */
+        main {
+            max-width: 1100px;
+            grid-template-columns: 1fr;
         }
 
-        .qr-frame svg {
-            max-width: 200px;
+        .info-col {
+            position: static;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 0;
+        }
+
+        .tool-col { padding: 2.5rem 0 0; }
+
+        .qr-hero {
+            margin: 0 0 2rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+
+        .qr-hero img {
+            display: block;
             width: 100%;
             height: auto;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
         }
 
-        .qr-frame svg rect { fill: #F7F4F3 !important; }
-        .qr-frame svg path { fill: #141414 !important; }
+        .qr-editor {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .qr-controls { min-width: 0; }
+
+        .qr-side {
+            position: sticky;
+            top: 84px;
+            min-width: 0;
+        }
+
+        /* Sections */
+        .qr-section {
+            border-top: 1px solid var(--rule);
+            padding: 1rem 0 1.25rem;
+        }
+
+        .qr-section summary {
+            cursor: pointer;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .qr-section summary::-webkit-details-marker { display: none; }
+
+        .qr-section summary::after {
+            content: '+';
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1;
+            color: var(--muted);
+        }
+
+        .qr-section[open] summary::after { content: '-'; }
+
+        .qr-desc {
+            font-size: 0.72rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0.5rem 0 0.9rem;
+        }
+
+        /* Tiles */
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tile-grid--4 { grid-template-columns: repeat(4, 1fr); }
+        .tile-grid--3 { grid-template-columns: repeat(3, 1fr); }
+
+        .tile {
+            background: var(--card-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text);
+            font-family: inherit;
+            padding: 0.5rem 0.35rem 0.45rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            min-width: 0;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .tile:hover { border-color: var(--text); }
+
+        .tile.selected {
+            border-color: var(--accent);
+            box-shadow: inset 0 0 0 1px var(--accent);
+        }
+
+        .tile svg {
+            width: 100%;
+            height: 34px;
+            display: block;
+        }
+
+        .tile span {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .tile.selected span { color: var(--text); }
+
+        /* Color rows */
+        .color-row {
+            display: grid;
+            grid-template-columns: 92px 44px minmax(0, 1fr);
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .color-row label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .color-row input[type="color"] {
+            width: 44px;
+            height: 32px;
+            padding: 2px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            cursor: pointer;
+        }
+
+        .color-row .color-hex { margin-bottom: 0; }
+
+        .color-hex {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+
+        .qr-row { margin: 0.4rem 0 0.8rem; }
+        .qr-row--gap {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .qr-link {
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0.7rem 0;
+            cursor: pointer;
+        }
+
+        .check-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+        }
+
+        .qr-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            padding: 0.65rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .qr-btn:hover { background: var(--text); color: var(--bg); }
+
+        .qr-btn--ghost { background: none; }
+
+        .qr-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+        .qr-btn[disabled]:hover { background: var(--input-bg); color: var(--text); }
+        .qr-btn--ghost[disabled]:hover { background: none; }
+
+        #resetDesignBtn { margin-top: 0.5rem; width: 100%; }
+
+        #logoShapeControl { margin-bottom: 1rem; }
+
+        /* Preview */
+        .qr-frame {
+            background: #ffffff;
+            padding: 1.5rem;
+            min-height: 300px;
+            overflow: hidden;
+        }
+
+        .qr-frame.is-transparent {
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(45deg, #d8d8d8 25%, transparent 25%),
+                linear-gradient(-45deg, #d8d8d8 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #d8d8d8 75%),
+                linear-gradient(-45deg, transparent 75%, #d8d8d8 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+        }
+
+        :root[data-theme="dark"] .qr-frame { background-color: #ffffff; }
+        :root[data-theme="dark"] .qr-frame.is-transparent { background-color: #2a2a2a; }
+
+        .qr-frame svg {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            display: block;
+        }
 
         .qr-error {
             font-size: 0.75rem;
             color: #141414;
             text-align: center;
             line-height: 1.7;
-            max-width: 26ch;
+            max-width: 30ch;
+        }
+
+        .qr-warn {
+            border: 1px solid var(--accent);
+            color: var(--text);
+            font-size: 0.68rem;
+            line-height: 1.6;
+            padding: 0.6rem 0.8rem;
+            margin: 0 0 0.8rem;
+        }
+
+        .qr-warn[hidden] { display: none; }
+
+        #qrWarnings { margin-bottom: 0.75rem; }
+        #qrWarnings:empty { margin-bottom: 0; }
+
+        .qr-actions {
+            grid-auto-flow: row;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .qr-actions #copyBtn { grid-column: 1 / -1; }
+
+        /* Frame option spacing */
+        #frameOptions .tool-input { margin-bottom: 1rem; }
+        #frameOptions .color-row:last-of-type { margin-bottom: 1rem; }
+
+        /* FAQ */
+        .qr-faq { margin-top: 2.5rem; }
+
+        .qr-faq-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 0.5rem 0 0.75rem;
+        }
+
+        .qr-faq-item { border-top: 1px solid var(--rule); }
+
+        .qr-faq-item:last-of-type { border-bottom: 1px solid var(--rule); }
+
+        .qr-faq-item summary {
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 0.8rem 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .qr-faq-item summary::-webkit-details-marker { display: none; }
+
+        .qr-faq-item summary::after {
+            content: '+';
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .qr-faq-item[open] summary::after { content: '-'; }
+
+        .qr-faq-item p {
+            font-size: 0.75rem;
+            color: var(--muted);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0 0 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1020px) {
+            .info-col { padding: 2rem 0; }
+
+            .tool-col { padding: 2rem 0 0; }
+
+            .qr-editor { grid-template-columns: minmax(0, 1fr) 310px; }
+        }
+
+        @media (max-width: 860px) {
+            .qr-editor { grid-template-columns: 1fr; }
+
+            .qr-side {
+                position: static;
+                order: -1;
+            }
+
+            .qr-frame { min-height: 240px; }
+
+            .tile-grid--4 { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .tile-grid { grid-template-columns: repeat(3, 1fr); }
+            .tile-grid--4 { grid-template-columns: repeat(2, 1fr); }
+
+            .color-row { grid-template-columns: 80px 40px minmax(0, 1fr); }
+
+            .qr-actions { grid-template-columns: 1fr; }
+            .qr-actions #copyBtn { grid-column: auto; }
         }
     </style>
 </head>
@@ -720,7 +1074,7 @@
 <nav>
     <a href="https://beben.design" class="logo">Beben Design</a>
     <div class="nav-right">
-        <a href="https://beben.design/tools/" class="nav-back">&larr; Tools</a>
+        <a href="https://beben.design/tools/" class="nav-back"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Tools</a>
         <button id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
             <span class="theme-toggle__label theme-toggle__label--light" aria-hidden="true">LIGHT</span>
             <span class="theme-toggle__label theme-toggle__label--dark" aria-hidden="true">DARK</span>
@@ -792,19 +1146,19 @@
 
         <p class="page-label">[ TOOLS.01 ] - Generator</p>
 
-        <h1>QR Code<br><span class="highlight-box">Generator</span></h1>
+        <h1>Free QR<br><span class="highlight-box">Generator</span></h1>
 
-        <p class="description">Paste any URL, plain text, phone number, or contact info and get a clean, scannable QR code instantly. No watermarks, no limits, no data leaves your browser.</p>
+        <p class="description">Make unlimited free QR codes from any URL, text, phone number, or contact info. Customize the pattern, colors, finders, frame, and logo, then export SVG or PNG. No watermarks, no limits, no data leaves your browser.</p>
 
         <div class="output-specs">
             <h2>// Expected Output</h2>
             <div class="spec-row">
                 <span class="spec-label">Format</span>
-                <span class="spec-value">SVG (vector, infinitely scalable)</span>
+                <span class="spec-value">SVG (vector) + PNG (raster)</span>
             </div>
             <div class="spec-row">
                 <span class="spec-label">Export size</span>
-                <span class="spec-value accent">1000 x 1000 px</span>
+                <span class="spec-value accent">1000 px SVG, 2000 px PNG</span>
             </div>
             <div class="spec-row">
                 <span class="spec-label">Watermark</span>
@@ -834,7 +1188,16 @@
 
     <!-- RIGHT: Tool column -->
     <div class="tool-col" id="tool">
-        <!-- Input -->
+        <figure class="qr-hero">
+            <img
+                src="https://beben.design/assets/images/qr-riverlands-cover.webp"
+                alt="Isometric voxel river landscape with a tiny explorer"
+                width="1600"
+                height="900"
+            >
+        </figure>
+
+        <!-- Content -->
         <label class="field-label" for="urlInput">// Input - URL or Text</label>
         <input
             type="text"
@@ -855,27 +1218,283 @@
                 <button type="button" class="seg-btn" data-value="Q" aria-pressed="false">Q - 25%</button>
                 <button type="button" class="seg-btn" data-value="H" aria-pressed="false">H - 30%</button>
             </div>
-            <p class="hint">Higher levels add redundancy. Use H if you plan to overlay a logo on the code.</p>
+            <p class="hint">Higher levels add redundancy. Use H when a logo sits on the code. Adding a logo switches this to H automatically, and the choice stays manual after that.</p>
         </div>
 
-        <!-- Preview -->
-        <div class="preview-label">
-            <span>// Preview</span>
-            <span class="preview-status" id="previewStatus">READY</span>
-        </div>
-        <div class="frame frame--center qr-frame" id="qrFrame"></div>
+        <div class="qr-editor">
+            <div class="qr-controls">
+                <!-- Pattern -->
+                <details class="qr-section" open>
+                    <summary>Pattern</summary>
+                    <p class="qr-desc">The shape of the data modules. Finder marks stay separate below.</p>
+                    <div class="tile-grid" id="patternGrid" role="group" aria-label="Module pattern">
+                        <button type="button" class="tile selected" data-value="square" aria-pressed="true" title="Classic square modules">
+                            <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="24" y="2" width="9" height="9"/><rect x="35" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/><rect x="35" y="13" width="9" height="9"/><rect x="2" y="24" width="9" height="6"/><rect x="13" y="24" width="9" height="6"/><rect x="24" y="24" width="9" height="6"/><rect x="35" y="24" width="9" height="6"/></g></svg>
+                            <span>Square</span>
+                        </button>
+                        <button type="button" class="tile" data-value="rounded" aria-pressed="false" title="Rounded modules">
+                            <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="9" height="9" rx="3"/><rect x="13" y="2" width="9" height="9" rx="3"/><rect x="24" y="2" width="9" height="9" rx="3"/><rect x="35" y="2" width="9" height="9" rx="3"/><rect x="2" y="13" width="9" height="9" rx="3"/><rect x="13" y="13" width="9" height="9" rx="3"/><rect x="35" y="13" width="9" height="9" rx="3"/><rect x="2" y="24" width="9" height="6" rx="3"/><rect x="13" y="24" width="9" height="6" rx="3"/><rect x="24" y="24" width="9" height="6" rx="3"/><rect x="35" y="24" width="9" height="6" rx="3"/></g></svg>
+                            <span>Rounded</span>
+                        </button>
+                        <button type="button" class="tile" data-value="dots" aria-pressed="false" title="Circular dots">
+                            <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><circle cx="6.5" cy="6.5" r="4"/><circle cx="17.5" cy="6.5" r="4"/><circle cx="28.5" cy="6.5" r="4"/><circle cx="39.5" cy="6.5" r="4"/><circle cx="6.5" cy="17.5" r="4"/><circle cx="17.5" cy="17.5" r="4"/><circle cx="39.5" cy="17.5" r="4"/><circle cx="6.5" cy="27" r="4"/><circle cx="17.5" cy="27" r="4"/><circle cx="28.5" cy="27" r="4"/><circle cx="39.5" cy="27" r="4"/></g></svg>
+                            <span>Dots</span>
+                        </button>
+                        <button type="button" class="tile" data-value="extra-rounded" aria-pressed="false" title="Extra rounded modules">
+                            <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="9" height="9" rx="4.5"/><rect x="13" y="2" width="9" height="9" rx="4.5"/><rect x="24" y="2" width="9" height="9" rx="4.5"/><rect x="35" y="2" width="9" height="9" rx="4.5"/><rect x="2" y="13" width="9" height="9" rx="4.5"/><rect x="13" y="13" width="9" height="9" rx="4.5"/><rect x="35" y="13" width="9" height="9" rx="4.5"/><rect x="2" y="24" width="9" height="6" rx="3"/><rect x="13" y="24" width="9" height="6" rx="3"/><rect x="24" y="24" width="9" height="6" rx="3"/><rect x="35" y="24" width="9" height="6" rx="3"/></g></svg>
+                            <span>Soft</span>
+                        </button>
+                        <button type="button" class="tile" data-value="diamond" aria-pressed="false" title="Diamond modules">
+                            <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><path d="M6.5 2.5 10.5 6.5 6.5 10.5 2.5 6.5Z"/><path d="M17.5 2.5 21.5 6.5 17.5 10.5 13.5 6.5Z"/><path d="M28.5 2.5 32.5 6.5 28.5 10.5 24.5 6.5Z"/><path d="M39.5 2.5 43.5 6.5 39.5 10.5 35.5 6.5Z"/><path d="M6.5 13.5 10.5 17.5 6.5 21.5 2.5 17.5Z"/><path d="M17.5 13.5 21.5 17.5 17.5 21.5 13.5 17.5Z"/><path d="M39.5 13.5 43.5 17.5 39.5 21.5 35.5 17.5Z"/></g></svg>
+                            <span>Diamond</span>
+                        </button>
+                        <button type="button" class="tile" data-value="bars" aria-pressed="false" title="Horizontal bars">
+                            <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="3" width="9" height="7" rx="3.5"/><rect x="13" y="3" width="9" height="7" rx="3.5"/><rect x="24" y="3" width="9" height="7" rx="3.5"/><rect x="35" y="3" width="9" height="7" rx="3.5"/><rect x="2" y="14" width="9" height="7" rx="3.5"/><rect x="13" y="14" width="9" height="7" rx="3.5"/><rect x="35" y="14" width="9" height="7" rx="3.5"/><rect x="2" y="25" width="9" height="5" rx="2.5"/><rect x="13" y="25" width="9" height="5" rx="2.5"/><rect x="24" y="25" width="9" height="5" rx="2.5"/><rect x="35" y="25" width="9" height="5" rx="2.5"/></g></svg>
+                            <span>Bars</span>
+                        </button>
+                    </div>
+                </details>
 
-        <!-- Actions -->
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary" id="downloadBtn">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export SVG
-            </button>
-            <button type="button" class="btn btn-secondary" id="copyBtn">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                Copy SVG Code
-            </button>
+                <!-- Colors -->
+                <details class="qr-section" open>
+                    <summary>Colors</summary>
+                    <p class="qr-desc">Pick each ink separately. The preview updates at once.</p>
+                    <div class="color-row">
+                        <label for="fgColor">Modules</label>
+                        <input type="color" id="fgColor" value="#141414">
+                        <input type="text" id="fgHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Module color hex">
+                    </div>
+                    <div class="color-row">
+                        <label for="bgColor">Background</label>
+                        <input type="color" id="bgColor" value="#ffffff">
+                        <input type="text" id="bgHex" class="tool-input color-hex" value="#FFFFFF" spellcheck="false" autocomplete="off" aria-label="Background color hex">
+                    </div>
+                    <div class="qr-row">
+                        <button type="button" class="qr-link" id="swapColorsBtn">Swap foreground and background</button>
+                    </div>
+                    <label class="check-row" for="transparentBg">
+                        <input type="checkbox" id="transparentBg">
+                        <span>Transparent background</span>
+                    </label>
+                    <p class="hint">Transparent exports carry no background rect, so the page behind shows through. Test the scan on the real surface.</p>
+                    <p class="qr-warn" id="contrastWarn" hidden></p>
+                </details>
+
+                <!-- Finder -->
+                <details class="qr-section">
+                    <summary>Finder marks</summary>
+                    <p class="qr-desc">The three corner squares. Shape and ink change, position never moves.</p>
+                    <span class="field-label">Outer frame shape</span>
+                    <div class="tile-grid tile-grid--4" id="finderFrameGrid" role="group" aria-label="Finder outer shape">
+                        <button type="button" class="tile selected" data-value="default" aria-pressed="true" title="Default finder frame">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="4" y="4" width="24" height="24"/></g><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>
+                            <span>Default</span>
+                        </button>
+                        <button type="button" class="tile" data-value="square" aria-pressed="false" title="Square finder frame">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="4" y="4" width="24" height="24"/></g><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>
+                            <span>Square</span>
+                        </button>
+                        <button type="button" class="tile" data-value="rounded" aria-pressed="false" title="Rounded finder frame">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="4" y="4" width="24" height="24" rx="6"/></g><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>
+                            <span>Rounded</span>
+                        </button>
+                        <button type="button" class="tile" data-value="circle" aria-pressed="false" title="Circular finder frame">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><circle cx="16" cy="16" r="12"/></g><circle cx="16" cy="16" r="4" fill="currentColor"/></svg>
+                            <span>Circle</span>
+                        </button>
+                    </div>
+                    <span class="field-label">Center shape</span>
+                    <div class="tile-grid tile-grid--3" id="finderCenterGrid" role="group" aria-label="Finder center shape">
+                        <button type="button" class="tile selected" data-value="default" aria-pressed="true" title="Default finder center">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="11" width="10" height="10" fill="currentColor"/></svg>
+                            <span>Default</span>
+                        </button>
+                        <button type="button" class="tile" data-value="square" aria-pressed="false" title="Square finder center">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="11" width="10" height="10" fill="currentColor"/></svg>
+                            <span>Square</span>
+                        </button>
+                        <button type="button" class="tile" data-value="circle" aria-pressed="false" title="Circular finder center">
+                            <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="6" fill="currentColor"/></svg>
+                            <span>Circle</span>
+                        </button>
+                    </div>
+                    <div class="color-row">
+                        <label for="finderFrameColor">Outer ink</label>
+                        <input type="color" id="finderFrameColor" value="#141414">
+                        <input type="text" id="finderFrameHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Finder outer color hex">
+                    </div>
+                    <div class="color-row">
+                        <label for="finderCenterColor">Center ink</label>
+                        <input type="color" id="finderCenterColor" value="#141414">
+                        <input type="text" id="finderCenterHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Finder center color hex">
+                    </div>
+                    <p class="hint">Default marks read on every scanner. Rounded and circular marks suit styled prints, test them on the target reader first.</p>
+                </details>
+
+                <!-- Frame -->
+                <details class="qr-section">
+                    <summary>Frame</summary>
+                    <p class="qr-desc">A border drawn inside the exported file, never a preview overlay.</p>
+                    <div class="tile-grid" id="frameGrid" role="group" aria-label="Frame style">
+                        <button type="button" class="tile selected" data-value="none" aria-pressed="true" title="No frame">
+                            <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="12" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/></svg>
+                            <span>None</span>
+                        </button>
+                        <button type="button" class="tile" data-value="outline" aria-pressed="false" title="Simple outlined frame">
+                            <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="2" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="9" width="18" height="18" fill="currentColor" opacity="0.85"/></svg>
+                            <span>Outline</span>
+                        </button>
+                        <button type="button" class="tile" data-value="rounded" aria-pressed="false" title="Rounded frame">
+                            <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="2" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="9" width="18" height="18" fill="currentColor" opacity="0.85"/></svg>
+                            <span>Rounded</span>
+                        </button>
+                        <button type="button" class="tile" data-value="label" aria-pressed="false" title="Frame with bottom label">
+                            <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="2" width="32" height="26" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="7" width="18" height="14" fill="currentColor" opacity="0.85"/><rect x="20" y="30" width="8" height="2" fill="currentColor"/></svg>
+                            <span>Label</span>
+                        </button>
+                        <button type="button" class="tile" data-value="badge" aria-pressed="false" title="Compact badge sticker">
+                            <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="6" y="2" width="36" height="32" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="16" y="9" width="16" height="16" fill="currentColor" opacity="0.85"/></svg>
+                            <span>Badge</span>
+                        </button>
+                        <button type="button" class="tile" data-value="banner" aria-pressed="false" title="Banner frame with call to action">
+                            <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="8" width="32" height="26" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="2" width="32" height="8" fill="currentColor"/><rect x="16" y="14" width="16" height="14" fill="currentColor" opacity="0.85"/></svg>
+                            <span>Banner</span>
+                        </button>
+                    </div>
+                    <div id="frameOptions" hidden>
+                        <label class="field-label" for="frameLabel">Label text</label>
+                        <input type="text" id="frameLabel" class="tool-input" value="Scan me" maxlength="48" autocomplete="off" spellcheck="false">
+                        <div class="color-row">
+                            <label for="frameBorderColor">Border</label>
+                            <input type="color" id="frameBorderColor" value="#141414">
+                            <input type="text" id="frameBorderHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Frame border color hex">
+                        </div>
+                        <div class="color-row">
+                            <label for="frameBgColor">Frame fill</label>
+                            <input type="color" id="frameBgColor" value="#ffffff">
+                            <input type="text" id="frameBgHex" class="tool-input color-hex" value="#FFFFFF" spellcheck="false" autocomplete="off" aria-label="Frame fill color hex">
+                        </div>
+                        <div class="color-row">
+                            <label for="frameLabelColor">Label ink</label>
+                            <input type="color" id="frameLabelColor" value="#141414">
+                            <input type="text" id="frameLabelHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Label color hex">
+                        </div>
+                        <label class="field-label" for="frameRadiusRange">Corner radius</label>
+                        <div class="range-row">
+                            <input type="range" id="frameRadiusRange" min="0" max="40" step="1" value="12">
+                            <span class="range-value" id="frameRadiusValue">12</span>
+                        </div>
+                        <label class="field-label" for="framePadRange">Padding</label>
+                        <div class="range-row">
+                            <input type="range" id="framePadRange" min="1" max="6" step="1" value="2">
+                            <span class="range-value" id="framePadValue">2</span>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Logo -->
+                <details class="qr-section">
+                    <summary>Logo</summary>
+                    <p class="qr-desc">An image centered on the code. Files stay in the tab and embed into the export.</p>
+                    <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml" class="visually-hidden">
+                    <div class="qr-row qr-row--gap">
+                        <button type="button" class="qr-btn" id="logoUploadBtn">Upload logo</button>
+                        <button type="button" class="qr-btn qr-btn--ghost" id="logoRemoveBtn" disabled>Remove</button>
+                    </div>
+                    <p class="hint">PNG or JPEG up to 5 MB, SVG rasterized locally first. Large logos need error correction H.</p>
+                    <p class="qr-warn" id="logoWarn" hidden></p>
+                    <div id="logoOptions" hidden>
+                        <label class="field-label" for="logoSizeRange">Logo size</label>
+                        <div class="range-row">
+                            <input type="range" id="logoSizeRange" min="15" max="30" step="1" value="22">
+                            <span class="range-value" id="logoSizeValue">22%</span>
+                        </div>
+                        <label class="check-row" for="logoBacking">
+                            <input type="checkbox" id="logoBacking" checked>
+                            <span>Backing plate behind logo</span>
+                        </label>
+                        <span class="field-label" id="logoShapeLabel">Backing shape</span>
+                        <div class="seg" id="logoShapeControl" role="group" aria-labelledby="logoShapeLabel">
+                            <button type="button" class="seg-btn" data-value="square" aria-pressed="false">Square</button>
+                            <button type="button" class="seg-btn active" data-value="rounded" aria-pressed="true">Rounded</button>
+                            <button type="button" class="seg-btn" data-value="circle" aria-pressed="false">Circle</button>
+                        </div>
+                        <label class="field-label" for="logoRadiusRange">Backing corner radius</label>
+                        <div class="range-row">
+                            <input type="range" id="logoRadiusRange" min="0" max="50" step="1" value="18">
+                            <span class="range-value" id="logoRadiusValue">18</span>
+                        </div>
+                    </div>
+                </details>
+
+                <button type="button" class="qr-btn qr-btn--ghost" id="resetDesignBtn">Reset design</button>
+            </div>
+
+            <div class="qr-side">
+                <div class="preview-label">
+                    <span>// Preview</span>
+                    <span class="preview-status" id="previewStatus">READY</span>
+                </div>
+                <div class="frame frame--center qr-frame" id="qrFrame"></div>
+                <div id="qrWarnings" aria-live="polite"></div>
+                <div class="btn-group qr-actions">
+                    <button type="button" class="btn btn-primary" id="downloadBtn">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Export SVG
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="pngBtn">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        Export PNG
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="copyBtn">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy SVG Code
+                    </button>
+                </div>
+                <p class="hint">Preview and export share one renderer. Nothing typed or uploaded leaves the tab. A downloaded copy works offline.</p>
+            </div>
         </div>
+
+        <!-- Facts -->
+        <div class="qr-faq">
+            <span class="field-label">// Questions</span>
+            <h2 class="qr-faq-title">Good to know</h2>
+            <details class="qr-faq-item">
+                <summary>Is this QR code generator really free</summary>
+                <p>Yes. No account, no watermark, and no limit on the number of codes. Every feature on this page is included.</p>
+            </details>
+            <details class="qr-faq-item">
+                <summary>Do the codes expire</summary>
+                <p>No. A QR code carries its own text, so a saved SVG or PNG scans forever, whether or not this page still exists.</p>
+            </details>
+            <details class="qr-faq-item">
+                <summary>What can a code hold</summary>
+                <p>URLs, plain text, phone numbers, and contact details typed as text. Longer text draws a denser matrix, so short links scan the easiest.</p>
+            </details>
+            <details class="qr-faq-item">
+                <summary>Is anything uploaded</summary>
+                <p>No. Content and logos stay in the browser tab, and the downloaded single file works offline. Nothing typed here reaches a server.</p>
+            </details>
+            <details class="qr-faq-item">
+                <summary>Why do some styled codes fail to scan</summary>
+                <p>Scanners need contrast and intact corner marks. Keep dark ink on a pale ground, test rounded or circular finders on the target reader, and pair logos with H error correction at modest sizes.</p>
+            </details>
+            <details class="qr-faq-item">
+                <summary>SVG or PNG, which export should be picked</summary>
+                <p>SVG for print and signage, since vectors scale without end. PNG for documents and slides that need pixels. Both carry the same design.</p>
+            </details>
+        </div>
+
+        <script type="application/ld+json">
+        {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+        {"@type":"Question","name":"Is this QR code generator really free","acceptedAnswer":{"@type":"Answer","text":"Yes. No account, no watermark, and no limit on the number of codes. Every feature on this page is included."}},
+        {"@type":"Question","name":"Do the codes expire","acceptedAnswer":{"@type":"Answer","text":"No. A QR code carries its own text, so a saved SVG or PNG scans forever, whether or not this page still exists."}},
+        {"@type":"Question","name":"What can a code hold","acceptedAnswer":{"@type":"Answer","text":"URLs, plain text, phone numbers, and contact details typed as text. Longer text draws a denser matrix, so short links scan the easiest."}},
+        {"@type":"Question","name":"Is anything uploaded","acceptedAnswer":{"@type":"Answer","text":"No. Content and logos stay in the browser tab, and the downloaded single file works offline. Nothing typed here reaches a server."}},
+        {"@type":"Question","name":"Why do some styled codes fail to scan","acceptedAnswer":{"@type":"Answer","text":"Scanners need contrast and intact corner marks. Keep dark ink on a pale ground, test rounded or circular finders on the target reader, and pair logos with H error correction at modest sizes."}},
+        {"@type":"Question","name":"SVG or PNG, which export should be picked","acceptedAnswer":{"@type":"Answer","text":"SVG for print and signage, since vectors scale without end. PNG for documents and slides that need pixels. Both carry the same design."}}
+        ]}
+        </script>
     </div>
 
 </main>
@@ -1033,27 +1652,297 @@ var Tool = (function () {
 (function () {
     'use strict';
 
-    // The library defaults to a byte encoder that truncates every char to
-    // its low 8 bits, which mangles anything outside Latin-1. UTF-8 is the
-    // only sane choice for URLs with accents, emoji, or non-Latin text.
+    // UTF-8 so URLs with accents, emoji, or non-Latin text survive encoding.
     qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
 
     var EXPORT_PX = 1000;
     var QUIET_MODULES = 4;
+    var LOGO_MAX_BYTES = 5 * 1024 * 1024;
 
-    var level = 'L';
+    var DEFAULTS = {
+        ecc: 'L',
+        pattern: 'square',
+        fg: '#141414',
+        bg: '#FFFFFF',
+        transparent: false,
+        finderFrame: 'default',
+        finderCenter: 'default',
+        finderFrameColor: '#141414',
+        finderCenterColor: '#141414',
+        frame: 'none',
+        frameLabel: 'Scan me',
+        frameBorder: '#141414',
+        frameBg: '#FFFFFF',
+        frameLabelColor: '#141414',
+        frameRadius: 12,
+        framePad: 2,
+        logoDataUrl: null,
+        logoSize: 22,
+        logoBacking: true,
+        logoShape: 'rounded',
+        logoRadius: 18
+    };
+
+    var state = {};
+    for (var k in DEFAULTS) state[k] = DEFAULTS[k];
 
     var urlInput = Tool.$('urlInput');
+    var eccControl = Tool.$('eccControl');
     var qrFrame = Tool.$('qrFrame');
     var status = Tool.$('previewStatus');
     var downloadBtn = Tool.$('downloadBtn');
+    var pngBtn = Tool.$('pngBtn');
     var copyBtn = Tool.$('copyBtn');
+    var warningsBox = Tool.$('qrWarnings');
+    var contrastWarn = Tool.$('contrastWarn');
+    var logoWarn = Tool.$('logoWarn');
+
+    function escXml(s) {
+        return String(s).replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function fmt(n) {
+        return String(Math.round(n * 100) / 100);
+    }
+
+    function normalizeHex(raw) {
+        if (!raw) return null;
+        var s = String(raw).trim().replace(/^#/, '');
+        if (/^[0-9a-fA-F]{3}$/.test(s)) {
+            s = s[0] + s[0] + s[1] + s[1] + s[2] + s[2];
+        }
+        if (!/^[0-9a-fA-F]{6}$/.test(s)) return null;
+        return '#' + s.toUpperCase();
+    }
+
+    function hexToRgb(hex) {
+        var h = normalizeHex(hex);
+        if (!h) return null;
+        return {
+            r: parseInt(h.slice(1, 3), 16),
+            g: parseInt(h.slice(3, 5), 16),
+            b: parseInt(h.slice(5, 7), 16)
+        };
+    }
+
+    function luminance(rgb) {
+        function ch(v) {
+            v = v / 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        }
+        return 0.2126 * ch(rgb.r) + 0.7152 * ch(rgb.g) + 0.0722 * ch(rgb.b);
+    }
+
+    function contrastRatio(a, b) {
+        var ra = hexToRgb(a), rb = hexToRgb(b);
+        if (!ra || !rb) return 0;
+        var l1 = luminance(ra), l2 = luminance(rb);
+        if (l1 < l2) { var t = l1; l1 = l2; l2 = t; }
+        return (l1 + 0.05) / (l2 + 0.05);
+    }
 
     function encode(text) {
-        var qr = qrcode(0, level);
+        var qr = qrcode(0, state.ecc);
         qr.addData(text, 'Byte');
         qr.make();
         return qr;
+    }
+
+    function inFinder(r, c, n) {
+        return (r < 7 && c < 7) ||
+            (r < 7 && c >= n - 7) ||
+            (r >= n - 7 && c < 7);
+    }
+
+    function moduleShape(pattern, x, y, cell, fill) {
+        var c = ' fill="' + fill + '"';
+        if (pattern === 'dots') {
+            return '<circle cx="' + fmt(x + cell / 2) + '" cy="' + fmt(y + cell / 2) +
+                '" r="' + fmt(cell * 0.42) + '"' + c + '/>';
+        }
+        if (pattern === 'diamond') {
+            var cx = x + cell / 2, cy = y + cell / 2, r = cell * 0.46;
+            return '<path d="M' + fmt(cx) + ',' + fmt(cy - r) +
+                'L' + fmt(cx + r) + ',' + fmt(cy) +
+                'L' + fmt(cx) + ',' + fmt(cy + r) +
+                'L' + fmt(cx - r) + ',' + fmt(cy) + 'Z"' + c + '/>';
+        }
+        if (pattern === 'rounded') {
+            return '<rect x="' + fmt(x) + '" y="' + fmt(y) + '" width="' + fmt(cell) +
+                '" height="' + fmt(cell) + '" rx="' + fmt(cell * 0.3) + '"' + c + '/>';
+        }
+        if (pattern === 'extra-rounded') {
+            return '<rect x="' + fmt(x) + '" y="' + fmt(y) + '" width="' + fmt(cell) +
+                '" height="' + fmt(cell) + '" rx="' + fmt(cell * 0.48) + '"' + c + '/>';
+        }
+        if (pattern === 'bars') {
+            var iy = y + cell * 0.13, ih = cell * 0.74;
+            return '<rect x="' + fmt(x) + '" y="' + fmt(iy) + '" width="' + fmt(cell) +
+                '" height="' + fmt(ih) + '" rx="' + fmt(cell * 0.3) + '"' + c + '/>';
+        }
+        return '<rect x="' + fmt(x) + '" y="' + fmt(y) + '" width="' + fmt(cell) +
+            '" height="' + fmt(cell) + '"' + c + '/>';
+    }
+
+    function finderSVG(ox, oy, cell, st, middleFill) {
+        var out = '';
+        var outer = st.finderFrameColor, center = st.finderCenterColor;
+        var s7 = cell * 7, s5 = cell * 5, s3 = cell * 3;
+        var shape = st.finderFrame === 'default' ? 'square' : st.finderFrame;
+        if (shape === 'circle') {
+            out += '<circle cx="' + fmt(ox + s7 / 2) + '" cy="' + fmt(oy + s7 / 2) +
+                '" r="' + fmt(s7 / 2) + '" fill="' + outer + '"/>';
+            if (middleFill) {
+                out += '<circle cx="' + fmt(ox + s7 / 2) + '" cy="' + fmt(oy + s7 / 2) +
+                    '" r="' + fmt(cell * 2.5) + '" fill="' + middleFill + '"/>';
+            }
+        } else if (shape === 'rounded') {
+            out += '<rect x="' + fmt(ox) + '" y="' + fmt(oy) + '" width="' + fmt(s7) +
+                '" height="' + fmt(s7) + '" rx="' + fmt(cell * 1.6) + '" fill="' + outer + '"/>';
+            if (middleFill) {
+                out += '<rect x="' + fmt(ox + cell) + '" y="' + fmt(oy + cell) + '" width="' +
+                    fmt(s5) + '" height="' + fmt(s5) + '" rx="' + fmt(cell * 1) +
+                    '" fill="' + middleFill + '"/>';
+            }
+        } else {
+            out += '<rect x="' + fmt(ox) + '" y="' + fmt(oy) + '" width="' + fmt(s7) +
+                '" height="' + fmt(s7) + '" fill="' + outer + '"/>';
+            if (middleFill) {
+                out += '<rect x="' + fmt(ox + cell) + '" y="' + fmt(oy + cell) + '" width="' +
+                    fmt(s5) + '" height="' + fmt(s5) + '" fill="' + middleFill + '"/>';
+            }
+        }
+        var cshape = st.finderCenter === 'default' ? 'square' : st.finderCenter;
+        if (cshape === 'circle') {
+            out += '<circle cx="' + fmt(ox + s7 / 2) + '" cy="' + fmt(oy + s7 / 2) +
+                '" r="' + fmt(cell * 1.5) + '" fill="' + center + '"/>';
+        } else {
+            out += '<rect x="' + fmt(ox + cell * 2) + '" y="' + fmt(oy + cell * 2) +
+                '" width="' + fmt(s3) + '" height="' + fmt(s3) + '" fill="' + center + '"/>';
+        }
+        return out;
+    }
+
+    // Single source of truth for preview and export. cell is the abstract
+    // module size. Export picks cell so the code area is EXPORT_PX wide.
+    function buildSVG(qr, st, cell, forExport) {
+        var n = qr.getModuleCount();
+        var quiet = QUIET_MODULES;
+        var hasFrame = st.frame !== 'none';
+        var padModules = hasFrame ? Math.max(1, st.framePad) : 0;
+        if (st.frame === 'badge') padModules = Math.max(3, st.framePad);
+        var qrUnits = n + quiet * 2;
+        var qrPx = qrUnits * cell;
+        var padPx = padModules * cell;
+        var labelBand = st.frame === 'label' ? cell * 6 : 0;
+        var bannerBand = st.frame === 'banner' ? cell * 6 : 0;
+        var W = qrPx + padPx * 2;
+        var H = W + labelBand + bannerBand;
+        var qx = padPx;
+        var qy = padPx + bannerBand;
+
+        var s = '';
+        s += '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"';
+        s += ' viewBox="0 0 ' + fmt(W) + ' ' + fmt(H) + '"';
+        if (forExport) {
+            s += ' width="' + Math.round(W) + '" height="' + Math.round(H) + '"';
+        }
+        s += ' role="img" aria-label="QR code">';
+        s += '<title>QR code</title>';
+
+        if (hasFrame) {
+            var sw = (st.frame === 'badge' ? 0.9 : 0.35) * cell;
+            var rx = (st.frameRadius / 40) * 5 * cell;
+            rx = Math.min(rx, W / 2, H / 2);
+            s += '<rect x="' + fmt(sw / 2) + '" y="' + fmt(sw / 2) + '" width="' +
+                fmt(W - sw) + '" height="' + fmt(H - sw) + '" rx="' + fmt(rx) +
+                '" fill="' + st.frameBg + '" stroke="' + st.frameBorder +
+                '" stroke-width="' + fmt(sw) + '"/>';
+            if (st.frame === 'banner') {
+                var bandH = bannerBand;
+                var bandRx = Math.max(0, rx - sw / 2);
+                s += '<rect x="' + fmt(sw) + '" y="' + fmt(sw) + '" width="' +
+                    fmt(W - sw * 2) + '" height="' + fmt(bandH) +
+                    '" fill="' + st.frameBorder + '"/>';
+                s += '<rect x="' + fmt(sw) + '" y="' + fmt(sw + bandH - 2 * cell * 0.15) +
+                    '" width="' + fmt(W - sw * 2) + '" height="' + fmt(cell * 0.3) +
+                    '" fill="' + st.frameBorder + '"/>';
+                void bandRx;
+            }
+        }
+
+        if (!st.transparent) {
+            s += '<rect x="' + fmt(qx) + '" y="' + fmt(qy) + '" width="' + fmt(qrPx) +
+                '" height="' + fmt(qrPx) + '" fill="' + st.bg + '"/>';
+        }
+
+        var r, c;
+        for (r = 0; r < n; r++) {
+            for (c = 0; c < n; c++) {
+                if (!qr.isDark(r, c)) continue;
+                if (inFinder(r, c, n)) continue;
+                var x = qx + (quiet + c) * cell;
+                var y = qy + (quiet + r) * cell;
+                s += moduleShape(st.pattern, x, y, cell, st.fg);
+            }
+        }
+
+        // The middle ring is always opaque ink, never a hole. In transparent
+        // mode the outer shape is a solid block, so skipping the knockout
+        // would fill the whole 7x7 eye and no scanner could find it. The
+        // data background stays genuinely transparent, only the three small
+        // separator rings keep an explicit light fill.
+        var middleFill = (hasFrame && st.transparent) ? st.frameBg : st.bg;
+        var origins = [[0, 0], [0, n - 7], [n - 7, 0]];
+        for (var i = 0; i < origins.length; i++) {
+            var orow = origins[i][0], ocol = origins[i][1];
+            var ox = qx + (quiet + ocol) * cell;
+            var oy = qy + (quiet + orow) * cell;
+            s += finderSVG(ox, oy, cell, st, middleFill);
+        }
+
+        if (st.logoDataUrl) {
+            var innerPx = n * cell;
+            var logoW = innerPx * (st.logoSize / 100);
+            var cx = qx + qrPx / 2;
+            var cy = qy + qrPx / 2;
+            if (st.logoBacking) {
+                var side = logoW * 1.4;
+                var bx = cx - side / 2, by = cy - side / 2;
+                var brx = 0;
+                if (st.logoShape === 'circle') brx = side / 2;
+                else if (st.logoShape === 'rounded') brx = side * (st.logoRadius / 100) * 0.5;
+                s += '<rect x="' + fmt(bx) + '" y="' + fmt(by) + '" width="' + fmt(side) +
+                    '" height="' + fmt(side) + '" rx="' + fmt(brx) + '" fill="#FFFFFF"/>';
+            }
+            var lx = cx - logoW / 2, ly = cy - logoW / 2;
+            s += '<image x="' + fmt(lx) + '" y="' + fmt(ly) + '" width="' + fmt(logoW) +
+                '" height="' + fmt(logoW) + '" preserveAspectRatio="xMidYMid meet" href="' +
+                st.logoDataUrl + '" xlink:href="' + st.logoDataUrl + '"/>';
+        }
+
+        var label = String(st.frameLabel || '').trim().slice(0, 48);
+        if (st.frame === 'label' && label) {
+            var fs = cell * 2.2;
+            var ty = padPx + qrPx + labelBand * 0.64;
+            s += '<text x="' + fmt(W / 2) + '" y="' + fmt(ty) + '" text-anchor="middle" ' +
+                'font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" ' +
+                'font-size="' + fmt(fs) + '" font-weight="700" letter-spacing="0.5" ' +
+                'fill="' + st.frameLabelColor + '">' + escXml(label) + '</text>';
+        }
+        if (st.frame === 'banner' && label) {
+            var bfs = cell * 2.2;
+            var bty = padPx * 0.4 + bannerBand * 0.64;
+            s += '<text x="' + fmt(W / 2) + '" y="' + fmt(bty) + '" text-anchor="middle" ' +
+                'font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" ' +
+                'font-size="' + fmt(bfs) + '" font-weight="700" letter-spacing="0.5" ' +
+                'fill="' + st.frameBg + '">' + escXml(label) + '</text>';
+        }
+
+        s += '</svg>';
+        return { svg: s, w: W, h: H };
     }
 
     function setStatus(text, isError) {
@@ -1064,67 +1953,448 @@ var Tool = (function () {
     function setEnabled(on) {
         downloadBtn.disabled = !on;
         copyBtn.disabled = !on;
+        pngBtn.disabled = !on;
+    }
+
+    function collectWarnings(qr) {
+        var list = [];
+        var ratio = contrastRatio(state.fg, state.bg);
+        if (!state.transparent && ratio < 3) {
+            list.push('Low contrast (' + ratio.toFixed(2) + ':1). Dark modules on a pale ground scan best, so raise the gap before printing.');
+        }
+        if (state.transparent) {
+            list.push('Transparent background: the finished code shows whatever sits behind it. Keep that surface pale and plain.');
+        }
+        var mid = !state.transparent ? state.bg : (state.frame !== 'none' ? state.frameBg : '#FFFFFF');
+        var fr = contrastRatio(state.finderFrameColor, mid);
+        if (fr < 2.5) {
+            list.push('Finder outer ink is close to the ground (' + fr.toFixed(2) + ':1). Corner marks need separation to register.');
+        }
+        if (state.finderFrame === 'circle' || state.finderFrame === 'rounded') {
+            list.push('Shaped finder marks trade compatibility for style. A strict scanner test failed them here, so keep Default when every scanner must read the code.');
+        }
+        if (state.logoDataUrl) {
+            if (state.ecc !== 'H') {
+                list.push('A logo covers data modules. Switch error correction to H for the best chance of scanning.');
+            }
+            if (state.logoSize > 25) {
+                list.push('Logo size above 25 percent covers a lot of data. Drop to 22 percent or below for safer scans.');
+            }
+            if (qr && qr.getModuleCount() >= 45) {
+                list.push('Dense code with a logo. Shorten the content when possible, the sparser the matrix the safer the logo.');
+            }
+        }
+        if (state.pattern === 'diamond' || state.pattern === 'dots') {
+            if (!state.transparent && ratio < 4) {
+                list.push('Dotted and diamond modules leave gaps, so they want strong contrast. The current pair is marginal.');
+            }
+        }
+        return list;
     }
 
     function render() {
         var text = urlInput.value.trim();
+        warningsBox.innerHTML = '';
 
         if (!text) {
+            qrFrame.classList.remove('is-transparent');
             qrFrame.innerHTML = '<p class="qr-error">Type something above to generate a code.</p>';
             setStatus('EMPTY', false);
             setEnabled(false);
+            contrastWarn.hidden = true;
             return;
         }
 
         try {
             var qr = encode(text);
-            qrFrame.innerHTML = qr.createSvgTag(6, 2);
+            var built = buildSVG(qr, state, 10, false);
+            qrFrame.innerHTML = built.svg;
+            qrFrame.classList.toggle('is-transparent', state.transparent && state.frame === 'none');
 
-            // Make the preview scale with the frame rather than its cell
-            // size. The library writes width="154px", and a viewBox with
-            // units in it is invalid, so take the number only.
-            var svg = qrFrame.querySelector('svg');
-            if (svg) {
-                var w = parseFloat(svg.getAttribute('width'));
-                if (w) svg.setAttribute('viewBox', '0 0 ' + w + ' ' + w);
-                svg.removeAttribute('width');
-                svg.removeAttribute('height');
+            var ratio = contrastRatio(state.fg, state.bg);
+            if (!state.transparent && ratio < 3) {
+                contrastWarn.textContent = 'Low contrast (' + ratio.toFixed(2) + ':1). Scanners may struggle. Darken the modules or lighten the ground.';
+                contrastWarn.hidden = false;
+            } else {
+                contrastWarn.hidden = true;
+            }
+
+            var list = collectWarnings(qr);
+            warningsBox.innerHTML = '';
+            for (var i = 0; i < list.length; i++) {
+                var p = document.createElement('p');
+                p.className = 'qr-warn';
+                p.textContent = list[i];
+                warningsBox.appendChild(p);
             }
 
             setStatus('READY', false);
             setEnabled(true);
         } catch (err) {
+            qrFrame.classList.remove('is-transparent');
             qrFrame.innerHTML = '<p class="qr-error">That is too much data for level ' +
-                level + '. Shorten the text, or drop to a lower correction level.</p>';
+                escXml(state.ecc) + '. Shorten the text, or drop to a lower correction level.</p>';
             setStatus('TOO LONG', true);
             setEnabled(false);
         }
     }
 
-    // Export at a fixed 1000px square regardless of how many modules the
-    // content needs, so every download drops into a layout the same way.
     function exportSVG() {
         var qr = encode(urlInput.value.trim());
-        var total = qr.getModuleCount() + QUIET_MODULES * 2;
-        return qr.createSvgTag(EXPORT_PX / total, QUIET_MODULES);
+        var n = qr.getModuleCount();
+        var cell = EXPORT_PX / (n + QUIET_MODULES * 2);
+        return buildSVG(qr, state, cell, true).svg;
     }
 
-    Tool.segmented(Tool.$('eccControl'), function (value) {
-        level = value;
+    function exportPNG() {
+        var svgStr;
+        try {
+            svgStr = exportSVG();
+        } catch (err) {
+            Tool.toast('Nothing to export yet.');
+            return;
+        }
+        var blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var img = new Image();
+        img.onload = function () {
+            try {
+                var scale = 2;
+                var w = Math.max(1, Math.round(img.width * 0));
+                void w;
+                var tmp = document.createElement('div');
+                tmp.innerHTML = svgStr;
+                var node = tmp.querySelector('svg');
+                var vb = (node.getAttribute('viewBox') || '').split(/\s+/);
+                var vw = parseFloat(vb[2]) || EXPORT_PX;
+                var vh = parseFloat(vb[3]) || EXPORT_PX;
+                var canvas = document.createElement('canvas');
+                canvas.width = Math.round(vw * scale);
+                canvas.height = Math.round(vh * scale);
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                URL.revokeObjectURL(url);
+                if (canvas.toBlob) {
+                    canvas.toBlob(function (b) {
+                        if (b) Tool.downloadBlob(b, 'beben-qr-2000px.png', 'PNG exported.');
+                        else Tool.toast('PNG export failed in this browser.');
+                    }, 'image/png');
+                } else {
+                    Tool.toast('PNG export failed in this browser.');
+                }
+            } catch (e) {
+                URL.revokeObjectURL(url);
+                Tool.toast('PNG export failed in this browser.');
+            }
+        };
+        img.onerror = function () {
+            URL.revokeObjectURL(url);
+            Tool.toast('PNG export failed in this browser.');
+        };
+        img.src = url;
+    }
+
+    function wireTileGrid(id, key) {
+        var grid = Tool.$(id);
+        if (!grid) return;
+        var btns = grid.querySelectorAll('.tile');
+        Array.prototype.forEach.call(btns, function (btn) {
+            btn.addEventListener('click', function () {
+                Array.prototype.forEach.call(btns, function (b) {
+                    b.classList.remove('selected');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                btn.classList.add('selected');
+                btn.setAttribute('aria-pressed', 'true');
+                state[key] = btn.getAttribute('data-value');
+                if (key === 'frame') syncFrameOptions();
+                render();
+            });
+        });
+    }
+
+    function syncTileGrid(id, value) {
+        var grid = Tool.$(id);
+        if (!grid) return;
+        var btns = grid.querySelectorAll('.tile');
+        Array.prototype.forEach.call(btns, function (b) {
+            var on = b.getAttribute('data-value') === value;
+            b.classList.toggle('selected', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+
+    function wireColorPair(colorId, hexId, key) {
+        var c = Tool.$(colorId), h = Tool.$(hexId);
+        if (!c || !h) return;
+        c.addEventListener('input', function () {
+            state[key] = normalizeHex(c.value) || c.value.toUpperCase();
+            h.value = state[key];
+            render();
+        });
+        h.addEventListener('change', function () {
+            var v = normalizeHex(h.value);
+            if (!v) {
+                h.value = state[key];
+                Tool.toast('Enter a 6 digit hex color like #141414.');
+                return;
+            }
+            state[key] = v;
+            c.value = '#' + v.slice(1).toLowerCase();
+            h.value = v;
+            render();
+        });
+    }
+
+    function setColorUI(colorId, hexId, value) {
+        var c = Tool.$(colorId), h = Tool.$(hexId);
+        if (c) c.value = '#' + value.slice(1).toLowerCase();
+        if (h) h.value = value;
+    }
+
+    function setEcc(value) {
+        state.ecc = value;
+        var btns = eccControl.querySelectorAll('.seg-btn');
+        Array.prototype.forEach.call(btns, function (b) {
+            var on = b.getAttribute('data-value') === value;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+
+    function syncFrameOptions() {
+        var show = state.frame !== 'none';
+        Tool.$('frameOptions').hidden = !show;
+    }
+
+    function syncLogoUI() {
+        var has = !!state.logoDataUrl;
+        Tool.$('logoOptions').hidden = !has;
+        Tool.$('logoRemoveBtn').disabled = !has;
+        if (!has && logoWarn) logoWarn.hidden = true;
+    }
+
+    function readFileAsDataURL(file, cb) {
+        var fr = new FileReader();
+        fr.onload = function () { cb(null, String(fr.result || '')); };
+        fr.onerror = function () { cb(new Error('read')); };
+        fr.readAsDataURL(file);
+    }
+
+    function rasterizeSVG(dataUrl, cb) {
+        var img = new Image();
+        img.onload = function () {
+            try {
+                var side = 1024;
+                var canvas = document.createElement('canvas');
+                canvas.width = side;
+                canvas.height = side;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, side, side);
+                cb(null, canvas.toDataURL('image/png'));
+            } catch (e) {
+                cb(e);
+            }
+        };
+        img.onerror = function () { cb(new Error('svg')); };
+        img.src = dataUrl;
+    }
+
+    function handleLogoFile(file) {
+        if (!file) return;
+        var type = String(file.type || '').toLowerCase();
+        var name = String(file.name || '').toLowerCase();
+        var isImg = type === 'image/png' || type === 'image/jpeg' ||
+            type === 'image/svg+xml' ||
+            /\.png$/.test(name) || /\.jpe?g$/.test(name) || /\.svg$/.test(name);
+        if (!isImg) {
+            Tool.toast('Upload a PNG, JPEG, or SVG file.');
+            return;
+        }
+        if (file.size > LOGO_MAX_BYTES) {
+            Tool.toast('Logo is over 5 MB. Compress it first.');
+            return;
+        }
+        readFileAsDataURL(file, function (err, dataUrl) {
+            if (err || !dataUrl) {
+                Tool.toast('Logo could not be read. Try another file.');
+                return;
+            }
+            var done = function (dErr, finalUrl) {
+                if (dErr || !finalUrl) {
+                    Tool.toast('Logo could not be processed. Try a PNG or JPEG.');
+                    return;
+                }
+                state.logoDataUrl = finalUrl;
+                if (state.ecc !== 'H') {
+                    setEcc('H');
+                    Tool.toast('Logo added. Error correction is now H.');
+                } else {
+                    Tool.toast('Logo added.');
+                }
+                syncLogoUI();
+                render();
+            };
+            if (type === 'image/svg+xml' || /\.svg$/.test(name)) {
+                rasterizeSVG(dataUrl, done);
+            } else {
+                done(null, dataUrl);
+            }
+        });
+    }
+
+    // Wiring
+    Tool.segmented(eccControl, function (value) {
+        state.ecc = value;
         render();
     });
 
     urlInput.addEventListener('input', render);
 
+    wireTileGrid('patternGrid', 'pattern');
+    wireTileGrid('finderFrameGrid', 'finderFrame');
+    wireTileGrid('finderCenterGrid', 'finderCenter');
+    wireTileGrid('frameGrid', 'frame');
+
+    wireColorPair('fgColor', 'fgHex', 'fg');
+    wireColorPair('bgColor', 'bgHex', 'bg');
+    wireColorPair('finderFrameColor', 'finderFrameHex', 'finderFrameColor');
+    wireColorPair('finderCenterColor', 'finderCenterHex', 'finderCenterColor');
+    wireColorPair('frameBorderColor', 'frameBorderHex', 'frameBorder');
+    wireColorPair('frameBgColor', 'frameBgHex', 'frameBg');
+    wireColorPair('frameLabelColor', 'frameLabelHex', 'frameLabelColor');
+
+    Tool.$('swapColorsBtn').addEventListener('click', function () {
+        var fg = state.fg, bg = state.bg;
+        state.fg = bg;
+        state.bg = fg;
+        setColorUI('fgColor', 'fgHex', state.fg);
+        setColorUI('bgColor', 'bgHex', state.bg);
+        render();
+    });
+
+    Tool.$('transparentBg').addEventListener('change', function (e) {
+        state.transparent = !!e.target.checked;
+        render();
+    });
+
+    Tool.$('frameLabel').addEventListener('input', function (e) {
+        state.frameLabel = e.target.value;
+        render();
+    });
+
+    function wireRange(rangeId, valueId, fmtFn, apply) {
+        var rg = Tool.$(rangeId), val = Tool.$(valueId);
+        if (!rg) return;
+        rg.addEventListener('input', function () {
+            apply(parseFloat(rg.value));
+            if (val) val.textContent = fmtFn(rg.value);
+            render();
+        });
+    }
+
+    wireRange('frameRadiusRange', 'frameRadiusValue', function (v) { return v; }, function (v) {
+        state.frameRadius = v;
+    });
+    wireRange('framePadRange', 'framePadValue', function (v) { return v; }, function (v) {
+        state.framePad = v;
+    });
+    wireRange('logoSizeRange', 'logoSizeValue', function (v) { return v + '%'; }, function (v) {
+        state.logoSize = v;
+    });
+    wireRange('logoRadiusRange', 'logoRadiusValue', function (v) { return v; }, function (v) {
+        state.logoRadius = v;
+    });
+
+    Tool.$('logoBacking').addEventListener('change', function (e) {
+        state.logoBacking = !!e.target.checked;
+        render();
+    });
+
+    Tool.segmented(Tool.$('logoShapeControl'), function (value) {
+        state.logoShape = value;
+        render();
+    });
+
+    var logoInput = Tool.$('logoInput');
+    Tool.$('logoUploadBtn').addEventListener('click', function () {
+        logoInput.click();
+    });
+    logoInput.addEventListener('change', function () {
+        if (logoInput.files && logoInput.files[0]) handleLogoFile(logoInput.files[0]);
+        logoInput.value = '';
+    });
+    Tool.$('logoRemoveBtn').addEventListener('click', function () {
+        state.logoDataUrl = null;
+        syncLogoUI();
+        render();
+    });
+
+    Tool.$('resetDesignBtn').addEventListener('click', function () {
+        if (state.logoDataUrl) {
+            if (!window.confirm('Reset the design and remove the uploaded logo.')) return;
+        }
+        var text = urlInput.value;
+        var ecc = state.ecc;
+        for (var key in DEFAULTS) state[key] = DEFAULTS[key];
+        state.ecc = ecc;
+        urlInput.value = text;
+
+        syncTileGrid('patternGrid', state.pattern);
+        syncTileGrid('finderFrameGrid', state.finderFrame);
+        syncTileGrid('finderCenterGrid', state.finderCenter);
+        syncTileGrid('frameGrid', state.frame);
+        setColorUI('fgColor', 'fgHex', state.fg);
+        setColorUI('bgColor', 'bgHex', state.bg);
+        setColorUI('finderFrameColor', 'finderFrameHex', state.finderFrameColor);
+        setColorUI('finderCenterColor', 'finderCenterHex', state.finderCenterColor);
+        setColorUI('frameBorderColor', 'frameBorderHex', state.frameBorder);
+        setColorUI('frameBgColor', 'frameBgHex', state.frameBg);
+        setColorUI('frameLabelColor', 'frameLabelHex', state.frameLabelColor);
+        Tool.$('transparentBg').checked = false;
+        Tool.$('frameLabel').value = state.frameLabel;
+        Tool.$('frameRadiusRange').value = String(state.frameRadius);
+        Tool.$('frameRadiusValue').textContent = String(state.frameRadius);
+        Tool.$('framePadRange').value = String(state.framePad);
+        Tool.$('framePadValue').textContent = String(state.framePad);
+        Tool.$('logoSizeRange').value = String(state.logoSize);
+        Tool.$('logoSizeValue').textContent = state.logoSize + '%';
+        Tool.$('logoBacking').checked = true;
+        Tool.$('logoRadiusRange').value = String(state.logoRadius);
+        Tool.$('logoRadiusValue').textContent = String(state.logoRadius);
+        var shapeBtns = Tool.$('logoShapeControl').querySelectorAll('.seg-btn');
+        Array.prototype.forEach.call(shapeBtns, function (b) {
+            var on = b.getAttribute('data-value') === 'rounded';
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        syncFrameOptions();
+        syncLogoUI();
+        render();
+        Tool.toast('Design reset to defaults.');
+    });
+
     downloadBtn.addEventListener('click', function () {
-        Tool.download(exportSVG(), 'beben-qr-1000x1000.svg',
-            'image/svg+xml;charset=utf-8', 'SVG exported at 1000 x 1000px.');
+        try {
+            Tool.download(exportSVG(), 'beben-qr-1000x1000.svg',
+                'image/svg+xml;charset=utf-8', 'SVG exported at 1000 x 1000px.');
+        } catch (err) {
+            Tool.toast('Nothing to export yet.');
+        }
     });
 
     copyBtn.addEventListener('click', function () {
-        Tool.copy(exportSVG(), 'SVG code copied to clipboard.');
+        try {
+            Tool.copy(exportSVG(), 'SVG code copied to clipboard.');
+        } catch (err) {
+            Tool.toast('Nothing to copy yet.');
+        }
     });
 
+    pngBtn.addEventListener('click', exportPNG);
+
+    syncFrameOptions();
+    syncLogoUI();
     render();
 })();
 </script>

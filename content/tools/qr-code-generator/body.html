@@ -1,4 +1,13 @@
-<!-- Input -->
+<figure class="qr-hero">
+    <img
+        src="https://beben.design/assets/images/qr-riverlands-cover.webp"
+        alt="Isometric voxel river landscape with a tiny explorer"
+        width="1600"
+        height="900"
+    >
+</figure>
+
+<!-- Content -->
 <label class="field-label" for="urlInput">// Input - URL or Text</label>
 <input
     type="text"
@@ -19,24 +28,280 @@
         <button type="button" class="seg-btn" data-value="Q" aria-pressed="false">Q - 25%</button>
         <button type="button" class="seg-btn" data-value="H" aria-pressed="false">H - 30%</button>
     </div>
-    <p class="hint">Higher levels add redundancy. Use H if you plan to overlay a logo on the code.</p>
+    <p class="hint">Higher levels add redundancy. Use H when a logo sits on the code. Adding a logo switches this to H automatically, and the choice stays manual after that.</p>
 </div>
 
-<!-- Preview -->
-<div class="preview-label">
-    <span>// Preview</span>
-    <span class="preview-status" id="previewStatus">READY</span>
-</div>
-<div class="frame frame--center qr-frame" id="qrFrame"></div>
+<div class="qr-editor">
+    <div class="qr-controls">
+        <!-- Pattern -->
+        <details class="qr-section" open>
+            <summary>Pattern</summary>
+            <p class="qr-desc">The shape of the data modules. Finder marks stay separate below.</p>
+            <div class="tile-grid" id="patternGrid" role="group" aria-label="Module pattern">
+                <button type="button" class="tile selected" data-value="square" aria-pressed="true" title="Classic square modules">
+                    <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="24" y="2" width="9" height="9"/><rect x="35" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/><rect x="35" y="13" width="9" height="9"/><rect x="2" y="24" width="9" height="6"/><rect x="13" y="24" width="9" height="6"/><rect x="24" y="24" width="9" height="6"/><rect x="35" y="24" width="9" height="6"/></g></svg>
+                    <span>Square</span>
+                </button>
+                <button type="button" class="tile" data-value="rounded" aria-pressed="false" title="Rounded modules">
+                    <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="9" height="9" rx="3"/><rect x="13" y="2" width="9" height="9" rx="3"/><rect x="24" y="2" width="9" height="9" rx="3"/><rect x="35" y="2" width="9" height="9" rx="3"/><rect x="2" y="13" width="9" height="9" rx="3"/><rect x="13" y="13" width="9" height="9" rx="3"/><rect x="35" y="13" width="9" height="9" rx="3"/><rect x="2" y="24" width="9" height="6" rx="3"/><rect x="13" y="24" width="9" height="6" rx="3"/><rect x="24" y="24" width="9" height="6" rx="3"/><rect x="35" y="24" width="9" height="6" rx="3"/></g></svg>
+                    <span>Rounded</span>
+                </button>
+                <button type="button" class="tile" data-value="dots" aria-pressed="false" title="Circular dots">
+                    <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><circle cx="6.5" cy="6.5" r="4"/><circle cx="17.5" cy="6.5" r="4"/><circle cx="28.5" cy="6.5" r="4"/><circle cx="39.5" cy="6.5" r="4"/><circle cx="6.5" cy="17.5" r="4"/><circle cx="17.5" cy="17.5" r="4"/><circle cx="39.5" cy="17.5" r="4"/><circle cx="6.5" cy="27" r="4"/><circle cx="17.5" cy="27" r="4"/><circle cx="28.5" cy="27" r="4"/><circle cx="39.5" cy="27" r="4"/></g></svg>
+                    <span>Dots</span>
+                </button>
+                <button type="button" class="tile" data-value="extra-rounded" aria-pressed="false" title="Extra rounded modules">
+                    <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="9" height="9" rx="4.5"/><rect x="13" y="2" width="9" height="9" rx="4.5"/><rect x="24" y="2" width="9" height="9" rx="4.5"/><rect x="35" y="2" width="9" height="9" rx="4.5"/><rect x="2" y="13" width="9" height="9" rx="4.5"/><rect x="13" y="13" width="9" height="9" rx="4.5"/><rect x="35" y="13" width="9" height="9" rx="4.5"/><rect x="2" y="24" width="9" height="6" rx="3"/><rect x="13" y="24" width="9" height="6" rx="3"/><rect x="24" y="24" width="9" height="6" rx="3"/><rect x="35" y="24" width="9" height="6" rx="3"/></g></svg>
+                    <span>Soft</span>
+                </button>
+                <button type="button" class="tile" data-value="diamond" aria-pressed="false" title="Diamond modules">
+                    <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><path d="M6.5 2.5 10.5 6.5 6.5 10.5 2.5 6.5Z"/><path d="M17.5 2.5 21.5 6.5 17.5 10.5 13.5 6.5Z"/><path d="M28.5 2.5 32.5 6.5 28.5 10.5 24.5 6.5Z"/><path d="M39.5 2.5 43.5 6.5 39.5 10.5 35.5 6.5Z"/><path d="M6.5 13.5 10.5 17.5 6.5 21.5 2.5 17.5Z"/><path d="M17.5 13.5 21.5 17.5 17.5 21.5 13.5 17.5Z"/><path d="M39.5 13.5 43.5 17.5 39.5 21.5 35.5 17.5Z"/></g></svg>
+                    <span>Diamond</span>
+                </button>
+                <button type="button" class="tile" data-value="bars" aria-pressed="false" title="Horizontal bars">
+                    <svg viewBox="0 0 48 32" aria-hidden="true"><g fill="currentColor"><rect x="2" y="3" width="9" height="7" rx="3.5"/><rect x="13" y="3" width="9" height="7" rx="3.5"/><rect x="24" y="3" width="9" height="7" rx="3.5"/><rect x="35" y="3" width="9" height="7" rx="3.5"/><rect x="2" y="14" width="9" height="7" rx="3.5"/><rect x="13" y="14" width="9" height="7" rx="3.5"/><rect x="35" y="14" width="9" height="7" rx="3.5"/><rect x="2" y="25" width="9" height="5" rx="2.5"/><rect x="13" y="25" width="9" height="5" rx="2.5"/><rect x="24" y="25" width="9" height="5" rx="2.5"/><rect x="35" y="25" width="9" height="5" rx="2.5"/></g></svg>
+                    <span>Bars</span>
+                </button>
+            </div>
+        </details>
 
-<!-- Actions -->
-<div class="btn-group">
-    <button type="button" class="btn btn-primary" id="downloadBtn">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export SVG
-    </button>
-    <button type="button" class="btn btn-secondary" id="copyBtn">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy SVG Code
-    </button>
+        <!-- Colors -->
+        <details class="qr-section" open>
+            <summary>Colors</summary>
+            <p class="qr-desc">Pick each ink separately. The preview updates at once.</p>
+            <div class="color-row">
+                <label for="fgColor">Modules</label>
+                <input type="color" id="fgColor" value="#141414">
+                <input type="text" id="fgHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Module color hex">
+            </div>
+            <div class="color-row">
+                <label for="bgColor">Background</label>
+                <input type="color" id="bgColor" value="#ffffff">
+                <input type="text" id="bgHex" class="tool-input color-hex" value="#FFFFFF" spellcheck="false" autocomplete="off" aria-label="Background color hex">
+            </div>
+            <div class="qr-row">
+                <button type="button" class="qr-link" id="swapColorsBtn">Swap foreground and background</button>
+            </div>
+            <label class="check-row" for="transparentBg">
+                <input type="checkbox" id="transparentBg">
+                <span>Transparent background</span>
+            </label>
+            <p class="hint">Transparent exports carry no background rect, so the page behind shows through. Test the scan on the real surface.</p>
+            <p class="qr-warn" id="contrastWarn" hidden></p>
+        </details>
+
+        <!-- Finder -->
+        <details class="qr-section">
+            <summary>Finder marks</summary>
+            <p class="qr-desc">The three corner squares. Shape and ink change, position never moves.</p>
+            <span class="field-label">Outer frame shape</span>
+            <div class="tile-grid tile-grid--4" id="finderFrameGrid" role="group" aria-label="Finder outer shape">
+                <button type="button" class="tile selected" data-value="default" aria-pressed="true" title="Default finder frame">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="4" y="4" width="24" height="24"/></g><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>
+                    <span>Default</span>
+                </button>
+                <button type="button" class="tile" data-value="square" aria-pressed="false" title="Square finder frame">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="4" y="4" width="24" height="24"/></g><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>
+                    <span>Square</span>
+                </button>
+                <button type="button" class="tile" data-value="rounded" aria-pressed="false" title="Rounded finder frame">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="4" y="4" width="24" height="24" rx="6"/></g><rect x="12" y="12" width="8" height="8" fill="currentColor"/></svg>
+                    <span>Rounded</span>
+                </button>
+                <button type="button" class="tile" data-value="circle" aria-pressed="false" title="Circular finder frame">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4"><circle cx="16" cy="16" r="12"/></g><circle cx="16" cy="16" r="4" fill="currentColor"/></svg>
+                    <span>Circle</span>
+                </button>
+            </div>
+            <span class="field-label">Center shape</span>
+            <div class="tile-grid tile-grid--3" id="finderCenterGrid" role="group" aria-label="Finder center shape">
+                <button type="button" class="tile selected" data-value="default" aria-pressed="true" title="Default finder center">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="11" width="10" height="10" fill="currentColor"/></svg>
+                    <span>Default</span>
+                </button>
+                <button type="button" class="tile" data-value="square" aria-pressed="false" title="Square finder center">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="11" width="10" height="10" fill="currentColor"/></svg>
+                    <span>Square</span>
+                </button>
+                <button type="button" class="tile" data-value="circle" aria-pressed="false" title="Circular finder center">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="6" fill="currentColor"/></svg>
+                    <span>Circle</span>
+                </button>
+            </div>
+            <div class="color-row">
+                <label for="finderFrameColor">Outer ink</label>
+                <input type="color" id="finderFrameColor" value="#141414">
+                <input type="text" id="finderFrameHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Finder outer color hex">
+            </div>
+            <div class="color-row">
+                <label for="finderCenterColor">Center ink</label>
+                <input type="color" id="finderCenterColor" value="#141414">
+                <input type="text" id="finderCenterHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Finder center color hex">
+            </div>
+            <p class="hint">Default marks read on every scanner. Rounded and circular marks suit styled prints, test them on the target reader first.</p>
+        </details>
+
+        <!-- Frame -->
+        <details class="qr-section">
+            <summary>Frame</summary>
+            <p class="qr-desc">A border drawn inside the exported file, never a preview overlay.</p>
+            <div class="tile-grid" id="frameGrid" role="group" aria-label="Frame style">
+                <button type="button" class="tile selected" data-value="none" aria-pressed="true" title="No frame">
+                    <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="12" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/></svg>
+                    <span>None</span>
+                </button>
+                <button type="button" class="tile" data-value="outline" aria-pressed="false" title="Simple outlined frame">
+                    <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="2" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="9" width="18" height="18" fill="currentColor" opacity="0.85"/></svg>
+                    <span>Outline</span>
+                </button>
+                <button type="button" class="tile" data-value="rounded" aria-pressed="false" title="Rounded frame">
+                    <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="2" width="32" height="32" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="9" width="18" height="18" fill="currentColor" opacity="0.85"/></svg>
+                    <span>Rounded</span>
+                </button>
+                <button type="button" class="tile" data-value="label" aria-pressed="false" title="Frame with bottom label">
+                    <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="2" width="32" height="26" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="7" width="18" height="14" fill="currentColor" opacity="0.85"/><rect x="20" y="30" width="8" height="2" fill="currentColor"/></svg>
+                    <span>Label</span>
+                </button>
+                <button type="button" class="tile" data-value="badge" aria-pressed="false" title="Compact badge sticker">
+                    <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="6" y="2" width="36" height="32" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="16" y="9" width="16" height="16" fill="currentColor" opacity="0.85"/></svg>
+                    <span>Badge</span>
+                </button>
+                <button type="button" class="tile" data-value="banner" aria-pressed="false" title="Banner frame with call to action">
+                    <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="8" y="8" width="32" height="26" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="2" width="32" height="8" fill="currentColor"/><rect x="16" y="14" width="16" height="14" fill="currentColor" opacity="0.85"/></svg>
+                    <span>Banner</span>
+                </button>
+            </div>
+            <div id="frameOptions" hidden>
+                <label class="field-label" for="frameLabel">Label text</label>
+                <input type="text" id="frameLabel" class="tool-input" value="Scan me" maxlength="48" autocomplete="off" spellcheck="false">
+                <div class="color-row">
+                    <label for="frameBorderColor">Border</label>
+                    <input type="color" id="frameBorderColor" value="#141414">
+                    <input type="text" id="frameBorderHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Frame border color hex">
+                </div>
+                <div class="color-row">
+                    <label for="frameBgColor">Frame fill</label>
+                    <input type="color" id="frameBgColor" value="#ffffff">
+                    <input type="text" id="frameBgHex" class="tool-input color-hex" value="#FFFFFF" spellcheck="false" autocomplete="off" aria-label="Frame fill color hex">
+                </div>
+                <div class="color-row">
+                    <label for="frameLabelColor">Label ink</label>
+                    <input type="color" id="frameLabelColor" value="#141414">
+                    <input type="text" id="frameLabelHex" class="tool-input color-hex" value="#141414" spellcheck="false" autocomplete="off" aria-label="Label color hex">
+                </div>
+                <label class="field-label" for="frameRadiusRange">Corner radius</label>
+                <div class="range-row">
+                    <input type="range" id="frameRadiusRange" min="0" max="40" step="1" value="12">
+                    <span class="range-value" id="frameRadiusValue">12</span>
+                </div>
+                <label class="field-label" for="framePadRange">Padding</label>
+                <div class="range-row">
+                    <input type="range" id="framePadRange" min="1" max="6" step="1" value="2">
+                    <span class="range-value" id="framePadValue">2</span>
+                </div>
+            </div>
+        </details>
+
+        <!-- Logo -->
+        <details class="qr-section">
+            <summary>Logo</summary>
+            <p class="qr-desc">An image centered on the code. Files stay in the tab and embed into the export.</p>
+            <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml" class="visually-hidden">
+            <div class="qr-row qr-row--gap">
+                <button type="button" class="qr-btn" id="logoUploadBtn">Upload logo</button>
+                <button type="button" class="qr-btn qr-btn--ghost" id="logoRemoveBtn" disabled>Remove</button>
+            </div>
+            <p class="hint">PNG or JPEG up to 5 MB, SVG rasterized locally first. Large logos need error correction H.</p>
+            <p class="qr-warn" id="logoWarn" hidden></p>
+            <div id="logoOptions" hidden>
+                <label class="field-label" for="logoSizeRange">Logo size</label>
+                <div class="range-row">
+                    <input type="range" id="logoSizeRange" min="15" max="30" step="1" value="22">
+                    <span class="range-value" id="logoSizeValue">22%</span>
+                </div>
+                <label class="check-row" for="logoBacking">
+                    <input type="checkbox" id="logoBacking" checked>
+                    <span>Backing plate behind logo</span>
+                </label>
+                <span class="field-label" id="logoShapeLabel">Backing shape</span>
+                <div class="seg" id="logoShapeControl" role="group" aria-labelledby="logoShapeLabel">
+                    <button type="button" class="seg-btn" data-value="square" aria-pressed="false">Square</button>
+                    <button type="button" class="seg-btn active" data-value="rounded" aria-pressed="true">Rounded</button>
+                    <button type="button" class="seg-btn" data-value="circle" aria-pressed="false">Circle</button>
+                </div>
+                <label class="field-label" for="logoRadiusRange">Backing corner radius</label>
+                <div class="range-row">
+                    <input type="range" id="logoRadiusRange" min="0" max="50" step="1" value="18">
+                    <span class="range-value" id="logoRadiusValue">18</span>
+                </div>
+            </div>
+        </details>
+
+        <button type="button" class="qr-btn qr-btn--ghost" id="resetDesignBtn">Reset design</button>
+    </div>
+
+    <div class="qr-side">
+        <div class="preview-label">
+            <span>// Preview</span>
+            <span class="preview-status" id="previewStatus">READY</span>
+        </div>
+        <div class="frame frame--center qr-frame" id="qrFrame"></div>
+        <div id="qrWarnings" aria-live="polite"></div>
+        <div class="btn-group qr-actions">
+            <button type="button" class="btn btn-primary" id="downloadBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export SVG
+            </button>
+            <button type="button" class="btn btn-secondary" id="pngBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Export PNG
+            </button>
+            <button type="button" class="btn btn-secondary" id="copyBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy SVG Code
+            </button>
+        </div>
+        <p class="hint">Preview and export share one renderer. Nothing typed or uploaded leaves the tab. A downloaded copy works offline.</p>
+    </div>
 </div>
+
+<!-- Facts -->
+<div class="qr-faq">
+    <span class="field-label">// Questions</span>
+    <h2 class="qr-faq-title">Good to know</h2>
+    <details class="qr-faq-item">
+        <summary>Is this QR code generator really free</summary>
+        <p>Yes. No account, no watermark, and no limit on the number of codes. Every feature on this page is included.</p>
+    </details>
+    <details class="qr-faq-item">
+        <summary>Do the codes expire</summary>
+        <p>No. A QR code carries its own text, so a saved SVG or PNG scans forever, whether or not this page still exists.</p>
+    </details>
+    <details class="qr-faq-item">
+        <summary>What can a code hold</summary>
+        <p>URLs, plain text, phone numbers, and contact details typed as text. Longer text draws a denser matrix, so short links scan the easiest.</p>
+    </details>
+    <details class="qr-faq-item">
+        <summary>Is anything uploaded</summary>
+        <p>No. Content and logos stay in the browser tab, and the downloaded single file works offline. Nothing typed here reaches a server.</p>
+    </details>
+    <details class="qr-faq-item">
+        <summary>Why do some styled codes fail to scan</summary>
+        <p>Scanners need contrast and intact corner marks. Keep dark ink on a pale ground, test rounded or circular finders on the target reader, and pair logos with H error correction at modest sizes.</p>
+    </details>
+    <details class="qr-faq-item">
+        <summary>SVG or PNG, which export should be picked</summary>
+        <p>SVG for print and signage, since vectors scale without end. PNG for documents and slides that need pixels. Both carry the same design.</p>
+    </details>
+</div>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is this QR code generator really free","acceptedAnswer":{"@type":"Answer","text":"Yes. No account, no watermark, and no limit on the number of codes. Every feature on this page is included."}},
+{"@type":"Question","name":"Do the codes expire","acceptedAnswer":{"@type":"Answer","text":"No. A QR code carries its own text, so a saved SVG or PNG scans forever, whether or not this page still exists."}},
+{"@type":"Question","name":"What can a code hold","acceptedAnswer":{"@type":"Answer","text":"URLs, plain text, phone numbers, and contact details typed as text. Longer text draws a denser matrix, so short links scan the easiest."}},
+{"@type":"Question","name":"Is anything uploaded","acceptedAnswer":{"@type":"Answer","text":"No. Content and logos stay in the browser tab, and the downloaded single file works offline. Nothing typed here reaches a server."}},
+{"@type":"Question","name":"Why do some styled codes fail to scan","acceptedAnswer":{"@type":"Answer","text":"Scanners need contrast and intact corner marks. Keep dark ink on a pale ground, test rounded or circular finders on the target reader, and pair logos with H error correction at modest sizes."}},
+{"@type":"Question","name":"SVG or PNG, which export should be picked","acceptedAnswer":{"@type":"Answer","text":"SVG for print and signage, since vectors scale without end. PNG for documents and slides that need pixels. Both carry the same design."}}
+]}
+</script>

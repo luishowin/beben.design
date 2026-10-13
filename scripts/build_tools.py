@@ -313,7 +313,7 @@ def card_html(tool, stagger):
     open_label = tool.get("card_open", "Open tool &nearr;")
 
     banner = ""
-    classes = "tool-card"
+    classes = "tool-card tool-card--" + slug
     if tool.get("banner"):
         classes += " tool-card--visual"
         banner = (f'                        <a href="{esc(href)}" class="card-banner" '

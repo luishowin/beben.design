@@ -130,7 +130,7 @@ Three finished case studies, three previews, three client sites.
   HTML file that keeps working offline forever.
 - Live now:
   - Beben Arcade (/games/): Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.
-  - QR Code Generator (/qr-code-generator/): Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.
+  - QR Code Generator (/qr-code-generator/): Make unlimited free QR codes with custom colors, patterns, frames, and logos. No sign-up, no watermark.
   - Contrast Grid (/contrast-grid/): Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.
   - Dither Machine (/dither-machine/): Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.
   - Does It Fit? (/character-counter/): One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.

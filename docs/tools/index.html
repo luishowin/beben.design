@@ -281,6 +281,10 @@
         .tool-card--visual:hover .card-banner-inner { transform: scale(1.02); }
         .tool-card--visual .card-banner + .card-body { padding-top: 1.25rem; }
 
+        .tool-card--qr-code-generator .card-banner-inner {
+            background-image: url("../assets/images/qr-riverlands-cover.webp");
+        }
+
         .tools-note {
             font-family: var(--font-mono);
             font-size: 0.82rem;
@@ -459,7 +463,7 @@
                     <p class="group-note">The two that get opened most.</p>
                 </div>
                 <div class="tools-grid">
-                    <article class="tool-card tool-card--visual" data-reveal style="--i:1">
+                    <article class="tool-card tool-card--games tool-card--visual" data-reveal style="--i:1">
                         <a href="../games/" class="card-banner" aria-label="Open Beben Arcade">
                             <span class="card-banner-inner"></span>
                         </a>
@@ -474,11 +478,14 @@
                         </div>
                     </article>
 
-                    <article class="tool-card" data-reveal style="--i:2">
+                    <article class="tool-card tool-card--qr-code-generator tool-card--visual" data-reveal style="--i:2">
+                        <a href="../qr-code-generator/" class="card-banner" aria-label="Open QR Code Generator">
+                            <span class="card-banner-inner"></span>
+                        </a>
                         <a href="../qr-code-generator/" class="card-body">
                             <span class="card-tag">// Generator</span>
                             <h3>QR Code Generator</h3>
-                            <p>Paste any URL, text, or contact info and get a clean, downloadable QR code instantly. No watermarks.</p>
+                            <p>Make unlimited free QR codes with custom colors, patterns, frames, and logos. No sign-up, no watermark.</p>
                             <p class="run-modes"><span class="visually-hidden">Runs as: </span><span class="run-badge" title="Runs in the tab. Nothing you paste is uploaded.">browser</span><span class="run-badge" title="One HTML file. Keep it, run it offline.">download</span><span class="run-badge" title="Put that file on your own server.">self-host</span></p>
                         </a>
                         <div class="card-footer">
@@ -561,7 +568,7 @@
                     <p class="group-note">The utilities client work keeps reaching for, rebuilt without the sign-up wall.</p>
                 </div>
                 <div class="tools-grid">
-                    <article class="tool-card" data-reveal style="--i:1">
+                    <article class="tool-card tool-card--contrast-grid" data-reveal style="--i:1">
                         <a href="../contrast-grid/" class="card-body">
                             <span class="card-tag">// Utility</span>
                             <h3>Contrast Grid</h3>
@@ -621,7 +628,7 @@
                         </div>
                     </article>
 
-                    <article class="tool-card" data-reveal style="--i:6">
+                    <article class="tool-card tool-card--dither-machine" data-reveal style="--i:6">
                         <a href="../dither-machine/" class="card-body">
                             <span class="card-tag">// Generator</span>
                             <h3>Dither Machine</h3>
@@ -645,7 +652,7 @@
                     <p class="group-note">Pricing, invoicing, and getting your own work out of the door.</p>
                 </div>
                 <div class="tools-grid">
-                    <article class="tool-card" data-reveal style="--i:1">
+                    <article class="tool-card tool-card--character-counter" data-reveal style="--i:1">
                         <a href="../character-counter/" class="card-body">
                             <span class="card-tag">// Utility</span>
                             <h3>Does It Fit?</h3>
