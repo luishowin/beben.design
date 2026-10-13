@@ -705,6 +705,7 @@
         main {
             max-width: 1100px;
             grid-template-columns: 1fr;
+            padding-top: 0;
         }
 
         .info-col {
@@ -714,11 +715,12 @@
             padding: 2.5rem 0;
         }
 
-        .tool-col { padding: 2.5rem 0 0; }
+        .tool-col { padding: calc(2.5rem + 80px) 0 0; }
 
+        /* Cover hero fallback (no script): plain framed banner above the input. */
         .qr-hero {
             margin: 0 0 2rem;
-            border: 1px solid var(--border);
+            border: 1px solid var(--rule);
             background: var(--card-bg);
         }
 
@@ -729,6 +731,66 @@
             aspect-ratio: 16 / 9;
             object-fit: cover;
         }
+
+        /* Cover hero: full-bleed image behind the info text with a dark overlay.
+           The figure is moved into .info-col at runtime, so it always matches
+           the text height and never needs fixed pixel values. */
+        html, body { overflow-x: clip; }
+
+        .info-col.has-cover {
+            position: relative;
+            top: auto;
+            isolation: isolate;
+            border-bottom: none;
+            padding-top: calc(65px + 2.5rem);
+            padding-bottom: 3rem;
+        }
+
+        .info-col.has-cover .qr-hero {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 100vw;
+            transform: translateX(-50%);
+            margin: 0;
+            border: none;
+            background: none;
+            z-index: 0;
+        }
+
+        .info-col.has-cover .qr-hero img {
+            height: 100%;
+            aspect-ratio: auto;
+        }
+
+        .info-col.has-cover .qr-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(8, 10, 14, 0.50) 0%, rgba(8, 10, 14, 0.62) 55%, rgba(8, 10, 14, 0.82) 100%);
+        }
+
+        .info-col.has-cover > :not(.qr-hero) {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Light ink over the cover, following the site hero precedent where
+           the red accent steps aside for yellow on photographic grounds. */
+        .info-col.has-cover h1 { color: #F7F4F3; }
+        .info-col.has-cover .description,
+        .info-col.has-cover .page-label,
+        .info-col.has-cover .spec-label,
+        .info-col.has-cover .output-specs h2,
+        .info-col.has-cover .cta-block p { color: rgba(247, 244, 243, 0.78); }
+        .info-col.has-cover .spec-value { color: #F7F4F3; }
+        .info-col.has-cover .spec-value.accent { color: var(--yellow); }
+        .info-col.has-cover .spec-row { border-bottom-color: rgba(247, 244, 243, 0.22); }
+        .info-col.has-cover .output-specs,
+        .info-col.has-cover .cta-block { border-top-color: rgba(247, 244, 243, 0.28); }
+        .info-col.has-cover .cta-link { color: var(--yellow); }
+        .info-col.has-cover .cta-link::after { background: var(--yellow); }
 
         .qr-editor {
             display: grid;
@@ -795,7 +857,7 @@
 
         .tile {
             background: var(--card-bg);
-            border: 1px solid var(--input-border);
+            border: 1px solid var(--rule);
             color: var(--text);
             font-family: inherit;
             padding: 0.5rem 0.35rem 0.45rem;
@@ -902,7 +964,7 @@
 
         .qr-btn {
             background: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 1px solid var(--rule);
             color: var(--text);
             font-family: inherit;
             font-size: 0.66rem;
@@ -1033,16 +1095,42 @@
             padding: 0 0 0.9rem;
         }
 
+        /* Quiet outlines: resting box borders and underline strokes use
+           --rule. Selected, focus, and warning states keep their colors
+           so they still signal. */
+        .frame,
+        .tool-input,
+        .tool-textarea,
+        .seg,
+        .btn-group,
+        .color-row input[type="color"] { border-color: var(--rule); }
+
+        .seg-btn { border-right-color: var(--rule); }
+
+        .qr-link { text-decoration-color: var(--rule); }
+
+        /* Dimmer backdrop grid, 10 percent under the shell tokens. */
+        :root[data-theme="light"] { --dot: rgba(20, 20, 20, 0.081); }
+        :root[data-theme="dark"] { --dot: rgba(247, 244, 243, 0.063); }
+
         /* Responsive */
         @media (max-width: 1020px) {
             .info-col { padding: 2rem 0; }
 
-            .tool-col { padding: 2rem 0 0; }
+            .tool-col { padding: calc(2rem + 72px) 0 0; }
 
             .qr-editor { grid-template-columns: minmax(0, 1fr) 310px; }
         }
 
+        @media (max-width: 768px) {
+            .info-col.has-cover {
+                padding-top: calc(63px + 2rem);
+            }
+        }
+
         @media (max-width: 860px) {
+            .tool-col { padding-top: calc(2rem + 56px); }
+
             .qr-editor { grid-template-columns: 1fr; }
 
             .qr-side {
@@ -1696,6 +1784,17 @@ var Tool = (function () {
     var warningsBox = Tool.$('qrWarnings');
     var contrastWarn = Tool.$('contrastWarn');
     var logoWarn = Tool.$('logoWarn');
+
+    // Cover hero: the shell renders the info column from shared templates,
+    // so the figure is authored in the tool column and moved here at once.
+    // Without script the figure simply stays above the input as a banner.
+    (function coverHero() {
+        var hero = document.querySelector('.qr-hero');
+        var info = document.querySelector('.info-col');
+        if (!hero || !info) return;
+        info.insertBefore(hero, info.firstChild);
+        info.classList.add('has-cover');
+    })();
 
     function escXml(s) {
         return String(s).replace(/&/g, '&amp;')

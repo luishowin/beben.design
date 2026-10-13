@@ -46,6 +46,17 @@
     var contrastWarn = Tool.$('contrastWarn');
     var logoWarn = Tool.$('logoWarn');
 
+    // Cover hero: the shell renders the info column from shared templates,
+    // so the figure is authored in the tool column and moved here at once.
+    // Without script the figure simply stays above the input as a banner.
+    (function coverHero() {
+        var hero = document.querySelector('.qr-hero');
+        var info = document.querySelector('.info-col');
+        if (!hero || !info) return;
+        info.insertBefore(hero, info.firstChild);
+        info.classList.add('has-cover');
+    })();
+
     function escXml(s) {
         return String(s).replace(/&/g, '&amp;')
             .replace(/</g, '&lt;').replace(/>/g, '&gt;')
