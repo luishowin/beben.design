@@ -8,27 +8,27 @@
     <meta name="theme-color" content="#141414">
 
     <title>Beben Arcade - twelve games that work with the wifi off | Beben Design Blog</title>
-    <meta name="description" content="An installable arcade of twelve tiny games, shipped as 222KB of static files with no engine, no build step, and no network after the first visit. What offline-first costs and what it buys.">
+    <meta name="description" content="Beben Arcade is a pocket arcade of tiny games. No ads, no account, works offline, and plays on anything with a browser.">
     <link rel="canonical" href="https://beben.design/blog/beben-arcade-offline/">
 
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://beben.design/blog/beben-arcade-offline/">
     <meta property="og:title" content="Beben Arcade - twelve games that work with the wifi off | Beben Design Blog">
-    <meta property="og:description" content="An installable arcade of twelve tiny games, shipped as 222KB of static files with no engine, no build step, and no network after the first visit. What offline-first costs and what it buys.">
+    <meta property="og:description" content="Beben Arcade is a pocket arcade of tiny games. No ads, no account, works offline, and plays on anything with a browser.">
     <meta property="og:site_name" content="Beben Design">
-    <meta property="article:published_time" content="2026-07-18">
+    <meta property="article:published_time" content="2026-10-19">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Beben Arcade - twelve games that work with the wifi off | Beben Design Blog">
-    <meta name="twitter:description" content="An installable arcade of twelve tiny games, shipped as 222KB of static files with no engine, no build step, and no network after the first visit. What offline-first costs and what it buys.">
+    <meta name="twitter:description" content="Beben Arcade is a pocket arcade of tiny games. No ads, no account, works offline, and plays on anything with a browser.">
 
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "Beben Arcade - twelve games that work with the wifi off",
-  "description": "An installable arcade of twelve tiny games, shipped as 222KB of static files with no engine, no build step, and no network after the first visit. What offline-first costs and what it buys.",
-  "datePublished": "2026-07-18",
-  "dateModified": "2026-07-18",
+  "description": "Beben Arcade is a pocket arcade of tiny games. No ads, no account, works offline, and plays on anything with a browser.",
+  "datePublished": "2026-10-19",
+  "dateModified": "2026-10-19",
   "url": "https://beben.design/blog/beben-arcade-offline/",
   "mainEntityOfPage": {
     "@type": "WebPage",
@@ -378,13 +378,13 @@
     <!-- Post hero - plain -->
     <section class="page-hero">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Blog &middot; July 18, 2026</span>
+            <span class="eyebrow" data-reveal style="--i:0">Blog &middot; October 19, 2026</span>
             <h1 data-reveal style="--i:1">Beben Arcade - twelve games that work with the wifi off</h1>
-            <p data-reveal style="--i:2">An installable arcade of twelve tiny games, shipped as 222KB of static files with no engine, no build step, and no network after the first visit. What offline-first costs and what it buys.</p>
+            <p data-reveal style="--i:2">Beben Arcade is a pocket arcade of tiny games. No ads, no account, works offline, and plays on anything with a browser.</p>
             <div class="post-meta" data-reveal style="--i:3">
                 <span>Luis</span>
                 <span>&middot;</span>
-                <span>6 min read</span>
+                <span>2 min read</span>
             </div>
         </div>
     </section>
@@ -396,38 +396,18 @@
                 <img src="/assets/images/blog/beben-arcade-offline/hero.svg" alt="An arcade cabinet screen with a neon game grid inside, wired to a service worker cache" width="1200" height="630">
             </figure>
             <article class="post-body" data-reveal>
-<p><a href="/games/">Beben Arcade</a> is twelve small games living at one address: snake, 2048, blockfall, brick bash, wingbeat, mines, pixel dash, skystack, paddle duel, star swarm, sudoku, four in a row. You can install it to a home screen, put the phone in airplane mode, and every one of them still opens.</p>
-<p>The whole thing is 222KB of static files. No engine, no bundler, no framework, no analytics, no network call after the first visit. This post is about the rules that made that possible, because the games were the easy part.</p>
-<h2>One rule, enforced ruthlessly</h2>
-<p>The arcade has a single hard constraint: nothing under <code>/games/</code> may reference anything outside <code>/games/</code>.</p>
-<p>That sounds pedantic until you try it. It rules out the site's own stylesheet, the shared navigation, the Sprite widget, Google Fonts, a CDN, an icon set, an analytics snippet. Every one of those is a request that will fail on a plane, and a request that fails on a plane is a broken app in the only moment the arcade exists to serve.</p>
-<p>So the arcade is a deliberate exception to our own design system. The main site has a shared <code>index.css</code>, a nav partial copied verbatim into every page, and a theme toggle. The arcade has none of them. It is a separate world with its own manifest, its own service worker scoped to <code>/games/</code>, and its own visual language. Every time someone suggests unifying the two, the answer is the same: unified means coupled, and coupled means the arcade goes down when the site does.</p>
-<h2>A shared runtime, not an engine</h2>
-<p>Twelve games written independently would be twelve copies of the same three hundred lines. The obvious fix is a game engine, and the obvious fix is wrong at this scale. An engine wants you to model your game its way, and it arrives with a build step attached.</p>
-<p>What we built instead is <code>arcade.js</code>, 35KB of plain JavaScript that does the boring things every game needed and nothing else:</p>
-<ul>
-<li>A fixed-timestep loop, so a 144Hz phone and a 60Hz laptop run the same physics.</li>
-<li><code>fitCanvas</code>, which handles device pixel ratio and resize so no game ships its own blurry-canvas bug.</li>
-<li>An 8-bit Web Audio synth with a <code>jingle()</code> helper, so the sounds are generated rather than downloaded.</li>
-<li>Score and settings stores, namespaced <code>beben-arcade-*</code> and wrapped in try/catch because Safari private mode throws on <code>localStorage</code>.</li>
-<li>Top-bar chrome injected at load, so the back button and mute toggle sit in exactly the same pixel in all twelve games.</li>
-</ul>
-<p>Each game is then one self-contained <code>&lt;slug&gt;/index.html</code> that loads the runtime and owns everything else. You can open any of them, read the whole game top to bottom, and change it without knowing how the other eleven work. That property is worth more than deduplication.</p>
-<h2>Cache-first means stale forever</h2>
-<p>The service worker serves from cache first and only falls back to the network. That is the correct strategy for an offline arcade and it comes with one sharp edge: if you ship a fix without changing the cache name, returning visitors keep the bug indefinitely. Not for a while. Forever, until they clear site data.</p>
-<p>The rule we wrote down after learning this: <strong>every commit that touches <code>docs/games/</code> bumps the <code>CACHE</code> constant in <code>sw.js</code></strong>. The version badge on the hub moves with it, so the number on your screen tells you which build you are actually running. It is a small discipline that exists entirely to make a silent failure loud.</p>
-<p>Adding a game touches four places on purpose: the precache list, a hub card, the hub's inline icon map, and the slug array the achievements read. There is no registry that generates those from a folder listing, because a registry would need a build step, and the build step is the thing we are refusing.</p>
-<h2>Identity as a constraint</h2>
-<p>The arcade is dark only. There is no theme toggle, and it never reads the main site's theme key. Twelve games on a near-black <code>#080813</code>, each owning one of seven neon accents that colours its card, the in-game chrome, the canvas art, and the game-over jingle. You learn which game you are in from the colour before you read a word.</p>
-<p>The display type is Press Start 2P, self-hosted at 5KB. That number is the point. The full font is far larger; we subset it to uppercase glyphs only, which is why every use of it is paired with <code>text-transform: uppercase</code>. A web font you can afford offline is a web font you can subset until it is smaller than most tracking pixels.</p>
-<p>The hero used to be a 168KB cover image. It is now drawn with CSS and SVG, which weighs nothing and scales to any screen.</p>
-<h2>Achievements without a server</h2>
-<p>There are eight achievements: first play, twenty-five plays, playing all twelve, five personal bests, installing to the home screen, a three-day streak, playing after midnight, and turning on CRT mode. All of them evaluate against <code>localStorage</code> on the device.</p>
-<p>Nobody can see your streak but you. That is not a limitation we apologise for, it is the same position we take on the <a href="/blog/tools-you-can-own/">QR generator</a>: if the feature does not need a server, it does not get one, and then there is no account, no leaderboard to moderate, and no database of who played what at 2am.</p>
-<p>The rest of the extras follow the same logic. CRT scanline mode unlocks from the Konami code, seven taps on the logo, or the settings panel, and persists as a setting. One launch in seven shows an INSERT COIN flourish. Neither needs anything the device does not already have.</p>
-<h2>What it cost, and what to steal</h2>
-<p>Offline-first is not free. We gave up the shared design system, hand-maintain four lists when adding a game, and cannot ship a hotfix without a cache bump. In exchange, the arcade has no runtime dependencies to break, no bill that scales with players, and no failure mode more interesting than a browser refusing to open a file it already has.</p>
-<p>If you are building something similar, steal the boundary rather than the code. Draw a hard line around what must work offline, refuse every reference that crosses it, and write down the one rule that will silently rot if you forget it. The games take a weekend. The boundary is the product.</p>
+<h2>What it is</h2>
+<p>Beben Arcade is a pocket arcade of twelve tiny games living at one address: snake, 2048, blockfall, brick bash, wingbeat, mines, pixel dash, skystack, paddle duel, star swarm, sudoku, four in a row, and more. You install it to your home screen, put your phone in airplane mode, and every game still opens.</p>
+<p>It is a web app, so there is nothing to download from an app store. It plays on anything with a browser - a phone, a laptop, a tablet. No account is needed. No telemetry is collected.</p>
+<h2>How it works</h2>
+<p>The whole arcade is about 222KB of static files: plain HTML, CSS, and JavaScript. There is no engine, no bundler, no framework, and no build step. Each game is a single self-contained HTML file that loads a small shared runtime (arcade.js) and owns everything else.</p>
+<p>A service worker caches every file on the first visit. After that, the arcade works entirely offline - no network call is ever made. When a new build is released, updates roll out automatically because it is a web app: the next time you open it, you get the latest version.</p>
+<p>Each game uses simple, ubiquitous technologies - HTML, CSS, and JavaScript - with canvas rendering and an 8-bit sound synth built in. The display type is Press Start 2P, self-hosted and subsetted to just the glyphs we need.</p>
+<h2>Why it was built</h2>
+<p>I built Beben Arcade because I hate ads. Almost every game you install today is stuffed with ads, tracking, and prompts to create an account. I wanted something cleaner.</p>
+<p>I also built it because I find myself in places without internet very often - on planes, in basements, anywhere the signal drops. Most games stop working the moment you lose a connection. Beben Arcade does not. Once installed, it keeps working forever, offline.</p>
+<p>A key enabler has been AI. Frontier models like Opus 5.5 and GPT Astra write much better code than I can by miles. Not only in code, but also in UX planning and engineering. With AI, these games went from idea to working reality far faster than I could have done alone.</p>
+<p>The games are very light. They use simple ubiquitous technologies like HTML, CSS, and JavaScript. They can be downloaded for offline play. Updates roll out automatically once built because it is a web app. There is no telemetry and no account needed. They play on anything with a browser.</p>
 <p>Twelve are live and eight slots are reserved on the hub. <a href="/games/">Go play something</a>, then turn the wifi off and play it again.</p>
             </article>
             <div class="post-tags" data-reveal><span>engineering</span><span>games</span><span>offline</span></div>
@@ -440,12 +420,8 @@
             <div class="post-nav">
                 <span class="eyebrow" data-reveal style="--i:0">Keep reading</span>
                 <div class="post-nav-row" data-reveal style="--i:1">
-                    <span class="dir">Newer</span>
-                    <a href="/blog/codex-offline-library/">Codex - an offline library that answers in milliseconds</a>
-                </div>
-                <div class="post-nav-row" data-reveal style="--i:2">
                     <span class="dir">Older</span>
-                    <a href="/blog/building-sprite/">Building Sprite - a chat widget with two brains</a>
+                    <a href="/blog/codex-offline-library/">Codex - an offline library that answers in milliseconds</a>
                 </div>
             </div>
             <div class="cta-row" data-reveal>

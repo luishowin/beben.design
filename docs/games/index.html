@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>ARCADIA by BEBEN DESIGN — tiny games, no ads, works offline</title>
-    <meta name="description" content="ARCADIA by BEBEN DESIGN — tiny 8-bit games. Install it on your phone, play offline, beat your best. No ads, ever.">
+    <title>ARCADIA by BEBEN DESIGN - tiny games, no ads, works offline</title>
+    <meta name="description" content="ARCADIA by BEBEN DESIGN - tiny 8-bit games. Install it on your phone, play offline, beat your best. No ads, ever.">
 
     <meta name="theme-color" content="#000000">
     <meta name="mobile-web-app-capable" content="yes">
@@ -22,7 +22,7 @@
 
     <style>
         /* ─────────────────────────────────────────────────────────
-           ARCADIA HUB — scoped additions only.
+           ARCADIA HUB - scoped additions only.
            Tokens + shared chrome come from arcade.css.
            Per-card accent rides on --ac (set inline per card).
         ───────────────────────────────────────────────────────── */
@@ -397,6 +397,16 @@
             border-radius: 4px;
         }
         .hub-gear:active { transform: translateY(1px); }
+
+        .bug-link {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .bug-link a { color: var(--headers); text-decoration: underline; text-decoration-color: var(--border); }
+        .bug-link a:hover { color: var(--neon-blue); }
     </style>
 </head>
 <body>
@@ -587,7 +597,7 @@
 
     <div class="game-grid" id="soonGrid">
         <a class="game-card game-card--soon" href="./void-dodger/" style="--ac: var(--neon-blue)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/void-dodger.png" alt="Void Dodger icon" loading="lazy"></span>
             <span class="game-name">Void Dodger</span>
             <span class="game-desc">Dodge the asteroids. Ride the void.</span>
@@ -597,7 +607,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./maze-muncher/" style="--ac: var(--neon-yellow)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/maze-muncher.png" alt="Maze Muncher icon" loading="lazy"></span>
             <span class="game-name">Maze Muncher</span>
             <span class="game-desc">Eat every pellet. Evade the chaser.</span>
@@ -608,7 +618,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./hop-across/" style="--ac: var(--neon-lime)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/hop-across.png" alt="Hop Across icon" loading="lazy"></span>
             <span class="game-name">Hop Across</span>
             <span class="game-desc">Cross the road. Traffic won't brake.</span>
@@ -619,7 +629,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./wave-rider/" style="--ac: var(--neon-pink)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/wave-rider.png" alt="Wave Rider icon" loading="lazy"></span>
             <span class="game-name">Wave Rider</span>
             <span class="game-desc">Ride the wave. Catch the stars.</span>
@@ -630,7 +640,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./solitaire/" style="--ac: var(--neon-purple)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/solitaire.png" alt="Solitaire icon" loading="lazy"></span>
             <span class="game-name">Solitaire</span>
             <span class="game-desc">Build four suits, ace to king.</span>
@@ -641,7 +651,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./checkers/" style="--ac: var(--neon-red)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/checkers.png" alt="Checkers icon" loading="lazy"></span>
             <span class="game-name">Checkers</span>
             <span class="game-desc">Capture every last piece.</span>
@@ -652,7 +662,7 @@
             <span class="game-best"></span>
         </a>
         <a class="game-card game-card--soon" href="./chess/" style="--ac: var(--neon-blue)">
-            <span class="pix-badge">New</span>
+            <span class="pix-badge">Beta</span>
             <span class="game-icon"><img src="./icons/games/chess.png" alt="Chess icon" loading="lazy"></span>
             <span class="game-name">Chess</span>
             <span class="game-desc">Outmove the AI. Take the king.</span>
@@ -666,8 +676,8 @@
     </div>
 
     <section class="footer-manifesto">
-        <p>ARCADIA is a pocket arcade &mdash; tiny 8-bit games, zero ads, zero sign-ups, zero tracking. It plays offline, keeps your best scores on your device, and never phones home.</p>
-        <p>Built with plain <strong>HTML, CSS and JavaScript</strong>: canvas rendering, a service worker for offline installs, self-hosted pixel type, no frameworks. A design project by <strong>Luis Howin</strong>, creative director at BEBEN DESIGN &mdash; about 99% of the code was written with AI.</p>
+        <p>ARCADIA is a pocket arcade - tiny 8-bit games, zero ads, zero sign-ups, zero tracking. It plays offline, keeps your best scores on your device, and never phones home.</p>
+        <p>Built with plain <strong>HTML, CSS and JavaScript</strong>: canvas rendering, a service worker for offline installs, self-hosted pixel type, no frameworks. A design project by <strong>Luis Howin</strong>, creative director at BEBEN DESIGN - about 99% of the code was written with AI.</p>
         <p class="cta">Have fun. And tell a friend to tell a friend.</p>
         <p class="hub-status" id="hubStatus">&nbsp;</p>
     </section>
@@ -677,6 +687,10 @@
         <button class="hub-trophy" id="hubTrophy" type="button">TROPHY CASE &#127942;</button>
         <button class="hub-gear" id="hubGear" aria-label="Settings">&#9881;</button>
     </footer>
+
+    <p class="bug-link">
+        <a href="../contact/" target="_blank" rel="noopener">Found a bug? 🐛</a>
+    </p>
 
 </main>
 
