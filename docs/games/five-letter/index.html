@@ -94,6 +94,12 @@
             color: var(--text-muted);
             margin-top: 0.3rem;
         }
+        .cw-note {
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
         .wl-keys { display: flex; flex-direction: column; gap: 6px; width: 100%; }
         .wl-krow { display: flex; gap: 5px; justify-content: center; }
         .wl-key {
@@ -126,6 +132,7 @@
         <div class="cw-board" id="board"></div>
         <div class="cw-clues" id="clues"></div>
         <div class="wl-keys" id="keys"></div>
+        <div class="cw-note">All clues in UK English.</div>
     </div>
 </main>
 
@@ -143,9 +150,9 @@
 
     var PUZZLES = [
         { grid: ['#vat#', 'salad', 'alike', 'given', '#den#'], clues: {
-            '1A': 'Big brewing tub', '1D': 'Legally acceptable', '2D': 'Not dead',
+            '1A': 'Value added tax', '1D': 'Legally acceptable', '2D': 'Not dead',
             '3D': 'Already claimed', '4A': 'Bowl of raw greens', '4D': 'Droop in the middle',
-            '5D': 'Cozy room', '6A': 'Similar in kind', '7A': 'Already assumed', '8A': "Bear's lair" } },
+            '5D': 'Cosy room', '6A': 'Similar in kind', '7A': 'Already assumed', '8A': "Bear's lair" } },
         { grid: ['#sap#', 'straw', 'arise', 'taste', '#yea#'], clues: {
             '1A': 'Tree fluid', '1D': 'Wander off', '2D': 'Get out of bed',
             '3D': 'Spaghetti, e.g.', '4A': 'Drinking tube', '4D': 'Took a chair',
@@ -165,10 +172,62 @@
         { grid: ['#sat#', 'sorry', 'argue', 'crust', '#yet#'], clues: {
             '1A': 'Took a chair', '1D': 'Apologetic', '2D': 'Bicker', '3D': 'Rely on',
             '4A': 'Apologetic', '4D': 'Biological pouch', '5D': 'Up to now', '6A': 'Bicker',
-            '7A': 'Pizza edge', '8A': 'Up to now' } }
+            '7A': 'Pizza edge', '8A': 'Up to now' } },
+        { grid: ['#had#', 'bones', 'alibi', 'remit', '#set#'], clues: {
+            '1A': 'Past tense of have', '1D': 'Openings', '2D': 'Japanese animation',
+            '3D': 'Money taken out', '4A': 'Parts of a skeleton', '4D': 'Place serving drinks',
+            '5D': 'Take a seat', '6A': 'Claim of being elsewhere', '7A': 'Send money', '8A': 'Put down' } },
+        { grid: ['#tea#', 'march', 'abate', 'poser', '#red#'], clues: {
+            '1A': 'Hot drink made from leaves', '1D': 'Drawing of an area',
+            '2D': 'Rub out', '3D': 'Colour at end of spectrum',
+            '4A': 'Walk in military manner', '4D': 'Did something',
+            '5D': 'Female pronoun', '6A': 'Become less intense', '7A': 'One who strikes a pose', '8A': 'Colour' } },
+        { grid: ['#all#', 'their', 'means', 'saves', '#des#'], clues: {
+            '1A': 'Whole amount', '1D': 'Plural of tah (tea)', '2D': 'Plural of line',
+            '3D': 'Really Simple Syndication', '4A': 'Belonging to them', '4D': 'In front',
+            '5D': 'Go away from', '6A': 'Way of doing something', '7A': 'Keeps safe or rescues', '8A': 'Abbreviation for desired' } },
+        { grid: ['#fog#', 'river', 'inane', 'dated', '#let#'], clues: {
+            '1A': 'Thick cloud of water droplets', '1D': 'Set free from',
+            '2D': 'Small carnivorous mammal', '3D': 'Colour at end of spectrum',
+            '4A': 'Large natural stream of water', '4D': 'Last in series',
+            '5D': 'Egg-shaped', '6A': 'Empty or silly', '7A': 'Marked with date', '8A': 'Allow' } },
+        { grid: ['#she#', 'awash', 'terse', 'eaten', '#ten#'], clues: {
+            '1A': 'Female pronoun', '1D': 'Past tense of eat', '2D': 'Moisture from skin',
+            '3D': 'Female chicken', '4A': 'Covered with water', '4D': 'Brief or concise',
+            '5D': 'Past participle of eat', '6A': 'Rare steak', '7A': 'Stag', '8A': 'Number after nine' } },
+        { grid: ['#age#', 'alive', 'cover', 'there', '#any#'], clues: {
+            '1A': 'How old someone is', '1D': 'Tropical drink', '2D': 'Japanese animation',
+            '3D': 'All of them', '4A': 'Living', '4D': 'Do something',
+            '5D': 'Existing', '6A': 'Place over', '7A': 'In that place', '8A': 'Any one' } },
+        { grid: ['#cap#', 'based', 'amino', 'react', '#one#'], clues: {
+            '1A': 'Head covering', '1D': 'Place serving drinks', '2D': 'Asian person',
+            '3D': 'Dot', '4A': 'Having a basis', '4D': 'Short for per cent',
+            '5D': 'Single', '6A': 'Building block of protein', '7A': 'Act in response', '8A': 'Single' } }
     ];
 
     var puz, cells, entries, nums, letters, solved, glowing, active, dir, over, streak, cellEls, puzzleIdx;
+    var deck = [];
+
+    function shuffle(a) {
+        for (var i = a.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+    }
+    function refillDeck() {
+        deck = shuffle(PUZZLES.map(function (_, i) { return i; }));
+    }
+    /* shuffled deck: every puzzle appears once before any repeats */
+    function drawNext(exclude) {
+        if (!deck.length) refillDeck();
+        var idx = deck.pop();
+        if (idx === exclude && deck.length && PUZZLES.length > 1) {
+            deck.unshift(idx);
+            idx = deck.pop();
+        }
+        return idx;
+    }
 
     function readStreak() {
         try { return parseInt(localStorage.getItem(STREAK_KEY), 10) || 0; }
@@ -237,9 +296,7 @@
     }
 
     function nextPuzzle() {
-        var idx = puzzleIdx;
-        while (idx === puzzleIdx && PUZZLES.length > 1) idx = Math.floor(Math.random() * PUZZLES.length);
-        load(idx);
+        load(drawNext(puzzleIdx));
     }
 
     function buildBoard() {
@@ -458,6 +515,7 @@
             label: 'Mini complete · streak',
             score: streak,
             best: res.best, isNew: res.isNew,
+            replayLabel: 'Next',
             onReplay: function () { nextPuzzle(); }
         });
     }
@@ -491,7 +549,8 @@
     });
 
     streak = readStreak();
-    load(Math.floor(Math.random() * PUZZLES.length));
+    refillDeck();
+    load(drawNext(-1));
 })();
 </script>
 

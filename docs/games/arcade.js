@@ -22,7 +22,7 @@
     var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: true };
     var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat',
         'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row',
-        'five-letter', 'dune-surf', 'super-hop', 'pocket-putt'];
+        'five-letter', 'dune-surf', 'safari-hop', 'pocket-putt'];
 
     /* ── storage helpers (Safari private mode throws) ─────────── */
     function readJSON(key, fallback) {
@@ -566,7 +566,7 @@
         actions.className = 'arc-actions';
         var replay = document.createElement('button');
         replay.className = 'arc-action arc-action--primary';
-        replay.textContent = 'Replay';
+        replay.textContent = o.replayLabel || 'Replay';
         replay.addEventListener('click', function () {
             overEl.remove(); overEl = null;
             state.over = false;

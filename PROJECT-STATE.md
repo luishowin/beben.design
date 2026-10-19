@@ -1003,6 +1003,52 @@ entries were sitting uncommitted in the working tree from an earlier session;
 this commit publishes them. Voice clean, and the page links only shared assets
 that exist.
 
+### Arcade batch (cache `v33`)
+
+**Five Letter rebuilt again — now 13 UK-English crossword sets.** The previous
+641-word Wordle-style list was replaced with 13 valid 5×5 mini-crossword grids
+(each grid: 5 across + 5 down, all dictionary words, zero repeated answers
+across sets, UK spellings throughout). Solve all 10 entries for "SOLVED",
+streak persists and submits to `Arcade.scores`. The win panel now offers a
+**Next** button (loads a new puzzle from a shuffled deck) alongside Replay and
+Hub; `Next` replaces the old Replay label. Bottom note reads "All clues in UK
+English." Hub card description corrected to "A mini crossword."
+
+**Super Hop renamed Safari Hop, savannah reskin.** Slug moved
+(`/games/super-hop/` → `/games/safari-hop/`, with a meta-refresh stub at the
+old slug). Title/score slug/`SLUGS`/hub card/precache/score-key all renamed;
+best score carries over from the old slug. Canvas art reskinned: explorer in
+safari hat, light shirt, beige shorts, brown boots running across dry savannah
+tiles with blue sky and acacia trees; lions replace crawlers (tawny body, dark
+mane, edge-aware patrol); baboons perch on tree canopies; a vulture crosses the
+sky periodically (ambient, harmless). Hurt label changed from "Caught by a
+crawler" to "Caught by a lion."
+
+**Chess pieces redrawn as canvas vectors.** Replaced `fillText`/`strokeText`
+font glyphs (U+265A–U+265F) that rendered inconsistently on mobile — black
+back-rank pieces read as white outlines, white pawns fell back to black — with
+hand-drawn canvas paths: solid white fill with dark rim on light squares,
+solid mid-slate (`#2A3049`) fill with light rim (`#C7D2EA`) on dark squares, so
+both sides read correctly at any size. Queen dots, knight eye and bishop slit
+cut in the rim colour. Board `#39405E`/`#151828` and move hints unchanged.
+
+**Six hub icons regenerated.** `dune-surf`, `five-letter`, `paddle-duel`,
+`pocket-putt`, `star-swarm` and `safari-hop` backgrounds stripped via `rembg`
+to transparent frameless 256×256 RGBA PNGs, matching the existing hub cards;
+`super-hop.png` deleted.
+
+Cache `v32` to `v33` with the hub label in lockstep; all precache entries
+resolve. The local `python -m http.server` test caveat still applies
+(heuristic HTTP cache can serve stale bytes until the Cache API is verified).
+
+### Website Audit page (pre-existing, committed here)
+
+`/services/website-audit/` (491 lines) and its services-hub row, meta
+description, JSON-LD `serviceType`, sitemap URL, `llms.txt` and `sprite.md`
+entries were sitting uncommitted in the working tree from an earlier session;
+this commit publishes them. Voice clean, and the page links only shared assets
+that exist.
+
 Measured at commit: 36 pages, 1135 internal references checked and 0 broken,
 voice clean, facts agree across 36 files, one asset version (`6.9`), status
 `--check` clean, all JSON-LD valid.

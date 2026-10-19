@@ -31,10 +31,12 @@
        or en passant yet — that's the full game. */
 
     var N = 8;
-    /* Solid silhouettes for BOTH sides. The hollow "white chess" glyphs, filled
-       dark, read as white line art on this board, so light and dark pieces were
-       impossible to tell apart — hence one solid glyph set + strong fills. */
-    var GLYPH = { K: '\u265A', Q: '\u265B', R: '\u265C', B: '\u265D', N: '\u265E', P: '\u265F' };
+    /* Hand-drawn canvas vector pieces. The old font glyphs (U+265A-265F via
+       fillText/strokeText) rendered inconsistently across devices: on mobile
+       the rim overwhelmed pale fills so black back-rank pieces read as white
+       outlines, and fallback fonts dropped fills entirely (white pawns drew
+       black). Each piece below is an explicit path with a solid fill + thin
+       rim, so both sides read correctly at any size. */
     var VAL = { P: 1, N: 3, B: 3, R: 5, Q: 9, K: 100 };
 
     var canvas = document.getElementById('game');
@@ -220,6 +222,171 @@
         sel = null; moves = [];
     });
 
+    /* Piece paths in a 100x100 box (x,y in [-50,50]). Each tracer draws the
+       silhouette with the current fill/stroke; small details (knight eye,
+       bishop slit) are cut in the rim colour. */
+    function tracePawn(ctx) {
+        ctx.beginPath();
+        ctx.arc(0, -24, 14, 0, Math.PI * 2);
+        ctx.moveTo(-9, -12);
+        ctx.lineTo(9, -12);
+        ctx.lineTo(15, 16);
+        ctx.lineTo(-15, 16);
+        ctx.closePath();
+        ctx.moveTo(-20, 22);
+        ctx.lineTo(20, 22);
+        ctx.lineTo(24, 36);
+        ctx.lineTo(-24, 36);
+        ctx.closePath();
+    }
+    function traceRook(ctx) {
+        ctx.beginPath();
+        ctx.moveTo(-24, -20);
+        ctx.lineTo(-24, -38);
+        ctx.lineTo(-14, -38);
+        ctx.lineTo(-14, -29);
+        ctx.lineTo(-7, -29);
+        ctx.lineTo(-7, -38);
+        ctx.lineTo(7, -38);
+        ctx.lineTo(7, -29);
+        ctx.lineTo(14, -29);
+        ctx.lineTo(14, -38);
+        ctx.lineTo(24, -38);
+        ctx.lineTo(24, -20);
+        ctx.closePath();
+        ctx.moveTo(-22, -20);
+        ctx.lineTo(22, -20);
+        ctx.lineTo(15, 20);
+        ctx.lineTo(-15, 20);
+        ctx.closePath();
+        ctx.moveTo(-24, 20);
+        ctx.lineTo(24, 20);
+        ctx.lineTo(26, 36);
+        ctx.lineTo(-26, 36);
+        ctx.closePath();
+    }
+    function traceKnight(ctx) {
+        ctx.beginPath();
+        ctx.moveTo(-27, -4);
+        ctx.lineTo(-21, -24);
+        ctx.lineTo(-15, -39);
+        ctx.lineTo(-9, -29);
+        ctx.lineTo(-2, -31);
+        ctx.lineTo(3, -20);
+        ctx.lineTo(13, -7);
+        ctx.lineTo(17, 10);
+        ctx.lineTo(14, 24);
+        ctx.lineTo(-7, 24);
+        ctx.lineTo(-9, 10);
+        ctx.lineTo(-17, 5);
+        ctx.closePath();
+        ctx.moveTo(-23, 24);
+        ctx.lineTo(23, 24);
+        ctx.lineTo(26, 38);
+        ctx.lineTo(-26, 38);
+        ctx.closePath();
+    }
+    function traceBishop(ctx) {
+        ctx.beginPath();
+        ctx.arc(0, -37, 5, 0, Math.PI * 2);
+        ctx.moveTo(-13, -30);
+        ctx.lineTo(13, -30);
+        ctx.lineTo(8, -6);
+        ctx.lineTo(-8, -6);
+        ctx.closePath();
+        ctx.moveTo(-8, -6);
+        ctx.lineTo(8, -6);
+        ctx.lineTo(16, 20);
+        ctx.lineTo(-16, 20);
+        ctx.closePath();
+        ctx.moveTo(-24, 20);
+        ctx.lineTo(24, 20);
+        ctx.lineTo(26, 36);
+        ctx.lineTo(-26, 36);
+        ctx.closePath();
+    }
+    function traceQueen(ctx) {
+        var xs = [-28, -14, 0, 14, 28], i;
+        ctx.beginPath();
+        for (i = 0; i < xs.length; i++) {
+            ctx.moveTo(xs[i] + 5.5, -32);
+            ctx.arc(xs[i], -32, 5.5, 0, Math.PI * 2);
+        }
+        ctx.moveTo(-31, -26);
+        ctx.lineTo(31, -26);
+        ctx.lineTo(26, -8);
+        ctx.lineTo(-26, -8);
+        ctx.closePath();
+        ctx.moveTo(-22, -8);
+        ctx.lineTo(22, -8);
+        ctx.lineTo(15, 22);
+        ctx.lineTo(-15, 22);
+        ctx.closePath();
+        ctx.moveTo(-26, 22);
+        ctx.lineTo(26, 22);
+        ctx.lineTo(28, 38);
+        ctx.lineTo(-28, 38);
+        ctx.closePath();
+    }
+    function traceKing(ctx) {
+        ctx.beginPath();
+        ctx.rect(-4, -46, 8, 18);
+        ctx.rect(-11, -41, 22, 8);
+        ctx.moveTo(-27, -28);
+        ctx.lineTo(27, -28);
+        ctx.lineTo(20, -6);
+        ctx.lineTo(-20, -6);
+        ctx.closePath();
+        ctx.moveTo(-20, -6);
+        ctx.lineTo(20, -6);
+        ctx.lineTo(15, 22);
+        ctx.lineTo(-15, 22);
+        ctx.closePath();
+        ctx.moveTo(-26, 22);
+        ctx.lineTo(26, 22);
+        ctx.lineTo(28, 38);
+        ctx.lineTo(-28, 38);
+        ctx.closePath();
+    }
+    var TRACER = { P: tracePawn, R: traceRook, N: traceKnight, B: traceBishop, Q: traceQueen, K: traceKing };
+
+    function drawPiece(ctx, t, c, cx, cy, size) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(size / 100, size / 100);
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        if (c === 'w') {
+            ctx.fillStyle = '#F2F4FA';
+            ctx.strokeStyle = 'rgba(8,10,17,0.85)';
+        } else {
+            /* mid slate: lighter than the dark squares, darker than the
+               light squares, so the body reads solid on both */
+            ctx.fillStyle = '#2A3049';
+            ctx.strokeStyle = '#C7D2EA';
+        }
+        ctx.lineWidth = 2.5;
+        TRACER[t](ctx);
+        ctx.fill();
+        ctx.stroke();
+        /* cut details in the rim colour so they read on both fills */
+        ctx.fillStyle = ctx.strokeStyle;
+        if (t === 'N') {
+            ctx.beginPath();
+            ctx.arc(-11, -14, 3, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (t === 'B') {
+            ctx.fillRect(-1.5, -27, 3, 14);
+        } else if (t === 'Q') {
+            for (var qi = -12; qi <= 12; qi += 12) {
+                ctx.beginPath();
+                ctx.arc(qi, -17, 2.6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        ctx.restore();
+    }
+
     function render() {
         var p = Arcade.palette();
         var ctx = view.ctx;
@@ -256,27 +423,11 @@
             }
         }
 
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        var size = cell * 0.74;
-        ctx.font = size + 'px Georgia, serif';
         for (var y = 0; y < N; y++) {
             for (var x = 0; x < N; x++) {
                 var pc = board[y][x];
                 if (!pc) continue;
-                var cx = (x + 0.5) * cell, cy = (y + 0.52) * cell;
-                var glyph = GLYPH[pc.t];
-                if (pc.c === 'w') {          // white: near-white body, dark rim
-                    ctx.fillStyle = '#F2F4FA';
-                    ctx.strokeStyle = 'rgba(8,10,17,0.85)';
-                    ctx.lineWidth = Math.max(1.2, cell * 0.045);
-                } else {                     // black: near-black body, slim slate rim
-                    ctx.fillStyle = '#0D1019';
-                    ctx.strokeStyle = '#AAB5D2';
-                    ctx.lineWidth = Math.max(1.2, cell * 0.038);
-                }
-                ctx.strokeText(glyph, cx, cy);
-                ctx.fillText(glyph, cx, cy);
+                drawPiece(ctx, pc.t, pc.c, (x + 0.5) * cell, (y + 0.52) * cell, cell * 0.78);
             }
         }
     }
