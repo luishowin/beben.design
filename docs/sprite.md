@@ -133,8 +133,11 @@ Three finished case studies, three previews, three client sites.
   - QR Code Generator (/qr-code-generator/): Make unlimited free QR codes with custom colors, patterns, frames, and logos. No sign-up, no watermark.
   - Contrast Grid (/contrast-grid/): Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.
   - Dither Machine (/dither-machine/): Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.
+  - EXIF Viewer and Stripper (/exif-stripper/): See the GPS coordinates, camera serial, and timestamps hidden in a photo, then download a clean copy.
+  - Checksum Verifier (/checksum-verifier/): Hash a downloaded file with SHA-1, SHA-256, SHA-384, or SHA-512 and compare it to the published value.
+  - Text Diff (/text-diff/): Compare two revisions of a contract or a copy deck side by side, without uploading either one.
   - Does It Fit? (/character-counter/): One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.
-- In development: Colour Blindness Simulator, SVG Cleaner, Favicon Forge, Fluid Type Calculator, EXIF Viewer and Stripper, JWT Decoder, Checksum Verifier, Text Diff, Passphrase Generator, Invoice Builder, Freelance Rate Calculator, Screenshot Framer, Barcode Generator.
+- In development: Colour Blindness Simulator, SVG Cleaner, Favicon Forge, Fluid Type Calculator, JWT Decoder, Passphrase Generator, Invoice Builder, Freelance Rate Calculator, Screenshot Framer, Barcode Generator.
 
 ## The blog
 

@@ -1,0 +1,74 @@
+/* Checksum verifier: file summary, a wrapping hash block, and a verdict
+   that can be read at a glance. */
+.dropzone.has-file p { color: var(--text); }
+.dropzone .file-meta {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+}
+
+.sum-file {
+    border-top: 1px solid var(--rule);
+    margin-bottom: 1.5rem;
+}
+
+.sum-file .hint { margin: 0; padding: 0.6rem 0; }
+
+.sum-file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.72rem;
+}
+
+.sum-file-key { color: var(--muted); flex: none; }
+
+.sum-file-val {
+    font-weight: 600;
+    text-align: right;
+    word-break: break-word;
+    min-width: 0;
+}
+
+.hash-box {
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    min-height: 66px;
+    display: flex;
+    align-items: center;
+}
+
+.hash-code {
+    display: block;
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    word-break: break-all;
+    color: var(--muted);
+}
+
+.hash-code.has-hash { color: var(--text); }
+
+.sum-status {
+    border: 1px solid var(--rule);
+    background: var(--bg-soft);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.55;
+    text-transform: uppercase;
+}
+
+.sum-status.is-match { border-color: var(--text); }
+.sum-status.is-mismatch { border-color: var(--accent); color: var(--accent); }
+.sum-status.is-busy { border-color: var(--yellow); }
+.sum-status.is-idle { color: var(--muted); }

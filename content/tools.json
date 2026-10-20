@@ -157,8 +157,66 @@
       "name": "EXIF Viewer and Stripper",
       "tag": "Utility",
       "pillar": "private",
-      "status": "soon",
-      "description": "See the GPS coordinates, camera serial, and timestamps hidden in a photo, then download a clean copy."
+      "status": "live",
+      "run_modes": ["browser", "download", "self-host"],
+      "number": "05",
+      "description": "See the GPS coordinates, camera serial, and timestamps hidden in a photo, then download a clean copy.",
+      "h1": "EXIF|Viewer & Stripper",
+      "lead": "Drop a photo and see what it carries beyond the image: GPS coordinates, camera make and serial, capture times, software, and orientation. Then download a copy with the metadata stripped. JPEG, PNG, WebP, and HEIC/HEIF files are read locally and never uploaded.",
+      "meta_title": "EXIF Viewer and Stripper - Remove Photo Metadata - Beben Design Tools",
+      "meta_description": "View the GPS, camera serial, and timestamps hidden in a photo, then download a clean copy with the metadata stripped. Runs in your browser. No upload.",
+      "specs": [
+        ["Formats", "JPEG, PNG, WebP, HEIC/HEIF"],
+        ["Reads", "EXIF, GPS, XMP, IPTC blocks", "accent"],
+        ["Strip", "Lossless, no re-encode"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "Clean copy downloaded."
+    },
+    {
+      "slug": "checksum-verifier",
+      "name": "Checksum Verifier",
+      "tag": "Utility",
+      "pillar": "private",
+      "status": "live",
+      "run_modes": ["browser", "download", "self-host"],
+      "number": "06",
+      "description": "Hash a downloaded file with SHA-1, SHA-256, SHA-384, or SHA-512 and compare it to the published value.",
+      "h1": "Checksum|Verifier",
+      "lead": "Drop a download and hash it with SHA-1, SHA-256, SHA-384, or SHA-512, then paste the value the publisher listed. The tool compares them and tells you whether the file is the one you asked for. Nothing is uploaded.",
+      "meta_title": "Checksum Verifier - SHA-1, SHA-256, SHA-384, SHA-512 - Beben Design Tools",
+      "meta_description": "Hash a downloaded file with SHA-1, SHA-256, SHA-384, or SHA-512 and compare it with the published checksum. Free browser tool, nothing uploaded.",
+      "specs": [
+        ["Algorithms", "SHA-1, SHA-256, SHA-384, SHA-512"],
+        ["Comparison", "Auto-detects the hash length", "accent"],
+        ["Input", "Any file type"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "Hash copied."
+    },
+    {
+      "slug": "text-diff",
+      "name": "Text Diff",
+      "tag": "Utility",
+      "pillar": "private",
+      "status": "live",
+      "run_modes": ["browser", "download", "self-host"],
+      "number": "07",
+      "description": "Compare two revisions of a contract or a copy deck side by side, without uploading either one.",
+      "h1": "Text|Diff",
+      "lead": "Paste two revisions of a contract, a copy deck, or a config file and see every line added, removed, or changed side by side. Ignore case or whitespace when those differences do not matter. Neither version leaves your browser.",
+      "meta_title": "Text Diff - Compare Two Revisions Side by Side - Beben Design Tools",
+      "meta_description": "Compare two versions of a document side by side, with line and word highlights. Ignore case or whitespace. Free browser tool, nothing uploaded, works offline.",
+      "specs": [
+        ["Input", "Paste or load two text files"],
+        ["View", "Side by side, word highlights", "accent"],
+        ["Options", "Ignore case and whitespace"],
+        ["Server calls", "Zero, runs locally"],
+        ["Offline support", "Yes, download the .html"]
+      ],
+      "toast": "Copied to clipboard."
     },
     {
       "slug": "jwt-decoder",
@@ -167,22 +225,6 @@
       "pillar": "private",
       "status": "soon",
       "description": "Read the header, payload, and expiry of a token without pasting it into somebody else's server."
-    },
-    {
-      "slug": "checksum-verifier",
-      "name": "Checksum Verifier",
-      "tag": "Utility",
-      "pillar": "private",
-      "status": "soon",
-      "description": "Hash a downloaded file with SHA-256 or SHA-512 and compare it to the published value."
-    },
-    {
-      "slug": "text-diff",
-      "name": "Text Diff",
-      "tag": "Utility",
-      "pillar": "private",
-      "status": "soon",
-      "description": "Compare two revisions of a contract or a copy deck side by side, without uploading either one."
     },
     {
       "slug": "passphrase-generator",

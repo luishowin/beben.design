@@ -1,10 +1,11 @@
 # Site revision, state of play
 
-Five pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
+Six pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
 1 to 4, the Sprite knowledge rework, the run described below, which closed
-v1 phases 7 and 8 and v2 phases 5 and 6, and an arcade gameplay pass, which
-has its own heading. GitHub Pages serves `docs/` from
-`main`, so pushing `main` publishes.
+v1 phases 7 and 8 and the v2 phases 5 and 6, an arcade gameplay pass, and a
+private-tools pass that added EXIF, checksum and text diff. The later passes
+each have their own heading. GitHub Pages serves `docs/` from `main`, so
+pushing `main` publishes.
 
 The Cloudflare Worker still does not deploy from git, but it no longer needs to
 for a content change. It is current, and it reads Sprite's facts from
@@ -1052,3 +1053,43 @@ that exist.
 Measured at commit: 36 pages, 1135 internal references checked and 0 broken,
 voice clean, facts agree across 36 files, one asset version (`6.9`), status
 `--check` clean, all JSON-LD valid.
+
+### Private tools: EXIF, checksum, text diff (20 Oct 2026)
+
+**Three private-pillar tools went live.** `/exif-stripper/` (05),
+`/checksum-verifier/` (06) and `/text-diff/` (07) are generated from
+`content/tools/` with no third-party code. The registry order now puts the
+three live cards before JWT Decoder and Passphrase Generator.
+
+**EXIF reads four containers.** The page carries its own TIFF, JPEG, PNG,
+WebP and ISOBMFF/HEIF parsers. It surfaces GPS coordinates, body and lens
+serials, owner, artist, copyright, capture times, software, orientation,
+maker notes, thumbnails, and XMP/IPTC presence. JPEG, PNG and WebP copies are
+rebuilt without metadata and without re-encoding; JPEG keeps ICC and can
+transplant only the orientation tag. HEIC/HEIF has no safe rebuild path in
+the browser, so metadata extents are zeroed and the items retyped in place.
+The image extents stay byte-identical and the file size does not change, which
+the page says. The supported formats are listed at the bottom.
+
+**Checksum uses Web Crypto.** SHA-1, SHA-256, SHA-384 and SHA-512, with
+auto-detection from the pasted value, normalisation of `sha256:` and
+`sha256sum`-style lines, and a match/mismatch verdict. MD5 is not offered
+because the browser crypto API does not compute it.
+
+**Text diff is line plus word.** Two panes, a single-scroll side-by-side
+table, word-level spans inside paired changed lines, ignore case and
+whitespace, swap, copy changes and clear. It uses LCS with prefix/suffix
+trimming and guards for oversized inputs; file loading stops at 2 MB. Nothing
+is written to localStorage.
+
+**Build and checks.** `content/tools.json` carries the three entries and
+`scripts/check_voice.py` lists the generated pages as generated. The build
+refreshed the grid, sitemap, `llms.txt` and `sprite.md`; `docs/index.html`
+was re-stamped by `build_status.py`. Measured at commit: 39 pages, 1165
+internal links checked and 0 broken, 7 tools, 23 games, voice clean, facts
+agree across 39 files, `build_status.py --check` clean, `build_tools.py`
+idempotent, all three tool scripts parse, and `git diff --check` clean. The
+three pages were exercised in Chrome with real JPEG, PNG, WebP and HEIC
+files; stripped outputs were checked with `exiftool` and Pillow, HEIC image
+extents compared byte-for-byte, and checksum results compared with
+`sha1sum`, `sha256sum`, `sha384sum` and `sha512sum`.

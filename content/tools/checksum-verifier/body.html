@@ -1,0 +1,61 @@
+<!-- Input -->
+<span class="field-label">// Input - Downloaded File</span>
+<div class="dropzone" id="sumDrop" role="button" tabindex="0"
+     aria-label="Choose a file, or drop one here">
+    <p><strong>Drop a file here</strong><br>
+    or click to browse. Any file type.</p>
+</div>
+<input type="file" id="sumFile" class="visually-hidden">
+
+<div class="sum-file" id="sumFileInfo">
+    <p class="hint">No file loaded yet.</p>
+</div>
+
+<!-- Algorithm -->
+<div class="seg-group">
+    <span class="field-label" id="algoLabel">// Algorithm</span>
+    <div class="seg" id="sumAlgo" role="group" aria-labelledby="algoLabel">
+        <button type="button" class="seg-btn active" data-value="SHA-256" aria-pressed="true">SHA-256</button>
+        <button type="button" class="seg-btn" data-value="SHA-512" aria-pressed="false">SHA-512</button>
+        <button type="button" class="seg-btn" data-value="SHA-1" aria-pressed="false">SHA-1</button>
+        <button type="button" class="seg-btn" data-value="SHA-384" aria-pressed="false">SHA-384</button>
+    </div>
+</div>
+
+<!-- Hash -->
+<div class="preview-label">
+    <span>// Computed Hash</span>
+    <span class="preview-status" id="hashStatus">NO FILE</span>
+</div>
+<div class="hash-box">
+    <code class="hash-code" id="sumHash">Drop a file to compute its hash.</code>
+</div>
+
+<!-- Expected -->
+<label class="field-label" for="expectedHash">// Expected Checksum</label>
+<textarea
+    id="expectedHash"
+    class="tool-textarea"
+    rows="3"
+    spellcheck="false"
+    autocomplete="off"
+    placeholder="Paste the published SHA-256, SHA-512, SHA-1, or SHA-384 value."
+></textarea>
+
+<div class="sum-status" id="sumStatus" role="status">Drop a file to begin.</div>
+
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" id="copyHash" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Hash
+    </button>
+    <button type="button" class="btn btn-secondary" id="sumClear">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear
+    </button>
+</div>
+
+<p class="hint">
+    The hash is computed with the browser's Web Crypto API. Nothing is
+    uploaded. MD5 is not supported.
+</p>

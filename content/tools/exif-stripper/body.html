@@ -1,0 +1,69 @@
+<!-- Input -->
+<span class="field-label">// Input - Photo</span>
+<div class="dropzone" id="exifDrop" role="button" tabindex="0"
+     aria-label="Choose a photo, or drop one here">
+    <p><strong>Drop a photo here</strong><br>
+    or click to browse. JPEG, PNG, WebP, HEIC, or HEIF.</p>
+</div>
+<input type="file" id="exifFile" class="visually-hidden"
+       accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif,.hif">
+
+<!-- Result -->
+<div class="exif-layout" id="exifLayout" hidden>
+
+    <aside class="exif-side">
+        <div class="exif-preview" id="exifPreviewWrap">
+            <img id="exifPreview" alt="">
+            <p class="exif-preview-empty" id="exifPreviewEmpty" hidden>
+                Preview not available for this format in this browser.
+            </p>
+        </div>
+
+        <div class="exif-file" id="exifFileInfo"></div>
+
+        <div class="exif-strip">
+            <label class="exif-check" id="orientationRow">
+                <input type="checkbox" id="keepOrientation" checked>
+                <span>Keep the orientation tag so the photo does not rotate.</span>
+            </label>
+
+            <div class="btn-group exif-actions">
+                <button type="button" class="btn btn-primary" id="stripBtn" disabled>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Clean Copy
+                </button>
+                <button type="button" class="btn btn-secondary" id="exifClear">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Clear
+                </button>
+            </div>
+
+            <p class="hint" id="stripStatus">Reading the file.</p>
+        </div>
+    </aside>
+
+    <div class="exif-main">
+        <div class="preview-label">
+            <span>// Privacy Findings</span>
+            <span class="preview-status" id="findingsStatus">READY</span>
+        </div>
+        <div class="frame">
+            <ul class="exif-findings" id="exifFindings"></ul>
+        </div>
+
+        <div class="preview-label">
+            <span>// Metadata</span>
+            <span class="preview-status" id="metaStatus">READY</span>
+        </div>
+        <div class="frame frame--flush">
+            <div id="exifGroups"></div>
+        </div>
+    </div>
+
+</div>
+
+<p class="hint exif-note">
+    Only JPEG, PNG, WebP, and HEIC/HEIF are supported. HEIC metadata is
+    overwritten in place, so the clean copy keeps the same file size. Nothing
+    you drop here is uploaded.
+</p>

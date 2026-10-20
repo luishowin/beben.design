@@ -1,0 +1,1757 @@
+(function () {
+    'use strict';
+
+    var dropzone = Tool.$('exifDrop');
+    var fileInput = Tool.$('exifFile');
+    var layout = Tool.$('exifLayout');
+    var preview = Tool.$('exifPreview');
+    var previewEmpty = Tool.$('exifPreviewEmpty');
+    var fileInfo = Tool.$('exifFileInfo');
+    var findingsList = Tool.$('exifFindings');
+    var findingsStatus = Tool.$('findingsStatus');
+    var groupsEl = Tool.$('exifGroups');
+    var metaStatus = Tool.$('metaStatus');
+    var stripBtn = Tool.$('stripBtn');
+    var clearBtn = Tool.$('exifClear');
+    var stripStatus = Tool.$('stripStatus');
+    var orientationRow = Tool.$('orientationRow');
+    var keepOrientation = Tool.$('keepOrientation');
+
+    var current = null;
+    var previewUrl = null;
+
+    // ── BYTES ─────────────────────────────────────────────────────
+    function ascii(bytes, start, end) {
+        var out = '';
+        for (var i = start; i < end && i < bytes.length; i++) {
+            out += String.fromCharCode(bytes[i]);
+        }
+        return out;
+    }
+
+    function startsWith(bytes, start, text) {
+        if (start + text.length > bytes.length) return false;
+        for (var i = 0; i < text.length; i++) {
+            if (bytes[start + i] !== text.charCodeAt(i)) return false;
+        }
+        return true;
+    }
+
+    function decodeText(bytes) {
+        try {
+            return new TextDecoder('utf-8').decode(bytes);
+        } catch (e) {
+            return ascii(bytes, 0, bytes.length);
+        }
+    }
+
+    function cString(bytes, start, end) {
+        var stop = start;
+        while (stop < end && stop < bytes.length && bytes[stop] !== 0) stop++;
+        return decodeText(bytes.subarray(start, stop));
+    }
+
+    function cStringEnd(bytes, start, end) {
+        var stop = start;
+        while (stop < end && stop < bytes.length && bytes[stop] !== 0) stop++;
+        return { text: decodeText(bytes.subarray(start, stop)), end: stop + 1 };
+    }
+
+    function u16be(bytes, p) { return (bytes[p] << 8) | bytes[p + 1]; }
+    function u32be(bytes, p) {
+        return bytes[p] * 16777216 + (bytes[p + 1] << 16) + (bytes[p + 2] << 8) + bytes[p + 3];
+    }
+    function u32le(bytes, p) {
+        return bytes[p] + (bytes[p + 1] << 8) + (bytes[p + 2] << 16) + bytes[p + 3] * 16777216;
+    }
+
+    function readNbe(bytes, p, n) {
+        var value = 0;
+        for (var i = 0; i < n; i++) value = value * 256 + bytes[p + i];
+        return value;
+    }
+
+    function concatBytes(parts) {
+        var total = 0, i;
+        for (i = 0; i < parts.length; i++) total += parts[i].length;
+        var out = new Uint8Array(total);
+        var at = 0;
+        for (i = 0; i < parts.length; i++) {
+            out.set(parts[i], at);
+            at += parts[i].length;
+        }
+        return out;
+    }
+
+    function formatBytes(n) {
+        if (n < 1024) return n + ' B';
+        if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+        return (n / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function formatDate(ms) {
+        try {
+            return new Date(ms).toLocaleString();
+        } catch (e) {
+            return String(ms);
+        }
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+    }
+
+    // ── FORMAT DETECTION ──────────────────────────────────────────
+    function sniff(bytes) {
+        if (!bytes || bytes.length < 12) return null;
+
+        if (bytes[0] === 0xFF && bytes[1] === 0xD8) return 'jpeg';
+
+        if (startsWith(bytes, 0, '\x89PNG\r\n\x1a\n')) return 'png';
+
+        if (startsWith(bytes, 0, 'RIFF') && startsWith(bytes, 8, 'WEBP')) return 'webp';
+
+        if (startsWith(bytes, 4, 'ftyp')) {
+            var size = u32be(bytes, 0);
+            var limit = Math.min(bytes.length, Math.max(16, size));
+            for (var p = 8; p + 4 <= limit; p += 4) {
+                var brand = ascii(bytes, p, p + 4);
+                if (/^(heic|heix|hevc|hevx|heif|heim|heis|hevm|hevs|mif1|msf1)$/i.test(brand)) {
+                    return 'heic';
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function baseName(name) {
+        return String(name || 'photo').replace(/\.[^.]+$/, '') || 'photo';
+    }
+
+    function extension(name) {
+        var match = /\.([^.]+)$/.exec(String(name || ''));
+        return match ? match[1].toLowerCase() : '';
+    }
+
+    // ── TIFF / EXIF ───────────────────────────────────────────────
+    var TYPE_SIZE = {
+        1: 1, 2: 1, 3: 2, 4: 4, 5: 8,
+        6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8
+    };
+
+    var CAMERA_NAMES = {
+        0x0100: 'Image width',
+        0x0101: 'Image height',
+        0x010E: 'Image description',
+        0x010F: 'Camera make',
+        0x0110: 'Camera model',
+        0x0112: 'Orientation',
+        0x011A: 'X resolution',
+        0x011B: 'Y resolution',
+        0x0128: 'Resolution unit',
+        0x0131: 'Software',
+        0x0132: 'File date and time',
+        0x013B: 'Artist',
+        0x0213: 'YCbCr positioning',
+        0x8298: 'Copyright',
+        0x9C9B: 'Windows title',
+        0x9C9C: 'Windows comment',
+        0x9C9D: 'Windows author',
+        0x9C9E: 'Windows keywords',
+        0x9C9F: 'Windows subject'
+    };
+
+    var EXIF_NAMES = {
+        0x829A: 'Exposure time',
+        0x829D: 'F number',
+        0x8822: 'Exposure program',
+        0x8827: 'ISO speed',
+        0x8830: 'Sensitivity type',
+        0x9000: 'EXIF version',
+        0x9003: 'Date taken',
+        0x9004: 'Date digitised',
+        0x9010: 'Offset time',
+        0x9011: 'Offset time original',
+        0x9012: 'Offset time digitised',
+        0x9101: 'Components configuration',
+        0x9102: 'Compressed bits per pixel',
+        0x9201: 'Shutter speed',
+        0x9202: 'Aperture',
+        0x9203: 'Brightness',
+        0x9204: 'Exposure bias',
+        0x9205: 'Max aperture',
+        0x9206: 'Subject distance',
+        0x9207: 'Metering mode',
+        0x9208: 'Light source',
+        0x9209: 'Flash',
+        0x920A: 'Focal length',
+        0x927C: 'Maker note',
+        0x9286: 'User comment',
+        0x9290: 'Subsecond time',
+        0x9291: 'Subsecond time original',
+        0x9292: 'Subsecond time digitised',
+        0xA000: 'Flashpix version',
+        0xA001: 'Colour space',
+        0xA002: 'Pixel X dimension',
+        0xA003: 'Pixel Y dimension',
+        0xA402: 'Exposure mode',
+        0xA403: 'White balance',
+        0xA404: 'Digital zoom ratio',
+        0xA405: 'Focal length in 35mm',
+        0xA406: 'Scene capture type',
+        0xA407: 'Gain control',
+        0xA408: 'Contrast',
+        0xA409: 'Saturation',
+        0xA40A: 'Sharpness',
+        0xA40C: 'Subject distance range',
+        0xA430: 'Owner name',
+        0xA431: 'Body serial number',
+        0xA432: 'Lens specification',
+        0xA433: 'Lens make',
+        0xA434: 'Lens model',
+        0xA435: 'Lens serial number'
+    };
+
+    var METERING = {
+        0: 'Unknown',
+        1: 'Average',
+        2: 'Centre-weighted average',
+        3: 'Spot',
+        4: 'Multi-spot',
+        5: 'Pattern',
+        6: 'Partial',
+        255: 'Other'
+    };
+
+    var EXPOSURE_PROGRAM = {
+        0: 'Not defined',
+        1: 'Manual',
+        2: 'Program AE',
+        3: 'Aperture priority',
+        4: 'Shutter priority',
+        5: 'Creative program',
+        6: 'Action program',
+        7: 'Portrait mode',
+        8: 'Landscape mode'
+    };
+
+    var COMPONENTS = { 0: '-', 1: 'Y', 2: 'Cb', 3: 'Cr', 4: 'R', 5: 'G', 6: 'B' };
+
+    var GPS_NAMES = {
+        0x0000: 'GPS version',
+        0x0001: 'Latitude reference',
+        0x0002: 'Latitude',
+        0x0003: 'Longitude reference',
+        0x0004: 'Longitude',
+        0x0005: 'Altitude reference',
+        0x0006: 'Altitude',
+        0x0007: 'GPS time',
+        0x0008: 'GPS satellites',
+        0x0009: 'GPS status',
+        0x000A: 'GPS measure mode',
+        0x000B: 'GPS DOP',
+        0x000C: 'Speed reference',
+        0x000D: 'Speed',
+        0x000E: 'Track reference',
+        0x000F: 'Track',
+        0x0010: 'Image direction reference',
+        0x0011: 'Image direction',
+        0x0012: 'Map datum',
+        0x0013: 'Destination latitude reference',
+        0x0014: 'Destination latitude',
+        0x0015: 'Destination longitude reference',
+        0x0016: 'Destination longitude',
+        0x0017: 'Destination bearing reference',
+        0x0018: 'Destination bearing',
+        0x001C: 'Processing method',
+        0x001D: 'GPS date',
+        0x001E: 'GPS differential'
+    };
+
+    var ORIENTATION = {
+        1: 'Normal',
+        2: 'Mirror horizontal',
+        3: 'Rotate 180',
+        4: 'Mirror vertical',
+        5: 'Mirror horizontal and rotate 270 CW',
+        6: 'Rotate 90 CW',
+        7: 'Mirror horizontal and rotate 90 CW',
+        8: 'Rotate 270 CW'
+    };
+
+    function normalizeExif(bytes) {
+        if (!bytes || bytes.length < 8) return null;
+        if (startsWith(bytes, 0, 'Exif\x00\x00')) return bytes.subarray(6);
+        if ((bytes[0] === 0x49 && bytes[1] === 0x49) ||
+            (bytes[0] === 0x4D && bytes[1] === 0x4D)) return bytes;
+        return null;
+    }
+
+    function readIfd(bytes, view, little, offset, group, result, seen) {
+        if (!offset || offset + 2 > view.byteLength || seen[offset]) return;
+        seen[offset] = true;
+
+        var count = view.getUint16(offset, little);
+        var entriesEnd = offset + 2 + count * 12;
+        if (entriesEnd > view.byteLength) return;
+
+        for (var i = 0; i < count; i++) {
+            var entry = offset + 2 + i * 12;
+            var tag = view.getUint16(entry, little);
+            var type = view.getUint16(entry + 2, little);
+            var n = view.getUint32(entry + 4, little);
+            var size = TYPE_SIZE[type];
+
+            if (!size || n > 1000000) continue;
+
+            var total = size * n;
+            var dataOffset = total <= 4 ? entry + 8 : view.getUint32(entry + 8, little);
+            if (dataOffset < 0 || dataOffset + total > view.byteLength) continue;
+
+            if (tag === 0x8769) {
+                readIfd(bytes, view, little, view.getUint32(dataOffset, little), 'Exposure', result, seen);
+                continue;
+            }
+            if (tag === 0x8825) {
+                readIfd(bytes, view, little, view.getUint32(dataOffset, little), 'Location', result, seen);
+                continue;
+            }
+            if (tag === 0xA005) {
+                readIfd(bytes, view, little, view.getUint32(dataOffset, little), 'Other', result, seen);
+                continue;
+            }
+
+            var values = null;
+            if (type === 2) {
+                values = cString(bytes, dataOffset, dataOffset + n);
+            } else {
+                values = readValues(view, little, type, n, dataOffset);
+            }
+            if (values === null) continue;
+
+            result.tags.push({
+                group: group,
+                id: tag,
+                name: tagName(group, tag),
+                type: type,
+                count: n,
+                raw: values,
+                value: formatTag(group, tag, type, n, values)
+            });
+
+            if (tag === 0x0112 && type === 3 && values.length) {
+                result.orientation = values[0];
+            }
+        }
+
+        if (group === 'Camera') {
+            var nextAt = offset + 2 + count * 12;
+            if (nextAt + 4 <= view.byteLength) {
+                var next = view.getUint32(nextAt, little);
+                if (next) result.hasThumbnail = true;
+            }
+        }
+    }
+
+    function readValues(view, little, type, count, offset) {
+        var size = TYPE_SIZE[type];
+        var out = [];
+        for (var i = 0; i < count; i++) {
+            var p = offset + i * size;
+            if (p + size > view.byteLength) return null;
+            switch (type) {
+                case 1:
+                case 7:
+                    out.push(view.getUint8(p));
+                    break;
+                case 6:
+                    out.push(view.getInt8(p));
+                    break;
+                case 3:
+                    out.push(view.getUint16(p, little));
+                    break;
+                case 8:
+                    out.push(view.getInt16(p, little));
+                    break;
+                case 4:
+                    out.push(view.getUint32(p, little));
+                    break;
+                case 9:
+                    out.push(view.getInt32(p, little));
+                    break;
+                case 5:
+                    out.push([view.getUint32(p, little), view.getUint32(p + 4, little)]);
+                    break;
+                case 10:
+                    out.push([view.getInt32(p, little), view.getInt32(p + 4, little)]);
+                    break;
+                case 11:
+                    out.push(view.getFloat32(p, little));
+                    break;
+                case 12:
+                    out.push(view.getFloat64(p, little));
+                    break;
+                default:
+                    return null;
+            }
+        }
+        return out;
+    }
+
+    function parseTiff(input) {
+        var tiff = normalizeExif(input);
+        if (!tiff || tiff.length < 8) return null;
+
+        var little;
+        if (tiff[0] === 0x49 && tiff[1] === 0x49) little = true;
+        else if (tiff[0] === 0x4D && tiff[1] === 0x4D) little = false;
+        else return null;
+
+        var view = new DataView(tiff.buffer, tiff.byteOffset, tiff.byteLength);
+        if (view.getUint16(2, little) !== 42) return null;
+
+        var result = {
+            tags: [],
+            orientation: null,
+            hasThumbnail: false,
+            error: null
+        };
+
+        try {
+            readIfd(tiff, view, little, view.getUint32(4, little), 'Camera', result, {});
+        } catch (e) {
+            result.error = 'Some metadata tags could not be read.';
+        }
+
+        return result;
+    }
+
+    function tagName(group, tag) {
+        if (group === 'Location') return GPS_NAMES[tag] || null;
+        if (group === 'Exposure') return EXIF_NAMES[tag] || null;
+        if (group === 'Other') return EXIF_NAMES[tag] || CAMERA_NAMES[tag] || null;
+        return CAMERA_NAMES[tag] || null;
+    }
+
+    function hexTag(tag) {
+        var hex = tag.toString(16).toUpperCase();
+        while (hex.length < 4) hex = '0' + hex;
+        return 'Tag 0x' + hex;
+    }
+
+    function rational(value) {
+        if (!value || value.length < 2) return 0;
+        return value[1] ? value[0] / value[1] : 0;
+    }
+
+    function trimNumber(value, places) {
+        if (!isFinite(value)) return '0';
+        var fixed = value.toFixed(places === undefined ? 4 : places);
+        if (fixed.indexOf('.') !== -1) {
+            fixed = fixed.replace(/0+$/, '').replace(/\.$/, '');
+        }
+        return fixed;
+    }
+
+    function formatTag(group, tag, type, count, values) {
+        if (tag === 0x927C) return 'Present (' + count + ' bytes)';
+
+        if (tag === 0x9286) return formatUserComment(values);
+
+        if (tag === 0x0112 && type === 3) {
+            return ORIENTATION[values[0]] || String(values[0]);
+        }
+
+        if (tag === 0x9000 || tag === 0xA000) {
+            return ascii(new Uint8Array(values), 0, values.length).replace(/\u0000/g, '').trim();
+        }
+
+        if (tag === 0x9101) {
+            var comps = [];
+            for (var c = 0; c < values.length; c++) comps.push(COMPONENTS[values[c]] || values[c]);
+            return comps.join(', ');
+        }
+
+        if (group === 'Exposure') {
+            if (tag === 0x8827) return 'ISO ' + values[0];
+            if (tag === 0x8822) return EXPOSURE_PROGRAM[values[0]] || String(values[0]);
+            if (tag === 0x9207) return METERING[values[0]] || String(values[0]);
+            if (tag === 0x9209) return flashLabel(values[0]);
+            if (tag === 0xA402) return values[0] === 1 ? 'Manual' : values[0] === 2 ? 'Auto' : 'Auto bracket';
+            if (tag === 0xA403) return values[0] === 1 ? 'Manual' : 'Auto';
+            if (tag === 0xA001) {
+                return values[0] === 1 ? 'sRGB' : values[0] === 65535 ? 'Uncalibrated' : String(values[0]);
+            }
+        }
+
+        if (tag === 0x0128 && type === 3) {
+            if (values[0] === 1) return 'None';
+            if (values[0] === 2) return 'inches';
+            if (values[0] === 3) return 'cm';
+        }
+
+        if (group === 'Location') return formatGpsTag(tag, type, values);
+
+        if (type === 5 || type === 10) return formatRationalTag(tag, values);
+
+        if (type === 7 || type === 1) {
+            if (count > 16) return count + ' bytes';
+            return values.join(' ');
+        }
+
+        if (type === 2) return String(values).replace(/\s+$/, '');
+        if (Array.isArray(values)) return values.join(', ');
+        return String(values);
+    }
+
+    function flashLabel(value) {
+        var fired = value & 1;
+        var mode = (value >> 3) & 3;
+        var label = fired ? 'Fired' : 'Did not fire';
+        if (mode === 1) label += ', compulsory';
+        else if (mode === 2) label += ', suppressed';
+        else if (mode === 3) label += ', auto';
+        return label;
+    }
+
+    function formatRationalTag(tag, values) {
+        if (tag === 0x829A) {
+            var time = rational(values[0]);
+            if (!time) return '0 s';
+            if (time >= 1) return trimNumber(time, 2) + ' s';
+            return '1/' + Math.round(1 / time) + ' s';
+        }
+        if (tag === 0x829D) return 'f/' + trimNumber(rational(values[0]), 1);
+        if (tag === 0x920A) return trimNumber(rational(values[0]), 1) + ' mm';
+        if (tag === 0xA405) return values[0] + ' mm (35mm eq)';
+        if (tag === 0x9202 || tag === 0x9205) {
+            return 'f/' + trimNumber(Math.pow(2, rational(values[0]) / 2), 1);
+        }
+        if (tag === 0x9204) {
+            var bias = rational(values[0]);
+            return (bias > 0 ? '+' : '') + trimNumber(bias, 2) + ' EV';
+        }
+        if (tag === 0x9206) return trimNumber(rational(values[0]), 2) + ' m';
+
+        var parts = [];
+        for (var i = 0; i < values.length; i++) {
+            parts.push(trimNumber(rational(values[i]), 4));
+        }
+        return parts.join(', ');
+    }
+
+    function formatGpsTag(tag, type, values) {
+        if (tag === 0x0000) return values.join('.');
+        if (tag === 0x0002 || tag === 0x0004) {
+            if (values.length < 3) return String(values);
+            return dmsString(values);
+        }
+        if (tag === 0x0005) return values[0] === 1 ? 'Below sea level' : 'Above sea level';
+        if (tag === 0x0006) return trimNumber(rational(values[0]), 2) + ' m';
+        if (tag === 0x0007 && values.length >= 3) {
+            return two(rational(values[0])) + ':' + two(rational(values[1])) +
+                ':' + two(rational(values[2]));
+        }
+        if (type === 5 || type === 10) {
+            var out = [];
+            for (var i = 0; i < values.length; i++) out.push(trimNumber(rational(values[i]), 4));
+            return out.join(', ');
+        }
+        if (Array.isArray(values)) return values.join(', ');
+        return String(values);
+    }
+
+    function two(n) {
+        var s = String(Math.round(n));
+        return s.length < 2 ? '0' + s : s;
+    }
+
+    function dmsString(values) {
+        var d = rational(values[0]);
+        var m = rational(values[1]);
+        var s = rational(values[2]);
+        return trimNumber(d, 0) + ' deg ' + trimNumber(m, 0) + "' " + trimNumber(s, 2) + '"';
+    }
+
+    function formatUserComment(values) {
+        if (!values || !values.length) return '';
+        var bytes = new Uint8Array(values);
+        var prefix = ascii(bytes, 0, Math.min(8, bytes.length));
+        var start = 8;
+        var text;
+
+        if (prefix.indexOf('ASCII') === 0) {
+            text = decodeText(bytes.subarray(start));
+        } else if (prefix.indexOf('UNICODE') === 0) {
+            try {
+                text = new TextDecoder('utf-16be').decode(bytes.subarray(start));
+            } catch (e) {
+                text = decodeText(bytes.subarray(start));
+            }
+        } else {
+            text = decodeText(bytes);
+        }
+
+        return text.replace(/\u0000/g, '').trim() || 'Present (' + values.length + ' bytes)';
+    }
+
+    function findTag(tags, id) {
+        for (var i = 0; i < tags.length; i++) {
+            if (tags[i].id === id) return tags[i];
+        }
+        return null;
+    }
+
+    function gpsDecimal(tags, latitude) {
+        var ref = findTag(tags, latitude ? 0x0001 : 0x0003);
+        var value = findTag(tags, latitude ? 0x0002 : 0x0004);
+        if (!value || !value.raw || value.raw.length < 3) return null;
+
+        var decimal = rational(value.raw[0]) + rational(value.raw[1]) / 60 +
+            rational(value.raw[2]) / 3600;
+        if (ref && /^[SW]/i.test(String(ref.value))) decimal = -decimal;
+        return decimal;
+    }
+
+    // ── JPEG ──────────────────────────────────────────────────────
+    function scanJpeg(bytes) {
+        var exif = null;
+        var blocks = [];
+        var xmp = false;
+        var iptc = false;
+        var comment = false;
+        var i = 2;
+
+        while (i + 4 <= bytes.length) {
+            if (bytes[i] !== 0xFF) break;
+            var marker = bytes[i + 1];
+            if (marker === 0xFF) { i++; continue; }
+            if (marker === 0xDA) break;
+            if (marker === 0xD8 || marker === 0xD9 ||
+                (marker >= 0xD0 && marker <= 0xD7)) {
+                i += 2;
+                continue;
+            }
+
+            var size = u16be(bytes, i + 2);
+            if (size < 2 || i + 2 + size > bytes.length) break;
+            var end = i + 2 + size;
+            var payload = i + 4;
+
+            if (marker === 0xE1) {
+                if (startsWith(bytes, payload, 'Exif\x00\x00')) {
+                    if (!exif) exif = bytes.subarray(payload + 6, end);
+                    blocks.push({ label: 'EXIF', bytes: end - i });
+                } else if (startsWith(bytes, payload, 'http://ns.adobe.com/xap/1.0/\x00')) {
+                    xmp = true;
+                    blocks.push({ label: 'XMP', bytes: end - i });
+                }
+            } else if (marker === 0xED &&
+                       startsWith(bytes, payload, 'Photoshop 3.0\x00')) {
+                iptc = true;
+                blocks.push({ label: 'IPTC', bytes: end - i });
+            } else if (marker === 0xFE) {
+                comment = true;
+                blocks.push({ label: 'Comment', bytes: end - i });
+            }
+
+            i = end;
+        }
+
+        return { kind: 'jpeg', exif: exif, xmp: xmp, iptc: iptc, comment: comment, blocks: blocks };
+    }
+
+    function stripJpeg(bytes, orientation, keepOrientation) {
+        var parts = [bytes.subarray(0, 2)];
+        var removed = { count: 0, bytes: 0 };
+
+        if (keepOrientation && orientation && orientation !== 1) {
+            parts.push(orientationSegment(orientation));
+        }
+
+        var i = 2;
+        while (i + 2 <= bytes.length) {
+            if (bytes[i] !== 0xFF) {
+                parts.push(bytes.subarray(i));
+                break;
+            }
+
+            var marker = bytes[i + 1];
+            if (marker === 0xFF) {
+                parts.push(bytes.subarray(i, i + 1));
+                i++;
+                continue;
+            }
+            if (marker === 0xDA) {
+                parts.push(bytes.subarray(i));
+                break;
+            }
+            if (marker === 0xD8 || marker === 0xD9 ||
+                (marker >= 0xD0 && marker <= 0xD7)) {
+                parts.push(bytes.subarray(i, i + 2));
+                i += 2;
+                continue;
+            }
+
+            if (i + 4 > bytes.length) {
+                parts.push(bytes.subarray(i));
+                break;
+            }
+
+            var size = u16be(bytes, i + 2);
+            if (size < 2 || i + 2 + size > bytes.length) {
+                parts.push(bytes.subarray(i));
+                break;
+            }
+
+            var end = i + 2 + size;
+            var payload = i + 4;
+            var strip = false;
+
+            if (marker === 0xE1) {
+                if (startsWith(bytes, payload, 'Exif\x00\x00') ||
+                    startsWith(bytes, payload, 'http://ns.adobe.com/xap/1.0/\x00')) {
+                    strip = true;
+                }
+            } else if (marker === 0xED &&
+                       startsWith(bytes, payload, 'Photoshop 3.0\x00')) {
+                strip = true;
+            } else if (marker === 0xFE) {
+                strip = true;
+            }
+
+            if (strip) {
+                removed.count++;
+                removed.bytes += end - i;
+            } else {
+                parts.push(bytes.subarray(i, end));
+            }
+
+            i = end;
+        }
+
+        return { bytes: concatBytes(parts), removed: removed };
+    }
+
+    function orientationSegment(value) {
+        var payload = new Uint8Array(32);
+        payload[0] = 0x45; payload[1] = 0x78; payload[2] = 0x69; payload[3] = 0x66;
+        payload[4] = 0; payload[5] = 0;
+
+        var tiff = payload.subarray(6);
+        tiff[0] = 0x49; tiff[1] = 0x49;
+        tiff[2] = 42; tiff[3] = 0;
+        tiff[4] = 8; tiff[5] = 0; tiff[6] = 0; tiff[7] = 0;
+        tiff[8] = 1; tiff[9] = 0;
+        tiff[10] = 0x12; tiff[11] = 0x01;
+        tiff[12] = 3; tiff[13] = 0;
+        tiff[14] = 1; tiff[15] = 0; tiff[16] = 0; tiff[17] = 0;
+        tiff[18] = value & 255; tiff[19] = (value >> 8) & 255;
+        tiff[22] = 0; tiff[23] = 0; tiff[24] = 0; tiff[25] = 0;
+
+        var out = new Uint8Array(4 + payload.length);
+        out[0] = 0xFF; out[1] = 0xE1;
+        out[2] = ((payload.length + 2) >> 8) & 255;
+        out[3] = (payload.length + 2) & 255;
+        out.set(payload, 4);
+        return out;
+    }
+
+    // ── PNG ───────────────────────────────────────────────────────
+    var PNG_STRIP = { eXIf: true, tEXt: true, zTXt: true, iTXt: true, tIME: true };
+
+    function scanPng(bytes) {
+        var exif = null;
+        var text = [];
+        var blocks = [];
+        var i = 8;
+
+        while (i + 12 <= bytes.length) {
+            var length = u32be(bytes, i);
+            if (length > bytes.length - i - 12) break;
+
+            var type = ascii(bytes, i + 4, i + 8);
+            var dataStart = i + 8;
+            var dataEnd = dataStart + length;
+            var end = dataEnd + 4;
+
+            if (type === 'eXIf') {
+                if (!exif) exif = bytes.subarray(dataStart, dataEnd);
+                blocks.push({ label: 'EXIF', bytes: end - i });
+            } else if (type === 'tEXt' || type === 'zTXt' || type === 'iTXt') {
+                text.push(pngText(type, bytes, dataStart, dataEnd));
+                blocks.push({ label: 'PNG ' + type, bytes: end - i });
+            } else if (type === 'tIME') {
+                blocks.push({ label: 'PNG tIME', bytes: end - i });
+            }
+
+            if (type === 'IEND') break;
+            i = end;
+        }
+
+        return { kind: 'png', exif: exif, text: text, blocks: blocks };
+    }
+
+    function pngText(type, bytes, start, end) {
+        var key = cStringEnd(bytes, start, end);
+        var rest = key.end;
+
+        if (type === 'tEXt') {
+            return { type: type, keyword: key.text, text: decodeText(bytes.subarray(rest, end)) };
+        }
+        if (type === 'zTXt') {
+            return { type: type, keyword: key.text, text: 'Compressed text' };
+        }
+
+        var compressed = bytes[rest];
+        rest += 2;
+        var language = cStringEnd(bytes, rest, end);
+        rest = language.end;
+        var translated = cStringEnd(bytes, rest, end);
+        rest = translated.end;
+        return {
+            type: type,
+            keyword: key.text,
+            text: compressed ? 'Compressed text' : decodeText(bytes.subarray(rest, end))
+        };
+    }
+
+    function stripPng(bytes) {
+        var parts = [bytes.subarray(0, 8)];
+        var removed = { count: 0, bytes: 0 };
+        var i = 8;
+
+        while (i + 12 <= bytes.length) {
+            var length = u32be(bytes, i);
+            if (length > bytes.length - i - 12) break;
+
+            var type = ascii(bytes, i + 4, i + 8);
+            var end = i + 12 + length;
+
+            if (PNG_STRIP[type]) {
+                removed.count++;
+                removed.bytes += end - i;
+            } else {
+                parts.push(bytes.subarray(i, end));
+            }
+
+            if (type === 'IEND') break;
+            i = end;
+        }
+
+        return { bytes: concatBytes(parts), removed: removed };
+    }
+
+    // ── WEBP ──────────────────────────────────────────────────────
+    function scanWebp(bytes) {
+        var exif = null;
+        var xmp = false;
+        var icc = false;
+        var blocks = [];
+        var i = 12;
+
+        while (i + 8 <= bytes.length) {
+            var type = ascii(bytes, i, i + 4);
+            var size = u32le(bytes, i + 4);
+            var dataStart = i + 8;
+            var dataEnd = dataStart + size;
+            if (dataEnd > bytes.length) break;
+            var end = dataEnd + (size & 1);
+
+            if (type === 'EXIF') {
+                if (!exif) exif = bytes.subarray(dataStart, dataEnd);
+                blocks.push({ label: 'EXIF', bytes: size });
+            } else if (type === 'XMP ') {
+                xmp = true;
+                blocks.push({ label: 'XMP', bytes: size });
+            } else if (type === 'ICCP') {
+                icc = true;
+            }
+
+            i = end;
+        }
+
+        return { kind: 'webp', exif: exif, xmp: xmp, icc: icc, blocks: blocks };
+    }
+
+    function stripWebp(bytes) {
+        var parts = [new Uint8Array(12)];
+        var removed = { count: 0, bytes: 0 };
+        var i = 12;
+
+        while (i + 8 <= bytes.length) {
+            var type = ascii(bytes, i, i + 4);
+            var size = u32le(bytes, i + 4);
+            var dataEnd = i + 8 + size;
+            if (dataEnd > bytes.length) break;
+            var end = dataEnd + (size & 1);
+
+            if (type === 'EXIF' || type === 'XMP ') {
+                removed.count++;
+                removed.bytes += size;
+            } else if (type === 'VP8X') {
+                var chunk = new Uint8Array(bytes.subarray(i, end));
+                chunk[8] = chunk[8] & ~0x0C;
+                parts.push(chunk);
+            } else {
+                parts.push(bytes.subarray(i, end));
+            }
+
+            i = end;
+        }
+
+        var out = concatBytes(parts);
+        out[0] = 0x52; out[1] = 0x49; out[2] = 0x46; out[3] = 0x46;
+        var size = out.length - 8;
+        out[4] = size & 255;
+        out[5] = (size >> 8) & 255;
+        out[6] = (size >> 16) & 255;
+        out[7] = (size >> 24) & 255;
+        out[8] = 0x57; out[9] = 0x45; out[10] = 0x42; out[11] = 0x50;
+
+        return { bytes: out, removed: removed };
+    }
+
+    // ── ISOBMFF / HEIC ────────────────────────────────────────────
+    function parseBoxes(bytes, start, end) {
+        var boxes = [];
+        var i = start;
+
+        while (i + 8 <= end) {
+            var size = u32be(bytes, i);
+            var type = ascii(bytes, i + 4, i + 8);
+            var header = 8;
+
+            if (size === 1) {
+                if (i + 16 > end) break;
+                size = u32be(bytes, i + 8) * 4294967296 + u32be(bytes, i + 12);
+                header = 16;
+            } else if (size === 0) {
+                size = end - i;
+            }
+
+            if (size < header || i + size > end) break;
+
+            boxes.push({
+                type: type,
+                start: i,
+                header: header,
+                dataStart: i + header,
+                end: i + size,
+                size: size
+            });
+            i += size;
+        }
+
+        return boxes;
+    }
+
+    function findBox(boxes, type) {
+        for (var i = 0; i < boxes.length; i++) {
+            if (boxes[i].type === type) return boxes[i];
+        }
+        return null;
+    }
+
+    function parseIinf(bytes, box, items) {
+        if (!box) return;
+        var p = box.dataStart;
+        var version = bytes[p];
+        p += 4;
+
+        var count = version === 0 ? u16be(bytes, p) : u32be(bytes, p);
+        p += version === 0 ? 2 : 4;
+
+        for (var i = 0; i < count && p + 8 <= box.end; i++) {
+            var child = parseBoxes(bytes, p, box.end)[0];
+            if (!child) break;
+            if (child.type === 'infe') parseInfe(bytes, child, items);
+            p = child.end;
+        }
+    }
+
+    function parseInfe(bytes, box, items) {
+        var p = box.dataStart;
+        var version = bytes[p];
+        p += 4;
+
+        var id;
+        if (version === 2) {
+            id = u16be(bytes, p);
+            p += 2;
+        } else if (version === 3) {
+            id = u32be(bytes, p);
+            p += 4;
+        } else {
+            return;
+        }
+
+        p += 2;
+        var typeOffset = p;
+        var itemType = ascii(bytes, p, p + 4);
+        p += 4;
+
+        var name = cStringEnd(bytes, p, box.end);
+        p = name.end;
+
+        var contentType = '';
+        var contentOffset = -1;
+        var contentLength = 0;
+
+        if (itemType === 'mime') {
+            contentOffset = p;
+            var content = cStringEnd(bytes, p, box.end);
+            contentType = content.text;
+            contentLength = content.end - 1 - contentOffset;
+        }
+
+        items.push({
+            id: id,
+            itemType: itemType,
+            itemName: name.text,
+            contentType: contentType,
+            typeOffset: typeOffset,
+            contentOffset: contentOffset,
+            contentLength: contentLength,
+            box: box
+        });
+    }
+
+    function parseIloc(bytes, box) {
+        var locations = {};
+        if (!box) return locations;
+
+        var p = box.dataStart;
+        var version = bytes[p];
+        p += 4;
+
+        var b1 = bytes[p++];
+        var b2 = bytes[p++];
+        var offsetSize = b1 >> 4;
+        var lengthSize = b1 & 15;
+        var baseSize = b2 >> 4;
+        var indexSize = (version === 1 || version === 2) ? (b2 & 15) : 0;
+
+        var count = version < 2 ? u16be(bytes, p) : u32be(bytes, p);
+        p += version < 2 ? 2 : 4;
+
+        for (var i = 0; i < count && p + 4 <= box.end; i++) {
+            var id = version < 2 ? u16be(bytes, p) : u32be(bytes, p);
+            p += version < 2 ? 2 : 4;
+
+            var method = 0;
+            if (version === 1 || version === 2) {
+                method = u16be(bytes, p) >> 12;
+                p += 2;
+            }
+
+            p += 2;
+            var base = readNbe(bytes, p, baseSize);
+            p += baseSize;
+
+            var extentCount = u16be(bytes, p);
+            p += 2;
+            var extents = [];
+
+            for (var j = 0; j < extentCount; j++) {
+                if (indexSize) p += indexSize;
+                var offset = readNbe(bytes, p, offsetSize);
+                p += offsetSize;
+                var length = readNbe(bytes, p, lengthSize);
+                p += lengthSize;
+                extents.push({ offset: offset, length: length });
+            }
+
+            locations[id] = { id: id, method: method, base: base, extents: extents };
+        }
+
+        return locations;
+    }
+
+    function parseIref(bytes, box) {
+        var refs = [];
+        if (!box) return refs;
+
+        var p = box.dataStart;
+        var version = bytes[p];
+        p += 4;
+
+        while (p + 8 <= box.end) {
+            var child = parseBoxes(bytes, p, box.end)[0];
+            if (!child) break;
+
+            var q = child.dataStart;
+            var from = version === 0 ? u16be(bytes, q) : u32be(bytes, q);
+            q += version === 0 ? 2 : 4;
+            var count = u16be(bytes, q);
+            q += 2;
+
+            var to = [];
+            for (var i = 0; i < count && q + 2 <= child.end; i++) {
+                to.push(version === 0 ? u16be(bytes, q) : u32be(bytes, q));
+                q += version === 0 ? 2 : 4;
+            }
+
+            refs.push({
+                typeOffset: child.start + 4,
+                from: from,
+                to: to
+            });
+            p = child.end;
+        }
+
+        return refs;
+    }
+
+    function parsePitm(bytes, box) {
+        if (!box) return 0;
+        var version = bytes[box.dataStart];
+        var p = box.dataStart + 4;
+        return version === 0 ? u16be(bytes, p) : u32be(bytes, p);
+    }
+
+    function absoluteExtents(location, idatStart, total) {
+        var out = [];
+        for (var i = 0; i < location.extents.length; i++) {
+            var extent = location.extents[i];
+            if (!extent.length) throw new Error('Unsupported HEIC item layout.');
+            var start;
+            if (location.method === 0) start = location.base + extent.offset;
+            else if (location.method === 1) start = idatStart + location.base + extent.offset;
+            else throw new Error('Unsupported HEIC item layout.');
+            if (start < 0 || start + extent.length > total) {
+                throw new Error('HEIC metadata points outside the file.');
+            }
+            out.push({ start: start, end: start + extent.length });
+        }
+        return out;
+    }
+
+    function parseHeic(bytes) {
+        var top = parseBoxes(bytes, 0, bytes.length);
+        var meta = findBox(top, 'meta');
+        if (!meta) return { kind: 'heic', exif: null, xmp: false, blocks: [], error: 'No HEIC metadata box found.' };
+
+        var children = parseBoxes(bytes, meta.dataStart + 4, meta.end);
+        var iinf = findBox(children, 'iinf');
+        var iloc = findBox(children, 'iloc');
+        var iref = findBox(children, 'iref');
+        var pitm = findBox(children, 'pitm');
+        var idat = findBox(children, 'idat');
+
+        var items = [];
+        try {
+            parseIinf(bytes, iinf, items);
+        } catch (e) {
+            return { kind: 'heic', exif: null, xmp: false, blocks: [], error: 'HEIC item table could not be read.' };
+        }
+
+        var locations = parseIloc(bytes, iloc);
+        var refs = parseIref(bytes, iref);
+        var primary = parsePitm(bytes, pitm);
+        var idatStart = idat ? idat.dataStart : 0;
+
+        var metaItems = [];
+        var exif = null;
+        var xmp = false;
+
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var isExif = item.itemType === 'Exif' || item.itemType === 'exif';
+            var isXmp = (item.itemType === 'mime' &&
+                /rdf|xmp/i.test(item.contentType)) || item.itemType === 'XMP ';
+
+            if (!isExif && !isXmp) continue;
+
+            var location = locations[item.id];
+            if (!location) continue;
+
+            var extents;
+            try {
+                extents = absoluteExtents(location, idatStart, bytes.length);
+            } catch (e) {
+                return { kind: 'heic', exif: null, xmp: xmp, blocks: [], error: e.message };
+            }
+
+            var payloadParts = [];
+            var bytesTotal = 0;
+            for (var j = 0; j < extents.length; j++) {
+                payloadParts.push(bytes.subarray(extents[j].start, extents[j].end));
+                bytesTotal += extents[j].end - extents[j].start;
+            }
+            var payload = concatBytes(payloadParts);
+
+            metaItems.push({
+                item: item,
+                extents: extents,
+                label: isExif ? 'EXIF' : 'XMP',
+                bytes: bytesTotal
+            });
+
+            if (isExif && !exif) {
+                exif = heicExifPayload(payload);
+            }
+            if (isXmp) xmp = true;
+        }
+
+        var blocks = metaItems.map(function (m) {
+            return { label: m.label, bytes: m.bytes };
+        });
+
+        return {
+            kind: 'heic',
+            exif: exif,
+            xmp: xmp,
+            blocks: blocks,
+            items: items,
+            locations: locations,
+            refs: refs,
+            primary: primary,
+            idatStart: idatStart,
+            metaItems: metaItems,
+            error: null
+        };
+    }
+
+    function heicExifPayload(payload) {
+        if (!payload || payload.length < 8) return null;
+        if (startsWith(payload, 0, 'Exif\x00\x00')) return payload.subarray(6);
+
+        var offset = u32be(payload, 0);
+        if (offset + 4 >= payload.length) return payload;
+        return payload.subarray(4 + offset);
+    }
+
+    function stripHeic(bytes) {
+        var data = parseHeic(bytes);
+        if (data.error) throw new Error(data.error);
+        if (!data.metaItems.length) {
+            return { bytes: bytes, removed: { count: 0, bytes: 0 }, note: 'No metadata items found.' };
+        }
+
+        var metadata = {};
+        var i, j;
+        for (i = 0; i < data.metaItems.length; i++) {
+            metadata[data.metaItems[i].item.id] = true;
+            if (data.metaItems[i].item.id === data.primary) {
+                throw new Error('The primary image is marked as metadata. Nothing was changed.');
+            }
+        }
+
+        var imageExtents = [];
+        for (i = 0; i < data.items.length; i++) {
+            var item = data.items[i];
+            if (metadata[item.id]) continue;
+            var location = data.locations[item.id];
+            if (!location) continue;
+            try {
+                imageExtents = imageExtents.concat(absoluteExtents(location, data.idatStart, bytes.length));
+            } catch (e) { /* an unreadable image item is not a reason to guess */ }
+        }
+
+        for (i = 0; i < data.metaItems.length; i++) {
+            for (j = 0; j < data.metaItems[i].extents.length; j++) {
+                var extent = data.metaItems[i].extents[j];
+                for (var k = 0; k < imageExtents.length; k++) {
+                    if (extent.start < imageExtents[k].end && extent.end > imageExtents[k].start) {
+                        throw new Error('A metadata block overlaps image data. Nothing was changed.');
+                    }
+                }
+            }
+        }
+
+        var out = bytes.slice();
+        var removedBytes = 0;
+        var removedCount = 0;
+
+        for (i = 0; i < data.metaItems.length; i++) {
+            var metaItem = data.metaItems[i];
+            for (j = 0; j < metaItem.extents.length; j++) {
+                out.fill(0, metaItem.extents[j].start, metaItem.extents[j].end);
+                removedBytes += metaItem.extents[j].end - metaItem.extents[j].start;
+            }
+            removedCount++;
+
+            out[metaItem.item.typeOffset] = 0x66;
+            out[metaItem.item.typeOffset + 1] = 0x72;
+            out[metaItem.item.typeOffset + 2] = 0x65;
+            out[metaItem.item.typeOffset + 3] = 0x65;
+
+            if (metaItem.item.contentOffset >= 0) {
+                for (var c = metaItem.item.contentOffset;
+                     c < metaItem.item.contentOffset + metaItem.item.contentLength; c++) {
+                    out[c] = 0;
+                }
+            }
+        }
+
+        for (i = 0; i < data.refs.length; i++) {
+            var ref = data.refs[i];
+            var touches = metadata[ref.from];
+            for (j = 0; j < ref.to.length; j++) {
+                if (metadata[ref.to[j]]) touches = true;
+            }
+            if (touches) {
+                out[ref.typeOffset] = 0x66;
+                out[ref.typeOffset + 1] = 0x72;
+                out[ref.typeOffset + 2] = 0x65;
+                out[ref.typeOffset + 3] = 0x65;
+            }
+        }
+
+        return {
+            bytes: out,
+            removed: { count: removedCount, bytes: removedBytes },
+            note: 'HEIC metadata was overwritten in place. The file size is unchanged.'
+        };
+    }
+
+    // ── LOADING ───────────────────────────────────────────────────
+    function loadFile(file) {
+        if (!file) return;
+
+        file.arrayBuffer().then(function (buffer) {
+            var bytes = new Uint8Array(buffer);
+            var kind = sniff(bytes);
+
+            if (!kind) {
+                Tool.toast('That file is not a supported photo.');
+                return;
+            }
+
+            var info;
+            try {
+                if (kind === 'jpeg') info = scanJpeg(bytes);
+                else if (kind === 'png') info = scanPng(bytes);
+                else if (kind === 'webp') info = scanWebp(bytes);
+                else info = parseHeic(bytes);
+            } catch (e) {
+                Tool.toast('That file could not be read.');
+                return;
+            }
+
+            var tiff = info.exif ? parseTiff(info.exif) : null;
+            if (info.exif && !tiff) {
+                Tool.toast('The EXIF block could not be decoded.');
+            }
+
+            current = {
+                file: file,
+                bytes: bytes,
+                kind: kind,
+                info: info,
+                tiff: tiff,
+                orientation: tiff && tiff.orientation ? tiff.orientation : null
+            };
+
+            render();
+        }).catch(function () {
+            Tool.toast('That file could not be read.');
+        });
+    }
+
+    function render() {
+        var file = current.file;
+        var info = current.info;
+        var tiff = current.tiff;
+
+        layout.hidden = false;
+        dropzone.classList.add('has-file');
+        dropzone.innerHTML = '<p><strong>' + escapeHtml(file.name) + '</strong>' +
+            '<span class="file-meta">' + formatBytes(file.size) +
+            '. Click to swap.</span></p>';
+
+        orientationRow.hidden = current.kind !== 'jpeg';
+
+        renderFileInfo(file, info, tiff);
+        renderPreview(file);
+        renderFindings(info, tiff);
+        renderGroups(tiff);
+        renderStripStatus(info, tiff);
+
+        stripBtn.disabled = !info.blocks || !info.blocks.length || !!info.error;
+    }
+
+    function renderPreview(file) {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        previewUrl = URL.createObjectURL(file);
+
+        preview.hidden = false;
+        previewEmpty.hidden = true;
+        preview.onload = function () {
+            preview.hidden = false;
+            previewEmpty.hidden = true;
+            updatePreviewDimensions(preview.naturalWidth, preview.naturalHeight);
+        };
+        preview.onerror = function () {
+            preview.hidden = true;
+            previewEmpty.hidden = false;
+        };
+        preview.src = previewUrl;
+
+        if (current.kind === 'heic') {
+            preview.hidden = true;
+            previewEmpty.hidden = false;
+        }
+    }
+
+    function renderFileInfo(file, info, tiff) {
+        var dimensions = null;
+        if (tiff) {
+            var w = findTag(tiff.tags, 0xA002);
+            var h = findTag(tiff.tags, 0xA003);
+            if (w && h) dimensions = w.value + ' x ' + h.value + ' px';
+        }
+
+        fileInfo.innerHTML = '';
+        var rows = [
+            ['Type', labelFor(info.kind)],
+            ['Size', formatBytes(file.size)],
+            ['Dimensions', dimensions || (current.kind === 'heic' ? 'Not read' : 'From preview')],
+            ['Modified', formatDate(file.lastModified)]
+        ];
+
+        rows.forEach(function (row) {
+            var el = document.createElement('div');
+            el.className = 'exif-file-row';
+            var key = document.createElement('span');
+            key.className = 'exif-file-key';
+            key.textContent = row[0];
+            var value = document.createElement('span');
+            value.className = 'exif-file-val';
+            value.textContent = row[1];
+            el.appendChild(key);
+            el.appendChild(value);
+            fileInfo.appendChild(el);
+        });
+
+        if (info.error) {
+            var error = document.createElement('p');
+            error.className = 'hint';
+            error.textContent = info.error;
+            fileInfo.appendChild(error);
+        }
+    }
+
+    function labelFor(kind) {
+        if (kind === 'jpeg') return 'JPEG';
+        if (kind === 'png') return 'PNG';
+        if (kind === 'webp') return 'WebP';
+        return 'HEIC/HEIF';
+    }
+
+    function updatePreviewDimensions(w, h) {
+        if (!w || !h) return;
+        var values = fileInfo.querySelectorAll('.exif-file-val');
+        if (values.length >= 3 && values[2].textContent === 'From preview') {
+            values[2].textContent = w + ' x ' + h + ' px';
+        }
+    }
+
+    function renderFindings(info, tiff) {
+        var findings = [];
+
+        if (tiff) {
+            var lat = gpsDecimal(tiff.tags, true);
+            var lon = gpsDecimal(tiff.tags, false);
+            if (lat !== null && lon !== null) {
+                var coords = lat.toFixed(6) + ', ' + lon.toFixed(6);
+                findings.push({ label: 'GPS location', value: coords, high: true, copy: coords });
+            }
+
+            addFinding(findings, tiff, 0xA431, 'Body serial', true);
+            addFinding(findings, tiff, 0xA435, 'Lens serial', true);
+            addFinding(findings, tiff, 0xA430, 'Owner', true);
+            addFinding(findings, tiff, 0x013B, 'Artist', true);
+            addFinding(findings, tiff, 0x8298, 'Copyright', false);
+            addFinding(findings, tiff, 0x9003, 'Date taken', false);
+            addFinding(findings, tiff, 0x0132, 'File date', false);
+            addFinding(findings, tiff, 0x0131, 'Software', false);
+            addFinding(findings, tiff, 0x927C, 'Maker note', false);
+
+            if (tiff.hasThumbnail) {
+                findings.push({
+                    label: 'Embedded thumbnail',
+                    value: 'A second copy of the image is stored inside the file.',
+                    high: true
+                });
+            }
+
+            if (tiff.error) {
+                findings.push({ label: 'Read warning', value: tiff.error, high: false });
+            }
+        }
+
+        if (info.xmp) {
+            findings.push({ label: 'XMP packet', value: 'Present and will be removed.', high: false });
+        }
+        if (info.iptc) {
+            findings.push({ label: 'IPTC block', value: 'Present and will be removed.', high: false });
+        }
+        if (info.comment) {
+            findings.push({ label: 'JPEG comment', value: 'Present and will be removed.', high: false });
+        }
+        if (info.text && info.text.length) {
+            var keys = [];
+            info.text.forEach(function (item) {
+                if (item.keyword) keys.push(item.keyword);
+            });
+            findings.push({
+                label: 'PNG text',
+                value: keys.length ? keys.join(', ') : 'Text chunks present and will be removed.',
+                high: false
+            });
+        }
+        if (info.icc) {
+            findings.push({
+                label: 'Colour profile',
+                value: 'Kept: it affects how the colours display.',
+                high: false
+            });
+        }
+
+        findingsList.innerHTML = '';
+
+        if (!findings.length) {
+            var empty = document.createElement('li');
+            empty.className = 'exif-empty';
+            empty.textContent = 'No location, serial, owner, or date tags found.';
+            findingsList.appendChild(empty);
+            findingsStatus.textContent = 'NONE';
+            return;
+        }
+
+        findings.forEach(function (finding) {
+            var li = document.createElement('li');
+            li.className = 'exif-finding' + (finding.high ? ' is-high' : '');
+
+            var key = document.createElement('span');
+            key.className = 'finding-key';
+            key.textContent = finding.label;
+
+            var value = document.createElement('span');
+            value.className = 'finding-value';
+            value.textContent = finding.value;
+
+            li.appendChild(key);
+            li.appendChild(value);
+
+            if (finding.copy) {
+                var copy = document.createElement('button');
+                copy.type = 'button';
+                copy.className = 'finding-copy';
+                copy.textContent = 'Copy';
+                copy.addEventListener('click', function () {
+                    Tool.copy(finding.copy, 'Coordinates copied.');
+                });
+                li.appendChild(copy);
+            }
+
+            findingsList.appendChild(li);
+        });
+
+        findingsStatus.textContent = findings.length + ' FOUND';
+    }
+
+    function addFinding(list, tiff, id, label, high) {
+        var tag = findTag(tiff.tags, id);
+        if (!tag || !tag.value) return;
+        list.push({ label: label, value: tag.value, high: high });
+    }
+
+    function renderGroups(tiff) {
+        groupsEl.innerHTML = '';
+
+        if (!tiff || !tiff.tags.length) {
+            var empty = document.createElement('p');
+            empty.className = 'exif-empty';
+            empty.textContent = 'No EXIF tags found. Any XMP, IPTC, or text metadata is listed above.';
+            groupsEl.appendChild(empty);
+            metaStatus.textContent = 'NO TAGS';
+            return;
+        }
+
+        var order = ['Camera', 'Exposure', 'Location', 'Other'];
+        var titles = {
+            Camera: 'Camera and file',
+            Exposure: 'Exposure',
+            Location: 'Location',
+            Other: 'Other'
+        };
+
+        order.forEach(function (group) {
+            var members = tiff.tags.filter(function (tag) { return tag.group === group; });
+            if (!members.length) return;
+
+            var details = document.createElement('details');
+            details.className = 'exif-group';
+            details.open = group !== 'Other';
+
+            var summary = document.createElement('summary');
+            var title = document.createElement('span');
+            title.textContent = titles[group];
+            var count = document.createElement('span');
+            count.className = 'group-count';
+            count.textContent = members.length + ' tags';
+            summary.appendChild(title);
+            summary.appendChild(count);
+            details.appendChild(summary);
+
+            var rows = document.createElement('div');
+            rows.className = 'exif-rows';
+
+            members.forEach(function (tag) {
+                var row = document.createElement('div');
+                row.className = 'exif-meta-row';
+
+                var key = document.createElement('span');
+                key.className = 'exif-meta-key';
+                key.textContent = tag.name || hexTag(tag.id);
+
+                var value = document.createElement('span');
+                value.className = 'exif-meta-val';
+                value.textContent = tag.value;
+
+                row.appendChild(key);
+                row.appendChild(value);
+                rows.appendChild(row);
+            });
+
+            details.appendChild(rows);
+            groupsEl.appendChild(details);
+        });
+
+        metaStatus.textContent = tiff.tags.length + ' TAGS';
+    }
+
+    function renderStripStatus(info, tiff) {
+        if (info.error) {
+            stripStatus.textContent = 'This file could not be read, so no clean copy can be made.';
+            return;
+        }
+
+        if (!info.blocks || !info.blocks.length) {
+            stripStatus.textContent = 'No metadata blocks found to remove.';
+            return;
+        }
+
+        var total = 0;
+        info.blocks.forEach(function (block) { total += block.bytes; });
+        stripStatus.textContent = info.blocks.length + ' metadata block' +
+            (info.blocks.length === 1 ? '' : 's') + ', ' + formatBytes(total) + ' in total.';
+
+        if (current.kind === 'heic') {
+            stripStatus.textContent += ' HEIC is overwritten in place, so the file size stays the same.';
+        }
+    }
+
+    function reset() {
+        current = null;
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+        }
+        preview.removeAttribute('src');
+        preview.hidden = false;
+        previewEmpty.hidden = true;
+        layout.hidden = true;
+        fileInput.value = '';
+        dropzone.classList.remove('has-file');
+        dropzone.innerHTML = '<p><strong>Drop a photo here</strong><br>' +
+            'or click to browse. JPEG, PNG, WebP, HEIC, or HEIF.</p>';
+        stripBtn.disabled = true;
+        fileInfo.innerHTML = '';
+        findingsList.innerHTML = '';
+        groupsEl.innerHTML = '';
+        findingsStatus.textContent = 'READY';
+        metaStatus.textContent = 'READY';
+        stripStatus.textContent = 'Reading the file.';
+    }
+
+    function downloadClean() {
+        if (!current) return;
+
+        var result;
+        try {
+            if (current.kind === 'jpeg') {
+                result = stripJpeg(current.bytes, current.orientation, keepOrientation.checked);
+            } else if (current.kind === 'png') {
+                result = stripPng(current.bytes);
+            } else if (current.kind === 'webp') {
+                result = stripWebp(current.bytes);
+            } else {
+                result = stripHeic(current.bytes);
+            }
+        } catch (e) {
+            Tool.toast(e.message || 'The clean copy could not be made.');
+            return;
+        }
+
+        var ext = extension(current.file.name);
+        if (!ext) ext = current.kind === 'jpeg' ? 'jpg' : current.kind;
+        var type = current.file.type || 'application/octet-stream';
+        var name = baseName(current.file.name) + '-clean.' + ext;
+
+        Tool.downloadBlob(new Blob([result.bytes], { type: type }), name,
+            'Clean copy downloaded.');
+
+        if (result.note) {
+            stripStatus.textContent = result.note;
+        } else if (result.removed.count) {
+            stripStatus.textContent = result.removed.count + ' metadata block' +
+                (result.removed.count === 1 ? '' : 's') + ' removed (' +
+                formatBytes(result.removed.bytes) + '). The clean copy is ready.';
+        } else {
+            stripStatus.textContent = 'No metadata blocks needed removing. The copy is identical.';
+        }
+    }
+
+    // ── WIRING ────────────────────────────────────────────────────
+    dropzone.addEventListener('click', function () { fileInput.click(); });
+
+    dropzone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInput.click();
+        }
+    });
+
+    ['dragenter', 'dragover'].forEach(function (type) {
+        dropzone.addEventListener(type, function (e) {
+            e.preventDefault();
+            dropzone.classList.add('is-over');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(function (type) {
+        dropzone.addEventListener(type, function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('is-over');
+        });
+    });
+
+    dropzone.addEventListener('drop', function (e) {
+        if (e.dataTransfer && e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length) loadFile(fileInput.files[0]);
+    });
+
+    window.addEventListener('paste', function (e) {
+        var items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image/') === 0) {
+                loadFile(items[i].getAsFile());
+                return;
+            }
+        }
+    });
+
+    stripBtn.addEventListener('click', downloadClean);
+    clearBtn.addEventListener('click', reset);
+})();

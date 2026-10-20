@@ -1,0 +1,273 @@
+/* EXIF reader. The metadata table needs the full page width, so the info
+   column opens as a hero band above the tool, like the QR editor. */
+[hidden] { display: none !important; }
+
+main {
+    grid-template-columns: 1fr;
+    padding-top: 100px;
+}
+
+.info-col {
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0 0 2.5rem;
+}
+
+.tool-col { padding: 2.5rem 0 3rem; }
+
+.exif-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+    margin-top: 1.5rem;
+}
+
+.dropzone.has-file p { color: var(--text); }
+.dropzone .file-meta {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+}
+
+.exif-side { min-width: 0; }
+.exif-main { min-width: 0; }
+
+/* Preview */
+.exif-preview {
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+}
+
+.exif-preview img {
+    display: block;
+    max-width: 100%;
+    max-height: 320px;
+    width: auto;
+    height: auto;
+}
+
+.exif-preview-empty {
+    padding: 2rem 1.25rem;
+    text-align: center;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--muted);
+}
+
+/* File details */
+.exif-file {
+    border-top: 1px solid var(--rule);
+    margin-bottom: 1.5rem;
+}
+
+.exif-file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.72rem;
+}
+
+.exif-file-key { color: var(--muted); flex: none; }
+
+.exif-file-val {
+    font-weight: 600;
+    text-align: right;
+    word-break: break-word;
+    min-width: 0;
+}
+
+/* Strip controls */
+.exif-strip {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+}
+
+.exif-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.7rem;
+    line-height: 1.55;
+    color: var(--muted);
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.exif-check input {
+    flex: none;
+    margin-top: 0.15rem;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    display: inline-grid;
+    place-content: center;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    cursor: pointer;
+}
+
+.exif-check input::before {
+    content: '';
+    width: 7px;
+    height: 4px;
+    border-left: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(-45deg) scale(0);
+    margin-top: -2px;
+    transition: transform 0.15s ease;
+}
+
+.exif-check input:checked::before { transform: rotate(-45deg) scale(1); }
+
+.exif-check[hidden] { display: none; }
+
+.exif-actions {
+    grid-auto-flow: row;
+    margin-bottom: 0.75rem;
+}
+
+.exif-actions .btn-primary {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Findings */
+.exif-findings { list-style: none; }
+
+.exif-finding {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.exif-finding:last-child { border-bottom: none; }
+
+.finding-key {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.exif-finding.is-high .finding-key { color: var(--accent); }
+
+.finding-value {
+    font-size: 0.74rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.finding-copy {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.45rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.finding-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+.exif-empty {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.74rem;
+    line-height: 1.7;
+    color: var(--muted);
+    list-style: none;
+}
+
+/* Metadata groups */
+.exif-group { border-bottom: 1px solid var(--rule); }
+.exif-group:last-child { border-bottom: none; }
+
+.exif-group summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+}
+
+.exif-group summary::-webkit-details-marker { display: none; }
+.exif-group summary:hover { color: var(--accent); }
+
+.group-count {
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    flex: none;
+}
+
+.exif-group[open] summary { color: var(--accent); }
+.exif-group[open] .group-count { color: var(--muted); }
+
+.exif-rows { padding: 0 1rem 0.5rem; }
+
+.exif-meta-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 170px) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--rule);
+    font-size: 0.72rem;
+    line-height: 1.55;
+}
+
+.exif-meta-key { color: var(--muted); word-break: break-word; }
+.exif-meta-val { word-break: break-word; }
+
+/* Strip result note */
+.exif-note { margin-top: 1.25rem; }
+
+@media (max-width: 860px) {
+    .exif-layout { grid-template-columns: 1fr; }
+    .exif-preview img { max-height: 280px; }
+}
+
+@media (max-width: 768px) {
+    main { padding: 80px 1.2rem 3rem; }
+    .info-col { padding: 2rem 0; }
+    .tool-col { padding: 2rem 0 0; }
+}
+
+@media (max-width: 520px) {
+    .exif-finding {
+        grid-template-columns: 1fr auto;
+        gap: 0.25rem 0.75rem;
+    }
+
+    .finding-value { grid-column: 1 / -1; grid-row: 2; }
+    .finding-copy { grid-row: 1; }
+
+    .exif-meta-row { grid-template-columns: 1fr; gap: 0.1rem; }
+}

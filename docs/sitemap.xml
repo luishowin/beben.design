@@ -169,6 +169,24 @@
   </url>
 
   <url>
+    <loc>https://beben.design/exif-stripper/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/checksum-verifier/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/text-diff/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
     <loc>https://beben.design/character-counter/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

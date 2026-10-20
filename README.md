@@ -194,7 +194,7 @@ To verify exactly one version string is in play:
 grep -rhoE '(index|sprite)\.(css|js)\?v=[0-9.]+' docs scripts --include=*.html | sort -u
 ```
 
-The six generated blog pages and the four generated tool pages are reached by
+The six generated blog pages and the seven generated tool pages are reached by
 editing `scripts/templates/` and rebuilding, never by hand.
 
 Sprite has two brains. Offline (default safety net): a built-in

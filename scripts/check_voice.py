@@ -83,9 +83,12 @@ EXCLUDED = (
 # report can point at the file actually worth opening.
 GENERATED = {
     "character-counter/index.html": "content/tools.json + content/tools/character-counter/",
+    "checksum-verifier/index.html": "content/tools.json + content/tools/checksum-verifier/",
     "contrast-grid/index.html": "content/tools.json + content/tools/contrast-grid/",
     "dither-machine/index.html": "content/tools.json + content/tools/dither-machine/",
+    "exif-stripper/index.html": "content/tools.json + content/tools/exif-stripper/",
     "qr-code-generator/index.html": "content/tools.json + content/tools/qr-code-generator/",
+    "text-diff/index.html": "content/tools.json + content/tools/text-diff/",
 }
 
 FIRST_PERSON = re.compile(r"\b(we|we're|we've|we'll|our|ours|us)\b", re.I)

@@ -1,0 +1,102 @@
+<!-- Two revisions -->
+<div class="diff-inputs">
+    <div class="diff-pane">
+        <div class="diff-pane-head">
+            <label class="field-label" for="diffA">// Original</label>
+            <span class="diff-count" id="countA">0 lines</span>
+        </div>
+        <textarea
+            id="diffA"
+            class="tool-textarea diff-text"
+            rows="8"
+            spellcheck="false"
+            placeholder="Paste the original here, or load a text file."
+        ></textarea>
+        <button type="button" class="diff-load" id="loadA">Load file</button>
+        <input type="file" id="fileA" class="visually-hidden"
+               accept=".txt,.md,.csv,.json,.html,.css,.js,.xml,.yaml,.yml,text/*">
+    </div>
+
+    <div class="diff-pane">
+        <div class="diff-pane-head">
+            <label class="field-label" for="diffB">// Revised</label>
+            <span class="diff-count" id="countB">0 lines</span>
+        </div>
+        <textarea
+            id="diffB"
+            class="tool-textarea diff-text"
+            rows="8"
+            spellcheck="false"
+            placeholder="Paste the revised version here, or load a text file."
+        ></textarea>
+        <button type="button" class="diff-load" id="loadB">Load file</button>
+        <input type="file" id="fileB" class="visually-hidden"
+               accept=".txt,.md,.csv,.json,.html,.css,.js,.xml,.yaml,.yml,text/*">
+    </div>
+</div>
+
+<!-- Options -->
+<div class="diff-options">
+    <label class="diff-option">
+        <input type="checkbox" id="ignoreWhitespace">
+        <span>Ignore whitespace</span>
+    </label>
+    <label class="diff-option">
+        <input type="checkbox" id="ignoreCase">
+        <span>Ignore case</span>
+    </label>
+</div>
+
+<!-- Result -->
+<div class="preview-label">
+    <span>// Comparison</span>
+    <span class="preview-status" id="diffStatus">READY</span>
+</div>
+
+<div class="diff-stats">
+    <div class="diff-stat"><span class="diff-stat-value" id="statAdded">0</span><span class="diff-stat-label">Added</span></div>
+    <div class="diff-stat"><span class="diff-stat-value" id="statRemoved">0</span><span class="diff-stat-label">Removed</span></div>
+    <div class="diff-stat"><span class="diff-stat-value" id="statUnchanged">0</span><span class="diff-stat-label">Unchanged</span></div>
+    <div class="diff-stat"><span class="diff-stat-value" id="statRows">0</span><span class="diff-stat-label">Rows</span></div>
+</div>
+
+<div class="frame frame--flush diff-frame" id="diffFrame">
+    <p class="diff-empty" id="diffEmpty">
+        Paste text into either side. Added, removed, and changed lines appear
+        here side by side.
+    </p>
+    <div class="diff-scroll" id="diffScroll" hidden>
+        <table class="diff-table" id="diffTable">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Original</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Revised</th>
+                </tr>
+            </thead>
+            <tbody id="diffBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="btn-group diff-actions">
+    <button type="button" class="btn btn-primary" id="swapBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Swap Sides
+    </button>
+    <button type="button" class="btn btn-secondary" id="copyChanges">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Changes
+    </button>
+    <button type="button" class="btn btn-secondary" id="diffClear">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear
+    </button>
+</div>
+
+<p class="hint">
+    Text stays in this tab. Files up to 2 MB. Very large or very different
+    inputs are compared in sections rather than freezing the page.
+</p>
