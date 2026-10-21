@@ -1,73 +1,95 @@
-"""Generate the Beben Arcade PWA icons.
+"""Generate the Arcadia PWA icons from the controller artwork.
 
-Renders a 16x16 pixel-art joystick in the arcade's neon palette onto
-#080813 and writes the three icons the arcade needs:
+Strips the baked-in checkerboard from scripts/assets/arcadia-icon.jpg with
+rembg, then composites the controller on Nintendo red (#E60012) and writes
+the five icons the arcade needs:
 
-    docs/games/icons/icon-192.png             (maskable + any)
-    docs/games/icons/icon-512.png             (maskable + any)
-    docs/games/icons/apple-touch-icon-180.png (opaque full-bleed)
+    docs/games/icons/icon-192.png              (any)
+    docs/games/icons/icon-512.png              (any)
+    docs/games/icons/icon-maskable-192.png     (maskable)
+    docs/games/icons/icon-maskable-512.png     (maskable)
+    docs/games/icons/apple-touch-icon-180.png  (opaque full-bleed)
 
-Rerunnable: py scripts/make_arcade_icons.py  (requires Pillow)
-The motif stays inside the central ~60% so maskable crops never clip it.
+Rerunnable: py scripts/make_arcade_icons.py
+Requires Pillow and rembg (the u2net model downloads once, ~170MB).
+
+The controller keeps the diagonal of the source art. "any" icons fill 82% of
+the canvas width; maskable icons fill 74%, which keeps every opaque pixel
+inside the central 80% circle Android may use as its safe zone.
 """
 
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageFilter
 
-BG = (0, 0, 0, 255)         # pure black app-icon background
-STICK = (25, 198, 255, 255)  # #19C6FF neon blue (stick + base)
-BALL = (255, 45, 170, 255)   # #FF2DAA neon pink (ball)
-GLINT = (234, 242, 255, 255) # #EAF2FF glint
+BG = (230, 0, 18)          # #E60012 Nintendo red
+ANY_WIDTH = 0.82
+MASKABLE_WIDTH = 0.74
 
-# 16x16 joystick: pink ball (white glint), blue stick and base.
-ART = [
-    "................",
-    "......YYYY......",
-    ".....YYYYYY.....",
-    ".....YWYYYY.....",
-    ".....YYYYYY.....",
-    "......YYYY......",
-    ".......RR.......",
-    ".......RR.......",
-    ".......RR.......",
-    ".......RR.......",
-    "....RRRRRRRR....",
-    "...RRRRRRRRRR...",
-    "..RRRRRRRRRRRR..",
-    "..RRRRRRRRRRRR..",
-    "................",
-    "................",
-]
-PALETTE = {"R": STICK, "Y": BALL, "W": GLINT}
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE = Path(__file__).resolve().parent / "assets" / "arcadia-icon.jpg"
+OUT = ROOT / "docs" / "games" / "icons"
 
 
-def render(size: int, art_scale: int) -> Image.Image:
-    img = Image.new("RGBA", (size, size), BG)
-    draw = ImageDraw.Draw(img)
-    art_px = 16 * art_scale
-    ox = (size - art_px) // 2
-    oy = (size - art_px) // 2
-    for row, line in enumerate(ART):
-        for col, ch in enumerate(line):
-            color = PALETTE.get(ch)
-            if color is None:
-                continue
-            x0 = ox + col * art_scale
-            y0 = oy + row * art_scale
-            draw.rectangle([x0, y0, x0 + art_scale - 1, y0 + art_scale - 1], fill=color)
-    return img
+def cutout() -> Image.Image:
+    """Remove the checkerboard, trim to the controller, soften the edge."""
+    try:
+        from rembg import new_session, remove
+    except ImportError:
+        raise SystemExit(
+            "rembg not installed. Use:\n"
+            "  uv venv /home/luishowin/.venvs/rembg &&\n"
+            "  uv pip install -p /home/luishowin/.venvs/rembg/bin/python "
+            "rembg onnxruntime pillow"
+        ) from None
+
+    with Image.open(SOURCE) as source:
+        src = source.convert("RGB")
+    im = remove(src, session=new_session("u2net")).convert("RGBA")
+
+    bbox = im.getbbox()
+    if bbox is None:
+        raise SystemExit(f"{SOURCE} is fully transparent after background removal")
+    im = im.crop(bbox)
+
+    # Defringe: harden the alpha, pull it in 1px, then feather slightly so the
+    # dark body does not keep a pale halo from the JPEG's white background.
+    alpha = im.getchannel("A").point(lambda v: 0 if v < 128 else 255)
+    alpha = alpha.filter(ImageFilter.MinFilter(3))
+    alpha = alpha.filter(ImageFilter.GaussianBlur(0.6))
+    im.putalpha(alpha)
+    return im.crop(im.getbbox())
+
+
+def render(art: Image.Image, size: int, width_fraction: float) -> Image.Image:
+    """Center the controller on a square red canvas at the given width."""
+    scale = (size * width_fraction) / art.width
+    resized = art.resize(
+        (max(1, round(art.width * scale)), max(1, round(art.height * scale))),
+        Image.Resampling.LANCZOS,
+    )
+    canvas = Image.new("RGB", (size, size), BG)
+    canvas.paste(
+        resized,
+        ((size - resized.width) // 2, (size - resized.height) // 2),
+        resized,
+    )
+    return canvas
 
 
 def main() -> None:
-    out = Path(__file__).resolve().parent.parent / "docs" / "games" / "icons"
-    out.mkdir(parents=True, exist_ok=True)
-
-    # art_scale keeps the 16px motif inside the central ~60% of the canvas
-    render(512, 19).convert("RGB").save(out / "icon-512.png", optimize=True)
-    render(192, 7).convert("RGB").save(out / "icon-192.png", optimize=True)
-    render(180, 7).convert("RGB").save(out / "apple-touch-icon-180.png", optimize=True)
-    print(f"Wrote 3 icons to {out}")
+    OUT.mkdir(parents=True, exist_ok=True)
+    art = cutout()
+    jobs = [
+        ("icon-512.png", 512, ANY_WIDTH),
+        ("icon-192.png", 192, ANY_WIDTH),
+        ("icon-maskable-512.png", 512, MASKABLE_WIDTH),
+        ("icon-maskable-192.png", 192, MASKABLE_WIDTH),
+        ("apple-touch-icon-180.png", 180, ANY_WIDTH),
+    ]
+    for name, size, fraction in jobs:
+        render(art, size, fraction).save(OUT / name, optimize=True)
+    print(f"Wrote {len(jobs)} icons to {OUT}")
 
 
 if __name__ == "__main__":

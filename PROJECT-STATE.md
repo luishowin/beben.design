@@ -1093,3 +1093,24 @@ three pages were exercised in Chrome with real JPEG, PNG, WebP and HEIC
 files; stripped outputs were checked with `exiftool` and Pillow, HEIC image
 extents compared byte-for-byte, and checksum results compared with
 `sha1sum`, `sha256sum`, `sha384sum` and `sha512sum`.
+
+### Arcadia icon + install name (21 Oct 2026, cache `v34`)
+
+**New install icon.** The black cabinet icon is replaced with the controller
+artwork supplied as `arcadia-icon.jpeg`. `rembg` strips the baked-in
+checkerboard, the alpha is trimmed and defringed, and the controller is
+centred on Nintendo red `#E60012`. The source lives at
+`scripts/assets/arcadia-icon.jpg`; `scripts/make_arcade_icons.py` now
+regenerates the set. `icon-192.png` and `icon-512.png` are the `any` icons at
+82% width; new `icon-maskable-192.png` and `icon-maskable-512.png` sit at 74%
+so Android's 80% safe circle never clips the art. The 180px Apple touch icon
+stays opaque.
+
+**Install name is title case.** Manifest `name` is "Arcadia by Beben Design",
+`short_name` is "Arcadia", and every arcade page's
+`apple-mobile-web-app-title` now says "Arcadia". The visible ARCADIA wordmark
+and page titles are unchanged.
+
+**Cache `v33` to `v34`.** The two maskable icons joined the precache list and
+the hub label moved in lockstep. All five icons measure exact size and are
+opaque RGB; the manifest parses.

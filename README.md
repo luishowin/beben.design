@@ -244,8 +244,10 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
   toggle), and a rare INSERT COIN launch flourish. Hero imagery swaps once
   per hour (3h desktop cycle / 2h mobile cycle, 1.5s crossfade). In iOS
   standalone mode the game bar drops 40px to clear the status-bar blur. App
-  icons sit on pure `#000`.
-  Install icons regenerate via `py scripts/make_arcade_icons.py`.
+  icons sit on Nintendo red `#E60012`, with separate padded `maskable` sizes
+  for Android's circular crop.
+  Install icons regenerate via `py scripts/make_arcade_icons.py` from
+  `scripts/assets/arcadia-icon.jpg` (needs Pillow and rembg).
 
 **Hard rules when touching `docs/games/**`:**
 
