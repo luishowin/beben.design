@@ -13,15 +13,15 @@ description and its og/twitter twins, and JSON-LD string values. Script and
 style bodies are skipped, so JS variable names and CSS comments cannot trip a
 rule.
 
-Zones. Each page is assigned one, and the zone decides whether first person is
-a failure or the house style:
+Zones. Each page is assigned one, and the zone decides how first person is
+treated:
 
-  selling     second person only. No we/our/us.
-  ui          second person, warm. Forms, errors, 404.
-  case-study  first person plural is correct. A judgment call needs an owner.
-  about       the studio may describe itself. Folded into /services/how-we-work/,
-              because v2's architecture has no /about/ page to carry it.
-  legal       third person, named. "Beben Design is not liable", never "we".
+  selling     first person singular is the house voice. No we/our/us.
+  ui          first person singular is allowed. Forms, errors, 404.
+  case-study  first person singular is correct. A judgment call needs an owner.
+  about       first person singular. The About page and credits.
+  blog        first person singular. Buyer notes and build notes.
+  legal       third person, named. "Beben Design is not liable", never "I" or "we".
   sprite      the mascot speaks as "I" and jokes. Studio "we" still leaks here.
 
 Excluded from every rule, deliberately:
@@ -29,7 +29,6 @@ Excluded from every rule, deliberately:
   docs/kemmy-spa-concierge-preview/  a mock client speaking as itself
   docs/redoubt/                      the same, a client prototype
   docs/games/                        a separate sub-app, and its own voice
-  docs/blog/, content/blog/          journal voice, phase 7
 """
 
 import re
@@ -51,11 +50,15 @@ SPRITE = "sprite"
 ZONES = {
     "index.html": SELLING,
     "services/": SELLING,
+    "new-home/": SELLING,
     # Brief v2 1.1: the one zone where the studio may describe itself. The
     # philosophy folded in here is the About content; v2's own architecture
     # has no /about/ page to put it on.
     "services/how-we-work/": ABOUT,
+    "labs/": SELLING,
     "tools/": SELLING,
+    "about/": ABOUT,
+    "blog/": ABOUT,
     "shop/": SELLING,
     "contact/": UI,
     "business-intelligence/": SELLING,
@@ -67,7 +70,7 @@ ZONES = {
     "kilimo-pal/": CASE_STUDY,
     "essential-watch/": CASE_STUDY,
     "rev-log/": CASE_STUDY,
-    "credits/": CASE_STUDY,
+    "credits/": ABOUT,
     "legal/": LEGAL,
     "privacy/": LEGAL,
 }
@@ -76,7 +79,6 @@ EXCLUDED = (
     "kemmy-spa-concierge-preview/",
     "redoubt/",
     "games/",
-    "blog/",
 )
 
 # Generated output. Editing these is wasted work; the source is listed so the
@@ -91,8 +93,11 @@ GENERATED = {
     "text-diff/index.html": "content/tools.json + content/tools/text-diff/",
 }
 
-FIRST_PERSON = re.compile(r"\b(we|we're|we've|we'll|our|ours|us)\b", re.I)
+PLURAL = re.compile(r"\b(we|we're|we've|we'll|our|ours|us)\b", re.I)
+THE_STUDIO = re.compile(r"\bthe studio\b", re.I)
+FIRST_SINGULAR = re.compile(r"\bI\b|\bI'm\b|\bI've\b|\bI'll\b")
 THE_TEAM = re.compile(r"\bthe team\b", re.I)
+PITCH = re.compile(r"no aggressive sales pitch", re.I)
 
 # Section 1.3. "solution" is handled separately: a plain \bsolution\b also
 # matches inside "resolution", which produces false positives on the legal and
@@ -218,22 +223,20 @@ def check_html(path, show_allowed):
         if not flat:
             continue
 
-        hits = FIRST_PERSON.findall(flat)
-        if hits and not is_proper_name(flat):
-            if zone in (SELLING, UI):
-                fails.append((where, line, f"first person in {zone} zone", flat))
-            elif zone == LEGAL:
+        if zone == LEGAL:
+            if FIRST_SINGULAR.search(flat) or PLURAL.search(flat):
                 fails.append((where, line, "first person in legal zone (name the party)", flat))
-            elif zone == ABOUT:
-                if show_allowed:
-                    notes.append((where, line, "first person, allowed in about", flat))
-            elif zone == SPRITE:
-                fails.append((where, line, "studio first person in sprite", flat))
-            elif show_allowed:
-                notes.append((where, line, f"first person, allowed in {zone}", flat))
+        else:
+            if PLURAL.search(flat) and not is_proper_name(flat):
+                fails.append((where, line, f"plural first person in {zone} zone", flat))
+            if THE_STUDIO.search(flat):
+                fails.append((where, line, "uses 'the studio' instead of I", flat))
 
         if THE_TEAM.search(flat):
             fails.append((where, line, "asserts a team that does not exist", flat))
+
+        if PITCH.search(flat) and not rel.startswith("contact/"):
+            fails.append((where, line, "the sales-pitch line belongs on Contact only", flat))
 
         low = flat.lower()
         for word in BANNED:
@@ -291,8 +294,10 @@ def check_inline_js(path, zone):
         for n, s in js_strings(block):
             if THE_TEAM.search(s):
                 fails.append((where, offset + n, "asserts a team that does not exist", s))
-            elif FIRST_PERSON.search(s) and not is_proper_name(s):
-                fails.append((where, offset + n, f"first person in {zone} zone (inline script)", s))
+            elif PLURAL.search(s) and not is_proper_name(s):
+                fails.append((where, offset + n, f"plural first person in {zone} zone (inline script)", s))
+            elif THE_STUDIO.search(s):
+                fails.append((where, offset + n, "uses 'the studio' instead of I (inline script)", s))
     return fails
 
 
@@ -303,8 +308,10 @@ def check_sprite(show_allowed):
     for n, s in js_strings(path.read_text(encoding="utf-8")):
         if THE_TEAM.search(s):
             fails.append(("docs/assets/JS/sprite.js", n, "asserts a team that does not exist", s))
-        elif FIRST_PERSON.search(s):
-            fails.append(("docs/assets/JS/sprite.js", n, "studio first person in sprite", s))
+        elif PLURAL.search(s):
+            fails.append(("docs/assets/JS/sprite.js", n, "studio plural in sprite", s))
+        elif THE_STUDIO.search(s):
+            fails.append(("docs/assets/JS/sprite.js", n, "uses 'the studio' instead of I", s))
     return fails
 
 

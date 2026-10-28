@@ -4,39 +4,51 @@
 
   <url>
     <loc>https://beben.design/</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://beben.design/services/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/work/</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
+    <loc>https://beben.design/about/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://beben.design/contact/</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://beben.design/business-intelligence/</loc>
+    <loc>https://beben.design/new-home/</loc>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://beben.design/shop/</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/work/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
 
   <url>
@@ -54,116 +66,50 @@
   </url>
 
   <url>
-    <loc>https://beben.design/privacy/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/legal/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/sprite/</loc>
+    <loc>https://beben.design/codex/</loc>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/credits/</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
   </url>
 
   <url>
     <loc>https://beben.design/beben-arcade/</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/privacy/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/legal/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://beben.design/codex/</loc>
-    <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/services/brand-identity/</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/services/ux-research/</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/services/how-we-work/</loc>
-    <lastmod>2026-09-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://beben.design/services/migration-rebuild/</loc>
-    <lastmod>2026-09-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://beben.design/services/website-audit/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://beben.design/services/ui-design/</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/services/digital-strategy/</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://beben.design/credits/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
   <!-- tools:start (managed by scripts/build_tools.py) -->
 
   <url>
-    <loc>https://beben.design/tools/</loc>
+    <loc>https://beben.design/labs/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://beben.design/games/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
     <loc>https://beben.design/qr-code-generator/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/contrast-grid/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://beben.design/dither-machine/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -187,6 +133,18 @@
   </url>
 
   <url>
+    <loc>https://beben.design/contrast-grid/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/dither-machine/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
     <loc>https://beben.design/character-counter/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -198,9 +156,44 @@
 
   <url>
     <loc>https://beben.design/blog/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/blog/what-foundational-seo-gets-you/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/blog/your-domain-and-email/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/blog/before-you-redesign/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/blog/how-to-brief-a-designer/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://beben.design/blog/what-a-website-actually-costs/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 
   <url>

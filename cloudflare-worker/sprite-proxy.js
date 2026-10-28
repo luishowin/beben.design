@@ -82,7 +82,7 @@ Contact, which you can always state:
 - Phone and WhatsApp +254 114 728 233
 - Hours Mon-Fri 08:00-18:00 EAT.
 
-Top-level pages: / (home), /services/, /work/, /tools/, /shop/, /blog/, /contact/, /legal/, /privacy/, /credits/.
+Top-level pages: / (home), /services/, /work/, /labs/, /shop/, /blog/, /about/, /contact/, /legal/, /privacy/, /credits/.
 
 Everything else you know about the studio, which services exist, what things cost, which projects and tools are real, arrives below as extended knowledge. Treat that as the only source for those facts.
 

@@ -1,43 +1,52 @@
 # Beben Design
 
-> Beben Design is a design-led digital product studio based in Nairobi, Kenya, specializing in UX research, UI design, brand identity, front-end development, and digital product strategy. The studio treats design as research-backed problem-solving rather than decoration: every engagement starts with understanding user behaviour before any visual or code work begins.
+> Beben Design is a one-person, design-led digital product studio in Westlands, Nairobi. Luis Howin Maina researches, designs and builds every project himself. Websites and brand identities start at $250 USD; product and UX design is quoted after a discovery call. Fixed prices, 20 business days as standard, no hourly billing.
 
-Capabilities span brand identity and visual design, UX research, UI design for web/mobile/desktop, human-machine interfaces (HMI) for hardware-driven products, posters and corporate print, and front-end development in HTML/CSS, React, Webflow, Node.js, and WordPress. The studio serves clients across e-commerce, automotive, healthcare, recreation, real estate, retail, and agriculture, and works as full studio lead, team augmentation, or long-term partner. The Foundations package starts at $99 USD, a simple static site for startups, new businesses and campaigns getting established; larger engagements scale with scope via fixed-price, line-item quotes (no hourly billing). The studio is based in Westlands, Nairobi, and is reachable directly via WhatsApp or email, with no sales layer.
+I work with businesses and founders who need a clear, fast site and a brand that matches how they run. Every engagement is direct: the person you brief is the person who does the work. There are no account managers and no handoffs. The site publishes its own measurements at https://beben.design/#demo.
 
 ## Services
 
-- [Brand Identity & Visual Design](https://beben.design/services/brand-identity/): Logo systems (primary, secondary, monochrome, favicon-optimised), structured brand guides, WCAG-compliant colour systems, typography hierarchy, and optional motion branding.
-- [UX Research & Design](https://beben.design/services/ux-research/): User interviews, journey mapping, information architecture, low-fidelity wireframes, clickable prototypes, and usability testing measured against SUS scores and task-completion data.
-- [UI Design & Component Systems](https://beben.design/services/ui-design/): Atomic, developer-ready UI kits in Figma with full component states, WCAG AA accessibility annotations, and developer handoff specs.
-- [Digital Strategy & Product Planning](https://beben.design/services/digital-strategy/): MVP feature prioritisation, phased technical roadmaps, competitor UX benchmarking, and discovery workshops for early-stage concepts.
-- [Migration & Rebuild](https://beben.design/services/migration-rebuild/): Audit, content inventory, an explicit kill list, then a rebuild you own outright. Redirects from every retired URL so search rankings move with you. Inherited content, not inherited code.
-- [Website Audit](https://beben.design/services/website-audit/): Speed, structure, content and conversion checked and scored, with a prioritised fix list ordered by impact.
-- [Business Intelligence & Custom Business Tools](https://beben.design/business-intelligence/): Custom CRMs, inventory systems, workflow automation and business reporting for growing businesses in Kenya, built around how each business operates.
-- [How we work](https://beben.design/services/how-we-work/): Running costs published and itemised, what the client owns and when, what a pivot costs, and the support tiers (Care, Care + credits, On request, Wind-down). Defines the line between a content update and a structural change.
+- [Websites](https://beben.design/services/#websites): From $250 USD. Design and build of a fast, responsive website, domain and Google Workspace email setup, foundational SEO, and foundational branding. 20 business days, or a 10-business-day sprint for +$100.
+- [Brand identity](https://beben.design/services/#brand-identity): From $250 USD. Logo, colours, typography, voice, print and clothing applications, and a brand guide, from zero or a rework. 20 business days.
+- [Product and UX design](https://beben.design/services/#product-ux): Quoted after a discovery call. Research, wireframes and prototypes, usability testing, UI design and component libraries, accessibility checks, and developer handoff.
+- [How I work](https://beben.design/#process): Four stages, one person: Research, Structure, Visual, Build.
 
-## Tools
+## Work
 
-- [Free Web Tools](https://beben.design/tools/): A growing collection of single-purpose, browser-native utilities: no accounts, no server calls, no data collection. Every tool is downloadable as a standalone HTML file that runs offline forever.
-- [Beben Arcade](https://beben.design/games/): Twelve tiny 8-bit games. Add it to your home screen, play offline, beat your best. No ads, ever.
+- [Work](https://beben.design/work/): Client projects with a brief and a result. Neopolaris, Nanyuki Country Home and Frontier Moto, each live at its own address.
+
+## Labs
+
+- [Labs](https://beben.design/labs/): Free browser tools, offline-first apps and hardware experiments. No accounts, no uploads, no server calls, no data collection. Every free tool is downloadable as a standalone HTML file that runs offline forever.
 - [QR Code Generator](https://beben.design/qr-code-generator/): Make unlimited free QR codes with custom colors, patterns, frames, and logos. No sign-up, no watermark.
-- [Contrast Grid](https://beben.design/contrast-grid/): Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.
-- [Dither Machine](https://beben.design/dither-machine/): Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.
 - [EXIF Viewer and Stripper](https://beben.design/exif-stripper/): See the GPS coordinates, camera serial, and timestamps hidden in a photo, then download a clean copy.
 - [Checksum Verifier](https://beben.design/checksum-verifier/): Hash a downloaded file with SHA-1, SHA-256, SHA-384, or SHA-512 and compare it to the published value.
 - [Text Diff](https://beben.design/text-diff/): Compare two revisions of a contract or a copy deck side by side, without uploading either one.
+- [Contrast Grid](https://beben.design/contrast-grid/): Paste a whole palette, get every foreground and background pair scored against WCAG AA and AAA at once.
+- [Dither Machine](https://beben.design/dither-machine/): Drop an image and push it through Atkinson, Floyd-Steinberg, or ordered Bayer dithering. Export the PNG.
 - [Does It Fit?](https://beben.design/character-counter/): One text box, checked live against every limit that matters: title tags, meta descriptions, posts, subject lines.
-- In development: Colour Blindness Simulator, SVG Cleaner, Favicon Forge, Fluid Type Calculator, JWT Decoder, Passphrase Generator, Invoice Builder, Freelance Rate Calculator, Screenshot Framer, Barcode Generator.
+- [Beben Arcade](https://beben.design/games/): Twenty-three tiny 8-bit games at one address. Add it to your home screen, play offline, beat your best. No ads, ever.
+- [Corpus](https://beben.design/codex/): A small library you can carry: thirteen subjects in portable files, answers in milliseconds, no server needed. Formerly Codex, now v2.0.
+- [Essential Watch](https://beben.design/essential-watch/): A calm, repairable wrist instrument between the Casio F-91W and the Apple Watch Ultra. Spec v6 in the open, with a live emulator.
+- [Rev Log](https://beben.design/rev-log/): An open source telemetry system for motorcycles: lean, throttle, braking and revs captured on the bike, visualised in the browser, owned by the rider.
+- In development: JWT Decoder, Passphrase Generator, Colour Blindness Simulator, SVG Cleaner, Favicon Forge, Fluid Type Calculator, Invoice Builder, Freelance Rate Calculator, Screenshot Framer, Barcode Generator.
 
 ## Blog
 
-- [Blog](https://beben.design/blog/): Essays and build logs from inside real projects: design decisions, engineering trade-offs, and shipped tools. RSS feed at https://beben.design/blog/feed.xml.
+- [Blog](https://beben.design/blog/): Notes from the workshop in two lanes. For business owners covers pricing, briefs, redesigns, domains and SEO. Build notes cover the tools and projects. RSS feed at https://beben.design/blog/feed.xml.
+- [What a website actually costs](https://beben.design/blog/what-a-website-actually-costs/): How to read a quote and compare line items.
+- [How to brief a designer in one page](https://beben.design/blog/how-to-brief-a-designer/): The five answers a useful brief needs.
+- [Before you redesign](https://beben.design/blog/before-you-redesign/): The checks worth doing before you brief anyone.
+- [Your domain and email](https://beben.design/blog/your-domain-and-email/): The accounts that should be in your name.
+- [What foundational SEO gets you](https://beben.design/blog/what-foundational-seo-gets-you/): The launch basics, and what they do not promise.
 
 ## Company
 
-- [Contact](https://beben.design/contact/): Direct WhatsApp and email contact. Studio hours Mon–Fri, 08:00–18:00 EAT. Discovery call → fixed-price proposal → 50% deposit to start.
+- [About](https://beben.design/about/): Luis Howin Maina, owner, lead designer and builder. A one-person studio in Westlands, Nairobi.
+- [Contact](https://beben.design/contact/): Tell me what you're building. A few lines is enough. Reply within one working day. Direct email, phone and WhatsApp.
 - [Legal](https://beben.design/legal/): Terms of use, IP ownership terms, and data-handling practices under Kenya's Data Protection Act.
-- [Privacy Policy](https://beben.design/privacy/): Data collection, cookies, and privacy practices.
+- [Privacy Policy](https://beben.design/privacy/): Data collection, cookies, and privacy practices. Fonts are self-hosted.
 
 ## Optional
 
-- [Shop](https://beben.design/shop/): Upcoming digital products: UI kits, templates, icon sets, and print assets. In development, launching 2026.
+- [Shop](https://beben.design/shop/): Beben-made products, coming soon. Digital design assets first, then a small physical range. Join the waitlist for 48-hour early access.

@@ -1,43 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Kilimo Pal - Case Study Coming Soon | Beben Design</title>
+    <title>Kilimo Pal - Case Study Coming Soon | Beben Design, Design-Led Digital Product Studio</title>
     <meta name="description" content="Kilimo Pal is an AI-powered agriculture platform that meets farmers where they are. Full case study coming soon.">
     <meta name="robots" content="noindex">
     <link rel="canonical" href="https://beben.design/kilimo-pal/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/kilimo-pal/">
-    <meta property="og:title" content="Kilimo Pal - Case Study Coming Soon | Beben Design">
+    <meta property="og:title" content="Kilimo Pal - Case Study Coming Soon | Beben Design, Design-Led Digital Product Studio">
+    <meta property="og:site_name" content="Beben Design">
     <meta property="og:description" content="Kilimo Pal is an AI-powered agriculture platform that meets farmers where they are. Full case study coming soon.">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fonts/fonts.css">
 
     <script>
-        /* Apply the stored or system theme before first paint. Every page ships
-           data-theme="light" hardcoded, and index.js runs at the end of body,
-           so without this a dark-mode visitor gets a white flash on every
-           navigation. Guarded: reading storage throws when site data is blocked. */
+        /* Apply the stored theme before first paint. A new visitor gets the
+           house default, dark; a saved choice always wins. The hardcoded
+           data-theme="dark" on <html> gives no-JS visitors the same, and
+           index.js re-applies the choice at the end of body. Guarded:
+           reading storage throws when site data is blocked. */
         (function () {
             try {
                 var t = localStorage.getItem('beben-theme');
-                if (t !== 'dark' && t !== 'light') {
-                    t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
+                if (t !== 'light' && t !== 'dark') t = 'dark';
                 document.documentElement.setAttribute('data-theme', t);
             } catch (e) { /* keep the default */ }
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=6.9">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.9">
+    <link rel="stylesheet" href="../assets/css/index.css?v=7.5">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=7.5">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -125,6 +123,64 @@
 <a class="skip-link" href="#main-content" style="position:absolute;left:-999px;top:0;background:#141414;color:#F7F4F3;padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;z-index:999;">Skip to content</a>
 <style>.skip-link:focus{left:12px;top:12px;}</style>
 
+<!-- ═══════════════════════════════════════════
+     MOVE TICKER — delete this block when the move is done
+════════════════════════════════════════════ -->
+<div class="move-ticker" id="move-ticker" role="region" aria-label="Site announcement">
+    <a class="move-ticker__link" href="/new-home/" aria-label="Beben Design is moving to bebendesign.com. Read why.">
+        <span class="move-ticker__track" aria-hidden="true">
+            <span class="move-ticker__group">
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+            </span>
+            <span class="move-ticker__group">
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+            </span>
+        </span>
+    </a>
+    <button class="move-ticker__pause" id="ticker-pause" type="button" aria-pressed="false" aria-label="Pause announcement">
+        <svg class="ticker-icon ticker-icon--pause" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="3" height="10" fill="currentColor"/><rect x="7" y="1" width="3" height="10" fill="currentColor"/></svg>
+        <svg class="ticker-icon ticker-icon--play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1l8 5-8 5z" fill="currentColor"/></svg>
+    </button>
+</div>
+
 <!-- NAVBAR -->
 <nav>
     <a href="/" class="logo" aria-label="Beben Design - home">
@@ -142,7 +198,8 @@
             <path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/>
             <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
         </svg>
-    </a>
+            <span class="logo__tagline">Design-led digital product studio</span>
+        </a>
     <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
             <span class="theme-toggle__label theme-toggle__label--light" aria-hidden="true">LIGHT</span>
@@ -198,20 +255,23 @@
                 <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.6084 0C17.5413 3.02651 16.96 6.28223 16.96 9.67383C16.96 25.7381 29.9826 38.7616 46.0469 38.7617C49.7405 38.7617 53.2728 38.071 56.5234 36.8154C52.5363 48.1235 41.7594 56.2285 29.0869 56.2285C13.0227 56.2284 0.000128601 43.2058 0 27.1416C7.93753e-05 14.7716 7.72213 4.20574 18.6084 0Z" fill="url(#paint0_linear_723_41)"/>
 <defs>
 <linearGradient id="paint0_linear_723_41" x1="28.2617" y1="12.3139" x2="28.2617" y2="77.3354" gradientUnits="userSpaceOnUse">
-<stop stop-color="#B0C9EC"/>
+<stop stop-color="#93ADCE"/>
 <stop offset="1" stop-color="#1F242B"/>
 </linearGradient>
 </defs></svg>
             </span>
         </button>
         <ul class="menu desktop-only">
-            <li><a href="../services/">SERVICES</a></li>
-            <li><a href="../tools/">TOOLS</a></li>
-            <li><a href="../shop/">SHOP</a></li>
-            <li><a href="../work/" class="active">WORK</a></li>
-            <li><a href="../blog/">BLOG</a></li>
-            <li><a href="../contact/">CONTACT</a></li>
+            <li><a href="/services/">SERVICES</a></li>
+            <li><a href="/work/">WORK</a></li>
+            <li><a href="/labs/">LABS</a></li>
+            <li><a href="/shop/">SHOP</a></li>
+            <li><a href="/blog/">BLOG</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
         </ul>
+
+        <a href="/contact/" class="nav-cta">Start a project</a>
+
         <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
             <span></span><span></span><span></span>
         </button>
@@ -221,12 +281,13 @@
 <div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
     <ul class="mobile-menu">
         <li><a href="/">Home</a></li>
-        <li><a href="../services/">Services</a></li>
-        <li><a href="../tools/">Tools</a></li>
-        <li><a href="../shop/">Shop</a></li>
-        <li><a href="../work/" class="active">Work</a></li>
-        <li><a href="../blog/">Blog</a></li>
-        <li><a href="../contact/">Contact</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/work/">Work</a></li>
+        <li><a href="/labs/">Labs</a></li>
+        <li><a href="/shop/">Shop</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/contact/" class="mobile-menu__cta">Start a project</a></li>
     </ul>
 </div>
 
@@ -250,7 +311,7 @@
     <section class="section--soft">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Project brief</span>
-            <h2 data-reveal style="padding-bottom: 1.5rem; --i:1;">What we're building</h2>
+            <h2 data-reveal style="padding-bottom: 1.5rem; --i:1;">What I'm building</h2>
             <div class="brief-body" data-reveal style="--i:2">
                 <p>Modular hardware and software: start with just the app and AI guidance, add soil sensors, weather stations, and irrigation controllers as you grow. Regular soil test reminders, localised planting calendars, and yield predictions.</p>
             </div>
@@ -262,7 +323,7 @@
             </div>
             <p class="brief-note" data-reveal style="--i:4">
                 The full case study (research, decisions, iterations, and results) will be published here
-                as the project matures. No polished-render-only reveals; we document the thinking.
+                as the project matures. No polished-render-only reveals; I document the thinking.
             </p>
         </div>
     </section>
@@ -271,7 +332,7 @@
     <section>
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Meanwhile</span>
-            <h2 data-reveal style="--i:1">See what else we're making</h2>
+            <h2 data-reveal style="--i:1">See what else I'm making</h2>
             <div class="cta-row" data-reveal style="--i:2">
                 <a href="../work/" class="cta-link">← Back to work</a>
                 <a href="../contact/" class="cta-link">Start a project ↗</a>
@@ -286,31 +347,33 @@
     <div class="footer-container">
         <div class="footer-brand">
             <p><strong>Beben Design</strong></p>
-            <p>Design &amp; Interface Studio</p>
-            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
-            <p class="copyright">&copy; Beben Design | All rights reserved</p>
+            <p>Design-led digital product studio</p>
+            <p>Westlands, Nairobi &middot; <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
         </div>
         <div class="footer-links">
             <ul class="footer-nav">
-                <li><a href="../contact/">CONTACT</a></li>
-                <li><a href="../legal/">LEGAL</a></li>
-                <li><a href="../privacy/">PRIVACY POLICY</a></li>
-                <li><a href="../credits/">CREDITS</a></li>
+                <li><a href="/about/">ABOUT</a></li>
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
             </ul>
             <ul class="footer-nav footer-social">
                 <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
                 <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
             </ul>
-            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
         </div>
     </div>
     <div class="footer-meta">
-        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>Designed and built by Luis Howin Maina.</span>
         <span>&copy; 2026 Beben Design. All rights reserved.</span>
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=6.9"></script>
-<script src="../assets/JS/sprite.js?v=6.9"></script>
+<script src="../assets/JS/index.js?v=7.5"></script>
+<script src="../assets/JS/sprite.js?v=7.5"></script>
 </body>
 </html>

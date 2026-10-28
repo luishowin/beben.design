@@ -9,13 +9,13 @@ document.documentElement.classList.add('js');
     'use strict';
 
     // ── 1. THEME ─────────────────────────────────────────────────
-    // Restore saved preference before paint; fall back to system
-    // preference on first visit rather than always defaulting light.
+    // Restore the saved preference before paint. A new visitor gets the
+    // house default, dark, rather than following the OS setting; the
+    // toggle writes an explicit choice, so light stays available.
     const html = document.documentElement;
     let savedTheme = null;
     try { savedTheme = localStorage.getItem('beben-theme'); } catch (e) { /* site data blocked */ }
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    const initialTheme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark';
     html.setAttribute('data-theme', initialTheme);
 
     const themeToggle = document.getElementById('theme-toggle');
@@ -33,11 +33,32 @@ document.documentElement.classList.add('js');
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const current = html.getAttribute('data-theme') || 'light';
+            const current = html.getAttribute('data-theme') || 'dark';
             const next = current === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', next);
             try { localStorage.setItem('beben-theme', next); } catch (e) { /* site data blocked */ }
             reflectTheme(next);
+        });
+    }
+
+    // ── 1b. MOVE TICKER PAUSE ────────────────────────────────────
+    // The ticker scrolls on its own, so WCAG 2.2.2 asks for a way to
+    // stop it. Hover and focus already pause it in CSS; this control
+    // makes the stop persistent. Reduced motion hides both the control
+    // and the animation, so there is nothing left to pause.
+    const ticker = document.querySelector('.move-ticker');
+    const tickerPause = document.getElementById('ticker-pause');
+
+    if (ticker && tickerPause) {
+        tickerPause.addEventListener('click', () => {
+            const paused = ticker.getAttribute('data-paused') === 'true';
+            if (paused) {
+                ticker.removeAttribute('data-paused');
+            } else {
+                ticker.setAttribute('data-paused', 'true');
+            }
+            tickerPause.setAttribute('aria-pressed', String(!paused));
+            tickerPause.setAttribute('aria-label', paused ? 'Pause announcement' : 'Resume announcement');
         });
     }
 

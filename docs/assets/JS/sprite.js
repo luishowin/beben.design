@@ -293,40 +293,40 @@ const SpriteChat = (() => {
     contact: {
       patterns: [/\b(contact|reach|email|talk|hire|get in touch|start|project)\b/i],
       responses: [
-        { text: "Love the enthusiasm! Head to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact</span> or just email hello.beben.design@gmail.com. No aggressive sales pitch -- just a real conversation.", emotion: "happy" },
+        { text: "Love the enthusiasm! Head to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact</span> or just email hello.beben.design@gmail.com. Just a real conversation about the problem.", emotion: "happy" },
         { text: "Ready to chat? There's a project form on the <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">Contact page</span>. It goes straight to the person who builds the thing!", emotion: "waving" },
       ]
     },
     pricing: {
       patterns: [/\b(price|pricing|cost|how much|budget|afford|expensive|cheap|rate)\b/i],
       responses: [
-        { text: "The Foundations package starts at $99 USD: a simple static site for a startup, a new business, or a campaign getting established. Bigger builds get a fixed-price, line-item quote after a call. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">reach out</span>?", emotion: "happy" },
-        { text: "Pricing is honest and transparent here. Foundations starts at $99 for a simple static site, and everything larger is quoted line by line. Best to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">get in touch</span> for a real number!", emotion: "happy" },
+        { text: "Websites start at $250 USD, brand identity starts at $250, and product and UX design is quoted after a discovery call. Fixed prices, no hourly billing. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">talk it through</span>?", emotion: "happy" },
+        { text: "Prices are in USD and fixed. A standard project is 20 business days; a 10-business-day sprint is +$100. Larger scopes get a line-item quote. Best to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">get in touch</span> for a real number!", emotion: "happy" },
       ]
     },
     about: {
       patterns: [/\b(who are you|what are you|about you|your name|sprite|tell me about)\b/i],
       responses: [
         { text: "I'm Sprite! A little AI guide built to help you navigate this site. Think of me as the friendly face of beben.design -- I know all the pages, services, and even a few secrets.", emotion: "waving" },
-        { text: "I'm your pixel-powered guide! Born right here in the Thinking in Pixels lab. I can help you find things, answer questions, or just hang out.", emotion: "happy" },
+        { text: "I'm your pixel-powered guide! Built right here on beben.design. I can help you find things, answer questions, or just hang out.", emotion: "happy" },
       ]
     },
     process: {
       patterns: [/\b(process|how (do you|does it) work|workflow|methodology|steps)\b/i],
       responses: [
-        { text: "The studio follows a 6-step process: Requirement Analysis, Ideation, Prototyping, Responsive Analysis, Testing and QA, then Maintenance. Want to see it? <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('process')\">Jump to Process</span>!", emotion: "happy" },
+        { text: "Four stages, one person: Research, Structure, Visual, then Build. Standard delivery is 20 business days, or a 10-business-day sprint for +$100. Want to see it? <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('process')\">Jump to Process</span>!", emotion: "happy" },
       ]
     },
     tools: {
       patterns: [/\b(tools?|framework|tech|stack|react|html|css|framer|wordpress)\b/i],
       responses: [
-        { text: "Two answers! The studio builds with HTML/CSS, React JS, Framer, and WordPress. And there are five free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('tools')\">Tools</span> live right now: Beben Arcade, a QR code generator, a contrast grid, a dither machine, and Does It Fit? for checking text against every limit that matters. Each one downloads as a single file that works offline forever.", emotion: "happy" },
+        { text: "Two answers! I build with HTML/CSS, React, Python and a little Rust, and I work in WordPress or Framer when a project needs it. And there are seven free browser <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('labs')\">tools in Labs</span>: QR codes, EXIF cleaning, checksums, text diff, contrast, dithering and Does It Fit?. Each free tool downloads as a single file that works offline forever.", emotion: "happy" },
       ]
     },
     shop: {
       patterns: [/\b(shop|store|buy|products?|templates?|ui kits?)\b/i],
       responses: [
-        { text: "The <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('shop')\">Shop</span> is launching in 2026 -- UI kits, templates, icon sets, and print assets. You can join the waitlist to get first access!", emotion: "excited" },
+        { text: "The <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('shop')\">Shop</span> is coming soon: digital design assets first, then a small physical range. Join the waitlist and you get access 48 hours before everyone else.", emotion: "excited" },
       ]
     },
     faq: {
@@ -355,7 +355,7 @@ const SpriteChat = (() => {
       patterns: [/\b(secret|easter egg|hidden|surprise|magic)\b/i],
       responses: [
         { text: "Ooh, you found me out! Here's a secret: try saying 'dance' and watch what happens...", emotion: "surprised" },
-        { text: "Psst... the best secret about this studio? They put as much thought into things you'll never see as the things you will. Now THAT'S craft.", emotion: "surprised" },
+        { text: "Psst... the best secret about this site? I put as much thought into things you'll never see as the things you will. Now THAT'S craft.", emotion: "surprised" },
       ]
     },
     thanks: {
@@ -375,13 +375,13 @@ const SpriteChat = (() => {
     startup: {
       patterns: [/\b(startup|early.?stage|mvp|launch|new company|founder)\b/i],
       responses: [
-        { text: "Startups are a sweet spot here! The studio helps find your 'Minimum Viable Design' to launch quickly and professionally. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">start a conversation</span>?", emotion: "excited" },
+        { text: "Startups are a sweet spot here! I help scope the smallest version that still looks and works like a serious product. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">start a conversation</span>?", emotion: "excited" },
       ]
     },
     redesign: {
       patterns: [/\b(redesign|rebuild|revamp|update|refresh|redo|improve)\b/i],
       responses: [
-        { text: "Absolutely! They start with a UX audit to find what's actually broken -- no painting over functional issues. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">discuss your project</span>?", emotion: "happy" },
+        { text: "Absolutely! I start with a UX audit to find what's actually broken, then scope the redesign from the findings. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">discuss your project</span>?", emotion: "happy" },
       ]
     },
     nairobi: {
@@ -391,7 +391,7 @@ const SpriteChat = (() => {
         // tags but does not decode entities, so "&deg;" would be read aloud
         // character by character. Canonical value is 1&deg;16'S 36&deg;48'E,
         // and scripts/check_facts.py knows all three spellings are the same.
-        { text: "The studio is based in Westlands, Nairobi -- coordinates 1 deg 16'S 36 deg 48'E to be exact! But they work with teams globally.", emotion: "happy" },
+        { text: "I'm based in Westlands, Nairobi -- coordinates 1 deg 16'S 36 deg 48'E to be exact! I work with teams globally.", emotion: "happy" },
       ]
     },
     bored: {
@@ -411,7 +411,7 @@ const SpriteChat = (() => {
     compliment: {
       patterns: [/\b(cute|adorable|cool|awesome|great site|love this|beautiful|nice design)\b/i],
       responses: [
-        { text: "Aw, thank you! I'll pass that along. There's a lot of heart in this one.", emotion: "excited" },
+        { text: "Aw, thank you! I'll take that. There's a lot of heart in this one.", emotion: "excited" },
         { text: "You just made my day! There's a lot of care in the details here.", emotion: "happy" },
       ]
     },
@@ -424,15 +424,15 @@ const SpriteChat = (() => {
     industries: {
       patterns: [/\b(industr|ecommerce|automotive|healthcare|real estate|retail|agriculture)\b/i],
       responses: [
-        { text: "The studio works across Ecommerce, Automotive, Healthcare, Recreation, Real Estate, Retail, and Agriculture. <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('industries')\">See the full list</span>!", emotion: "happy" },
+        { text: "I work with businesses across sectors, from retail and hospitality to agriculture and software. The best place to start is <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('services')\">Services</span>.", emotion: "happy" },
       ]
     },
   };
 
   const fallbacks = [
     { text: "Hmm, I'm not sure about that one! But I can help you find Services, Work, Contact info, or Pricing. What sounds good?", emotion: "guessing", chips: ["Services", "Work", "Contact", "Pricing"] },
-    { text: "That's a great question, but it's a bit outside my training data! Try asking about the studio's services, work, or how to get in touch.", emotion: "thinking", chips: ["What do you offer?", "Show me work", "Get in touch"] },
-    { text: "I wish I knew! I'm best at navigating this site and answering questions about the studio. Want to try one of these?", emotion: "guessing", chips: ["Services", "Portfolio", "Pricing", "Contact"] },
+    { text: "That's a great question, but it's a bit outside my training data! Try asking about my services, work, or how to get in touch.", emotion: "thinking", chips: ["What do you offer?", "Show me work", "Get in touch"] },
+    { text: "I wish I knew! I'm best at navigating this site and answering questions about the work. Want to try one of these?", emotion: "guessing", chips: ["Services", "Portfolio", "Pricing", "Contact"] },
   ];
 
   // ── Page awareness ──
@@ -448,12 +448,13 @@ const SpriteChat = (() => {
     var p = window.location.pathname;
     if (p.indexOf('/services') === 0) return ["What's the process?", "Pricing", "Start a project"];
     if (p.indexOf('/shop') === 0)     return ["When does the shop open?", "What's coming?", "Services"];
-    if (p.indexOf('/tools') === 0)    return ["What can the tools do?", "Services", "Tell me a joke"];
+    if (p.indexOf('/labs') === 0)     return ["What can the tools do?", "Services", "Tell me a joke"];
+    if (p.indexOf('/about') === 0)    return ["What do you do?", "Show me work", "Start a project"];
     if (p.indexOf('/contact') === 0)  return ["Pricing", "How long do projects take?", "Show me work"];
     if (p.indexOf('/work') === 0 || p.indexOf('/sprite') === 0 || p.indexOf('/kilimo-pal') === 0 ||
         p.indexOf('/essential-watch') === 0 || p.indexOf('/rev-log') === 0)
       return ["Tell me about the projects", "Services", "Start a project"];
-    if (p.indexOf('/blog') === 0)     return ["What does the studio do?", "Show me work", "Start a project"];
+    if (p.indexOf('/blog') === 0)     return ["What do you do?", "Show me work", "Start a project"];
     return ["Services", "Work", "Pricing", "Tell me a joke"];
   }
 
@@ -821,7 +822,7 @@ const SpriteChat = (() => {
   // jumps to the right page (homepage sections get a /#hash).
 
   const sectionUrls = {
-    services: '/services/', tools: '/tools/', shop: '/shop/',
+    services: '/services/', labs: '/labs/', shop: '/shop/',
     work: '/work/', contact: '/contact/',
   };
 

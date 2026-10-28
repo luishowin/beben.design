@@ -1,49 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#141414">
 
-    <title>Shop - Coming Soon | Beben Design</title>
-    <meta name="description" content="The Beben Design shop is launching soon. Digital products, design assets and templates built to the same standard as the client work.">
+    <title>Shop | Beben Design, Design-Led Digital Product Studio</title>
+    <meta name="description" content="Beben-made products, coming soon. Digital design assets first, then a small physical range. Join the waitlist for 48-hour early access.">
     <link rel="canonical" href="https://beben.design/shop/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/shop/">
-    <meta property="og:title" content="Shop - Coming Soon | Beben Design">
-    <meta property="og:description" content="Digital products and design assets. Launching soon.">
+    <meta property="og:site_name" content="Beben Design">
+    <meta property="og:title" content="Shop | Beben Design, Design-Led Digital Product Studio">
+    <meta property="og:description" content="Beben-made products, coming soon. Digital design assets first, then a small physical range.">
     <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://beben.design/shop/">
-    <meta property="twitter:title" content="Shop - Coming Soon | Beben Design">
-    <meta property="twitter:description" content="Digital products and design assets. Launching soon.">
+    <meta property="twitter:title" content="Shop | Beben Design, Design-Led Digital Product Studio">
+    <meta property="twitter:description" content="Beben-made products, coming soon. Digital design assets first, then a small physical range.">
     <meta property="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fonts/fonts.css">
 
     <script>
-        /* Apply the stored or system theme before first paint. Every page ships
-           data-theme="light" hardcoded, and index.js runs at the end of body,
-           so without this a dark-mode visitor gets a white flash on every
-           navigation. Guarded: reading storage throws when site data is blocked. */
+        /* Apply the stored theme before first paint. A new visitor gets the
+           house default, dark; a saved choice always wins. The hardcoded
+           data-theme="dark" on <html> gives no-JS visitors the same, and
+           index.js re-applies the choice at the end of body. Guarded:
+           reading storage throws when site data is blocked. */
         (function () {
             try {
                 var t = localStorage.getItem('beben-theme');
-                if (t !== 'dark' && t !== 'light') {
-                    t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
+                if (t !== 'light' && t !== 'dark') t = 'dark';
                 document.documentElement.setAttribute('data-theme', t);
             } catch (e) { /* keep the default */ }
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=6.9">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.9">
+    <link rel="stylesheet" href="../assets/css/index.css?v=7.5">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=7.5">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -244,6 +242,64 @@
 <style>.skip-link:focus{left:12px;top:12px;}</style>
 
 <!-- ═══════════════════════════════════════════
+     MOVE TICKER — delete this block when the move is done
+════════════════════════════════════════════ -->
+<div class="move-ticker" id="move-ticker" role="region" aria-label="Site announcement">
+    <a class="move-ticker__link" href="/new-home/" aria-label="Beben Design is moving to bebendesign.com. Read why.">
+        <span class="move-ticker__track" aria-hidden="true">
+            <span class="move-ticker__group">
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+            </span>
+            <span class="move-ticker__group">
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+            </span>
+        </span>
+    </a>
+    <button class="move-ticker__pause" id="ticker-pause" type="button" aria-pressed="false" aria-label="Pause announcement">
+        <svg class="ticker-icon ticker-icon--pause" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="3" height="10" fill="currentColor"/><rect x="7" y="1" width="3" height="10" fill="currentColor"/></svg>
+        <svg class="ticker-icon ticker-icon--play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1l8 5-8 5z" fill="currentColor"/></svg>
+    </button>
+</div>
+
+<!-- ═══════════════════════════════════════════
      NAVBAR
 ════════════════════════════════════════════ -->
 <nav>
@@ -262,7 +318,8 @@
             <path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/>
             <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
         </svg>
-    </a>
+            <span class="logo__tagline">Design-led digital product studio</span>
+        </a>
 
     <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
@@ -319,7 +376,7 @@
                 <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.6084 0C17.5413 3.02651 16.96 6.28223 16.96 9.67383C16.96 25.7381 29.9826 38.7616 46.0469 38.7617C49.7405 38.7617 53.2728 38.071 56.5234 36.8154C52.5363 48.1235 41.7594 56.2285 29.0869 56.2285C13.0227 56.2284 0.000128601 43.2058 0 27.1416C7.93753e-05 14.7716 7.72213 4.20574 18.6084 0Z" fill="url(#paint0_linear_723_41)"/>
 <defs>
 <linearGradient id="paint0_linear_723_41" x1="28.2617" y1="12.3139" x2="28.2617" y2="77.3354" gradientUnits="userSpaceOnUse">
-<stop stop-color="#B0C9EC"/>
+<stop stop-color="#93ADCE"/>
 <stop offset="1" stop-color="#1F242B"/>
 </linearGradient>
 </defs></svg>
@@ -327,13 +384,16 @@
         </button>
 
         <ul class="menu desktop-only">
-            <li><a href="../services/">SERVICES</a></li>
-            <li><a href="../tools/">TOOLS</a></li>
-            <li><a href="../shop/" class="active">SHOP</a></li>
-            <li><a href="../work/">WORK</a></li>
-            <li><a href="../blog/">BLOG</a></li>
-            <li><a href="../contact/">CONTACT</a></li>
+            <li><a href="/services/">SERVICES</a></li>
+            <li><a href="/work/">WORK</a></li>
+            <li><a href="/labs/">LABS</a></li>
+            <li><a href="/shop/" class="active">SHOP</a></li>
+            <li><a href="/blog/">BLOG</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
         </ul>
+
+
+        <a href="/contact/" class="nav-cta">Start a project</a>
 
         <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
             <span></span><span></span><span></span>
@@ -345,12 +405,13 @@
 <div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
     <ul class="mobile-menu">
         <li><a href="/">Home</a></li>
-        <li><a href="../services/">Services</a></li>
-        <li><a href="../tools/">Tools</a></li>
-        <li><a href="../shop/" class="active">Shop</a></li>
-        <li><a href="../work/">Work</a></li>
-        <li><a href="../blog/">Blog</a></li>
-        <li><a href="../contact/">Contact</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/work/">Work</a></li>
+        <li><a href="/labs/">Labs</a></li>
+        <li><a href="/shop/" class="active">Shop</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/contact/" class="mobile-menu__cta">Start a project</a></li>
     </ul>
 </div>
 
@@ -359,154 +420,27 @@
 ════════════════════════════════════════════ -->
 <main id="main-content">
 
-    <!-- Hero - plain -->
     <section class="page-hero">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Shop · Digital products</span>
-            <h1 data-reveal style="--i:1">The shop is <em class="highlight-box">almost</em> ready.</h1>
-            <p data-reveal style="--i:2">A focused collection of digital products is on the way: UI kits, design
-                templates and downloadable assets built to the same standard as the client work. No filler, no bloat.</p>
+            <span class="eyebrow" data-reveal style="--i:0">Shop</span>
+            <h1 data-reveal style="--i:1">Beben-made products, <em class="highlight-box">coming soon</em>.</h1>
+            <p data-reveal style="--i:2">Products I design and choose myself, with no filler and no cheap merch.
+                Digital design assets first: UI kits, templates and icon sets. A small physical range later.</p>
             <div class="status-badge" data-reveal style="--i:3">
                 <span class="dot" aria-hidden="true"></span>
-                In development · launching 2026
+                Coming soon
             </div>
         </div>
     </section>
 
-    <!-- Upcoming products - soft -->
-    <section class="section--soft">
-        <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Coming to the shop</span>
-            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Upcoming products</h2>
-
-            <div class="product-grid">
-
-                <article class="product-card" data-reveal style="--i:2">
-                    <div class="product-media"><span>Preview soon</span></div>
-                    <div class="card-body">
-                        <span class="card-category">// UI Kit</span>
-                        <h3>Brutalist Dashboard UI Kit</h3>
-                        <p>A complete set of data display components: charts, tables, stat cards. Built on the Beben grid system. Figma + HTML/CSS.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-price">Price TBD</span>
-                        <span class="card-note">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="product-card" data-reveal style="--i:2">
-                    <div class="product-media"><span>Preview soon</span></div>
-                    <div class="card-body">
-                        <span class="card-category">// Template</span>
-                        <h3>Monospace Portfolio Template</h3>
-                        <p>A clean, single-file HTML portfolio template. Zero dependencies. Dot-grid background, dark/light mode, mobile-first.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-price">Price TBD</span>
-                        <span class="card-note">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="product-card" data-reveal style="--i:3">
-                    <div class="product-media"><span>Preview soon</span></div>
-                    <div class="card-body">
-                        <span class="card-category">// Icon Set</span>
-                        <h3>HMI Icon Set - Industrial</h3>
-                        <p>300+ SVG icons engineered for hardware interfaces. High-contrast, scalable from 16px to 200mm. Covers automotive, industrial, and medical categories.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-price">Price TBD</span>
-                        <span class="card-note">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="product-card" data-reveal style="--i:3">
-                    <div class="product-media"><span>Preview soon</span></div>
-                    <div class="card-body">
-                        <span class="card-category">// Template</span>
-                        <h3>Startup Landing Page Kit</h3>
-                        <p>A conversion-focused landing page template. Hero, features, pricing, FAQ, CTA. All sections pre-built. HTML, CSS, and Webflow versions.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-price">Price TBD</span>
-                        <span class="card-note">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="product-card" data-reveal style="--i:4">
-                    <div class="product-media"><span>Preview soon</span></div>
-                    <div class="card-body">
-                        <span class="card-category">// UI Kit</span>
-                        <h3>Mobile UI Component Library</h3>
-                        <p>iOS and Android-ready components for Figma. Follows platform HIG conventions while maintaining a distinctive visual language.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-price">Price TBD</span>
-                        <span class="card-note">Coming soon</span>
-                    </div>
-                </article>
-
-                <article class="product-card" data-reveal style="--i:4">
-                    <div class="product-media"><span>Preview soon</span></div>
-                    <div class="card-body">
-                        <span class="card-category">// Print</span>
-                        <h3>Brand Identity Poster Series</h3>
-                        <p>A set of print-ready poster templates. Brutalist grid layouts, customisable for events, studio branding, or editorial use. A3 + A2 formats.</p>
-                    </div>
-                    <div class="card-footer">
-                        <span class="card-price">Price TBD</span>
-                        <span class="card-note">Coming soon</span>
-                    </div>
-                </article>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Launch timeline - plain -->
-    <section>
-        <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Roadmap</span>
-            <h2 data-reveal style="padding-bottom: 2rem; --i:1;">Launch timeline</h2>
-
-            <div class="timeline-step" data-reveal style="--i:2">
-                <span class="timeline-period">Q2 2026</span>
-                <div>
-                    <h3>Shop infrastructure</h3>
-                    <p>Payment processing, product delivery, and licence management system. No third-party platform dependency.</p>
-                    <span class="timeline-status timeline-status--now">In progress</span>
-                </div>
-            </div>
-
-            <div class="timeline-step" data-reveal style="--i:3">
-                <span class="timeline-period">Q3 2026</span>
-                <div>
-                    <h3>First product drop</h3>
-                    <p>Initial release of 2–3 products. Notification sent to waitlist first. Public launch follows 48 hours later.</p>
-                    <span class="timeline-status timeline-status--planned">Planned</span>
-                </div>
-            </div>
-
-            <div class="timeline-step" data-reveal style="--i:4">
-                <span class="timeline-period">Q4 2026</span>
-                <div>
-                    <h3>Full catalogue</h3>
-                    <p>Remaining product categories live. Category filters enabled. Bundle pricing introduced.</p>
-                    <span class="timeline-status timeline-status--planned">Planned</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Notify - soft -->
     <section class="section--soft">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Stay in the loop</span>
             <h2 data-reveal style="--i:1">Know when products drop.</h2>
-            <p data-reveal style="margin-top: 0.8rem; font-size: 0.9rem; line-height: 1.7; color: var(--text-muted); max-width: 52ch; --i:2;">
-                Send a note and you get told directly when the first release is live. The waitlist gets access 48 hours before everyone else.</p>
+            <p data-reveal style="--i:2">Send a note and I'll tell you directly when the first release is live.
+                The waitlist gets access 48 hours before everyone else.</p>
             <div class="cta-wrapper" data-reveal style="--i:3">
-                <a href="mailto:hello.beben.design@gmail.com?subject=Shop%20Launch%20Notification" class="cta-link">Notify me ↗</a>
+                <a href="mailto:hello.beben.design@gmail.com?subject=Shop%20Launch%20Notification" class="cta-link cta-pill"><span>Notify me</span><span class="cta-pill__arrow" aria-hidden="true">↗</span></a>
             </div>
         </div>
     </section>
@@ -520,31 +454,33 @@
     <div class="footer-container">
         <div class="footer-brand">
             <p><strong>Beben Design</strong></p>
-            <p>Design &amp; Interface Studio</p>
-            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
-            <p class="copyright">&copy; Beben Design | All rights reserved</p>
+            <p>Design-led digital product studio</p>
+            <p>Westlands, Nairobi &middot; <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
         </div>
         <div class="footer-links">
             <ul class="footer-nav">
-                <li><a href="../contact/">CONTACT</a></li>
-                <li><a href="../legal/">LEGAL</a></li>
-                <li><a href="../privacy/">PRIVACY POLICY</a></li>
-                <li><a href="../credits/">CREDITS</a></li>
+                <li><a href="/about/">ABOUT</a></li>
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
             </ul>
             <ul class="footer-nav footer-social">
                 <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
                 <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
             </ul>
-            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
         </div>
     </div>
     <div class="footer-meta">
-        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>Designed and built by Luis Howin Maina.</span>
         <span>&copy; 2026 Beben Design. All rights reserved.</span>
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=6.9"></script>
-<script src="../assets/JS/sprite.js?v=6.9"></script>
+<script src="../assets/JS/index.js?v=7.5"></script>
+<script src="../assets/JS/sprite.js?v=7.5"></script>
 </body>
 </html>

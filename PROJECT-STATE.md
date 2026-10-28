@@ -1114,3 +1114,124 @@ and page titles are unchanged.
 **Cache `v33` to `v34`.** The two maskable icons joined the precache list and
 the hub label moved in lockstep. All five icons measure exact size and are
 opaque RGB; the manifest parses.
+
+### Site copy rework (23 Oct 2026)
+
+**Positioning.** The site now leads with the business buyer, one voice (first
+person singular), fixed prices from $250 USD, and a 20-business-day standard.
+The AI marketing sections are held for the next pass. Sprite and Kilimo Pal
+remain live but are not promoted from Home, Services or Work.
+
+**Architecture.** Services is one page with three offers, terms, promises and
+FAQ; the seven old service URLs are redirect stubs into its anchors. Work is
+three client projects linking to live sites. Tools became Labs at `/labs/`,
+with `/tools/` as a redirect; the page groups Free tools, Apps and Experiments,
+shows built cards only, and generates one "Next up" line. Shop is hero plus
+waitlist. Blog is Latest plus a two-lane filter and ten posts, five buyer notes
+and five build notes. About is new at `/about/`.
+
+**Shell and facts.** Nav order is Services, Work, Labs, Shop, Blog, Contact,
+with a Start a project pill. Footer has the tagline, Westlands and email, the
+Luis Howin Maina credit and one copyright line. Fonts are self-hosted WOFF2 in
+`docs/assets/fonts/`; the Google Fonts links and the privacy processor entry are
+gone. All shared assets are `?v=7.0`. `check_voice.py` now allows I and fails
+we/our/us/the studio/the team; it also keeps "no aggressive sales pitch" on
+Contact only. `check_facts.py` no longer requires coordinates on every page.
+
+**Checks at this pass.** 46 pages, 1,275 internal links checked and 0 broken,
+125 KB of CSS and JavaScript, 0 JS deps, 0 analytics, 0 cookies, 7 free tools,
+23 games, 3 client projects, 10 blog posts. Voice clean; facts agree across 46
+files; `build_tools.py` and `build_blog.py` idempotent; `build_status.py`
+re-stamped the measured block. The Cloudflare Worker prompt now points at
+`/labs/` and `/about/`; it still needs a manual deploy outside this repo.
+
+### Move ticker and /new-home/ (28 Oct 2026, assets `7.1`)
+
+**The announcement is one component.** A yellow strip sits above the fixed
+nav on every page that loads `index.css`: 34px tall, `#FFC710` on `#141414`
+(11.8:1), one line in IBM Plex Mono, and a slow marquee. The track holds two
+identical groups, each carrying four copies of the line and a trailing gutter,
+with `min-width: 100vw` and `space-around` for ultrawide screens. Half the
+track is therefore exactly one group, so `translateX(-50%)` loops with no seam
+at any window width. Four copies per group are deliberate: one copy per group
+left wide blank stretches between passes on desktop. Hover, focus and a 48px
+pause control stop it, the copy is `aria-hidden` with one label on the link,
+and `prefers-reduced-motion` removes the animation and the control, then
+centres a single copy.
+
+**Offsets moved to `--chrome-height`.** The nav now starts at
+`--ticker-height`; `main`, the mobile overlay, `section[id]` and `article[id]`
+scroll margins (the three services offers are articles) and the hero grid
+alignment all clear both bars. The ticker's focus ring is black, not the brand
+red, which measures about 2:1 on yellow.
+
+**Coverage is deliberate.** 18 static pages, the 11 generated blog pages (via
+the two templates) and the new page carry it: 30 files. The 7 generated tool
+pages are excluded because they are standalone files with their own inline
+styles, and a dated announcement would go stale in an offline copy. The two
+client previews and the redirect stubs never load the shared assets.
+
+**`/new-home/` is the explanation.** Four reasons, a changes/stays split, three
+plain small-print rows and one CTA. It never mentions domain cost, renewal fees
+or the price of anything. The reasons are the widening scope: client websites,
+then subscription software, then a small physical range, so the address needs
+room beyond the word "design". The page says the old address points here while
+it stays live, not that it forwards forever, because the old domain may be
+allowed to lapse. It is in the sitemap, the voice checker maps it to the
+selling zone, and `sprite.md` gained a "The move" section so Sprite answers
+consistently.
+
+**Checks.** 47 pages, 1,336 internal links checked and 0 broken, 131 KB of CSS
+and JavaScript, 0 JS deps, 0 analytics, 0 cookies, 7 tools, 23 games, 3 client
+projects, 10 posts. Voice clean, facts agree across 47 files,
+`build_status.py --check` clean, all four shared assets read `7.1` exactly
+once per page, and the generators stayed idempotent. Marquee movement, the
+pause control, focus pause, reduced-motion stillness, the mobile menu and the
+new page were exercised in a browser; ticker movement and reduced-motion
+stillness were also compared as pixel diffs between two headless captures.
+
+**Not in this pass:** `docs/CNAME` still says `beben.design`, and no canonical,
+`og:url`, DNS or email changes were made. The actual switch is an owner task:
+register and point `bebendesign.com`, set `CNAME` to it, update canonicals and
+`og:url`, forward the old domain, and add the new origin to Formspree's
+allowed domains and the Worker's CORS allowlist.
+
+### Dark by default (28 Oct 2026, assets `7.3`)
+
+**Dark is the first-visit default, not the OS setting.** The pre-paint
+bootstrap on all 37 themed pages and in the three templates now sets `dark`
+when `beben-theme` is missing or holds anything other than `light`/`dark`.
+`<html>` is hardcoded to `data-theme="dark"` so no-JS visitors and the
+storage-blocked path also land on dark, and both `index.js` and the standalone
+tool pages use the same fallback. A saved light choice still wins and still
+persists; the toggle, its labels and the token blocks are unchanged.
+
+**The moon reads a shade deeper.** Its gradient start moved from `#B0C9EC`
+to `#93ADCE`, so the crescent sits a little darker on the dark pill; the
+geometry, gradient angle and near-black end are unchanged. That is a markup
+edit on all 37 pages, the three templates and the unused
+`assets/icons/moon.svg` export. It keeps about 8.4:1 against `#141414`.
+
+**Version bump.** `index.js` and `index.css` changed, so all four shared
+assets moved `7.1` to `7.3` in one pass. `docs/CNAME`, canonicals and the
+domain move are untouched.
+
+### Brand accent is pink (28 Oct 2026, assets `7.5`)
+
+`--highlight` and `--highlight-text` both moved to `#FF2D6A` in both themes,
+replacing the red pair (`#E20531`, with `#B81124` on light and `#F04458` on
+dark for text). Measured against the real surfaces: 3.30:1 on light `--bg`,
+3.13:1 on light `--bg-soft`, 5.12:1 on dark `--bg`, 4.74:1 on dark
+`--bg-soft`. Fills, large display text and focus rings clear 3:1 everywhere;
+normal-size pink text on light surfaces sits below 4.5:1, which is now a
+deliberate compromise rather than the old accessible-variant split. `.hero`
+still remaps both tokens to yellow. The standalone tool pages keep their own
+`--accent` red and `sprite.css` keeps its `#E20531` fallback; neither token
+was in scope.
+
+**Active nav link is yellow.** `.menu li a.active` moved from the old hot red
+(`#ff001d`) to `#FFC710`, matching the ticker. On the dark nav that is 11.8:1;
+on the light nav the same yellow is only about 1.4:1, so light mode uses
+`--yellow-text` (`#806200`, 5.26:1) instead. The brackets and the rule from
+the older nav entry are otherwise unchanged. A literal `#FFC710` in light
+mode is a one-line revert if that is preferred.

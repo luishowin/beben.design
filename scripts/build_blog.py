@@ -12,8 +12,8 @@ Dependency (one):
     py -m pip install markdown
 
 Post format: content/blog/YYYY-MM-DD-slug.md with front matter between
---- fences. Keys: title, description, date (required); author, tags,
-hero_image, hero_alt, featured, pinned, draft (optional).
+--- fences. Keys: title, description, date, lane (required; buyer or build);
+author, tags, hero_image, hero_alt, draft (optional).
 The output is committed to git like any other page. Nav or footer
 changes on the site must be mirrored in scripts/templates/, then rebuilt.
 """
@@ -38,8 +38,8 @@ BLOG_OUT = DOCS / "blog"
 SITEMAP = DOCS / "sitemap.xml"
 
 SITE = "https://beben.design"
-FEED_DESCRIPTION = ("Essays and build logs from Beben Design: design decisions, "
-                    "engineering trade-offs, and tools we shipped, written from inside real projects.")
+FEED_DESCRIPTION = ("Notes from the workshop at Beben Design: design decisions, "
+                    "engineering trade-offs, and the tools I ship, written from inside real projects.")
 WORDS_PER_MINUTE = 200
 MONTHS = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"]
@@ -104,6 +104,10 @@ def load_posts():
             print(f"  skipping draft: {path.name}")
             continue
 
+        lane = (meta.get("lane", "").strip() or "build")
+        if lane not in ("buyer", "build"):
+            sys.exit(f"{path.name}: lane must be 'buyer' or 'build', got {lane!r}.")
+
         try:
             date = datetime.strptime(meta["date"], "%Y-%m-%d").date()
         except ValueError:
@@ -125,11 +129,10 @@ def load_posts():
             "description": meta["description"],
             "date": date,
             "author": meta.get("author", "Luis"),
+            "lane": (meta.get("lane", "").strip() or "build"),
             "tags": [t.strip() for t in meta.get("tags", "").split(",") if t.strip()],
             "hero_image": meta.get("hero_image", ""),
             "hero_alt": meta.get("hero_alt", ""),
-            "featured": as_bool(meta.get("featured", "")),
-            "pinned": as_bool(meta.get("pinned", "")),
             "minutes": max(1, round(word_count / WORDS_PER_MINUTE)),
             "body_html": markdown.markdown(body_md, extensions=["extra"]),
         })
@@ -143,26 +146,16 @@ def load_posts():
 
 
 def pick_layout(posts):
-    pinned = [p for p in posts if p["pinned"]]
-    if len(pinned) > 1:
-        warn("More than one post is pinned; using the newest ("
-             + pinned[0]["source"] + ").")
-    hero = pinned[0] if pinned else posts[0]
-
-    pool = [p for p in posts if p is not hero]
-    featured = [p for p in pool if p["featured"]][:3]
-    for p in pool:
-        if len(featured) >= 3:
-            break
-        if p not in featured:
-            featured.append(p)
-    featured.sort(key=lambda p: (p["date"], p["source"]), reverse=True)
-    rest = [p for p in pool if p not in featured]
-    return hero, featured, rest
+    """Newest post is the Latest slot; every post stays in the filterable list."""
+    return posts[0], posts
 
 
 def post_url(post):
     return f"{SITE}/blog/{post['slug']}/"
+
+
+def lane_label(post):
+    return "For business owners" if post["lane"] == "buyer" else "Build notes"
 
 
 def meta_line(post, with_author=True):
@@ -244,7 +237,7 @@ def aotd_section(hero, css_class):
     href = f"/blog/{hero['slug']}/"
     text = [
         '            <div class="aotd-text">',
-        '                <span class="aotd-label" data-reveal style="--i:0"><span class="dot" aria-hidden="true"></span>Article of the day</span>',
+        '                <span class="aotd-label" data-reveal style="--i:0"><span class="dot" aria-hidden="true"></span>Latest</span>',
         f'                <h2 data-reveal style="--i:1"><a href="{href}">{esc(hero["title"])}</a></h2>',
         f'                <div class="post-meta" data-reveal style="--i:2">{meta_line(hero)}</div>',
         f'                <p data-reveal style="--i:3">{esc(hero["description"])}</p>',
@@ -268,58 +261,58 @@ def aotd_section(hero, css_class):
             + "\n        </div>\n        </div>\n    </section>")
 
 
-def featured_section(featured, css_class):
-    cards = []
-    for i, p in enumerate(featured):
-        tag = esc(p["tags"][0]) if p["tags"] else "journal"
-        cards.append(
-            f'                <article class="featured-card" data-reveal style="--i:{i + 2}">\n'
-            f'                    <span class="tag">{tag}</span>\n'
-            f'                    <h3><a href="/blog/{p["slug"]}/">{esc(p["title"])}</a></h3>\n'
-            f'                    <p>{esc(p["description"])}</p>\n'
-            f'                    <div class="post-meta">{meta_line(p, with_author=False)}</div>\n'
-            "                </article>")
-    return (f'    <section{css_class}>\n        <div class="container">\n'
-            '            <div class="content-block">\n'
-            '                <span class="eyebrow" data-reveal style="--i:0">Featured</span>\n'
-            '                <h2 data-reveal style="--i:1">Worth your time</h2>\n'
-            "            </div>\n"
-            '            <div class="featured-grid">\n' + "\n".join(cards)
-            + "\n            </div>\n        </div>\n    </section>")
-
-
-def rest_section(rest, css_class):
+def archive_section(posts, css_class):
     rows = []
-    for i, p in enumerate(rest):
+    for i, p in enumerate(posts):
         rows.append(
-            f'                <article class="article-row" data-reveal style="--i:{i + 2}">\n'
+            f'                <article class="article-row" data-lane="{p["lane"]}" data-reveal style="--i:{i + 2}">\n'
             f'                    <span class="date">{esc(short_date(p["date"]))}</span>\n'
             "                    <div>\n"
+            f'                        <span class="post-lane">{lane_label(p)}</span>\n'
             f'                        <h3><a href="/blog/{p["slug"]}/">{esc(p["title"])}</a></h3>\n'
             f'                        <p>{esc(p["description"])}</p>\n'
             "                    </div>\n"
             f'                    <span class="mins">{p["minutes"]} min</span>\n'
             "                </article>")
+    rows_html = "\n".join(rows)
+    filter_html = (
+        '            <div class="lane-filter" data-reveal style="--i:1" role="group" aria-label="Filter articles">\n'
+        '                <button type="button" class="lane-btn" data-lane-filter="all" aria-pressed="true">All</button>\n'
+        '                <button type="button" class="lane-btn" data-lane-filter="buyer" aria-pressed="false">For business owners</button>\n'
+        '                <button type="button" class="lane-btn" data-lane-filter="build" aria-pressed="false">Build notes</button>\n'
+        "            </div>")
+    script = """                <script>
+                (function () {
+                    var buttons = document.querySelectorAll('[data-lane-filter]');
+                    var rows = document.querySelectorAll('.article-row[data-lane]');
+                    buttons.forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            var lane = button.getAttribute('data-lane-filter');
+                            buttons.forEach(function (other) {
+                                other.setAttribute('aria-pressed', other === button ? 'true' : 'false');
+                            });
+                            rows.forEach(function (row) {
+                                row.hidden = lane !== 'all' && row.getAttribute('data-lane') !== lane;
+                            });
+                        });
+                    });
+                })();
+                </script>"""
     return (f'    <section{css_class}>\n        <div class="container">\n'
             '            <div class="content-block">\n'
-            '                <span class="eyebrow" data-reveal style="--i:0">Archive</span>\n'
-            '                <h2 data-reveal style="--i:1">All articles</h2>\n'
+            '                <span class="eyebrow" data-reveal style="--i:0">All notes</span>\n'
+            '                <h2 data-reveal style="--i:1">Read by lane</h2>\n'
             "            </div>\n"
-            '            <div class="article-rows">\n' + "\n".join(rows)
-            + "\n            </div>\n        </div>\n    </section>")
+            + filter_html + "\n"
+            '            <div class="article-rows">\n' + rows_html
+            + "\n            </div>\n" + script + "\n        </div>\n    </section>")
 
 
-def build_index(hero, featured, rest, template):
-    builders = [lambda c: aotd_section(hero, c)]
-    if featured:
-        builders.append(lambda c: featured_section(featured, c))
-    if rest:
-        builders.append(lambda c: rest_section(rest, c))
-    # The page-hero above is plain, so alternation starts soft.
-    sections = []
-    for i, build in enumerate(builders):
-        css_class = ' class="section--soft"' if i % 2 == 0 else ""
-        sections.append(build(css_class))
+def build_index(latest, archive, template):
+    sections = [
+        aotd_section(latest, ' class="section--soft"'),
+        archive_section(archive, ""),
+    ]
 
     page = template.replace(
         "{{GENERATED_COMMENT}}",
@@ -405,7 +398,7 @@ def main():
     if not posts:
         sys.exit("No publishable posts found in content/blog/.")
 
-    hero, featured, rest = pick_layout(posts)
+    latest, archive = pick_layout(posts)
     post_template = (TEMPLATES / "post.html").read_text(encoding="utf-8")
     index_template = (TEMPLATES / "blog-index.html").read_text(encoding="utf-8")
 
@@ -416,15 +409,14 @@ def main():
         out = build_post_page(post, newer, older, post_template)
         print(f"  wrote {out.relative_to(ROOT)}")
 
-    print(f"  wrote {build_index(hero, featured, rest, index_template).relative_to(ROOT)}")
+    print(f"  wrote {build_index(latest, archive, index_template).relative_to(ROOT)}")
     print(f"  wrote {build_feed(posts).relative_to(ROOT)}")
     update_sitemap(posts)
     print("  updated docs/sitemap.xml (blog block)")
     check_orphans(posts)
 
-    print(f"Done: {len(posts)} posts. Hero: {hero['slug']}. "
-          f"Featured: {', '.join(p['slug'] for p in featured) or 'none'}. "
-          f"Archive rows: {len(rest)}.")
+    print(f"Done: {len(posts)} posts. Latest: {latest['slug']}. "
+          f"Archive rows: {len(archive)}.")
     if warnings:
         print(f"{len(warnings)} warning(s) above.")
 

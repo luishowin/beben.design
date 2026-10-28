@@ -1,16 +1,16 @@
 ---
 title: Codex - an offline library that answers in milliseconds
-description: We had 180GB of offline archives that worked and were almost unusable. Codex rebuilds them into plain SQLite, 25x smaller, searchable in single-digit milliseconds, readable by any language. What it is, why it exists, and how it was built.
+description: I had 180GB of offline archives that worked and were almost unusable. Codex rebuilds them into plain SQLite, 25x smaller, searchable in single-digit milliseconds, readable by any language. What it is, why it exists, and how it was built.
 date: 2026-07-27
 author: Luis
 tags: engineering, offline, search, python
+lane: build
 hero_image: /assets/images/blog/codex-offline-library/hero.svg
 hero_alt: A stack of offline archives narrowing into a single SQLite file, with a search box returning ranked results
 featured: true
-pinned: true
 ---
 
-Somewhere on a drive here sits about 180GB of ZIM archives: Wikipedia, iFixit, a few others. They are the offline internet in a box, downloaded for exactly the situation this studio keeps designing around, the moment the connection is not there.
+Somewhere on a drive here sits about 180GB of ZIM archives: Wikipedia, iFixit, a few others. They are the offline internet in a box, downloaded for exactly the situation I keep designing around, the moment the connection is not there.
 
 They work. They are also close to unusable. The reader is slow, the built-in search index cannot be reranked, and nothing can query them programmatically. You have the knowledge and no good way to ask it a question.
 
@@ -28,7 +28,7 @@ The same instinct is behind the [QR generator](/blog/tools-you-can-own/) and [Be
 
 ## Why not just use the archives
 
-The honest answer is that we tried, and the failure was structural rather than cosmetic.
+The honest answer is that I tried, and the failure was structural rather than cosmetic.
 
 A ZIM is a compressed web archive. It is a superb distribution format and a poor query substrate: the text is locked inside HTML, the index that ships with it ranks how it ranks, and there is no way to blend in a second signal or hand results to anything else. Rebuilding is what buys the ability to rank differently, and ranking is the entire problem.
 
@@ -38,7 +38,7 @@ The size collapse is a side effect, not the goal. 25.6x smaller happens because 
 
 Version 0.1 shipped 408,876 images in a 2GB sidecar file. All of it is gone now, deleted along with its pipeline, its storage, its schema, and its UI.
 
-The reason is a number. Sampled across the full Wikipedia archive, the median image is 0.05 megapixels, the largest found was 0.395, and not one of 220 sampled reached 2MP. iFixit's are about 300x225. Kiwix downsamples everything on the way in, so the archives simply cannot supply a usable picture. We were paying gigabytes for thumbnails nobody could read.
+The reason is a number. Sampled across the full Wikipedia archive, the median image is 0.05 megapixels, the largest found was 0.395, and not one of 220 sampled reached 2MP. iFixit's are about 300x225. Kiwix downsamples everything on the way in, so the archives simply cannot supply a usable picture. I was paying gigabytes for thumbnails nobody could read.
 
 Deleting them created a second problem, which is more interesting than the first. With no pictures, a repair guide saying "as shown in the first photo" points at nothing, and 16.5% of documents had at least one reference like that.
 
@@ -104,10 +104,10 @@ And the rough edges are written down rather than forgotten: 2.2% of leads still 
 
 Two things, and neither is code.
 
-The first is the format position. Rebuilding into plain SQLite rather than a clever container cost nothing and means the output outlives the project that made it. Every design decision after that got easier because the answer to "how will we read this in five years" was already settled.
+The first is the format position. Rebuilding into plain SQLite rather than a clever container cost nothing and means the output outlives the project that made it. Every design decision after that got easier because the answer to "how will I read this in five years" was already settled.
 
-The second is writing the measurement next to the decision. Every rule above looks arbitrary until you know the number behind it, and a rule whose reason has been forgotten is a rule the next person deletes. The comments in this codebase are mostly not explaining what the code does. They are explaining what we tried first and what it cost.
+The second is writing the measurement next to the decision. Every rule above looks arbitrary until you know the number behind it, and a rule whose reason has been forgotten is a rule the next person deletes. The comments in this codebase are mostly not explaining what the code does. They are explaining what I tried first and what it cost.
 
 Both are the same habit as the [arcade's cache rule](/blog/beben-arcade-offline/) and the [QR generator's one-file constraint](/blog/tools-you-can-own/): find the thing that will silently rot if nobody remembers it, and write it down where it cannot be missed.
 
-If your business runs on knowledge trapped in a format that cannot answer questions, that is fixable, and it is the kind of work we enjoy. [Talk to us](/contact/).
+If your business runs on knowledge trapped in a format that cannot answer questions, that is fixable, and it is the kind of work I enjoy. [Talk to me](/contact/).

@@ -1,64 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Services | Beben Design - UX, UI, Front-End & Brand Design</title>
-    <meta name="description" content="From early UX research to production-ready interfaces - Beben Design offers brand identity, UX research, UI design, website audits, front-end development, HMI, and digital strategy. Nairobi, Kenya.">
+    <title>Services | Beben Design, Design-Led Digital Product Studio</title>
+    <meta name="description" content="Websites from $250, brand identity from $250, and product and UX design quoted. Fixed-price proposals from a one-person studio in Westlands, Nairobi.">
     <link rel="canonical" href="https://beben.design/services/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beben.design/services/">
-    <meta property="og:title" content="Services | Beben Design">
-    <meta property="og:description" content="Design that works before it looks good. UX research, UI design, website audits, front-end development, brand identity, HMI, and digital strategy.">
+    <meta property="og:site_name" content="Beben Design">
+    <meta property="og:title" content="Services | Beben Design, Design-Led Digital Product Studio">
+    <meta property="og:description" content="Websites from $250, brand identity from $250, and product and UX design quoted. Fixed-price proposals from a one-person studio in Westlands, Nairobi.">
     <meta property="og:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://beben.design/services/">
-    <meta property="twitter:title" content="Services | Beben Design">
-    <meta property="twitter:description" content="Design that works before it looks good.">
+    <meta property="twitter:title" content="Services | Beben Design, Design-Led Digital Product Studio">
+    <meta property="twitter:description" content="Websites from $250, brand identity from $250, and product and UX design quoted.">
     <meta property="twitter:image" content="https://beben.design/assets/images/og/ogimage.jpg">
 
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      "serviceType": ["UX Design", "UI Design", "Brand Identity", "Front-End Development", "HMI Design", "Digital Strategy", "Website Audit"],
-      "provider": {
-        "@type": "ProfessionalService",
-        "name": "Beben Design",
-        "url": "https://beben.design",
-        "address": { "@type": "PostalAddress", "addressLocality": "Nairobi", "addressCountry": "KE" }
-      },
-      "url": "https://beben.design/services/"
+      "name": "Beben Design services",
+      "provider": { "@id": "https://beben.design/#organization" },
+      "areaServed": { "@type": "Country", "name": "Kenya" },
+      "url": "https://beben.design/services/",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "priceCurrency": "USD",
+            "price": "250",
+            "itemOffered": { "@type": "Service", "name": "Websites" }
+          },
+          {
+            "@type": "Offer",
+            "priceCurrency": "USD",
+            "price": "250",
+            "itemOffered": { "@type": "Service", "name": "Brand identity" }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Product and UX design" },
+            "description": "Fixed price after a discovery call."
+          }
+        ]
+      }
     }
     </script>
 
-  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who owns the domain and email accounts?",
+          "acceptedAnswer": { "@type": "Answer", "text": "You do. I set them up in your name, and you pay the subscriptions directly." }
+        },
+        {
+          "@type": "Question",
+          "name": "What does foundational SEO cover?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Titles, descriptions, a sitemap and Search Console setup. It gets your site found. Ongoing marketing and ranking work are separate." }
+        },
+        {
+          "@type": "Question",
+          "name": "What counts as a revision?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A round of consolidated feedback on a finished stage." }
+        },
+        {
+          "@type": "Question",
+          "name": "What if my project doesn't fit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "I start with a discovery call. If I'm not the right fit, I tell you clearly and point you somewhere better." }
+        }
+      ]
+    }
+    </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="/assets/fonts/fonts.css">
 
     <script>
-        /* Apply the stored or system theme before first paint. Every page ships
-           data-theme="light" hardcoded, and index.js runs at the end of body,
-           so without this a dark-mode visitor gets a white flash on every
-           navigation. Guarded: reading storage throws when site data is blocked. */
+        /* Apply the stored theme before first paint. A new visitor gets the
+           house default, dark; a saved choice always wins. The hardcoded
+           data-theme="dark" on <html> gives no-JS visitors the same, and
+           index.js re-applies the choice at the end of body. Guarded:
+           reading storage throws when site data is blocked. */
         (function () {
             try {
                 var t = localStorage.getItem('beben-theme');
-                if (t !== 'dark' && t !== 'light') {
-                    t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
+                if (t !== 'light' && t !== 'dark') t = 'dark';
                 document.documentElement.setAttribute('data-theme', t);
             } catch (e) { /* keep the default */ }
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=6.9">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=6.9">
+    <link rel="stylesheet" href="../assets/css/index.css?v=7.5">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=7.5">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -398,6 +444,64 @@
 <style>.skip-link:focus{left:12px;top:12px;}</style>
 
 <!-- ═══════════════════════════════════════════
+     MOVE TICKER — delete this block when the move is done
+════════════════════════════════════════════ -->
+<div class="move-ticker" id="move-ticker" role="region" aria-label="Site announcement">
+    <a class="move-ticker__link" href="/new-home/" aria-label="Beben Design is moving to bebendesign.com. Read why.">
+        <span class="move-ticker__track" aria-hidden="true">
+            <span class="move-ticker__group">
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+            </span>
+            <span class="move-ticker__group">
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+                <span class="move-ticker__item">
+                    <span class="move-ticker__long">Beben Design is packing its boxes. A new home at bebendesign.com, soon</span>
+                    <span class="move-ticker__short">New home soon at bebendesign.com</span>
+                    <span class="move-ticker__sep">&#10022;</span>
+                </span>
+            </span>
+        </span>
+    </a>
+    <button class="move-ticker__pause" id="ticker-pause" type="button" aria-pressed="false" aria-label="Pause announcement">
+        <svg class="ticker-icon ticker-icon--pause" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="3" height="10" fill="currentColor"/><rect x="7" y="1" width="3" height="10" fill="currentColor"/></svg>
+        <svg class="ticker-icon ticker-icon--play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1l8 5-8 5z" fill="currentColor"/></svg>
+    </button>
+</div>
+
+<!-- ═══════════════════════════════════════════
      NAVBAR
 ════════════════════════════════════════════ -->
 <nav>
@@ -416,7 +520,8 @@
             <path d="M496.342 155.341L390.337 155.341V137.294L496.342 137.294V155.341Z" fill="#FFC710"/>
             <path d="M626.453 195.892L603.073 195.892L598.536 195.891L598.507 195.892L593.3 201.519L593.31 201.539L585.897 209.551L591.589 214.816L601.925 203.645L626.453 203.645V239.84L613.202 254.489H520.448V137.292L626.453 137.292V195.892Z" fill="#FFC710"/>
         </svg>
-    </a>
+            <span class="logo__tagline">Design-led digital product studio</span>
+        </a>
     <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
             <span class="theme-toggle__label theme-toggle__label--light" aria-hidden="true">LIGHT</span>
@@ -472,20 +577,23 @@
                 <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.6084 0C17.5413 3.02651 16.96 6.28223 16.96 9.67383C16.96 25.7381 29.9826 38.7616 46.0469 38.7617C49.7405 38.7617 53.2728 38.071 56.5234 36.8154C52.5363 48.1235 41.7594 56.2285 29.0869 56.2285C13.0227 56.2284 0.000128601 43.2058 0 27.1416C7.93753e-05 14.7716 7.72213 4.20574 18.6084 0Z" fill="url(#paint0_linear_723_41)"/>
 <defs>
 <linearGradient id="paint0_linear_723_41" x1="28.2617" y1="12.3139" x2="28.2617" y2="77.3354" gradientUnits="userSpaceOnUse">
-<stop stop-color="#B0C9EC"/>
+<stop stop-color="#93ADCE"/>
 <stop offset="1" stop-color="#1F242B"/>
 </linearGradient>
 </defs></svg>
             </span>
         </button>
         <ul class="menu desktop-only">
-            <li><a href="../services/" class="active">SERVICES</a></li>
-            <li><a href="../tools/">TOOLS</a></li>
-            <li><a href="../shop/">SHOP</a></li>
-            <li><a href="../work/">WORK</a></li>
-            <li><a href="../blog/">BLOG</a></li>
-            <li><a href="../contact/">CONTACT</a></li>
+            <li><a href="/services/" class="active">SERVICES</a></li>
+            <li><a href="/work/">WORK</a></li>
+            <li><a href="/labs/">LABS</a></li>
+            <li><a href="/shop/">SHOP</a></li>
+            <li><a href="/blog/">BLOG</a></li>
+            <li><a href="/contact/">CONTACT</a></li>
         </ul>
+
+        <a href="/contact/" class="nav-cta">Start a project</a>
+
         <button id="hamburger" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-menu-overlay">
             <span></span><span></span><span></span>
         </button>
@@ -495,12 +603,13 @@
 <div id="mobile-menu-overlay" role="dialog" aria-label="Navigation menu">
     <ul class="mobile-menu">
         <li><a href="/">Home</a></li>
-        <li><a href="../services/" class="active">Services</a></li>
-        <li><a href="../tools/">Tools</a></li>
-        <li><a href="../shop/">Shop</a></li>
-        <li><a href="../work/">Work</a></li>
-        <li><a href="../blog/">Blog</a></li>
-        <li><a href="../contact/">Contact</a></li>
+        <li><a href="/services/" class="active">Services</a></li>
+        <li><a href="/work/">Work</a></li>
+        <li><a href="/labs/">Labs</a></li>
+        <li><a href="/shop/">Shop</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/contact/" class="mobile-menu__cta">Start a project</a></li>
     </ul>
 </div>
 
@@ -509,195 +618,152 @@
 ════════════════════════════════════════════ -->
 <main id="main-content">
 
-    <!-- Hero - blueprint workshop cover with dark gradient overlay -->
     <section class="page-hero page-hero--cover">
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Capabilities</span>
-            <h1 data-reveal style="--i:1">Design that works<br>before it <em class="highlight-box">looks</em> good.</h1>
-            <p data-reveal style="--i:2">From early research to production-ready interfaces: clarity, usability, and
-                measurable outcomes. Decisions backed by reasoning, not trends.</p>
+            <span class="eyebrow" data-reveal style="--i:0">Services</span>
+            <h1 data-reveal style="--i:1">Design that works <br>before it <em class="highlight-box">looks</em> good.</h1>
+            <p data-reveal style="--i:2">Three services, fixed-price proposals, one person doing the work. Pick one stage
+                or the whole pipeline.</p>
+            <p data-reveal style="--i:3" class="offer__meta"><a href="/#process" class="hero-secondary">See the four stages</a></p>
         </div>
     </section>
 
-    <!-- Pipeline - soft -->
-    <section class="section--soft">
-        <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">How work moves</span>
-            <h2 data-reveal style="--i:1">The pipeline</h2>
-            <p class="section-intro" data-reveal style="--i:2">
-                Interfaces should reduce friction, so design here is problem-solving: research
-                connected to implementation without a handoff gap. Take a single stage or the full
-                pipeline, and either way it is built to scale.
-            </p>
-            <div class="grid pipeline-flow">
-                <div class="service-card" data-reveal style="--i:3">
-                    <span class="pipeline-num">01</span>
-                    <h3>Research</h3>
-                    <p>Understand behaviour. Map the problem before touching a pixel.</p>
-                </div>
-                <div class="service-card" data-reveal style="--i:3">
-                    <span class="pipeline-num">02</span>
-                    <h3>Structure</h3>
-                    <p>Map the logic. Information architecture and user journey definition.</p>
-                </div>
-                <div class="service-card" data-reveal style="--i:4">
-                    <span class="pipeline-num">03</span>
-                    <h3>Visual</h3>
-                    <p>Apply the interface. High-fidelity design, component systems, motion.</p>
-                </div>
-                <div class="service-card" data-reveal style="--i:4">
-                    <span class="pipeline-num">04</span>
-                    <h3>Execute</h3>
-                    <p>Final implementation. Production-ready code or developer handoff.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Service catalogue - plain -->
     <section>
         <div class="container">
-            <span class="eyebrow" data-reveal style="--i:0">Service catalogue</span>
-            <h2 data-reveal style="padding-bottom: 2.5rem; --i:1;">What you get, in depth</h2>
+            <span class="eyebrow" data-reveal style="--i:0">What I do</span>
+            <h2 data-reveal style="--i:1">Three ways to start</h2>
 
-        <!-- ─── 1. BRAND IDENTITY ─────────────────────────────── -->
-        <article class="service-row service-row--index" data-reveal>
-            <div class="service-row__grid">
+            <article class="offer" id="websites" data-reveal>
                 <div>
-                    <span class="service-num">01</span>
-                    <h3><a href="/services/brand-identity/">Brand Identity &amp; Visual Design</a></h3>
-                    <p class="service-tagline">Focusing on the intersection of storytelling and systematic design. A logo that works on a favicon and a billboard. A colour system that speaks before words do.</p>
+                    <h3>Websites</h3>
+                    <p class="offer__price">From $250 USD</p>
+                    <p class="offer__lead">For businesses, startups and campaigns that need to exist properly online.</p>
                 </div>
-                <div class="service-row__aside">
-                    <p class="service-goal">Turn a concept into a recognisable visual language.</p>
-                    <a href="/services/brand-identity/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <div class="offer__body">
+                    <p class="offer__label">Included</p>
+                    <ul class="included-list">
+                        <li>Design and build of a fast, responsive website, with the page count agreed in the quote.</li>
+                        <li>Help securing your domain name, registered in your name.</li>
+                        <li>A custom email address on Google Workspace, set up and tested.</li>
+                        <li>Foundational SEO, so Google can find your site: titles, descriptions, a sitemap and Search Console setup.</li>
+                        <li>Foundational branding: colour, type and tone that capture your personality on the site, not a full brand identity.</li>
+                        <li>A defined number of revision rounds, agreed in the quote.</li>
+                    </ul>
+                    <p class="offer__meta">Timeline: 20 business days. A 10-business-day sprint is +$100.<br>Price: from $250. Larger scopes get a fixed-price quote with line items.</p>
                 </div>
-            </div>
-        </article>
+            </article>
 
-        <!-- ─── 2. UX DESIGN ──────────────────────────────────── -->
-        <article class="service-row service-row--index" data-reveal>
-            <div class="service-row__grid">
+            <article class="offer" id="brand-identity" data-reveal>
                 <div>
-                    <span class="service-num">02</span>
-                    <h3><a href="/services/ux-research/">UX Research &amp; Design</a></h3>
-                    <p class="service-tagline">Prioritising research-driven flows and usability. Understanding why users do what they do before designing where they should go.</p>
+                    <h3>Brand identity</h3>
+                    <p class="offer__price">From $250 USD</p>
+                    <p class="offer__lead">For businesses starting from zero, or reworking what they already have.</p>
                 </div>
-                <div class="service-row__aside">
-                    <p class="service-goal">Reduce redesign costs. Build the right thing first.</p>
-                    <a href="/services/ux-research/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <div class="offer__body">
+                    <p class="offer__label">Included</p>
+                    <ul class="included-list">
+                        <li>Logo.</li>
+                        <li>Colours and typography.</li>
+                        <li>Brand voice.</li>
+                        <li>Print material: business cards and one flyer.</li>
+                        <li>Clothing applications: a cap and a t-shirt.</li>
+                        <li>A brand guide as a PDF, with editable source files.</li>
+                    </ul>
+                    <p class="offer__meta">When reworking an existing brand, I first work out which parts people already recognise and keep those.<br>Timeline: 20 business days. A 10-business-day sprint is +$100.<br>Price: from $250.</p>
                 </div>
-            </div>
-        </article>
+            </article>
 
-        <!-- ─── 3. UI DESIGN ──────────────────────────────────── -->
-        <article class="service-row service-row--index" data-reveal>
-            <div class="service-row__grid">
+            <article class="offer" id="product-ux" data-reveal>
                 <div>
-                    <span class="service-num">03</span>
-                    <h3><a href="/services/ui-design/">UI Design &amp; Component Systems</a></h3>
-                    <p class="service-tagline">Aesthetic precision and developer-ready systems. Every component documented, every state covered, every handoff clean.</p>
+                    <h3>Product &amp; UX design</h3>
+                    <p class="offer__price">Quoted</p>
+                    <p class="offer__lead">For products and software: web apps, mobile, desktop and hardware interfaces.</p>
                 </div>
-                <div class="service-row__aside">
-                    <p class="service-goal">Increase development speed. Eliminate design debt.</p>
-                    <a href="/services/ui-design/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <div class="offer__body">
+                    <p class="offer__label">Choose what you need</p>
+                    <ul class="included-list">
+                        <li>UX research: interviews, journey maps, information architecture.</li>
+                        <li>Wireframes and a clickable prototype.</li>
+                        <li>Usability testing with prioritised findings.</li>
+                        <li>UI design and a component library, with WCAG AA accessibility checks.</li>
+                        <li>Developer handoff.</li>
+                        <li>Product strategy and a discovery workshop.</li>
+                    </ul>
+                    <p class="offer__meta">Price: fixed, after a free discovery call.</p>
                 </div>
-            </div>
-        </article>
+            </article>
 
-        <!-- ─── 4. DIGITAL STRATEGY ───────────────────────────── -->
-        <article class="service-row service-row--index" data-reveal>
-            <div class="service-row__grid">
-                <div>
-                    <span class="service-num">04</span>
-                    <h3><a href="/services/digital-strategy/">Digital Strategy &amp; Product Planning</a></h3>
-                    <p class="service-tagline">The technical roadmap for long-term success. Turning rough concepts into sequenced, fundable, buildable product plans.</p>
-                </div>
-                <div class="service-row__aside">
-                    <p class="service-goal">Build the right thing in the right order.</p>
-                    <a href="/services/digital-strategy/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                </div>
-            </div>
-        </article>
-
-        <!-- ─── 5. MIGRATION & REBUILD ────────────────────────── -->
-        <article class="service-row service-row--index" data-reveal>
-            <div class="service-row__grid">
-                <div>
-                    <span class="service-num">05</span>
-                    <h3><a href="/services/migration-rebuild/">Migration &amp; Rebuild</a></h3>
-                    <p class="service-tagline">Years of content by different writers, a sitemap that drifted, a platform nobody chose on purpose. Bring the mess, keep what is worth keeping, and rebuild the rest properly.</p>
-                </div>
-                <div class="service-row__aside">
-                    <p class="service-goal">Keep the traffic. Lose the debt.</p>
-                    <a href="/services/migration-rebuild/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                </div>
-            </div>
-        </article>
-
-        <!-- ─── 6. WEBSITE AUDIT ────────────────────────────── -->
-        <article class="service-row service-row--index" data-reveal>
-            <div class="service-row__grid">
-                <div>
-                    <span class="service-num">06</span>
-                    <h3><a href="/services/website-audit/">Website Audit</a></h3>
-                    <p class="service-tagline">A diagnostic pass over the site you already have. Speed, structure, content and conversion, each scored with the reasoning attached.</p>
-                </div>
-                <div class="service-row__aside">
-                    <p class="service-goal">Know what is broken before paying to fix it.</p>
-                    <a href="/services/website-audit/" class="read-more-pill"><span>Read more</span><svg class="read-more-pill__arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.75 1.75012L0.75 12.7501" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.75 0.75H11.75C12.2214 0.75 12.4571 0.75 12.6036 0.896447C12.75 1.04289 12.75 1.2786 12.75 1.75V7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                </div>
-            </div>
-        </article>
-
+            <p class="offer__meta" data-reveal style="margin-top:1.6rem;"><a href="/#process" class="hero-secondary">The four stages appear once, on the Home page.</a></p>
         </div>
     </section>
 
-    <!-- How we work - sits under Services rather than taking a nav slot,
-         per brief v2 section 2. Linked from here and from every CTA. -->
-    <section>
+    <section id="terms" class="section--soft">
         <div class="container">
-            <div class="edge-block" data-reveal>
-                <div>
-                    <p class="edge-label">// Before you commit</p>
-                    <h3>How we work</h3>
-                </div>
-                <div class="edge-body">
-                    <p>What a website actually costs to run, itemised down to the domain. What you own when it ships, and why the accounts are in your name from day one. What happens when the business pivots. And what support costs, bounded and tiered rather than open-ended.</p>
-                    <p><a href="/services/how-we-work/" class="cta-link">Read how we work &#x2197;</a></p>
-                </div>
-            </div>
+            <span class="eyebrow" data-reveal style="--i:0">Terms</span>
+            <h2 data-reveal style="--i:1">Terms that protect your time</h2>
+            <table class="terms-table" data-reveal style="--i:2">
+                <thead><tr><th scope="col">Option</th><th scope="col">Terms</th></tr></thead>
+                <tbody>
+                    <tr><td>Standard</td><td>20 business days. The clock pauses while I wait on your content or feedback.</td></tr>
+                    <tr><td>Sprint</td><td>+$100, 10 business days. You give feedback within the same day, and I run one sprint at a time.</td></tr>
+                    <tr><td>Retainer</td><td>A monthly block of capped hours, with the response time and minimum term agreed in writing. No emergency work.</td></tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
-    <!-- Custom scope - full-bleed inverted band. Deliberately breaks the
-         plain/soft alternation, because the point of this section is that the
-         work sits outside the six packages above. -->
-    <section class="section--invert">
+    <section id="promises">
         <div class="container">
-            <div class="edge-block" data-reveal>
-                <div>
-                    <p class="edge-label">// Custom scope</p>
-                    <h3>When your need is not on the list</h3>
+            <span class="eyebrow" data-reveal style="--i:0">Promises</span>
+            <h2 data-reveal style="--i:1">What I will and will not promise</h2>
+            <div class="promise-grid">
+                <div class="promise-card" data-reveal style="--i:2">
+                    <h3>I will not promise</h3>
+                    <ul>
+                        <li>Search rankings or traffic numbers.</li>
+                        <li>Sales or conversion lifts.</li>
+                        <li>Unlimited revisions.</li>
+                    </ul>
                 </div>
-                <div class="edge-body">
-                <p>Edge cases are welcome. The approach is modular, so if your project falls between categories, like a niche MedTech integration or a complex AI dashboard, it starts with a <strong>Discovery Workshop</strong>. 
-                <br>
-                <br>
-                Your requirements get broken down from a UX and technical perspective to establish whether this studio is the right fit. If it is a yes, you get a custom scope of work built around your constraints. If it is a no, you get told plainly, and pointed somewhere better.</p>
+                <div class="promise-card" data-reveal style="--i:3">
+                    <h3>I do promise</h3>
+                    <p>A fixed price, a delivery date, and direct contact with the person doing the work.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA - soft -->
-    <section class="next-step section--soft">
+    <section id="faq" class="section--soft">
+        <div class="container">
+            <span class="eyebrow" data-reveal style="--i:0">Questions</span>
+            <h2 data-reveal style="--i:1">Common questions</h2>
+
+            <div class="faq-item" data-reveal style="--i:2">
+                <button class="faq-trigger" aria-expanded="false">Who owns the domain and email accounts?</button>
+                <div class="faq-answer"><p>You do. I set them up in your name, and you pay the subscriptions directly.</p></div>
+            </div>
+            <div class="faq-item" data-reveal style="--i:2">
+                <button class="faq-trigger" aria-expanded="false">What does foundational SEO cover?</button>
+                <div class="faq-answer"><p>Titles, descriptions, a sitemap and Search Console setup. It gets your site found. Ongoing marketing and ranking work are separate.</p></div>
+            </div>
+            <div class="faq-item" data-reveal style="--i:3">
+                <button class="faq-trigger" aria-expanded="false">What counts as a revision?</button>
+                <div class="faq-answer"><p>A round of consolidated feedback on a finished stage.</p></div>
+            </div>
+            <div class="faq-item" data-reveal style="--i:3">
+                <button class="faq-trigger" aria-expanded="false">What if my project doesn't fit?</button>
+                <div class="faq-answer"><p>I start with a discovery call. If I'm not the right fit, I tell you clearly and point you somewhere better.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="next-step">
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Next step</span>
-            <h2 data-reveal style="--i:1">Build something that <em class="highlight-box">actually</em> works.</h2>
-            <p data-reveal style="--i:2">No pitch. A technical conversation about your goals, with the person who will actually build it.</p>
+            <h2 data-reveal style="--i:1">Start with the problem.</h2>
+            <p data-reveal style="--i:2">A few lines about what you're building is enough. I reply within one working day.</p>
             <div class="cta-row" data-reveal style="--i:3">
-                <a href="../contact/" class="contact-pill">Start a project ↗</a>
+                <a href="/contact/" class="cta-link">Start a project ↗</a>
             </div>
         </div>
     </section>
@@ -711,31 +777,33 @@
     <div class="footer-container">
         <div class="footer-brand">
             <p><strong>Beben Design</strong></p>
-            <p>Design &amp; Interface Studio</p>
-            <p><a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
-            <p class="copyright">&copy; Beben Design | All rights reserved</p>
+            <p>Design-led digital product studio</p>
+            <p>Westlands, Nairobi &middot; <a href="mailto:hello.beben.design@gmail.com">hello.beben.design@gmail.com</a></p>
         </div>
         <div class="footer-links">
             <ul class="footer-nav">
-                <li><a href="../contact/">CONTACT</a></li>
-                <li><a href="../legal/">LEGAL</a></li>
-                <li><a href="../privacy/">PRIVACY POLICY</a></li>
-                <li><a href="../credits/">CREDITS</a></li>
+                <li><a href="/about/">ABOUT</a></li>
+                <li><a href="/contact/">CONTACT</a></li>
+                <li><a href="/legal/">LEGAL</a></li>
+                <li><a href="/privacy/">PRIVACY POLICY</a></li>
+                <li><a href="/credits/">CREDITS</a></li>
             </ul>
             <ul class="footer-nav footer-social">
                 <li><a href="https://www.instagram.com/beben.design/" target="_blank" rel="noopener">INSTAGRAM &nearr;</a></li>
                 <li><a href="https://www.behance.net/beben_design" target="_blank" rel="noopener">BEHANCE &nearr;</a></li>
             </ul>
-            <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">BACK TO TOP &uarr;</button>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="back-to-top">
+                BACK TO TOP ↑
+            </button>
         </div>
     </div>
     <div class="footer-meta">
-        <span>1&deg;16'S 36&deg;48'E &ndash; built in Westlands, Nairobi</span>
+        <span>Designed and built by Luis Howin Maina.</span>
         <span>&copy; 2026 Beben Design. All rights reserved.</span>
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=6.9"></script>
-<script src="../assets/JS/sprite.js?v=6.9"></script>
+<script src="../assets/JS/index.js?v=7.5"></script>
+<script src="../assets/JS/sprite.js?v=7.5"></script>
 </body>
 </html>

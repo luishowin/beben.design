@@ -24,12 +24,14 @@
     --bg:            #f5f5f5;
     --bg-soft:       #efefef;
     --headers:       #141414;
-    --highlight:     #E20531;
-    /* Accessible variant, for --highlight applied to normal-size TEXT.
-       6.13:1 on --bg, 5.81:1 on --bg-soft. The brand red (#E20531) is
-       4.48 / 4.25, so it stays reserved for large display text, fills
-       and focus rings where 3:1 is the bar. */
-    --highlight-text: #B81124;
+    /* Brand pink (#FF2D6A): 3.30:1 on --bg, 3.13:1 on --bg-soft. That
+       clears the 3:1 bar for large display text, fills and focus rings,
+       not the 4.5:1 bar for normal-size text. */
+    --highlight:     #FF2D6A;
+    /* Same value as --highlight by request. On light surfaces 3.30:1 sits
+       below 4.5:1, so normal-size text in this colour is a known
+       compromise; the dark theme reads 5.12:1. */
+    --highlight-text: #FF2D6A;
     --yellow:        #FFC710;
     /* Accessible variant, for --yellow applied to normal-size TEXT.
        5.26:1 on --bg, 4.98:1 on --bg-soft. Banana yellow is 1.43 / 1.36. */
@@ -51,11 +53,10 @@
     --bg:            #141414;
     --bg-soft:       #1C1C1C;
     --headers:       #F7F4F3;
-    --highlight:     #E20531;
-    /* 4.98:1 on --bg, 4.60:1 on --bg-soft. The brand red (#E20531) is
-       3.77 / 3.49 on dark surfaces, so it stays reserved for large
-       display text, fills and focus rings where 3:1 is the bar. */
-    --highlight-text: #F04458;
+    /* Brand pink (#FF2D6A): 5.12:1 on --bg, 4.74:1 on --bg-soft, so it
+       clears both the 3:1 non-text bar and 4.5:1 for normal-size text. */
+    --highlight:     #FF2D6A;
+    --highlight-text: #FF2D6A;
     --yellow:        #FFC710;
     /* 11.78:1 on --bg, 10.90:1 on --bg-soft. On a dark surface the brand
        yellow is already past AAA, so it needs no separate text variant. */
@@ -78,6 +79,11 @@
     --font-body:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
     --nav-height: 55px;
+    /* The move ticker sits above the fixed nav, so every offset that used to
+       clear the nav now clears both bars. --nav-height stays the nav's own
+       height; --chrome-height is the sum the layout should use. */
+    --ticker-height: 34px;
+    --chrome-height: calc(var(--nav-height) + var(--ticker-height));
     --ease-snap:  cubic-bezier(0.22, 0.9, 0.32, 1);
     --dur-fast:   180ms;
     --dur-base:   600ms;
@@ -129,20 +135,165 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-section[id] { scroll-margin-top: var(--nav-height); }
+/* Deep links land on section anchors and on the three services offers,
+   which are <article id> elements inside a plain section. Both need to
+   clear the fixed ticker plus nav. */
+section[id],
+article[id] { scroll-margin-top: var(--chrome-height); }
 
 :focus-visible {
     outline: 2px solid var(--highlight);
     outline-offset: 2px;
 }
 
-/* ── 3. NAVBAR ────────────────────────────────────────────────── */
+/* ── 3a. MOVE TICKER ──────────────────────────────────────────── */
+/* A one-line yellow strip above the fixed nav, announcing the move to
+   bebendesign.com. Four copies of the line sit in each of two identical
+   groups, and each group carries a trailing 1.1rem gutter, so the track
+   is exactly two equal halves and translate -50% loops with no seam. The
+   four copies are what keep the strip full: one copy per group left long
+   blank stretches on wide screens between passes. The pause control is
+   JS-only (.js gate below), because a button that does nothing is worse
+   than no button. Hover and focus pause as well, so keyboard users can
+   stop it by tabbing to it. */
+.move-ticker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--ticker-height);
+    z-index: 202;
+    background: var(--yellow);
+    color: #141414;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(20, 20, 20, 0.28);
+}
+
+.move-ticker__link {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    color: #141414;
+}
+
+/* The pause control needs room, but only when JS can make it work. */
+.js .move-ticker__link { right: 48px; }
+
+.move-ticker__track {
+    display: flex;
+    width: max-content;
+    height: 100%;
+    animation: ticker-scroll 55s linear infinite;
+    will-change: transform;
+}
+
+.move-ticker__group {
+    display: flex;
+    align-items: center;
+    /* At every normal window width the four copies are wider than the
+       viewport, so this is inert. On ultrawide screens it stretches the
+       group to one viewport and space-around shares the spare room
+       evenly, which keeps the seam gap identical to the inner ones and
+       stops the strip ever running out of text. */
+    justify-content: space-around;
+    min-width: 100vw;
+    gap: 1.1rem;
+    height: 100%;
+    padding-right: 1.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.move-ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.move-ticker__short { display: none; }
+.move-ticker__sep { font-size: 0.62rem; opacity: 0.55; }
+
+@keyframes ticker-scroll {
+    to { transform: translate3d(-50%, 0, 0); }
+}
+
+.move-ticker:hover .move-ticker__track,
+.move-ticker:focus-within .move-ticker__track,
+.move-ticker[data-paused="true"] .move-ticker__track { animation-play-state: paused; }
+
+.move-ticker__pause {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    display: none;
+    place-items: center;
+    width: 48px;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid rgba(20, 20, 20, 0.28);
+    background: linear-gradient(to right,
+                rgba(255, 199, 16, 0) 0%,
+                var(--yellow) 45%);
+    color: #141414;
+    cursor: pointer;
+}
+
+.js .move-ticker__pause { display: grid; }
+.move-ticker__pause:hover { background: #141414; color: var(--yellow); }
+.move-ticker__pause svg { width: 12px; height: 12px; display: block; }
+.move-ticker__pause .ticker-icon--play { display: none; }
+.move-ticker[data-paused="true"] .move-ticker__pause .ticker-icon--pause { display: none; }
+.move-ticker[data-paused="true"] .move-ticker__pause .ticker-icon--play { display: block; }
+
+/* Pink is invisible on the yellow strip (about 2.2:1), so the shared focus
+   outline is re-pointed at the ink colour here, inset so it stays on the
+   strip rather than bleeding into the nav. */
+.move-ticker :focus-visible {
+    outline: 2px solid #141414;
+    outline-offset: -3px;
+}
+
+@media (max-width: 640px) {
+    .move-ticker__group { font-size: 0.64rem; letter-spacing: 0.1em; }
+    .move-ticker__long { display: none; }
+    .move-ticker__short { display: inline; }
+    /* The short line is about a third of the width of the long one, so
+       the same duration would read much faster. */
+    .move-ticker__track { animation-duration: 28s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .move-ticker__track {
+        width: 100%;
+        animation: none;
+        transform: none;
+        will-change: auto;
+    }
+    .move-ticker__group {
+        width: 100%;
+        justify-content: center;
+        padding-right: 0;
+    }
+    .move-ticker__group + .move-ticker__group,
+    .move-ticker__item + .move-ticker__item { display: none; }
+    .js .move-ticker__link { right: 0; }
+    .js .move-ticker__pause { display: none; }
+}
+
+/* ── 3b. NAVBAR ───────────────────────────────────────────────── */
 /* Navbar sits above the mobile overlay so the logo, theme toggle
    and hamburger (morphing into the close control) stay clickable
    while the menu is open. */
 nav {
     position: fixed;
-    top: 0;
+    top: var(--ticker-height);
     left: 0;
     right: 0;
     z-index: 201;
@@ -183,9 +334,10 @@ nav {
    rolls while the sun/moon crossfade at the midpoint; the labels
    crossfade with a small translateX. End positions are driven by
    :root[data-theme], so the pre-paint theme applies instantly with
-   no animation on load. The sun/moon SVGs are the Figma exports,
-   untouched — the .theme-toggle__mover parent owns translate/rotate
-   and each icon only fades/scales. */
+   no animation on load. The sun/moon SVGs are the Figma exports (the
+   moon's gradient starts a shade darker than the original export);
+   geometry is untouched, the .theme-toggle__mover parent owns
+   translate/rotate and each icon only fades/scales. */
 .theme-toggle {
     --toggle-travel: 68px;
     position: relative;
@@ -338,11 +490,17 @@ nav {
     color: var(--highlight-text);
 }
 
-/* The current page. Brighter red than the accessible --highlight-text
-   pair, by request; the underline stays --highlight. */
+/* The current page carries the ticker yellow. On the dark nav it reads
+   11.8:1; on the light nav #FFC710 is only about 1.4:1, so light mode
+   swaps to --yellow-text (5.26:1) rather than dropping the label. The
+   underline stays --highlight. */
 .menu li a.active {
-    color: #ff001d;
+    color: #FFC710;
     border-bottom-color: transparent;
+}
+
+:root[data-theme="light"] .menu li a.active {
+    color: var(--yellow-text);
 }
 
 /* Brackets on the current page, e.g. [ SERVICES ]. Done as generated
@@ -379,7 +537,7 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
 
 /* ── 4. MOBILE MENU OVERLAY ───────────────────────────────────── */
 #mobile-menu-overlay {
-    padding-top: var(--nav-height);
+    padding-top: var(--chrome-height);
     position: fixed;
     inset: 0;
     /* Full-viewport menu: 100dvh preferred for mobile browser chrome,
@@ -442,6 +600,7 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(5) { transition-delay: 0.25s; }
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(6) { transition-delay: 0.30s; }
 #mobile-menu-overlay.is-active .mobile-menu li:nth-child(7) { transition-delay: 0.35s; }
+#mobile-menu-overlay.is-active .mobile-menu li:nth-child(8) { transition-delay: 0.40s; }
 @media (prefers-reduced-motion: reduce) {
     .mobile-menu li { transition: none; transform: none; }
     #mobile-menu-overlay.is-active .mobile-menu li { transition-delay: 0s; }
@@ -464,7 +623,7 @@ body.menu-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate
    or the soft secondary fill) reads edge to edge. .container is
    the actual 1140px content column inside each one. */
 main {
-    padding-top: var(--nav-height);
+    padding-top: var(--chrome-height);
 }
 
 section {
@@ -537,9 +696,9 @@ h2 {
    background layer, so the stack falls out for free. No
    pseudo-elements, no z-index, nothing to tangle with the fixed nav.
 
-   The grid layers are shifted up by --nav-height so their 48px tiles
+   The grid layers are shifted up by --chrome-height so their 48px tiles
    stay in step with the body grid above and below: main's padding-top
-   puts this box at exactly --nav-height from the document top, and
+   puts this box at exactly --chrome-height from the document top, and
    everything above <main> is out of flow. */
 .hero {
     /* A dark surface in both themes: re-point the tokens locally and
@@ -549,13 +708,13 @@ h2 {
     --text:       #F7F4F3;
     --text-muted: rgba(247, 244, 243, 0.88);
     --bg:         #141414;
-    /* The brand red is unusable on a dark surface — #E20531 lands at
-       ~2.9:1 on the CTA. The brand yellow clears it comfortably:
-       8.4:1 on the CTA, 6.5:1 on the italic "logic", measured against
-       the actual photo pixels under the scrim. */
+    /* The hero remaps the accent to brand yellow. Measured against the
+       actual photo pixels under the scrim, the yellow reads 8.4:1 on the
+       CTA and 6.5:1 on the italic "logic", and it matches the hero's
+       yellow frame. */
     --highlight:  var(--yellow);
-    /* Same remap for the text variant, or the CTA drops back to a red on the
-       photo and lands at the 2.9:1 this block exists to avoid. */
+    /* Same remap for the text variant, or the CTA drops back to pink on the
+       photo. */
     --highlight-text: var(--yellow);
 
     padding-top: clamp(110px, 14vw, 150px);
@@ -579,8 +738,8 @@ h2 {
         var(--hero-scrim),
         url("../images/nrb%20skyline%20hero%20image.webp");
     background-size:     48px 48px, 48px 48px, 100% 100%, cover;
-    background-position: 0 calc(-1 * var(--nav-height)),
-                         0 calc(-1 * var(--nav-height)),
+    background-position: 0 calc(-1 * var(--chrome-height)),
+                         0 calc(-1 * var(--chrome-height)),
                          0 0,
                          var(--hero-focus);
     background-repeat:   repeat, repeat, no-repeat, no-repeat;
@@ -1203,7 +1362,7 @@ footer {
    photographic backdrop: the Skybound wind farm, dimmed so copy
    stays legible. That is .next-step site-wide plus the homepage
    #contact section (marked .contact-cta-bg). Text is forced light
-   in both themes because the overlay darkens the surface; the red
+   in both themes because the overlay darkens the surface; the pink
    headline accent follows the hero precedent and goes yellow. */
 .next-step,
 #contact.contact-cta-bg {
@@ -1310,7 +1469,7 @@ footer {
     max-width: 64ch;
 }
 
-/* What could not be measured. Yellow, not red: red has four jobs and this
+/* What could not be measured. Yellow, not pink: pink has four jobs and this
    is none of them. */
 .honesty {
     margin-top: 2.6rem;
@@ -1480,4 +1639,265 @@ footer {
     .footer-meta { padding: 0 1.2rem; }
     .sprite-preview__pill { display: flex; }
     .sprite-preview__text { font-size: 0.82rem; }
+}
+
+/* ── 20. COPY REWORK PRIMITIVES ───────────────────────────────────
+   Nav lockup, the new home/service blocks, the blog lane filter and the
+   text-led About page. Shared because each appears on more than one page
+   or in more than one generated template. */
+
+.logo { gap: 0.85rem; }
+.logo__tagline {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    max-width: 150px;
+    text-transform: none;
+}
+.logo:hover .logo__tagline { color: var(--text); }
+
+.nav-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--headers);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--headers);
+    white-space: nowrap;
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.nav-cta:hover { background: var(--headers); color: var(--bg); }
+
+.mobile-menu li a.mobile-menu__cta {
+    display: inline-flex;
+    margin-top: 0.6rem;
+    padding: 0.7rem 1.3rem;
+    border: 1px solid var(--headers);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.mobile-menu li a.mobile-menu__cta:hover { color: var(--bg); background: var(--headers); }
+
+/* Hero: one primary pill, one quiet second route. */
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 1.7rem;
+}
+.hero-secondary {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 2px;
+    transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.hero-secondary:hover { color: var(--highlight-text); border-color: var(--highlight-text); }
+
+/* What you get: four open cells, no cards. */
+.get-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 1.8rem;
+    border-top: 1px solid var(--border);
+}
+.get-item {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+.get-item:nth-child(odd) { padding-right: 2rem; border-right: 1px solid var(--border); }
+.get-item:nth-child(even) { padding-left: 2rem; }
+.get-num {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+.get-item h3 {
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--headers);
+    margin-bottom: 0.35rem;
+}
+.get-item p { font-size: 0.88rem; line-height: 1.7; color: var(--text-muted); max-width: 54ch; }
+
+/* Services price table. */
+.price-table, .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.6rem;
+}
+.price-table th, .terms-table th {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--text-muted);
+    padding: 0 0 0.7rem;
+    border-bottom: 1px solid var(--border-strong);
+}
+.price-table td, .terms-table td {
+    padding: 1.35rem 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+.price-table td:first-child { font-family: var(--font-body); font-weight: 600; color: var(--headers); width: 24%; }
+.price-table td:nth-child(2) { font-family: var(--font-mono); font-size: 0.8rem; color: var(--highlight-text); width: 16%; white-space: nowrap; }
+.price-table td:last-child { font-size: 0.88rem; line-height: 1.7; color: var(--text-muted); }
+.terms-table td:first-child { font-family: var(--font-body); font-weight: 600; color: var(--headers); width: 18%; }
+.terms-table td:last-child { font-size: 0.88rem; line-height: 1.7; color: var(--text-muted); }
+
+/* Proof bullets above the measured block. */
+.proof-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 2.5rem;
+    margin: 1.8rem 0 1.6rem;
+    list-style: none;
+}
+.proof-list li {
+    border-top: 1px solid var(--border);
+    padding-top: 0.9rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+.proof-list strong { color: var(--headers); font-weight: 600; }
+.measure-link { margin-top: 0.4rem; }
+
+/* Fit / not a fit. */
+.fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 1.8rem; }
+.fit-card { border-top: 2px solid var(--headers); padding-top: 1.1rem; }
+.fit-card--no { border-top-color: var(--border-strong); }
+.fit-card h3 { font-family: var(--font-body); font-size: 1rem; font-weight: 600; margin-bottom: 0.8rem; }
+.fit-list { list-style: none; }
+.fit-list li {
+    position: relative;
+    padding: 0.7rem 0 0.7rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+}
+.fit-list li::before { position: absolute; left: 0; top: 0.7rem; font-family: var(--font-mono); color: var(--highlight-text); }
+.fit-card:not(.fit-card--no) .fit-list li::before { content: "\2192"; }
+.fit-card--no .fit-list li::before { content: "\00D7"; color: var(--text-muted); }
+
+/* Ways to work. */
+.ways-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 1.8rem;
+    border-top: 1px solid var(--border);
+}
+.way-card { padding: 1.5rem 1.5rem 1.5rem 0; border-bottom: 1px solid var(--border); }
+.way-card + .way-card { padding-left: 1.5rem; border-left: 1px solid var(--border); }
+.way-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.08em; }
+.way-card h3 { font-family: var(--font-body); font-size: 1rem; font-weight: 600; margin: 0.5rem 0 0.45rem; }
+.way-card p { font-size: 0.88rem; line-height: 1.7; color: var(--text-muted); }
+
+/* About teaser on Home. */
+.about-teaser { display: grid; grid-template-columns: 1.5fr 0.5fr; gap: 2rem; align-items: end; margin-top: 1.4rem; }
+.about-teaser p { font-size: 0.95rem; line-height: 1.8; color: var(--text-muted); max-width: 64ch; margin-bottom: 0.9rem; }
+.about-teaser .cta-link { font-size: 0.8rem; }
+
+/* Services page offers. */
+.offer { border-top: 1px solid var(--border); padding: 2rem 0; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 2.5rem; }
+.offer:last-of-type { border-bottom: 1px solid var(--border); }
+.offer h3 { font-family: var(--font-title); font-weight: 400; font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.15; margin-bottom: 0.5rem; }
+.offer__price { font-family: var(--font-mono); font-size: 0.8rem; color: var(--highlight-text); letter-spacing: 0.02em; }
+.offer__lead { font-size: 0.9rem; line-height: 1.7; color: var(--text-muted); margin-top: 0.9rem; max-width: 48ch; }
+.offer__body p { font-size: 0.9rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 0.9rem; }
+.offer__label { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 1.2rem 0 0.5rem; }
+.included-list { list-style: none; }
+.included-list li { position: relative; padding: 0.45rem 0 0.45rem 1.2rem; font-size: 0.88rem; line-height: 1.65; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.included-list li::before { content: "\2013"; position: absolute; left: 0; color: var(--text-muted); }
+.offer__meta { font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.7; color: var(--text-muted); margin-top: 1rem; }
+.promise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 1.6rem; }
+.promise-card { border-top: 1px solid var(--border); padding-top: 1rem; }
+.promise-card h3 { font-family: var(--font-body); font-size: 0.98rem; font-weight: 600; margin-bottom: 0.8rem; }
+.promise-card ul { list-style: none; }
+.promise-card li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text-muted); }
+.promise-card p { font-size: 0.9rem; line-height: 1.7; color: var(--text-muted); }
+
+/* About page. */
+.about-body { max-width: 66ch; }
+.about-body p { font-size: 1rem; line-height: 1.85; color: var(--text); margin-bottom: 1.4rem; }
+.about-body p:last-child { margin-bottom: 0; }
+.about-body .about-lead { font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.6; color: var(--headers); }
+
+/* Blog lane filter. */
+.lane-filter { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.8rem; }
+.lane-btn {
+    border: 1px solid var(--border-strong);
+    background: none;
+    border-radius: 999px;
+    padding: 0.5rem 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    cursor: pointer;
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.lane-btn:hover { border-color: var(--headers); }
+.lane-btn[aria-pressed="true"] { background: var(--headers); color: var(--bg); border-color: var(--headers); }
+.post-lane { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.article-row[hidden] { display: none; }
+
+@media (max-width: 1280px) {
+    .logo__tagline { display: none; }
+}
+@media (max-width: 1180px) {
+    .nav-cta { display: none; }
+}
+@media (max-width: 900px) {
+    .get-grid, .proof-list, .fit-grid, .promise-grid, .about-teaser { grid-template-columns: 1fr; }
+    .get-item:nth-child(odd), .get-item:nth-child(even) { padding-left: 0; padding-right: 0; border-right: none; }
+    .ways-grid { grid-template-columns: 1fr; }
+    .way-card, .way-card + .way-card { padding-left: 0; border-left: none; }
+    .offer { grid-template-columns: 1fr; gap: 1.2rem; }
+}
+@media (max-width: 700px) {
+    .price-table thead, .terms-table thead { display: none; }
+    .price-table tr, .terms-table tr { display: block; padding: 1.1rem 0; border-bottom: 1px solid var(--border); }
+    .price-table td, .terms-table td { display: block; padding: 0; border: none; }
+    .price-table td:first-child, .terms-table td:first-child { width: auto; margin-bottom: 0.2rem; }
+    .price-table td:nth-child(2) { width: auto; margin-bottom: 0.5rem; }
+    .price-table td:last-child, .terms-table td:last-child { margin-top: 0.4rem; }
+}
+
+/* Project card titles are shared by Home and Work; the Work page uses h2
+   for the section hierarchy, Home uses h3. Keep both on the card voice. */
+.proj-card__title {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    line-height: 1.25;
+    color: #FFFFFF;
+    margin-bottom: 0.6rem;
 }

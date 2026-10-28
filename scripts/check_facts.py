@@ -66,7 +66,10 @@ FACTS = [
         # followed by an east reading, whatever the numbers are.
         "shape": re.compile(r"\d+\s*(?:&deg;|°|\bdeg\b)\s*\d+'[NS]"
                             r"\s*\d+\s*(?:&deg;|°|\bdeg\b)\s*\d+'[EW]"),
-        "required_on_pages": True,
+        # The 2026 copy rework drops the coordinates from the footer. They
+        # still appear in Sprite's spoken knowledge, so the fact stays checked
+        # wherever it is written, but it is no longer required on every page.
+        "required_on_pages": False,
     },
     {
         "name": "email",

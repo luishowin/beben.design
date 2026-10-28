@@ -71,9 +71,9 @@ ARCADE = "games/"
 # Mocks of other people's sites. See the module docstring.
 PROTOTYPES = ("kemmy-spa-concierge-preview/", "redoubt/")
 
-# Curated, then verified against disk. A case study is a page that carries
-# the full skeleton, which is not something a file listing can tell you.
-CASE_STUDIES = ["sprite", "beben-arcade", "codex"]
+# Client work is counted off /work/, where every card is an external link to a
+# live site. That is the number the rework's proof section promises.
+WORK = DOCS / "work" / "index.html"
 
 # Matched against code surfaces only: script bodies, and the URL of every
 # request the markup makes. Never against prose. The Sprite case study names
@@ -187,7 +187,8 @@ def homepage_weight():
     for ref in refs:
         if urllib.parse.urlparse(ref).netloc:
             continue
-        asset = (HOME.parent / urllib.parse.urlparse(ref).path).resolve()
+        path = urllib.parse.urlparse(ref).path
+        asset = ((DOCS / path.lstrip("/")) if path.startswith("/") else (HOME.parent / path)).resolve()
         if not asset.is_file():
             warn(f"homepage references a missing asset: {ref}")
             continue
@@ -257,11 +258,9 @@ def count_games():
                if p.is_dir() and (p / "index.html").is_file())
 
 
-def count_case_studies():
-    missing = [s for s in CASE_STUDIES if not (DOCS / s / "index.html").is_file()]
-    for slug in missing:
-        warn(f"case study listed but not on disk: docs/{slug}/")
-    return len(CASE_STUDIES) - len(missing)
+def count_client_projects():
+    text = WORK.read_text(encoding="utf-8")
+    return len(re.findall(r'class="proj-card"', text))
 
 
 def count_posts():
@@ -298,7 +297,7 @@ def render(figures):
     cookies, _ = figures["cookies"]
     tools = figures["tools"]
     games = figures["games"]
-    studies = figures["case_studies"]
+    projects = figures["client_projects"]
     posts = figures["posts"]
 
     metrics = [
@@ -312,12 +311,12 @@ def render(figures):
     shipped = [
         line(f"{tools} tools that run in the browser. Nothing you paste leaves the tab."),
         line(f"{games} games at one address, installable, playable in airplane mode."),
-        line(f"{studies} case {plural(studies, 'study', 'studies')}, every figure "
-             "re-run from source before it was published."),
+        line(f"{projects} client {plural(projects, 'project', 'projects')}, each live "
+             "at its own address."),
         # "Blog", not "Journal". The rename is brief v2 phase 7 and has not
         # happened: the nav, the page title and the URL all still say blog.
-        line(f"{posts} blog {plural(posts, 'post', 'posts')} on how the things "
-             "above were built."),
+        line(f"{posts} blog {plural(posts, 'post', 'posts')}: five for buyers, "
+             "five build notes."),
         line("1 person doing the design, the code and the writing."),
     ]
 
@@ -346,7 +345,7 @@ def measure():
         "cookies": count_cookies(),
         "tools": count_tools(),
         "games": count_games(),
-        "case_studies": count_case_studies(),
+        "client_projects": count_client_projects(),
         "posts": count_posts(),
     }
 
@@ -364,7 +363,7 @@ def report(figures):
     print(f"  analytics_scripts  {trackers}" + (f" ({tracker_hits[0]})" if tracker_hits else ""))
     print(f"  cookies_set        {cookies}" + (f" ({cookie_hits[0]})" if cookie_hits else ""))
     print(f"  tools {figures['tools']}, games {figures['games']}, "
-          f"case studies {figures['case_studies']}, posts {figures['posts']}")
+          f"client projects {figures['client_projects']}, posts {figures['posts']}")
 
 
 def stamp_of(markup):

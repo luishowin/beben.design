@@ -6,10 +6,10 @@ content/tools/<slug>/, renders each live tool into a single self-contained
 docs/<slug>/index.html using scripts/templates/tool.html, and refreshes
 every place the tool list is mirrored:
 
-    docs/tools/index.html   the card grid, grouped by pillar
-    docs/sitemap.xml        the tools block
-    docs/llms.txt           the "## Tools" section
-    docs/sprite.md          the "## The tools" section
+    docs/labs/index.html    the card grid, grouped by kind
+    docs/sitemap.xml        the Labs block
+    docs/llms.txt           the "## Labs" section
+    docs/sprite.md          the "## The Labs" section
 
 Usage:
     py scripts/build_tools.py
@@ -38,7 +38,7 @@ REGISTRY = ROOT / "content" / "tools.json"
 SOURCES = ROOT / "content" / "tools"
 TEMPLATE = ROOT / "scripts" / "templates" / "tool.html"
 DOCS = ROOT / "docs"
-TOOLS_INDEX = DOCS / "tools" / "index.html"
+TOOLS_INDEX = DOCS / "labs" / "index.html"
 SITEMAP = DOCS / "sitemap.xml"
 LLMS = DOCS / "llms.txt"
 SPRITE = DOCS / "sprite.md"
@@ -51,14 +51,12 @@ MAX_STAGGER = 6
 
 # Grid grouping. Order here is the order on the page.
 PILLARS = [
-    ("featured", "Featured",
-     "The two that get opened most."),
-    ("private", "Private by default",
-     "Nothing you paste, drop, or type into these ever leaves your device."),
-    ("design", "Design toolkit",
-     "The utilities client work keeps reaching for, rebuilt without the sign-up wall."),
-    ("business", "Run your business",
-     "Pricing, invoicing, and getting your own work out of the door."),
+    ("free", "Free tools",
+     "Small, single-purpose utilities that run in the tab."),
+    ("apps", "Apps",
+     "Installable, offline-first things that do more than one job."),
+    ("experiments", "Experiments",
+     "Hardware and open projects, documented as they are built."),
 ]
 
 # Run modes. Badges on the card, and a promise each. Every one of them is
@@ -164,8 +162,13 @@ def load_registry():
 
 
 def tool_url(tool):
-    if tool.get("external_url"):
-        return f"{SITE}/{tool['slug']}/"
+    external = tool.get("external_url")
+    if external:
+        if external.startswith("../"):
+            return SITE + "/" + external[3:]
+        if external.startswith("/"):
+            return SITE + external
+        return external
     return f"{SITE}/{tool['slug']}/"
 
 
@@ -182,7 +185,7 @@ def h1_html(raw):
         return ""
     lead = [esc(p) for p in parts[:-1]]
     last = f'<span class="highlight-box">{esc(parts[-1])}</span>'
-    return "<br>".join(lead + [last])
+    return " <br>".join(lead + [last])
 
 
 def specs_html(rows):
@@ -249,7 +252,7 @@ def build_tool_page(tool, template):
         "{{META_DESCRIPTION}}": esc(tool["meta_description"]),
         "{{CANONICAL_URL}}": canonical,
         "{{OG_IMAGE}}": OG_IMAGE,
-        "{{PAGE_LABEL}}": esc(f"[ TOOLS.{tool['number']} ] - {tool['tag']}"),
+        "{{PAGE_LABEL}}": esc(f"[ LABS.{tool['number']} ] - {tool['tag']}"),
         "{{H1_HTML}}": h1_html(tool["h1"]),
         "{{LEAD}}": esc(tool["lead"]),
         "{{SPECS_HTML}}": specs_html(tool.get("specs")),
@@ -322,6 +325,9 @@ def card_html(tool, stagger):
                   "                        </a>\n")
 
     footer = f'                            <a href="{esc(href)}" class="card-open">{open_label}</a>\n'
+    if tool.get("note_url"):
+        footer += (f'                            <a href="{esc(tool["note_url"])}" '
+                   'class="card-build-note">Build note &nearr;</a>\n')
     if tool["generated"]:
         footer += (f'                            <a href="../{slug}/index.html"\n'
                    '                               class="card-download"\n'
@@ -344,14 +350,14 @@ def card_html(tool, stagger):
 def grid_html(tools):
     groups = []
     for key, title, note in PILLARS:
-        members = [t for t in tools if t["pillar"] == key]
+        members = [t for t in tools if t["pillar"] == key and t["status"] == "live"]
         if not members:
             continue
         cards = [card_html(t, n + 1) for n, t in enumerate(members)]
         groups.append(
             '            <div class="tool-group">\n'
             '                <div class="group-head" data-reveal style="--i:0">\n'
-            f'                    <h3 class="group-title">{esc(title)}</h3>\n'
+            f'                    <h2 class="group-title">{esc(title)}</h2>\n'
             f'                    <p class="group-note">{esc(note)}</p>\n'
             "                </div>\n"
             '                <div class="tools-grid">\n'
@@ -359,6 +365,14 @@ def grid_html(tools):
             "                </div>\n"
             "            </div>")
     return "\n\n".join(groups)
+
+
+def next_up_html(tools):
+    soon = [t["name"] for t in tools if t["status"] == "soon"]
+    if not soon:
+        return ""
+    return ('            <p class="tools-next" data-reveal>'
+            '<strong>Next up:</strong> ' + esc(", ".join(soon)) + '.</p>')
 
 
 def verify_browser_badge(tool, rendered):
@@ -389,7 +403,11 @@ def update_tools_index(tools):
     start = "<!-- tools:start (managed by scripts/build_tools.py) -->"
     end = "<!-- tools:end -->"
     text = TOOLS_INDEX.read_text(encoding="utf-8")
-    text = replace_block(text, start, end, grid_html(tools), "docs/tools/index.html")
+    block = grid_html(tools)
+    extra = next_up_html(tools)
+    if extra:
+        block += "\n\n" + extra
+    text = replace_block(text, start, end, block, "docs/labs/index.html")
     TOOLS_INDEX.write_text(text, encoding="utf-8", newline="\n")
 
 
@@ -398,13 +416,13 @@ def update_sitemap(tools):
     end = "<!-- tools:end -->"
     entries = [
         "  <url>\n"
-        f"    <loc>{SITE}/tools/</loc>\n"
+        f"    <loc>{SITE}/labs/</loc>\n"
         "    <changefreq>weekly</changefreq>\n"
         "    <priority>0.7</priority>\n"
         "  </url>"
     ]
     for tool in tools:
-        if tool["status"] != "live":
+        if tool["status"] != "live" or tool.get("external_url"):
             continue
         entries.append(
             "  <url>\n"
@@ -437,9 +455,9 @@ def replace_md_section(path, heading, body):
 
 def update_llms(tools):
     lines = [
-        f"- [Free Web Tools]({SITE}/tools/): A growing collection of single-purpose, "
-        "browser-native utilities: no accounts, no server calls, no data collection. "
-        "Every tool is downloadable as a standalone HTML file that runs offline forever."
+        f"- [Labs]({SITE}/labs/): Free browser tools, offline-first apps and hardware "
+        "experiments. No accounts, no uploads, no server calls, no data collection. "
+        "Every free tool is downloadable as a standalone HTML file that runs offline forever."
     ]
     for tool in tools:
         if tool["status"] != "live":
@@ -449,23 +467,25 @@ def update_llms(tools):
     soon = [t["name"] for t in tools if t["status"] == "soon"]
     if soon:
         lines.append("- In development: " + ", ".join(soon) + ".")
-    replace_md_section(LLMS, "## Tools", "\n".join(lines))
+    replace_md_section(LLMS, "## Labs", "\n".join(lines))
 
 
 def update_sprite(tools):
     live = [t for t in tools if t["status"] == "live"]
     soon = [t for t in tools if t["status"] == "soon"]
     lines = [
-        "- The free tools at /tools/ all run entirely in the browser: no accounts,",
-        "  no uploads, no data collection. Each one can be downloaded as a single",
-        "  HTML file that keeps working offline forever.",
+        "- The Labs at /labs/ collect the free tools, apps and experiments. The free",
+        "  tools run entirely in the browser: no accounts, no uploads, no data",
+        "  collection. Each one can be downloaded as a single HTML file that keeps",
+        "  working offline forever.",
         "- Live now:",
     ]
     for tool in live:
-        lines.append(f"  - {tool['name']} (/{tool['slug']}/): {tool['description']}")
+        path = tool_url(tool).replace(SITE, "")
+        lines.append(f"  - {tool['name']} ({path}): {tool['description']}")
     if soon:
         lines.append("- In development: " + ", ".join(t["name"] for t in soon) + ".")
-    replace_md_section(SPRITE, "## The tools", "\n".join(lines))
+    replace_md_section(SPRITE, "## The Labs", "\n".join(lines))
 
     # The Worker slices sprite.md at KNOWLEDGE_MAX_CHARS with no error, so an
     # over-long file loses its tail and Sprite quietly forgets whatever was at
@@ -505,13 +525,13 @@ def main():
             built += 1
 
     update_tools_index(tools)
-    print("  updated docs/tools/index.html (grid block)")
+    print("  updated docs/labs/index.html (grid block)")
     update_sitemap(tools)
     print("  updated docs/sitemap.xml (tools block)")
     update_llms(tools)
-    print("  updated docs/llms.txt (Tools section)")
+    print("  updated docs/llms.txt (Labs section)")
     update_sprite(tools)
-    print("  updated docs/sprite.md (The tools section)")
+    print("  updated docs/sprite.md (The Labs section)")
     check_orphans(tools)
 
     live = sum(1 for t in tools if t["status"] == "live")

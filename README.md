@@ -9,12 +9,12 @@ served by GitHub Pages from `docs/`, no build step.
 ```
 docs/                  the published site
   index.html           homepage
-  services/            hub: five rows, each linking to a detail page
-  services/brand-identity/ services/ux-research/ services/ui-design/
-  services/digital-strategy/ services/migration-rebuild/   the five detail pages
-  services/how-we-work/    running costs, ownership, support tiers. Not in the
-                       nav by design; linked from the hub and every service CTA
-  tools/ shop/ work/ contact/              main pages
+  services/            one page: Websites, Brand identity, Product & UX,
+                       terms, promises and FAQ. Retired service URLs are
+                       redirect stubs into the anchors on this page.
+  labs/ shop/ work/ about/ contact/         main pages
+  new-home/            the move announcement: why, what changes, the small print
+  tools/               redirect stub to /labs/
   sprite/ beben-arcade/ codex/             case studies (four-part, verifiable numbers)
   rev-log/             open project page, indexed
   kilimo-pal/                            project placeholder (noindex; not a case study)
@@ -22,17 +22,18 @@ docs/                  the published site
   blog/                GENERATED blog pages + feed.xml (never hand-edit; see The blog)
   legal/ privacy/ credits/ 404.html        support pages
   qr-code-generator/ contrast-grid/ character-counter/ dither-machine/
-                       GENERATED tool pages (never hand-edit; see The tools)
-  games/               ARCADIA by BEBEN DESIGN — standalone offline PWA, 20 games (see The arcade)
+                       GENERATED tool pages (never hand-edit; see Labs)
+  games/               ARCADIA by BEBEN DESIGN — standalone offline PWA, 23 games (see The arcade)
   redoubt/ kemmy-spa-concierge-preview/    client previews (intentionally standalone)
   assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid,
-                       FAQ, and section 18's shared page primitives; see Shared CSS)
+                       FAQ, and section 20's rework primitives; see Shared CSS)
+  assets/fonts/        self-hosted WOFF2 (three families) + fonts.css + OFL licences
   assets/css/sprite.css + assets/JS/sprite.js   the Sprite chat widget
   assets/JS/index.js   theme, mobile menu, reveal animation, FAQ accordion
 content/blog/          blog posts as markdown (the SOURCE; not published)
 content/tools.json + content/tools/    tool registry and per-tool sources (the SOURCE)
 scripts/build_blog.py  renders content/blog/ into docs/blog/ (+ templates in scripts/templates/)
-scripts/build_tools.py renders content/tools/ into docs/<slug>/ (see The tools)
+scripts/build_tools.py renders content/tools/ into docs/<slug>/ (see Labs)
 cloudflare-worker/     Sprite's LLM proxy (deploys to Cloudflare, NOT part of the site)
 legal-draft/           drafted Terms of Engagement, parked OUTSIDE docs/ so nothing
                        unreviewed is served. See legal-review.md
@@ -43,22 +44,32 @@ PROJECT-STATE.md       where this revision stands, what is left, what needs the 
 
 ## Design system
 
-- **Three fonts only:** Old Standard TT (h1/h2 serif), IBM Plex Mono (eyebrows,
-  labels, CTAs), Inter (body; Inter 600 sentence case for card titles, step
-  titles, FAQ questions). No League Gothic, no uppercase headings.
-- **Red has four jobs:** the one italic `em` per headline, CTA links,
-  active/hovered nav, focus outlines. Decorative marks stay muted.
-  Two tokens, and the distinction matters: `--highlight` (`#E71D36`) is the
-  brand red, used for large display text, the focus ring and fills, where 3:1
-  is the bar. `--highlight-text` is the accessible variant for red on
-  normal-size text, where the bar is 4.5:1 and the brand red measures 3.75 to
-  4.16 and fails. `.hero` remaps **both** to `--yellow`, because the red lands
-  at 2.9:1 on the hero photo.
+- **Three fonts only, self-hosted:** Old Standard TT (h1/h2 serif), IBM Plex
+  Mono (eyebrows, labels, CTAs), Inter (body; Inter 600 sentence case for card
+  titles, step titles, FAQ questions). No League Gothic, no uppercase headings.
+  The Google Fonts links are gone; `assets/fonts/fonts.css` is the single
+  @font-face source.
+- **Pink has four jobs:** the one italic `em` per headline, CTA links,
+  hovered nav, focus outlines. The current page in the nav is separate:
+  `#FFC710`, matching the ticker, with `--yellow-text` on light surfaces so
+  the label stays readable. Decorative marks stay muted.
+  `--highlight` and `--highlight-text` now hold the same brand pink,
+  `#FF2D6A`: 3.30:1 on the light `--bg` and 5.12:1 on the dark one. That
+  clears the 3:1 bar for large display text, the focus ring and fills, and
+  clears 4.5:1 on dark surfaces, but normal-size text in pink on light
+  surfaces sits below 4.5:1 by design. `.hero` remaps **both** to `--yellow`,
+  matching the hero's yellow frame.
 - **Layout:** full-bleed sections alternating plain / `.section--soft`, content
   inside a 1140px `.container`. Subpages open with `.page-hero`. Prefer open
   rows with top-border separators over nested boxes.
 - **Animation:** `data-reveal` + `--i` stagger, driven by `index.js`. Never add
   a per-page observer.
+- **Theme:** dark is the house default for a first-time visitor, and the
+  `data-theme="dark"` attribute is hardcoded on `<html>` so no-JS visitors get
+  the same. A saved `beben-theme` choice in localStorage always wins, and the
+  toggle writes one. The head script applies the theme before first paint;
+  `index.js` re-applies it at the end of body. Tool pages carry the same
+  logic inline because they do not load the shared assets.
 - **Copy:** no em dashes. Titles use hyphens, badges use middle dots, prose
   uses commas/colons/periods.
 - **Shared CSS:** a pattern that appears on three or more pages belongs in
@@ -72,6 +83,27 @@ PROJECT-STATE.md       where this revision stands, what is left, what needs the 
   shared patterns live in `index.css`. New pages copy the nav/footer markup
   verbatim from an existing page.
 
+## The move ticker
+
+The yellow strip above the nav announces the move to `bebendesign.com` and
+links to `/new-home/`. It is one shared component: the markup is copied
+verbatim before `<nav>` on every page that loads `index.css`, the styles live
+in section 3a of `index.css`, and the pause handler is in `index.js`. The
+track holds two identical groups, each with four copies of the line and at
+least a viewport wide, so translating it by `-50%` loops without a seam and
+the strip never runs out of text; hover, focus and the pause control all stop
+it, and `prefers-reduced-motion` removes the motion entirely.
+
+The seven generated tool pages do not carry it: they are deliberately
+standalone files with their own inline styles, so a dated announcement would go
+stale in an offline copy. The two client previews and the redirect stubs load
+their own shells and never see the shared assets.
+
+**To remove it after the move:** delete the `MOVE TICKER` block from the pages
+and from `scripts/templates/post.html` and `blog-index.html` (then rebuild the
+blog), delete section 3a of `index.css`, and fold the `--chrome-height` offsets
+back to `--nav-height`. Bump all four shared assets again when you do.
+
 ## The blog
 
 Posts are markdown files in `content/blog/`, rendered to real static HTML in
@@ -82,9 +114,9 @@ the site.
 **To publish a post:**
 
 1. Write `content/blog/YYYY-MM-DD-your-slug.md` with front matter between
-   `---` fences: `title`, `description`, `date` (required); `author`, `tags`
-   (comma-separated), `hero_image`, `hero_alt`, `featured`, `pinned`, `draft`
-   (optional). Images go in `docs/assets/images/blog/your-slug/` and are
+   `---` fences: `title`, `description`, `date`, `lane` (required; `buyer`
+   or `build`); `author`, `tags` (comma-separated), `hero_image`, `hero_alt`,
+   `draft` (optional). Images go in `docs/assets/images/blog/your-slug/` and are
    referenced with root-absolute paths (`/assets/images/blog/your-slug/...`).
 2. Run `py scripts/build_blog.py` (one dependency: `py -m pip install markdown`).
    It regenerates every post page, the blog index, `docs/blog/feed.xml`, and
@@ -92,9 +124,9 @@ the site.
    orphaned output folders.
 3. Review, commit, push. Done.
 
-The index leads with the `pinned: true` post as the article of the day
-(falling back to the newest), then up to three `featured: true` articles,
-then the rest as archive rows.
+The index leads with the newest post in the Latest slot, then a single
+filterable list with All / For business owners / Build notes. There is no
+pinned or featured section. Each post carries `lane: buyer` or `lane: build`.
 
 A teammate without the toolchain can add or edit a markdown file through the
 GitHub web UI; whoever merges runs the build. Two rules keep the system
@@ -113,15 +145,13 @@ Upgrade ladder, when the team grows into it (design intent, not built yet):
 3. **Community/network features** would be a separate app on a subdomain;
    GitHub Pages stays the publishing layer.
 
-## The tools
+## Labs
 
-[beben.design/tools](https://beben.design/tools) is a collection of small,
-single-purpose utilities grouped into three pillars: **private by default**
-(the offline guarantee is the product), **design toolkit**, and **run your
-business**. The promise on the page is exact and load-bearing: every tool is
-**one HTML file with zero external requests**, so a downloaded copy works
-offline forever. Nothing may load from a CDN, and no tool page may reference a
-relative path.
+[beben.design/labs](https://beben.design/labs) is the collection: **Free
+tools**, **Apps**, and **Experiments**. The promise on the page is exact and
+load-bearing: every free tool is **one HTML file with zero external requests**,
+so a downloaded copy works offline forever. Nothing may load from a CDN, and
+no tool page may reference a relative path. `/tools/` is a redirect stub.
 
 Tool pages are generated, on the same model as the blog. **Never hand-edit
 `docs/<tool-slug>/index.html`** (the next build overwrites it).
@@ -139,15 +169,16 @@ scripts/build_tools.py          the generator
 
 **To add a tool:**
 
-1. Add an entry to `content/tools.json`. `status: "soon"` is enough to put a
-   coming-soon card on the page; nothing else is needed yet.
+1. Add an entry to `content/tools.json`. `status: "soon"` keeps it off the
+   grid and puts its name in the single "Next up" line; nothing else is
+   needed yet.
 2. When you build it, flip it to `status: "live"`, fill in `number`, `h1`,
    `lead`, `meta_title`, `meta_description`, and `specs`, then write
    `content/tools/<slug>/body.html` plus its `tool.css` and `tool.js`.
 3. Run `py scripts/build_tools.py` (no dependencies). It renders the page and
-   refreshes all four places the tool list is mirrored: the grid in
-   `docs/tools/index.html`, the tools block of `docs/sitemap.xml`, the
-   `## Tools` section of `docs/llms.txt`, and `## The tools` in
+   refreshes all four places the list is mirrored: the grid in
+   `docs/labs/index.html`, the Labs block of `docs/sitemap.xml`, the
+   `## Labs` section of `docs/llms.txt`, and `## The Labs` in
    `docs/sprite.md`. It warns about em dashes and stale folders.
 4. Review, commit, push.
 
@@ -162,9 +193,10 @@ Three rules keep the offline promise honest:
 
 1. **No external requests.** Vendor third-party code into
    `content/tools/<slug>/vendor/` with a `.txt` licence note beside it, which
-   the generator inlines as a comment. Google Fonts is the one exception: it is
-   progressive enhancement behind a full system fallback stack, so an offline
-   file is plainer but never broken.
+   the generator inlines as a comment. Fonts are a first-party progressive
+   enhancement: the shell links `/assets/fonts/fonts.css`, and a downloaded
+   file that cannot reach it falls back to the system stacks rather than
+   breaking.
 2. **Absolute URLs only** in nav, footer, and meta. A relative `href` resolves
    against the user's Downloads folder once the file leaves the site.
 3. **Keep the `execCommand` clipboard fallback.** A file opened over `file://`
@@ -183,7 +215,7 @@ Nav, footer, or token changes on the site must be mirrored in
 ```
 
 **All four shared assets carry the same `?v=`:** `index.css`, `index.js`,
-`sprite.css` and `sprite.js`, currently `3.8` across 24 files. Bump all four
+`sprite.css` and `sprite.js`, currently `7.5` across every page and template. Bump all four
 together whenever any one of them changes, or returning visitors keep a stale
 copy. `index.css` and `index.js` were previously unversioned, which meant a
 returning visitor could get new markup against an old stylesheet.
@@ -209,7 +241,7 @@ mailto, and tel. Deploy steps: [cloudflare-worker/README.md](cloudflare-worker/R
 ## The arcade
 
 [beben.design/games](https://beben.design/games) is **ARCADIA by BEBEN DESIGN**,
-a self-contained installable PWA of 20 tiny offline games. It is intentionally
+a self-contained installable PWA of 23 tiny offline games. It is intentionally
 standalone: no `index.css`, no nav, no Sprite, no external fonts, and zero
 references outside `/games/` so it runs fully offline once installed. It has
 its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
@@ -226,7 +258,7 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
   (set inline on `<html>` and through `Arcade.init({accent:'lime'})`), used for
   its card, in-game chrome, canvas art, and a game-over jingle. There is no
   light theme and the arcade never touches the main site's `beben-theme`.
-- **Hub cards.** The hero card and all 20 game cards are `#000` with a 1px
+- **Hub cards.** The hero card and all 23 game cards are `#000` with a 1px
   `#171717` border (border flips to the game's neon on hover). Each game card
   shows a frameless icon, the name in pixel type, a one-line description, and
   one to three `> GENRE` lines. CRT scanlines are **on by default** (static,
@@ -318,10 +350,11 @@ everywhere would delete the thing being sold.
 
 | Zone | Person | Where |
 |---|---|---|
-| Selling | Second person only | home, services, tools, shop |
-| UI | Second person, warm | contact, 404, form copy |
-| Case study | First person plural | work, sprite, codex, beben-arcade |
-| About | First person plural | services/how-we-work/ |
+| Selling | First person singular | home, services, labs, shop |
+| UI | First person singular | contact, 404, form copy |
+| Case study | First person singular | work, sprite, codex, beben-arcade |
+| About | First person singular | about, credits |
+| Blog | First person singular | blog posts and the blog index |
 | Legal | Third person, named | legal, privacy |
 | Sprite | Playful, jokes, contractions | assets/JS/sprite.js |
 
@@ -332,12 +365,12 @@ literals on selling and UI pages, because the contact triage builds its copy in
 JavaScript.
 
 Deliberately excluded: `kemmy-spa-concierge-preview/` and `redoubt/` speak as
-mock clients, `games/` is a separate sub-app, and `blog/` is journal voice.
+mock clients, and `games/` is a separate sub-app.
 
 Two traps are encoded in the checker rather than rediscovered. A plain
 `\bsolution\b` also matches inside "resolution". And `\bus\b` matches the
 uppercase half of "en-US". Exemptions are narrow and named: "Does It Fit?" is a
-product name, "How we work" is a page name.
+product name.
 
 **One claim that is not a style rule:** the site is written by one person across
 three git identities. Copy asserting a team is a factual problem, not a tonal
@@ -356,7 +389,8 @@ port serves the site fine, but Sprite falls back to its offline replies.
 Before committing, the checks that matter:
 
 ```
-python3 scripts/check_voice.py      # voice zoning and banned constructions
+python3 scripts/check_voice.py      # first-person voice and banned constructions
+python3 scripts/check_facts.py      # repeated facts still agree
 python3 scripts/build_tools.py      # both generators must be idempotent:
 .venv/bin/python scripts/build_blog.py
 git status --short                  # a run against unchanged sources leaves this clean
