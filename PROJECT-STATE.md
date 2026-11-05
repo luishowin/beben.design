@@ -1239,7 +1239,8 @@ mode is a one-line revert if that is preferred.
 ### Sprite 2.0: standalone repo and Figma rebuild (5 Nov 2026, assets `8.0`)
 
 **Sprite now has a public home.** The widget, emotion controller, Worker and
-Figma references live at `github.com/luishowin/sprite` under MIT. The files in
+Figma references live at `github.com/luishowin/sprite` under MIT, with a live
+playground at `luishowin.github.io/sprite`. The files in
 `docs/assets` are vendored copies; the standalone repo is the source of truth
 and can be developed independently of this site.
 
