@@ -24,8 +24,8 @@ visitor -> beben.design (sprite.js) -> your Worker -> Fireworks AI
 4. Back on the Worker page: Settings -> Variables and Secrets:
    - Add secret:   name `FIREWORKS_API_KEY`, value = your key from step 1.
    - (Optional) add variable `MODEL` with a Fireworks model id. The default
-     is `accounts/fireworks/models/gpt-oss-20b` ($0.07/M input, $0.30/M
-     output, serverless as of July 2026). If you pick another model from
+     is `accounts/fireworks/models/gpt-oss-120b` ($0.15/M input, $0.60/M
+     output, serverless as of September 2026). If you pick another model from
      https://fireworks.ai/models, open its page and check it says
      "Serverless: supported" - many listed models (including Gemma 3 4B
      and Qwen3 8B) are on-demand only and the API returns 404 for them.
@@ -38,13 +38,15 @@ visitor -> beben.design (sprite.js) -> your Worker -> Fireworks AI
 
 ## 3. Point Sprite at it
 
-In `docs/assets/JS/sprite.js`, top of the file:
+In `sprite.js` (or in a `window.SPRITE_CONFIG` block before it):
 
-```js
-const SPRITE_CONFIG = {
-  apiUrl: 'https://sprite-proxy.YOURNAME.workers.dev',
-  ...
-};
+```html
+<script>
+  window.SPRITE_CONFIG = {
+    apiUrl: 'https://sprite-proxy.YOURNAME.workers.dev'
+  };
+</script>
+<script src="sprite.js"></script>
 ```
 
 Commit and push. That's the only site change; if the Worker is ever down or
@@ -61,7 +63,18 @@ curl -s -X POST https://sprite-proxy.YOURNAME.workers.dev \
   -d "{\"messages\":[{\"role\":\"user\",\"content\":\"what services do you offer?\"}],\"page\":{\"path\":\"/\"}}"
 ```
 
-You should get `{"reply":"..."}` mentioning the services with a link.
+You should get `{"reply":"...","emotion":"happy"}` mentioning the services with a link. The `emotion` field is optional in older deployments; the widget falls back to a friendly smile when it is absent.
+
+## Emotion signal
+
+The system prompt asks the model to end each reply with a hidden tag such as
+`[[emotion:curious]]`. The Worker validates the tag against a fixed allowlist,
+strips it from the visible reply and returns it as `emotion`. The tag never
+reaches the visitor. A malformed or missing tag simply produces an empty
+`emotion`, and Sprite falls back to `smiling`.
+
+This is why changing the Worker requires a redeploy even when the website
+JavaScript is already updated. The site keeps working without it.
 
 ## Teaching Sprite new things
 
@@ -77,7 +90,7 @@ secrets or private information in it.
   A chat turn is ~500-900 tokens, so about a hundredth of a cent.
   $50 in credits is on the order of hundreds of thousands of turns.
 - The Worker already caps: 12 history messages, 1,000 chars per message,
-  300 reply tokens, CORS locked to beben.design (+ localhost for testing).
+  700 reply tokens, CORS locked to beben.design (+ localhost for testing).
 - Optional hardening: in Cloudflare, Security -> WAF -> rate limiting rule
   on the Worker route (e.g. 20 requests/minute per IP).
 - Watch spend at https://app.fireworks.ai -> Usage. If credits run out,

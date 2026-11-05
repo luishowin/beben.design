@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0C0C0C">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Sprite — character playground</title>
+  <script>
+    (function () {
+      var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+      var explicit = /(?:[?&])dev=1(?:&|$)/.test(window.location.search);
+      if (!local && !explicit) window.location.replace('/404.html');
+    })();
+  </script>
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/assets/css/sprite.css?v=8.0">
+  <style>
+    :root {
+      --bg: #070707;
+      --panel: #0C0C0C;
+      --surface: #141414;
+      --surface-2: #1B1B1B;
+      --line: #2A2A2A;
+      --text: #F4F4F4;
+      --muted: #8A8A8A;
+      --accent: #FFBF00;
+      --green: #27C45E;
+      --font: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; min-height: 100%; }
+
+    body {
+      background:
+        radial-gradient(circle at 76% 12%, rgba(255, 191, 0, 0.07), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration-color: #555; text-underline-offset: 3px; }
+    a:hover { color: var(--accent); }
+
+    .page {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 56px 0 110px;
+    }
+
+    .top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 32px;
+      padding-bottom: 34px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 56px);
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      font-weight: 500;
+    }
+
+    .lead {
+      max-width: 64ch;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top__meta {
+      flex-shrink: 0;
+      min-width: 190px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .top__meta strong { color: var(--text); font-weight: 500; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+      gap: 24px;
+      margin-top: 28px;
+    }
+
+    .stack { display: grid; gap: 24px; align-content: start; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .card__hint {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 11.5px;
+    }
+
+    .emotion-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .emotion-button,
+    .action,
+    .toggle,
+    .play-button {
+      font: inherit;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .emotion-button {
+      min-height: 44px;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.3;
+    }
+
+    .emotion-button:hover,
+    .action:hover,
+    .play-button:hover {
+      border-color: #4A4A4A;
+      background: #191919;
+    }
+
+    .emotion-button.is-active {
+      border-color: var(--accent);
+      background: rgba(255, 191, 0, 0.1);
+      color: var(--accent);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .action,
+    .play-button {
+      padding: 8px 12px;
+      font-size: 11.5px;
+    }
+
+    .state-sheet {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .state-cell {
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      min-height: 104px;
+      padding: 12px 6px 9px;
+      background: #080808;
+      border: 1px solid #1E1E1E;
+      border-radius: 12px;
+    }
+
+    .state-cell .sprite-character {
+      width: 58px;
+      height: 58px;
+    }
+
+    .state-cell span {
+      color: var(--muted);
+      font-size: 9.5px;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .field-row label { color: var(--muted); font-size: 11.5px; }
+
+    select,
+    input[type="number"] {
+      height: 34px;
+      padding: 0 9px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      font: inherit;
+      font-size: 11.5px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      text-align: left;
+    }
+
+    .toggle__state {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+
+    .toggle__dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4A4A4A;
+    }
+
+    .toggle[aria-pressed="true"] .toggle__dot {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(39, 196, 94, 0.65);
+    }
+
+    .state {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .state__item {
+      padding: 9px 10px;
+      background: #101010;
+      border: 1px solid #1E1E1E;
+      border-radius: 9px;
+    }
+
+    .state__label {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .state__value {
+      display: block;
+      color: var(--text);
+      font-size: 11.5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .preview-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .preview {
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      gap: 10px;
+      padding: 18px 14px;
+      background: #080808;
+      border: 1px solid #1E1E1E;
+      border-radius: 14px;
+    }
+
+    .preview__stage {
+      display: grid;
+      place-items: center;
+      min-height: 58px;
+    }
+
+    .preview__caption {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    .preview--pill .preview__pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 48px;
+      padding: 6px 16px 6px 6px;
+      background: #000;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .preview--panel .preview__bar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 220px;
+      height: 48px;
+      padding: 6px 10px;
+      background: #000;
+      border-radius: 24px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+    }
+
+    .preview--panel .preview__bar .status-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(39, 196, 94, 0.65);
+    }
+
+    .manual-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .manual-stage {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      background: #080808;
+      border: 1px solid #1E1E1E;
+      border-radius: 16px;
+    }
+
+    .manual-face {
+      width: 108px;
+      height: 108px;
+    }
+
+    .sliders {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 22px;
+    }
+
+    .slider-group {
+      min-width: 0;
+      padding: 12px;
+      background: #101010;
+      border: 1px solid #1E1E1E;
+      border-radius: 12px;
+    }
+
+    .slider-group h3 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .slider {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr) 38px;
+      gap: 8px;
+      align-items: center;
+      margin: 7px 0;
+      font-size: 10.5px;
+      color: #BDBDBD;
+    }
+
+    .slider output {
+      color: var(--muted);
+      font-size: 10px;
+      text-align: right;
+    }
+
+    .note {
+      margin: 16px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid #1E1E1E;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    code {
+      padding: 1px 5px;
+      background: #181818;
+      border: 1px solid #262626;
+      border-radius: 5px;
+      color: #DDD;
+      font-size: 0.94em;
+    }
+
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 28px;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10.5px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0);
+      white-space: nowrap; border: 0;
+    }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+      .manual-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .page { width: calc(100vw - 28px); padding-top: 30px; }
+      .top { flex-direction: column; }
+      .top__meta { width: 100%; }
+      .emotion-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .state-sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sliders { grid-template-columns: 1fr; }
+      .state { grid-template-columns: 1fr; }
+      .card { padding: 16px; border-radius: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="top">
+      <div>
+        <p class="eyebrow">Sprite development surface</p>
+        <h1>Her face,<br>under the microscope.</h1>
+        <p class="lead">
+          Every expression, every transition, and the manual geometry underneath.
+          The fixed chat pill is the production component. This page is the workbench.
+        </p>
+      </div>
+      <div class="top__meta">
+        <strong>github.com/luishowin/sprite</strong><br>
+        Sprite 2.0 · no dependencies<br>
+        <span id="systemMotion">Motion: checking...</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="stack">
+        <section class="card">
+          <h2>Expressions</h2>
+          <p class="card__hint">Select a persistent state. The live widget also updates.</p>
+          <div class="emotion-grid" id="emotionGrid"></div>
+        </section>
+
+        <section class="card">
+          <h2>State sheet</h2>
+          <p class="card__hint">All twelve at once. Geometry only; the animation is in the live preview.</p>
+          <div class="state-sheet" id="stateSheet"></div>
+        </section>
+
+        <section class="card">
+          <h2>Motion playback</h2>
+          <p class="card__hint">One-shot reactions, blinking and the idle glance.</p>
+          <div class="actions">
+            <button class="action" type="button" data-action="blink">Blink once</button>
+            <button class="action" type="button" data-action="double-blink">Double blink</button>
+            <button class="action" type="button" data-action="look">Look around</button>
+            <button class="action" type="button" data-action="bounce-excited">Excited bounce</button>
+            <button class="action" type="button" data-action="bounce-happy">Happy bounce</button>
+            <button class="action" type="button" data-action="bounce-proud">Proud nod</button>
+          </div>
+          <div class="field-row">
+            <label for="transitionRange">Transition</label>
+            <input id="transitionRange" type="range" min="0" max="600" step="20" value="260" style="flex:1;min-width:160px">
+            <output id="transitionOutput" for="transitionRange">260ms</output>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Temporary expression</h2>
+          <p class="card__hint">Plays once and returns to the persistent base state.</p>
+          <div class="field-row">
+            <label for="temporaryEmotion">Emotion</label>
+            <select id="temporaryEmotion"></select>
+            <label for="temporaryDuration">Duration</label>
+            <input id="temporaryDuration" type="number" min="300" max="12000" step="100" value="2200" style="width:90px">
+            <button class="play-button" id="playTemporary" type="button">Play</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Manual geometry</h2>
+          <p class="card__hint">Independent values, straight onto the SVG. The preview is deliberately not connected to the emotion controller.</p>
+          <div class="manual-layout">
+            <div class="manual-stage">
+              <div class="sprite-character manual-face" id="manualFace" data-sprite-manual aria-hidden="true"></div>
+            </div>
+            <div>
+              <div class="sliders" id="manualSliders"></div>
+              <div class="field-row">
+                <button class="action action--quiet" type="button" id="resetGeometry">Reset geometry</button>
+                <button class="action action--quiet" type="button" id="loadNeutralGeometry">Load neutral</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <h2>Preview</h2>
+          <p class="card__hint">Actual production sizes: 36px face in a 57px pill and a 57px panel header.</p>
+          <div class="preview-row">
+            <div class="preview">
+              <div class="preview__stage">
+                <div class="sprite-character" aria-hidden="true"></div>
+              </div>
+              <div class="preview__caption">36px face</div>
+            </div>
+            <div class="preview preview--pill">
+              <div class="preview__stage">
+                <div class="preview__pill">
+                  <div class="sprite-character" aria-hidden="true"></div>
+                  <span>Hello there, need help?</span>
+                </div>
+              </div>
+              <div class="preview__caption">57px pill</div>
+            </div>
+          </div>
+          <div class="preview preview--panel" style="margin-top:12px">
+            <div class="preview__stage">
+              <div class="preview__bar">
+                <div class="sprite-character" aria-hidden="true"></div>
+                <span>SPRITE</span>
+                <span class="status-dot"></span>
+              </div>
+            </div>
+            <div class="preview__caption">Panel header</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Idle &amp; sleep</h2>
+          <p class="card__hint">Real timings are 5–10s to a glance and 60s to sleep. Speed them up here.</p>
+          <div class="actions">
+            <button class="action" type="button" data-action="idle-look">Idle glance</button>
+            <button class="action" type="button" data-action="sleep">Sleep</button>
+            <button class="action" type="button" data-action="wake">Wake</button>
+            <button class="action" type="button" data-action="neutral">Neutral</button>
+            <button class="action" type="button" data-action="fast-idle">Start fast idle</button>
+            <button class="action action--quiet" type="button" data-action="restore-idle">Restore timings</button>
+          </div>
+          <div class="state" id="statePanel">
+            <div class="state__item"><span class="state__label">Emotion</span><span class="state__value" id="stateEmotion">neutral</span></div>
+            <div class="state__item"><span class="state__label">Priority</span><span class="state__value" id="statePriority">1</span></div>
+            <div class="state__item"><span class="state__label">Base</span><span class="state__value" id="stateBase">neutral</span></div>
+            <div class="state__item"><span class="state__label">Sleep in</span><span class="state__value" id="stateSleep">60s</span></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Accessibility</h2>
+          <p class="card__hint">The site honours the system preference automatically. Override it here.</p>
+          <button class="toggle" type="button" id="reducedMotionToggle" aria-pressed="false">
+            <span>Emulate reduced motion</span>
+            <span class="toggle__state"><span class="toggle__dot"></span><span id="reducedMotionLabel">off</span></span>
+          </button>
+          <p class="note">
+            Reduced motion stops blinking, looking around, bounce and breathing. Emotion changes still happen.
+          </p>
+        </section>
+
+        <section class="card">
+          <h2>Console</h2>
+          <p class="card__hint">The same API used by the site.</p>
+          <p style="margin:0;color:#BDBDBD;font-size:11px">
+            <code>SpriteEmotion.setEmotion('excited', { duration: 1800 })</code><br><br>
+            <code>document.dispatchEvent(new CustomEvent('sprite:emotion', { detail: { emotion: 'smug-proud' } }))</code>
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>Sprite is a small yellow circle with strong opinions.</span>
+      <span><a href="https://github.com/luishowin/sprite">Source</a> · MIT</span>
+    </footer>
+  </main>
+
+  <script src="/assets/JS/sprite.js?v=8.0"></script>
+  <script src="playground.js"></script>
+</body>
+</html>

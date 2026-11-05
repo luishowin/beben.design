@@ -28,7 +28,7 @@ docs/                  the published site
   assets/css/index.css design tokens + shared components (nav, footer, page-hero, grid,
                        FAQ, and section 20's rework primitives; see Shared CSS)
   assets/fonts/        self-hosted WOFF2 (three families) + fonts.css + OFL licences
-  assets/css/sprite.css + assets/JS/sprite.js   the Sprite chat widget
+  assets/css/sprite.css + assets/JS/sprite.js   the Sprite chat widget (vendored from github.com/luishowin/sprite)
   assets/JS/index.js   theme, mobile menu, reveal animation, FAQ accordion
 content/blog/          blog posts as markdown (the SOURCE; not published)
 content/tools.json + content/tools/    tool registry and per-tool sources (the SOURCE)
@@ -210,12 +210,18 @@ Nav, footer, or token changes on the site must be mirrored in
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=3.9">
-<script src="../assets/JS/sprite.js?v=3.9"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=8.0">
+<script src="../assets/JS/sprite.js?v=8.0"></script>
 ```
 
+**Sprite's source of truth is now [github.com/luishowin/sprite](https://github.com/luishowin/sprite).**
+The live playground is [luishowin.github.io/sprite](https://luishowin.github.io/sprite/).
+The two files in `docs/assets` are vendored copies. Develop the face, motion and
+chat in the standalone repo, then copy `sprite.js` and `sprite.css` back here.
+The repo includes the public playground, the Worker and the Figma references.
+
 **All four shared assets carry the same `?v=`:** `index.css`, `index.js`,
-`sprite.css` and `sprite.js`, currently `7.5` across every page and template. Bump all four
+`sprite.css` and `sprite.js`, currently `8.0` across every page and template. Bump all four
 together whenever any one of them changes, or returning visitors keep a stale
 copy. `index.css` and `index.js` were previously unversioned, which meant a
 returning visitor could get new markup against an old stylesheet.
@@ -237,6 +243,37 @@ Worker, never in this repo. Any Worker failure falls back to offline mode
 silently. Conversation history follows the visitor across pages via
 sessionStorage, and links in replies are allowlisted to this site, WhatsApp,
 mailto, and tel. Deploy steps: [cloudflare-worker/README.md](cloudflare-worker/README.md).
+
+### Expressions and events
+
+The face is SVG. Two vertical pill eyes and a small mouth are driven by
+`SpriteEmotion`, a central controller with twelve states, priorities, temporary
+and persistent expressions, blinking, idle looks, sleeping and reduced-motion
+support.
+
+Trigger a reaction from anywhere on the page:
+
+```js
+document.dispatchEvent(new CustomEvent('sprite:emotion', {
+  detail: { emotion: 'excited', duration: 2200 }
+}));
+```
+
+Or call the controller directly:
+
+```js
+SpriteChat.setEmotion('smug-proud', { duration: 3200 });
+SpriteEmotion.wake();
+SpriteEmotion.sleep();
+```
+
+The live Worker now returns `{ reply, emotion }`. If an older Worker is still
+deployed, the widget falls back to a smile and keeps working.
+
+The development playground is at `/dev/sprite/`. It is unlinked, `noindex`,
+disallowed in `robots.txt`, and only reachable on localhost or with `?dev=1`.
+It shows all twelve expressions, geometry sliders, animation playback, idle
+timing and reduced-motion emulation.
 
 ## The arcade
 

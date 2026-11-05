@@ -82,8 +82,8 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="../assets/css/index.css?v=7.5">
-    <link rel="stylesheet" href="../assets/css/sprite.css?v=7.5">
+    <link rel="stylesheet" href="../assets/css/index.css?v=8.0">
+    <link rel="stylesheet" href="../assets/css/sprite.css?v=8.0">
 
     <link rel="icon" href="../assets/icons/favicon.ico" sizes="any">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
@@ -127,18 +127,20 @@
             justify-content: center;
         }
         .sprite-demo-pill {
-            display: inline-flex; align-items: center; gap: 14px;
+            display: inline-flex; align-items: center; gap: 18px;
+            height: 57px;
             padding: 10px 24px 10px 10px;
-            background: var(--bg-soft);
-            border: 1px solid var(--border);
+            background: #000;
+            border: 1px solid #2A2A2A;
             border-radius: 9999px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 34px rgba(0,0,0,0.22);
         }
-        .sprite-demo-pill .sprite-character { pointer-events: none; }
+        .sprite-demo-pill .sprite-character { width: 36px; height: 36px; pointer-events: none; }
+        .sprite-demo-pill .sprite-character img { display: block; width: 100%; height: 100%; }
         .sprite-demo-pill span {
-            font-family: var(--font-body);
-            font-size: 0.95rem;
-            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #fff;
         }
 
         .roadmap {
@@ -373,7 +375,7 @@
         <div class="container">
             <span class="eyebrow" data-reveal style="--i:0">Thinking in pixels</span>
             <h1 data-reveal style="--i:1">Meet <em class="highlight-box">Sprite</em></h1>
-            <p class="lead" data-reveal style="--i:2">Sprite is the guide on this site. He shows visitors around, answers questions in plain language and keeps the tone warm on a technical site. He is one example of the smart interactive components I build: small, light and modular.</p>
+            <p class="lead" data-reveal style="--i:2">Sprite is the guide on this site. She shows visitors around, answers questions in plain language and keeps the tone warm on a technical site. She is one example of the smart interactive components I build: small, light and modular.</p>
 
             <figure class="sprite-hero-figure" data-reveal style="--i:3">
                 <img src="../assets/images/projects/sprite-cover.webp" alt="" fetchpriority="high">
@@ -381,16 +383,10 @@
 
             <div class="sprite-demo-embed" data-reveal style="--i:3">
                 <div class="sprite-demo-pill">
-                    <div class="sprite-character" data-emotion="happy">
-                        <div class="sprite-body">
-                            <div class="sprite-eyes">
-                                <div class="sprite-eye"><div class="sprite-brow"></div></div>
-                                <div class="sprite-eye"><div class="sprite-brow"></div></div>
-                            </div>
-                            <div class="sprite-mouth"></div>
-                        </div>
+                    <div class="sprite-character" data-emotion="neutral" aria-hidden="true">
+                        <img src="../assets/images/sprite-neutral.svg" alt="">
                     </div>
-                    <span>Hey, I'm Sprite - need help finding something?</span>
+                    <span>Hello there, need help?</span>
                 </div>
             </div>
         </div>
@@ -402,24 +398,24 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What it is</span>
                 <h2 data-reveal style="--i:1">A tour guide, not a chatbox</h2>
-                <p data-reveal style="--i:2">Sprite lives on every page of this site. He replaces the generic support chatbox with a small animated character that helps you find things and answers questions where you are, without sending you to a help page.</p>
-                <p data-reveal style="--i:3">He is built as a smart interactive component: two small files, no framework, no account, no tracking. He collects nothing and stores nothing beyond the open tab, so there is nothing to opt out of.</p>
+                <p data-reveal style="--i:2">Sprite lives on every page of this site. She replaces the generic support chatbox with a small animated character that helps you find things and answers questions where you are, without sending you to a help page.</p>
+                <p data-reveal style="--i:3">She is built as a smart interactive component: two small files, no framework, no account, no tracking. She collects nothing and stores nothing beyond the open tab, so there is nothing to opt out of.</p>
                 <p data-reveal style="--i:4">If you are considering something similar for your product, this page is the short version. The full build notes live in the public repo, linked below.</p>
             </div>
         </div>
     </section>
 
-    <!-- 2. What he does - plain -->
+    <!-- 2. What she does - plain -->
     <section>
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">What he does</span>
+                <span class="eyebrow" data-reveal style="--i:0">What she does</span>
                 <h2 data-reveal style="--i:1">Helpful on purpose</h2>
-                <p data-reveal style="--i:2">Sprite does a small set of things well. He points you to the right page, answers questions about services, process and projects, and keeps answers short, pointing to a page when a page says it better.</p>
+                <p data-reveal style="--i:2">Sprite does a small set of things well. She points you to the right page, answers questions about services, process and projects, and keeps answers short, pointing to a page when a page says it better.</p>
             </div>
             <ul class="tech-list" data-reveal style="--i:3">
                 <li>Shows you around, with links to the page you actually need</li>
-                <li>Answers questions in plain language, in his own voice</li>
+                <li>Answers questions in plain language, in her own voice</li>
                 <li>Reacts with expressions that match the tone of the reply</li>
                 <li>Speaks and listens through the browser voice tools</li>
                 <li>Offers suggestion chips, so you can keep moving with one tap</li>
@@ -427,15 +423,15 @@
         </div>
     </section>
 
-    <!-- 3. How he works - soft -->
+    <!-- 3. How she works - soft -->
     <section class="section--soft">
         <div class="container">
             <div class="content-block">
-                <span class="eyebrow" data-reveal style="--i:0">How he works</span>
+                <span class="eyebrow" data-reveal style="--i:0">How she works</span>
                 <h2 data-reveal style="--i:1">Offline first, AI when it helps</h2>
                 <p data-reveal style="--i:2">Sprite answers from a small set of hand-written replies first. That set ships with the site files, costs nothing to run and keeps working when the network drops, so there is always something helpful on screen.</p>
-                <p data-reveal style="--i:3">When the network is there, a tiny proxy adds a live AI brain on top. The key stays in the proxy, never in the repo, and any failure falls back to the offline replies with no error shown. The chat follows you across pages in the tab session and dies with the tab, and links he renders are limited to this site, WhatsApp, email and phone.</p>
-                <p data-reveal style="--i:4">The technical detail lives where it belongs: the Sprite section of the <a href="https://github.com/luishowin/beben.design">public repo</a> and the proxy notes in <a href="https://github.com/luishowin/beben.design/tree/main/cloudflare-worker">cloudflare-worker</a>.</p>
+                <p data-reveal style="--i:3">When the network is there, a tiny proxy adds a live AI brain on top. The key stays in the proxy, never in the repo, and any failure falls back to the offline replies with no error shown. The chat follows you across pages in the tab session and dies with the tab, and links she renders are limited to this site, WhatsApp, email and phone.</p>
+                <p data-reveal style="--i:4">The technical detail lives in the standalone <a href="https://github.com/luishowin/sprite">Sprite repository</a>, the Sprite section of the <a href="https://github.com/luishowin/beben.design">site repo</a> and the proxy notes in <a href="https://github.com/luishowin/beben.design/tree/main/cloudflare-worker">cloudflare-worker</a>.</p>
             </div>
         </div>
     </section>
@@ -446,7 +442,7 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">Current state</span>
                 <h2 data-reveal style="--i:1">Live here today</h2>
-                <p data-reveal style="--i:2">Sprite is live across this site now, running the tour guide role described above. This site carries no analytics, so there are no visitor counts here by design. What I can say is structural: he is stable as a guide and in progress as a reusable component other sites can theme without forking the engine.</p>
+                <p data-reveal style="--i:2">Sprite is live across this site now, running the tour guide role described above. This site carries no analytics, so there are no visitor counts here by design. What I can say is structural: she is stable as a guide and in progress as a reusable component other sites can theme without forking the engine.</p>
             </div>
             <div class="metrics">
                 <div class="metric" data-reveal style="--i:2">
@@ -542,7 +538,7 @@
     </div>
 </footer>
 
-<script src="../assets/JS/index.js?v=7.5"></script>
-<script src="../assets/JS/sprite.js?v=7.5"></script>
+<script src="../assets/JS/index.js?v=8.0"></script>
+<script src="../assets/JS/sprite.js?v=8.0"></script>
 </body>
 </html>

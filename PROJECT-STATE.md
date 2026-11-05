@@ -1235,3 +1235,33 @@ on the light nav the same yellow is only about 1.4:1, so light mode uses
 `--yellow-text` (`#806200`, 5.26:1) instead. The brackets and the rule from
 the older nav entry are otherwise unchanged. A literal `#FFC710` in light
 mode is a one-line revert if that is preferred.
+
+### Sprite 2.0: standalone repo and Figma rebuild (5 Nov 2026, assets `8.0`)
+
+**Sprite now has a public home.** The widget, emotion controller, Worker and
+Figma references live at `github.com/luishowin/sprite` under MIT. The files in
+`docs/assets` are vendored copies; the standalone repo is the source of truth
+and can be developed independently of this site.
+
+**The widget was rebuilt to the Figma exports.** The pill is 57px with a 36px
+avatar. The panel is 457×664 with a black inset SPRITE header, a green status
+dot, mono type, `#212121`/`#424242` message bubbles and a black composer. The
+seasonal banner was removed from the widget; its image assets remain in place.
+The face is now SVG: `#FFBF00` circle, two vertical black pill eyes and a
+minimal mouth. The message mini-avatars were removed.
+
+**Expressions are a first-class system.** `SpriteEmotion` owns twelve states,
+priority-based interruption, temporary and persistent expressions, random
+4–7s blinking with double blinks, idle glances, sleeping/waking, reduced motion
+and page-visibility pausing. The offline dialogue intents and the live Worker
+now feed the face. The Worker returns `{ reply, emotion }` by parsing and
+validating a hidden emotion tag; older Workers still fall back to `smiling`.
+
+**A development playground exists at `/dev/sprite/`.** It is unlinked, noindex,
+blocked in `robots.txt`, and gated to localhost or `?dev=1`. It includes the
+twelve-state sheet, geometry sliders, animation playback, idle timing and
+reduced-motion emulation.
+
+**Asset lock.** All four shared assets moved `7.5` to `8.0` across the 32 pages
+and two templates that load Sprite. `index.css` and `index.js` were not
+otherwise changed.
