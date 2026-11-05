@@ -698,6 +698,11 @@ const SpriteEmotion = (() => {
   function noteActivity() {
     lastActivity = Date.now();
     nextLookAt = lastActivity + random(TIMINGS.lookAroundAfterMin, TIMINGS.lookAroundAfterMax);
+    if (active.name === 'looking-around') {
+      clearActiveTimer();
+      active = { name: base.name, priority: base.priority, persistent: true };
+      renderActive(false);
+    }
     if (isSleeping()) wake();
     scheduleIdle();
   }

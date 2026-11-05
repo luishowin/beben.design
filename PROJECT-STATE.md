@@ -1236,7 +1236,7 @@ on the light nav the same yellow is only about 1.4:1, so light mode uses
 the older nav entry are otherwise unchanged. A literal `#FFC710` in light
 mode is a one-line revert if that is preferred.
 
-### Sprite 2.0: standalone repo and Figma rebuild (5 Nov 2026, assets `8.1`)
+### Sprite 2.0: standalone repo and Figma rebuild (5 Nov 2026, assets `8.2`)
 
 **Sprite now has a public home.** The widget, emotion controller, Worker and
 Figma references live at `github.com/luishowin/sprite` under MIT, with a live
@@ -1263,6 +1263,6 @@ blocked in `robots.txt`, and gated to localhost or `?dev=1`. It includes the
 twelve-state sheet, geometry sliders, animation playback, idle timing and
 reduced-motion emulation.
 
-**Asset lock.** All four shared assets moved `7.5` to `8.1` across the 32 pages
+**Asset lock.** All four shared assets moved `7.5` to `8.2` across the 32 pages
 and two templates that load Sprite. `index.css` and `index.js` were not
 otherwise changed.

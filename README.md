@@ -210,8 +210,8 @@ Nav, footer, or token changes on the site must be mirrored in
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=8.1">
-<script src="../assets/JS/sprite.js?v=8.1"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=8.2">
+<script src="../assets/JS/sprite.js?v=8.2"></script>
 ```
 
 **Sprite's source of truth is now [github.com/luishowin/sprite](https://github.com/luishowin/sprite).**
@@ -221,7 +221,7 @@ chat in the standalone repo, then copy `sprite.js` and `sprite.css` back here.
 The repo includes the public playground, the Worker and the Figma references.
 
 **All four shared assets carry the same `?v=`:** `index.css`, `index.js`,
-`sprite.css` and `sprite.js`, currently `8.1` across every page and template. Bump all four
+`sprite.css` and `sprite.js`, currently `8.2` across every page and template. Bump all four
 together whenever any one of them changes, or returning visitors keep a stale
 copy. `index.css` and `index.js` were previously unversioned, which meant a
 returning visitor could get new markup against an old stylesheet.
