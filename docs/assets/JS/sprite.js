@@ -1059,7 +1059,7 @@ const SpriteChat = (() => {
       ],
     },
     badJoke: {
-      patterns: [/\b(why did the|knock knock|what do you call|a (man|woman|developer|designer|front-end dev) walks into|dad joke)\b/i],
+      patterns: [/\b(why did the (chicken|developer|designer|man|woman)|knock knock|what do you call (a|an)|a (man|woman|developer|designer|front-end dev) walks into|dad joke)\b/i],
       responses: [
         { text: 'That was a crime against comedy. I respect the commitment.', emotion: 'unimpressed' },
         { text: 'I have seen better jokes in a 404 page.', emotion: 'unimpressed' },
