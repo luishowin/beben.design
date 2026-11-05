@@ -1236,7 +1236,7 @@ on the light nav the same yellow is only about 1.4:1, so light mode uses
 the older nav entry are otherwise unchanged. A literal `#FFC710` in light
 mode is a one-line revert if that is preferred.
 
-### Sprite 2.0: standalone repo and Figma rebuild (5 Nov 2026, assets `8.2`)
+### Sprite 2.0: standalone repo and Figma rebuild (5 Nov 2026, assets `8.3`)
 
 **Sprite now has a public home.** The widget, emotion controller, Worker and
 Figma references live at `github.com/luishowin/sprite` under MIT, with a live
@@ -1263,6 +1263,28 @@ blocked in `robots.txt`, and gated to localhost or `?dev=1`. It includes the
 twelve-state sheet, geometry sliders, animation playback, idle timing and
 reduced-motion emulation.
 
-**Asset lock.** All four shared assets moved `7.5` to `8.2` across the 32 pages
+**Asset lock.** All four shared assets moved `7.5` to `8.3` across the 32 pages
 and two templates that load Sprite. `index.css` and `index.js` were not
 otherwise changed.
+
+### Sprite chrome pass (5 Nov 2026, assets `8.3`)
+
+**TTS control removed.** The speaker button is gone from the panel header and
+the active yellow icon with it. The browser speech-synthesis path stays in
+`sprite.js` but has no UI until a good free voice model is chosen; `toggleTTS()`
+is guarded to do nothing while the button is absent. The `/sprite/` feature
+list now says voice output is paused rather than claiming she speaks.
+
+**Interactive yellow removed.** The widget's `--sw-accent` yellow is gone.
+Focus rings are neutral white, link hover is light grey, and the dev playground
+switches its UI accent to white. The face keeps `#FFBF00`; it is the only
+yellow left in the character.
+
+**Chat edges blur.** A `.chat-viewport` wrapper carries masked
+`backdrop-filter` strips at the top and bottom of the scroll area. The top
+strip appears only after scrolling; the bottom appears only while content
+remains below. A gradient fallback covers browsers without `backdrop-filter`,
+and reduced motion removes the fade transition. The first and last messages
+stay sharp at rest.
+
+**Asset lock.** All four shared assets moved `8.2` to `8.3`.

@@ -856,6 +856,9 @@ const SpriteChat = (() => {
   'use strict';
 
   let isOpen = false;
+  /* Voice output is intentionally UI-less until a good free voice model is
+     chosen. The browser speech-synthesis path is kept below so the button can
+     return without rebuilding it. */
   let ttsEnabled = false;
   let isRecording = false;
   let recognition = null;
@@ -873,7 +876,6 @@ const SpriteChat = (() => {
   ];
 
   const icons = {
-    speaker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 017.07 7.07"/></svg>',
     mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0014 0v-1"/><path d="M12 18v3M8 21h8"/></svg>',
     send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
@@ -895,12 +897,13 @@ const SpriteChat = (() => {
             '<span class="status-text">online</span>' +
           '</div>' +
           '<div class="panel-actions">' +
-            '<button class="panel-icon" id="ttsToggle" onclick="SpriteChat.toggleTTS()" title="Toggle voice output" aria-label="Toggle voice output" aria-pressed="false">' + icons.speaker + '</button>' +
             '<button class="panel-icon panel-close" onclick="SpriteChat.close()" title="Close" aria-label="Close the chat">' + icons.chevron + '</button>' +
           '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="chat-area" id="chatArea"></div>' +
+      '<div class="chat-viewport" id="chatViewport">' +
+        '<div class="chat-area" id="chatArea"></div>' +
+      '</div>' +
       '<div class="quick-chips" id="quickChips"></div>' +
       '<div class="composer">' +
         '<div class="composer-shell" id="composerShell">' +
@@ -1184,6 +1187,16 @@ const SpriteChat = (() => {
 
   /* ── Init ── */
 
+  function updateChatFade() {
+    var viewport = document.getElementById('chatViewport');
+    var area = document.getElementById('chatArea');
+    if (!viewport || !area) return;
+    var top = area.scrollTop > 4;
+    var bottom = area.scrollTop + area.clientHeight < area.scrollHeight - 4;
+    viewport.classList.toggle('has-top-fade', top);
+    viewport.classList.toggle('has-bottom-fade', bottom);
+  }
+
   function init() {
     if (document.documentElement.hasAttribute('data-sprite-playground')) {
       SpriteEmotion.mountAll();
@@ -1204,6 +1217,10 @@ const SpriteChat = (() => {
     });
     input.addEventListener('input', autoGrow);
 
+    var chatArea = document.getElementById('chatArea');
+    if (chatArea) chatArea.addEventListener('scroll', updateChatFade, { passive: true });
+    window.addEventListener('resize', updateChatFade);
+
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       var mic = document.getElementById('micBtn');
       if (mic) mic.style.display = 'none';
@@ -1212,6 +1229,7 @@ const SpriteChat = (() => {
     rotatePillText();
     initScrollTrigger();
     autoGrow();
+    requestAnimationFrame(updateChatFade);
   }
 
   /* ── Scroll Trigger ── */
@@ -1290,6 +1308,8 @@ const SpriteChat = (() => {
         if (input) input.focus();
       }, 350);
     }
+
+    requestAnimationFrame(updateChatFade);
   }
 
   function close() {
@@ -1319,6 +1339,7 @@ const SpriteChat = (() => {
     msg.innerHTML = '<div class="msg-bubble">' + content + '</div>';
     area.appendChild(msg);
     area.scrollTop = area.scrollHeight;
+    requestAnimationFrame(updateChatFade);
   }
 
   function escapeHtml(str) {
@@ -1410,6 +1431,7 @@ const SpriteChat = (() => {
       '</div>';
     area.appendChild(indicator);
     area.scrollTop = area.scrollHeight;
+    requestAnimationFrame(updateChatFade);
     SpriteChat.setEmotion('curious', { duration: SPRITE_CONFIG.ui.typing, priority: 8, force: true });
   }
 
@@ -1418,6 +1440,7 @@ const SpriteChat = (() => {
     if (el) el.remove();
     setStatus('online');
     SpriteEmotion.release('busy');
+    requestAnimationFrame(updateChatFade);
   }
 
   function showChips(labels) {
@@ -1436,6 +1459,7 @@ const SpriteChat = (() => {
       };
       container.appendChild(btn);
     });
+    requestAnimationFrame(updateChatFade);
   }
 
   /* ── Response Engine (offline fallback) ── */
@@ -1526,6 +1550,7 @@ const SpriteChat = (() => {
     input.style.height = next + 'px';
     var typing = Boolean(input.value.trim());
     shell.classList.toggle('is-typing', typing);
+    requestAnimationFrame(updateChatFade);
   }
 
   function send() {
@@ -1557,9 +1582,11 @@ const SpriteChat = (() => {
   }
 
   function toggleTTS() {
-    ttsEnabled = !ttsEnabled;
+    /* No button is rendered while voice output is paused. Guarding here keeps
+       the public method harmless if an old page or console still calls it. */
     var btn = document.getElementById('ttsToggle');
     if (!btn) return;
+    ttsEnabled = !ttsEnabled;
     btn.classList.toggle('active', ttsEnabled);
     btn.setAttribute('aria-pressed', String(ttsEnabled));
     btn.title = ttsEnabled ? 'Voice output ON' : 'Voice output OFF';

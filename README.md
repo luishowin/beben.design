@@ -210,8 +210,8 @@ Nav, footer, or token changes on the site must be mirrored in
 `sprite.js` injects its own DOM, so a page only needs the two includes:
 
 ```html
-<link rel="stylesheet" href="../assets/css/sprite.css?v=8.2">
-<script src="../assets/JS/sprite.js?v=8.2"></script>
+<link rel="stylesheet" href="../assets/css/sprite.css?v=8.3">
+<script src="../assets/JS/sprite.js?v=8.3"></script>
 ```
 
 **Sprite's source of truth is now [github.com/luishowin/sprite](https://github.com/luishowin/sprite).**
@@ -221,7 +221,7 @@ chat in the standalone repo, then copy `sprite.js` and `sprite.css` back here.
 The repo includes the public playground, the Worker and the Figma references.
 
 **All four shared assets carry the same `?v=`:** `index.css`, `index.js`,
-`sprite.css` and `sprite.js`, currently `8.2` across every page and template. Bump all four
+`sprite.css` and `sprite.js`, currently `8.3` across every page and template. Bump all four
 together whenever any one of them changes, or returning visitors keep a stale
 copy. `index.css` and `index.js` were previously unversioned, which meant a
 returning visitor could get new markup against an old stylesheet.
@@ -274,6 +274,16 @@ The development playground is at `/dev/sprite/`. It is unlinked, `noindex`,
 disallowed in `robots.txt`, and only reachable on localhost or with `?dev=1`.
 It shows all twelve expressions, geometry sliders, animation playback, idle
 timing and reduced-motion emulation.
+
+### Voice output
+
+The TTS button was removed on 5 November 2026. The browser speech-synthesis
+code remains in `sprite.js` behind the scenes, but there is no UI control until
+a good free voice model is chosen. Re-add the header button when that happens;
+`toggleTTS()` is already guarded to no-op while the button is absent.
+
+The chat area now fades into a soft blur at the top and bottom edges, but only
+when there is content hidden beyond that edge.
 
 ## The arcade
 
