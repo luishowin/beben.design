@@ -311,7 +311,7 @@
                 </div>
                 <div class="decision" data-reveal style="--i:5">
                     <h3>Generate the game registry from a folder listing</h3>
-                    <p>Adding a game touches four separate lists: the precache array, a hub card, the hub's inline icon map, and the slug array the achievements read. A registry that derived all four from the filesystem is the obvious deduplication and needs a build step to run. The four hand-maintained lists are the cheaper trade, because the cost is paid once per new game and the build step would be paid on every deploy forever.</p>
+                    <p>Adding a game touches four separate places: the precache array, the hub card, its 256px WebP card icon, and the slug array the achievements read. A registry that derived all four from the filesystem is the obvious deduplication and needs a build step to run. The four hand-maintained places are the cheaper trade, because the cost is paid once per new game and the build step would be paid on every deploy forever.</p>
                 </div>
                 <div class="decision" data-reveal style="--i:5">
                     <h3>Load the display face from a font host</h3>
@@ -335,15 +335,15 @@
             <div class="content-block">
                 <span class="eyebrow" data-reveal style="--i:0">What shipped</span>
                 <h2 data-reveal style="--i:1">What is running now</h2>
-                <p data-reveal style="--i:2">Twenty-three games at one address, installable as a PWA, with a service worker scoped to the arcade and a precache list of 60 entries. Put the device in airplane mode after the first visit and every game still opens.</p>
+                <p data-reveal style="--i:2">Twenty-three games at one address, installable as a PWA, with a service worker scoped to the arcade and a precache list of 57 entries. Put the device in airplane mode after the first visit and every game still opens.</p>
                 <p data-reveal style="--i:3">The shared runtime is arcade.js, 36,228 bytes of plain JavaScript that does the boring things every game needed and nothing more: a fixed-timestep loop so a 144Hz phone and a 60Hz laptop run the same physics, a canvas fitter that handles device pixel ratio so no game ships its own blurry-canvas bug, an 8-bit Web Audio synth so sounds are generated rather than downloaded, score and settings stores wrapped in try/catch, and top-bar chrome injected at load so the back button sits in the same pixel in all 23 games.</p>
                 <p data-reveal style="--i:4">Each game is then one self-contained HTML file that loads the runtime and owns everything else. You can open any of them, read the whole game top to bottom, and change it without knowing how the other eleven work. At this scale that property is worth more than deduplication.</p>
                 <p data-reveal style="--i:4">The identity is a constraint rather than a decoration. The arcade is dark only, never reads the main site's theme key, and assigns each game one neon accent that colours its card, its in-game chrome, its canvas art and its game-over jingle. You learn which game you are in from the colour before you read a word.</p>
             </div>
             <ul class="tech-list" data-reveal style="--i:4">
-                <li>Twenty-three games, 3,588,286 bytes of static files in total, installable to a home screen</li>
+                <li>Twenty-three games, 1,623,504 bytes of static files in total, installable to a home screen</li>
                 <li>A shared runtime in arcade.js and arcade.css, 46,905 bytes combined, no engine and no bundler</li>
-                <li>A cache-first service worker scoped to the arcade, precaching 60 entries under a versioned cache name</li>
+                <li>A cache-first service worker scoped to the arcade, precaching 57 entries under a versioned cache name</li>
                 <li>A 5,212 byte subset of Press Start 2P, uppercase glyphs only, self-hosted</li>
                 <li>Seven neon accent tokens over a near-black ground, one assigned to each of the 23 games</li>
                 <li>Eight achievements, a CRT scanline mode and a rare launch flourish, all evaluated on the device</li>
@@ -362,14 +362,14 @@
             </div>
             <div class="metrics">
                 <div class="metric" data-reveal style="--i:2">
-                    <span class="metric-value">3,588,286 bytes</span>
+                    <span class="metric-value">1,623,504 bytes</span>
                     <div class="metric-body">
                         <span class="metric-label">total size of the arcade</span>
-                        <p class="metric-note">3,504 KB for twenty-three games, a shared runtime, a font, icons and a service worker.</p>
+                        <p class="metric-note">1,585 KB for twenty-three games, a shared runtime, a font, icons and a service worker.</p>
                     </div>
                 </div>
                 <div class="metric" data-reveal style="--i:3">
-                    <span class="metric-value">12</span>
+                    <span class="metric-value">23</span>
                     <div class="metric-body">
                         <span class="metric-label">games</span>
                         <p class="metric-note">Twenty-three folders, each one self-contained HTML that reads top to bottom.</p>

@@ -1288,3 +1288,46 @@ and reduced motion removes the fade transition. The first and last messages
 stay sharp at rest.
 
 **Asset lock.** All four shared assets moved `8.2` to `8.3`.
+
+### Arcadia icon + asset diet (7 Nov 2026, cache `v35`)
+
+**New install icon.** The controller artwork is replaced with the supplied
+full-bleed joystick photograph (`~/Downloads/arcadia.jpg`, 688×694), now at
+`scripts/assets/arcadia-icon.jpg`. `scripts/make_arcade_icons.py` is simpler:
+it center-crops the near-square source, resizes, and quantises to a 256-colour
+palette. The `rembg` cutout, the checkerboard defringe and the 82%/74% padding
+fractions are gone, as is the Nintendo red `#E60012` background. The two
+`maskable` files are the same full-bleed square because Android supplies the
+safe circle; the joystick sits inside it. All five icons regenerate from the
+script (Pillow only), and the set dropped from 391KB to 258KB. The 180px Apple
+touch icon is still fully opaque.
+
+**Precache diet: 3.00MB to 1.332MB.** Every game page stays in the precache, so
+the offline promise is unchanged: 57 entries including all 22 game pages, the
+`super-hop` redirect, all 22 card icons, all five heroes, the hub shell and the
+pixel font.
+
+- The 22 game-card icons became 256×256 WebP at quality 90: 1,710KB → 429KB.
+  Their `.png` originals were deleted; the `<img>` tags and precache list point
+  at `.webp`.
+- The five hero WebPs were re-encoded at quality 78, same dimensions: 550KB →
+  472KB.
+- The 512px and maskable app icons (210KB) are no longer precached. Only the OS
+  install surface fetches them; no page paints them. The 192px favicon and the
+  Apple touch icon remain cached.
+- App icons are palette PNGs: 95KB at 512px instead of ~200KB as RGB.
+
+**Dead files removed.** `docs/games/icons/games/alt/` held four unreferenced
+variants (`blockfall--sticker`, `mines--red`, `star-swarm--glass`,
+`star-swarm--sticker`, 431.7KB) and was deleted after a repo-wide reference
+check. `docs/games/fonts/OFL.txt` is unreferenced but stays: it is the font
+licence. `docs/games/super-hop/` also stays: it is a 447-byte redirect stub to
+Safari Hop, still precached so old links and the old score key resolve offline.
+
+**Cache `v34` to `v35`.** The hub label moved in lockstep. README now records
+the full-bleed icon, the WebP card-icon rule, the intentionally uncached 512px
+icons, and a corrected "adding a game" checklist (the hub's inline `ICONS` map
+no longer exists). The published `/beben-arcade/` case study was refreshed to
+match: precache 60 → 57 entries, total 3,588,286 → 1,623,504 bytes, 3,504 →
+1,585 KB, its "inline icon map" line now names the 256px WebP card icon, and
+the stale "12 games" metric now says 23 folders.

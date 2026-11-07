@@ -1,8 +1,11 @@
-"""Generate the Arcadia PWA icons from the controller artwork.
+"""Generate the Arcadia PWA icons from the joystick artwork.
 
-Strips the baked-in checkerboard from scripts/assets/arcadia-icon.jpg with
-rembg, then composites the controller on Nintendo red (#E60012) and writes
-the five icons the arcade needs:
+The source is the supplied full-bleed joystick photograph at
+scripts/assets/arcadia-icon.jpg. It is already a near-square product shot, so
+the generator center-crops it to a square and resizes it rather than cutting
+the subject out. The light background and shadow stay in the icon.
+
+Writes the five icons the arcade needs:
 
     docs/games/icons/icon-192.png              (any)
     docs/games/icons/icon-512.png              (any)
@@ -10,86 +13,57 @@ the five icons the arcade needs:
     docs/games/icons/icon-maskable-512.png     (maskable)
     docs/games/icons/apple-touch-icon-180.png  (opaque full-bleed)
 
-Rerunnable: py scripts/make_arcade_icons.py
-Requires Pillow and rembg (the u2net model downloads once, ~170MB).
+The maskable files are the same full-bleed square; Android supplies the safe
+circle itself, and the joystick sits inside it.
 
-The controller keeps the diagonal of the source art. "any" icons fill 82% of
-the canvas width; maskable icons fill 74%, which keeps every opaque pixel
-inside the central 80% circle Android may use as its safe zone.
+Rerunnable: py scripts/make_arcade_icons.py
+Requires Pillow only.
+
+PNG output is quantised to a 256-colour palette (the art is pixel-styled, so
+the loss is invisible at icon sizes) and saved with optimize=True. That keeps
+the 512px icons around 95KB instead of ~200KB as full RGB.
 """
 
 from pathlib import Path
 
-from PIL import Image, ImageFilter
+from PIL import Image
 
-BG = (230, 0, 18)          # #E60012 Nintendo red
-ANY_WIDTH = 0.82
-MASKABLE_WIDTH = 0.74
+PALETTE_COLORS = 256
+ICON_SIZES = [
+    ("icon-512.png", 512),
+    ("icon-192.png", 192),
+    ("icon-maskable-512.png", 512),
+    ("icon-maskable-192.png", 192),
+    ("apple-touch-icon-180.png", 180),
+]
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = Path(__file__).resolve().parent / "assets" / "arcadia-icon.jpg"
 OUT = ROOT / "docs" / "games" / "icons"
 
 
-def cutout() -> Image.Image:
-    """Remove the checkerboard, trim to the controller, soften the edge."""
-    try:
-        from rembg import new_session, remove
-    except ImportError:
-        raise SystemExit(
-            "rembg not installed. Use:\n"
-            "  uv venv /home/luishowin/.venvs/rembg &&\n"
-            "  uv pip install -p /home/luishowin/.venvs/rembg/bin/python "
-            "rembg onnxruntime pillow"
-        ) from None
-
+def render(size: int) -> Image.Image:
+    """Center-crop the source to a square, resize, and palette-quantise."""
     with Image.open(SOURCE) as source:
-        src = source.convert("RGB")
-    im = remove(src, session=new_session("u2net")).convert("RGBA")
-
-    bbox = im.getbbox()
-    if bbox is None:
-        raise SystemExit(f"{SOURCE} is fully transparent after background removal")
-    im = im.crop(bbox)
-
-    # Defringe: harden the alpha, pull it in 1px, then feather slightly so the
-    # dark body does not keep a pale halo from the JPEG's white background.
-    alpha = im.getchannel("A").point(lambda v: 0 if v < 128 else 255)
-    alpha = alpha.filter(ImageFilter.MinFilter(3))
-    alpha = alpha.filter(ImageFilter.GaussianBlur(0.6))
-    im.putalpha(alpha)
-    return im.crop(im.getbbox())
-
-
-def render(art: Image.Image, size: int, width_fraction: float) -> Image.Image:
-    """Center the controller on a square red canvas at the given width."""
-    scale = (size * width_fraction) / art.width
-    resized = art.resize(
-        (max(1, round(art.width * scale)), max(1, round(art.height * scale))),
-        Image.Resampling.LANCZOS,
+        im = source.convert("RGB")
+    width, height = im.size
+    side = min(width, height)
+    left = (width - side) // 2
+    top = (height - side) // 2
+    im = im.crop((left, top, left + side, top + side))
+    im = im.resize((size, size), Image.Resampling.LANCZOS)
+    return im.quantize(
+        colors=PALETTE_COLORS,
+        method=Image.Quantize.MEDIANCUT,
+        dither=Image.Dither.FLOYDSTEINBERG,
     )
-    canvas = Image.new("RGB", (size, size), BG)
-    canvas.paste(
-        resized,
-        ((size - resized.width) // 2, (size - resized.height) // 2),
-        resized,
-    )
-    return canvas
 
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    art = cutout()
-    jobs = [
-        ("icon-512.png", 512, ANY_WIDTH),
-        ("icon-192.png", 192, ANY_WIDTH),
-        ("icon-maskable-512.png", 512, MASKABLE_WIDTH),
-        ("icon-maskable-192.png", 192, MASKABLE_WIDTH),
-        ("apple-touch-icon-180.png", 180, ANY_WIDTH),
-    ]
-    for name, size, fraction in jobs:
-        render(art, size, fraction).save(OUT / name, optimize=True)
-    print(f"Wrote {len(jobs)} icons to {OUT}")
+    for name, size in ICON_SIZES:
+        render(size).save(OUT / name, optimize=True)
+    print(f"Wrote {len(ICON_SIZES)} icons to {OUT}")
 
 
 if __name__ == "__main__":

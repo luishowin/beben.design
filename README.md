@@ -322,20 +322,28 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
   the settings toggle — the CRT Head achievement now tracks an explicit
   toggle), and a rare INSERT COIN launch flourish. Hero imagery swaps once
   per hour (3h desktop cycle / 2h mobile cycle, 1.5s crossfade). In iOS
-  standalone mode the game bar drops 40px to clear the status-bar blur. App
-  icons sit on Nintendo red `#E60012`, with separate padded `maskable` sizes
-  for Android's circular crop.
-  Install icons regenerate via `py scripts/make_arcade_icons.py` from
-  `scripts/assets/arcadia-icon.jpg` (needs Pillow and rembg).
+  standalone mode the game bar drops 40px to clear the status-bar blur.
+- **Icons.** App icons use the supplied full-bleed joystick artwork. All five
+  are square crops of `scripts/assets/arcadia-icon.jpg`; the two `maskable`
+  files are the same full-bleed image because Android supplies the safe circle.
+  They are palette-quantised PNGs (~95KB at 512px instead of ~200KB). Generate
+  them with `py scripts/make_arcade_icons.py` (needs Pillow only).
+  The 512px and maskable app icons are deliberately **not** in the `sw.js`
+  precache: only the OS install surface fetches them, never a page. The 192px
+  favicon and the Apple touch icon are precached.
+- **Card icons are WebP.** The 22 game-card PNGs became 256×256 WebP at
+  quality 90 in v35: 1710KB → 429KB. Keep them WebP; do not add PNGs back.
 
 **Hard rules when touching `docs/games/**`:**
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v15`) moves in lockstep as an on-device sanity check.
+   hub (`v35`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
-   PRECACHE list, a hub card in `docs/games/index.html`, an entry in the hub's
-   inline `ICONS` map, and the `SLUGS` array in `arcade.js` (for achievements).
+   PRECACHE list, a 256×256 WebP card icon in `docs/games/icons/games/` plus
+   its `<img>` in the hub card, the hub card itself in
+   `docs/games/index.html`, and the `SLUGS` array in `arcade.js` (for
+   achievements).
 3. All arcade-internal links use trailing slashes. Use "Four in a Row", never
    "Connect Four" (trademark).
 
