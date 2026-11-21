@@ -2,7 +2,7 @@
    RULE: bump CACHE on EVERY commit that touches docs/games/** —
    cache-first serves stale files forever otherwise. */
 
-const CACHE = 'beben-arcade-v35';
+const CACHE = 'beben-arcade-v36';
 
 /* Every page, card icon and hero the app can show offline. Both app icons the
    page itself references are here too. The 512px and maskable app icons are
@@ -14,6 +14,9 @@ const PRECACHE = [
     './arcade.js',
     './manifest.webmanifest',
     './fonts/press-start-2p.woff2',
+    './art/skatepark-day.webp',
+    './art/skatepark-night.webp',
+    './art/blockfall-terraces.webp',
     './icons/icon-192.png',
     './icons/apple-touch-icon-180.png',
     './icons/hero-01.webp',

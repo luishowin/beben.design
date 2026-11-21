@@ -19,7 +19,7 @@
     var SETTINGS_KEY = 'beben-arcade-settings';
     var SCORES_KEY = 'beben-arcade-scores';
     var ACH_KEY = 'beben-arcade-achievements';
-    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: true };
+    var DEFAULTS = { sound: true, haptics: true, hintDismissed: false, lastPlayed: null, crt: true, gameBackground: true };
     var SLUGS = ['snake', '2048', 'blockfall', 'brick-bash', 'wingbeat',
         'pixel-dash', 'skystack', 'paddle-duel', 'star-swarm', 'sudoku', 'four-in-a-row',
         'five-letter', 'dune-surf', 'safari-hop', 'pocket-putt'];
@@ -57,6 +57,14 @@
 
     // CRT scanline mode — applied before first paint (arcade.js is in <head>)
     if (settingsData.crt) document.documentElement.classList.add('arc-crt');
+
+    function applyGameBackground() {
+        document.documentElement.classList.toggle('arc-game-background', settingsData.gameBackground === true);
+    }
+    applyGameBackground();
+    settings.onChange(function (key) {
+        if (key === 'gameBackground') applyGameBackground();
+    });
 
     /* ── palette for canvas games (cached; accent set in init) ── */
     var paletteCache = null;
@@ -408,6 +416,7 @@
         row.className = 'arc-row';
         var btn = document.createElement('button');
         btn.className = 'arc-toggle';
+        btn.setAttribute('aria-label', label);
         function paint() {
             var on = !!settingsData[key];
             btn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -515,11 +524,12 @@
         settingsEl = document.createElement('div');
         settingsEl.className = 'arc-overlay';
         var panel = document.createElement('div');
-        panel.className = 'arc-panel';
+        panel.className = 'arc-panel arc-settings-panel';
         panel.innerHTML = '<div class="arc-panel-title">Settings</div>';
         panel.appendChild(buildToggleRow('Sound', 'sound'));
         panel.appendChild(buildToggleRow('Haptics', 'haptics'));
         panel.appendChild(buildCrtRow());
+        panel.appendChild(buildToggleRow('Game Background', 'gameBackground'));
 
         var actions = document.createElement('div');
         actions.className = 'arc-actions';
@@ -625,8 +635,8 @@
             '<a class="arc-back" href="../" aria-label="Back to ARCADIA">&lt; BACK</a>' +
             '<span class="arc-title"></span>' +
             '<span class="arc-score-slot"></span>' +
-            '<button class="arc-btn arc-pause-btn" aria-label="Pause">&#10074;&#10074;</button>' +
-            '<button class="arc-btn arc-gear" aria-label="Settings">&#9881;</button>';
+            '<button class="arc-btn arc-pause-btn" aria-label="Pause"></button>' +
+            '<button class="arc-btn arc-gear" aria-label="Settings"></button>';
         bar.querySelector('.arc-title').textContent = opts.title || '';
         document.body.prepend(bar);
 

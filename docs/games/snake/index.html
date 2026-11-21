@@ -34,9 +34,45 @@
     };
     var SPEED_KEY = 'beben-arcade-snake-speed';
     var STEP_PER_FOOD = 2;
+    var GRASS_COLORS = ['#275E32', '#337040', '#3C7540'];
+    var APPLE = [
+        '.....SlL.',
+        '....SlL..',
+        '.dd.S.dd.',
+        'dHHrdrrRd',
+        'dHrrrrRRd',
+        'drrrrRRRd',
+        '.drrRRRd.',
+        '.dRRRRRd.',
+        '..dd.dd..'
+    ];
+    var APPLE_COLORS = {
+        d: '#771D36', H: '#FFBC9E', r: '#FF5260', R: '#DF304E',
+        S: '#E9A265', l: '#55BB45', L: '#B6EC56'
+    };
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var grassTime = 0;
+    var tufts = [];
+    for (var y = 0; y < ROWS; y++) {
+        for (var x = 0; x < COLS; x++) {
+            var seed = (x * 73 + y * 139 + x * y * 47) % 101;
+            if (seed < 22) {
+                tufts.push({
+                    x: x + 0.23 + (seed % 5) * 0.12,
+                    y: y + 0.52 + (seed % 4) * 0.1,
+                    height: 0.17 + (seed % 6) * 0.025,
+                    color: GRASS_COLORS[seed % GRASS_COLORS.length],
+                    phase: seed % 4
+                });
+            }
+        }
+    }
 
     var canvas = document.getElementById('game');
-    var view = Arcade.fitCanvas(canvas, { aspect: 1, maxW: 480 });
+    var view = Arcade.fitCanvas(canvas, {
+        aspect: 1, maxW: 480,
+        onResize: function () { if (snake) render(); }
+    });
 
     var snake, dir, queue, food, score, stepMs, minStep, acc, alive, speed, selEl;
 
@@ -62,6 +98,7 @@
         stepMs = cfg.start;
         minStep = cfg.min;
         acc = 0;
+        grassTime = 0;
         alive = true;
         spawnFood();
         Arcade.ui.setScore('000');
@@ -179,68 +216,80 @@
         loop.resume();
     }
 
-    function render() {
-        var p = Arcade.palette();
-        var ctx = view.ctx;
-        var cell = view.w / COLS;
-
-        ctx.fillStyle = p.bgSoft;
+    function drawGrass(ctx, cell) {
+        ctx.fillStyle = '#133820';
         ctx.fillRect(0, 0, view.w, view.h);
 
-        // checker
-        ctx.fillStyle = p.gridLine;
+        ctx.fillStyle = '#163D23';
         for (var y = 0; y < ROWS; y++) {
             for (var x = (y % 2); x < COLS; x += 2) {
                 ctx.fillRect(x * cell, y * cell, cell, cell);
             }
         }
 
-        // garden: sparse deterministic grass tufts (decorative)
-        ctx.globalAlpha = 0.15;
-        for (var gy = 0; gy < ROWS; gy++) {
-            for (var gx = 0; gx < COLS; gx++) {
-                var n = gx * 7 + gy * 13;
-                if (n % 13 !== 0 && n % 37 !== 5) continue;
-                var tx = (gx + 0.5) * cell, ty = (gy + 0.74) * cell;
-                ctx.fillStyle = n % 37 === 5 ? '#3F8F2F' : p.accent;
-                ctx.fillRect(tx - cell * 0.06, ty - cell * 0.24, cell * 0.12, cell * 0.24);
-                ctx.fillRect(tx - cell * 0.2, ty - cell * 0.13, cell * 0.12, cell * 0.13);
-                ctx.fillRect(tx + 0.08 * cell, ty - cell * 0.13, cell * 0.12, cell * 0.13);
-            }
-        }
-        ctx.globalAlpha = 1;
+        var wind = Math.floor(grassTime * 3);
+        var blade = Math.max(1, Math.round(cell * 0.075));
+        var still = reduceMotion.matches;
+        tufts.forEach(function (tuft) {
+            var x = Math.round(tuft.x * cell);
+            var y = Math.round(tuft.y * cell);
+            var h = Math.max(2, Math.round(tuft.height * cell));
+            var phase = (wind + tuft.phase) % 4;
+            var sway = still || phase % 2 === 0 ? 0 : (phase === 1 ? -blade : blade);
+            ctx.fillStyle = tuft.color;
+            ctx.fillRect(x - blade, y - blade, blade * 3, blade);
+            ctx.fillRect(x - blade * 2, y - blade * 2, blade, blade);
+            ctx.fillRect(x + blade * 2, y - blade * 2, blade, blade);
+            ctx.fillRect(x, y - h + blade, blade, h - blade);
+            ctx.fillRect(x + sway, y - h, blade, blade);
+        });
+    }
 
-        // food: pixel apple (red body, leaf, stem)
-        var APPLE = [
-            '..ss....',
-            '.lls....',
-            'drrrrrd.',
-            'drhrhrd.',
-            'drrrrrd.',
-            'dRRrRRd.',
-            '.ddddd..'
-        ];
-        var ap = cell * 0.82 / 8;
-        var ax = (food.x + 0.5) * cell - ap * 4, ay = (food.y + 0.5) * cell - ap * 3.5;
-        for (var ayy = 0; ayy < APPLE.length; ayy++) {
-            for (var axx = 0; axx < APPLE[ayy].length; axx++) {
-                var ch = APPLE[ayy][axx];
-                if (ch === '.') continue;
-                ctx.fillStyle =
-                    ch === 'r' ? p.red :
-                    ch === 'd' ? '#9E2B2B' :
-                    ch === 'h' ? '#FF9B8F' :
-                    ch === 'R' ? '#F27A6B' :
-                    ch === 's' ? '#8A5A2B' : '#59C467';
-                ctx.fillRect(ax + axx * ap, ay + ayy * ap, ap + 0.5, ap + 0.5);
+    function drawApple(ctx, cell) {
+        var pixel = cell * 0.9 / APPLE.length;
+        var left = (food.x + 0.05) * cell;
+        var top = (food.y + 0.05) * cell;
+        for (var y = 0; y < APPLE.length; y++) {
+            for (var x = 0; x < APPLE[y].length; x++) {
+                var color = APPLE_COLORS[APPLE[y][x]];
+                if (!color) continue;
+                var px = Math.round(left + x * pixel);
+                var py = Math.round(top + y * pixel);
+                ctx.fillStyle = color;
+                ctx.fillRect(px, py, Math.round(left + (x + 1) * pixel) - px,
+                    Math.round(top + (y + 1) * pixel) - py);
             }
         }
+    }
+
+    function drawTail(ctx, cell, color) {
+        var tail = snake[snake.length - 1];
+        var neighbor = snake[snake.length - 2];
+        ctx.save();
+        ctx.translate((tail.x + 0.5) * cell, (tail.y + 0.5) * cell);
+        ctx.rotate(Math.atan2(neighbor.y - tail.y, neighbor.x - tail.x));
+        ctx.scale(cell, cell);
+        ctx.fillStyle = color;
+        ctx.fillRect(-0.34, -0.08, 0.22, 0.16);
+        ctx.fillRect(-0.12, -0.18, 0.26, 0.36);
+        ctx.fillRect(0.14, -0.29, 0.36, 0.58);
+        ctx.restore();
+    }
+
+    function render() {
+        var p = Arcade.palette();
+        var ctx = view.ctx;
+        var cell = view.w / COLS;
+
+        drawGrass(ctx, cell);
+        drawApple(ctx, cell);
+        drawTail(ctx, cell, p.accent);
 
         // snake
-        for (var i = snake.length - 1; i >= 1; i--) {
+        ctx.fillStyle = p.accent;
+        for (var i = snake.length - 2; i >= 1; i--) {
             var s = snake[i];
             var g = cell * 0.06;
-            ctx.fillStyle = p.accent;
             ctx.fillRect(s.x * cell + g, s.y * cell + g, cell - g * 2, cell - g * 2);
         }
 
@@ -278,6 +327,7 @@
     var loop = Arcade.loop({
         update: function (dt) {
             if (!alive) return;
+            grassTime += dt;
             acc += dt * 1000;
             while (acc >= stepMs) { acc -= stepMs; tick(); }
         },
@@ -297,6 +347,7 @@
     });
 
     reset(readSpeed());
+    view.refit();
     loop.start();
     loop.pause();
     showSelect();

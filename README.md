@@ -303,16 +303,17 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 - **Dark-only neon identity.** Tokens live in `arcade.css`: `--bg #000` and
   seven `--neon-*` accents. Every game owns one neon via a per-game `--accent`
   (set inline on `<html>` and through `Arcade.init({accent:'lime'})`), used for
-  its card, in-game chrome, canvas art, and a game-over jingle. There is no
-  light theme and the arcade never touches the main site's `beben-theme`.
+  its card, in-game chrome, canvas art, and a game-over jingle. Game chrome
+  stays dark. The optional skatepark backdrop around the playfield follows the
+  device's light or dark appearance. Arcadia uses its own settings store.
 - **Hub cards.** The hero card and all 23 game cards are `#000` with a 1px
   `#171717` border (border flips to the game's neon on hover). Each game card
   shows a frameless icon, the name in pixel type, a one-line description, and
   one to three `> GENRE` lines. CRT scanlines are **on by default** (static,
   no flicker — a strobe made fast sprites trail) and can be toggled off in
-  settings. Every game canvas paints a pure `#000` backdrop (no `--bg-soft`
-  fills), and the in-game bar shows `< BACK` in pixel type next to the game
-  title.
+  settings. The in-game bar shows `< BACK` in pixel type next to the game
+  title. The skatepark and Blockfall artwork are local WebP files precached
+  for offline play.
 - **Pixel display font.** `docs/games/fonts/press-start-2p.woff2` is a ~5KB OFL
   subset (uppercase glyphs only, so always pair it with
   `text-transform: uppercase`). Rebuild it with `py scripts/subset_arcade_font.py`
@@ -338,7 +339,7 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v35`) moves in lockstep as an on-device sanity check.
+   hub (`v36`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a 256×256 WebP card icon in `docs/games/icons/games/` plus
    its `<img>` in the hub card, the hub card itself in

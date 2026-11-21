@@ -27,6 +27,7 @@
     'use strict';
 
     var COLS = 8, ROWS = 6;
+    var BRICK_COLORS = ['red', 'orange', 'yellow', 'lime', 'blue', 'purple', 'pink'];
     var canvas = document.getElementById('game');
     var view = Arcade.fitCanvas(canvas, { aspect: 0.72, maxW: 420, onResize: function () { if (bricks) layout(); } });
 
@@ -52,8 +53,14 @@
         bricks = [];
         for (var r = 0; r < ROWS; r++) {
             for (var c = 0; c < COLS; c++) {
-                bricks.push({ c: c, r: r, alive: true });
+                bricks.push({ c: c, r: r, alive: true, color: BRICK_COLORS[bricks.length % BRICK_COLORS.length] });
             }
+        }
+        for (var i = bricks.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var color = bricks[i].color;
+            bricks[i].color = bricks[j].color;
+            bricks[j].color = color;
         }
     }
 
@@ -212,12 +219,10 @@
         }
         ctx.globalAlpha = 1;
 
-        // bricks: vibrant diagonal mosaic through the whole neon set
-        var mosaic = [p.neon.red, p.neon.orange, p.neon.yellow, p.neon.lime, p.neon.blue, p.neon.purple, p.neon.pink];
         bricks.forEach(function (b) {
             if (!b.alive) return;
             var rc = brickRect(b);
-            ctx.fillStyle = mosaic[(b.r + b.c) % mosaic.length];
+            ctx.fillStyle = p.neon[b.color];
             ctx.fillRect(rc.x, rc.y, rc.w, rc.h);
             ctx.fillStyle = 'rgba(255,255,255,0.3)';   // glossy top edge
             ctx.fillRect(rc.x, rc.y, rc.w, 2);

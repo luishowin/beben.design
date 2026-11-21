@@ -25,6 +25,8 @@
             display: flex;
             align-items: center;
             gap: 1.1rem;
+            padding-inline: 0.55rem;
+            background: rgba(0, 0, 0, 0.76);
             font-size: 0.7rem;
             font-weight: 600;
             letter-spacing: 0.12em;
@@ -34,6 +36,11 @@
         .bf-hud b { color: var(--headers); font-variant-numeric: tabular-nums; }
         .bf-hud canvas { display: block; background: #000; border: 1px solid var(--border); }
         .bf-board { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
+        .bf-board canvas {
+            background: center / cover no-repeat
+                linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.26)),
+                center / cover no-repeat url('../art/blockfall-terraces.webp') #000;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +85,10 @@
     }
 
     var canvas = document.getElementById('game');
-    var view = Arcade.fitCanvas(canvas, { aspect: COLS / ROWS, maxW: 300 });
+    var view = Arcade.fitCanvas(canvas, {
+        aspect: COLS / ROWS, maxW: 300,
+        onResize: function () { if (board) render(); }
+    });
     var nextCanvas = document.getElementById('next');
     var nextCtx = nextCanvas.getContext('2d');
     var lvEl = document.getElementById('lv'), lnEl = document.getElementById('ln');
@@ -355,10 +365,9 @@
         var ctx = view.ctx;
         var cell = view.w / COLS;
 
-        ctx.fillStyle = p.bg;
-        ctx.fillRect(0, 0, view.w, view.h);
+        ctx.clearRect(0, 0, view.w, view.h);
 
-        ctx.strokeStyle = p.gridLine;
+        ctx.strokeStyle = 'rgba(234, 242, 255, 0.12)';
         ctx.lineWidth = 1;
         for (var gx = 1; gx < COLS; gx++) {
             ctx.beginPath(); ctx.moveTo(gx * cell, 0); ctx.lineTo(gx * cell, view.h); ctx.stroke();

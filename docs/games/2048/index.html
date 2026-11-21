@@ -23,8 +23,8 @@
 
         .board {
             position: relative;
-            background: #000;
-            border: 1px solid var(--border-strong);
+            background: #14101E;
+            border: 1px solid #514060;
             border-radius: 6px;
             touch-action: none;
         }
@@ -43,7 +43,11 @@
 
         @keyframes bits-drift { to { transform: translateY(-70vh); } }
 
-        .cell-bg { position: absolute; background: var(--grid-line); }
+        .cell-bg {
+            position: absolute;
+            background: #241B31;
+            box-shadow: inset 0 2px #1B1427;
+        }
 
         .tile {
             position: absolute;
@@ -53,7 +57,8 @@
             font-weight: 700;
             font-variant-numeric: tabular-nums;
             background: var(--bg);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            box-shadow: inset 0 2px rgba(255, 255, 255, 0.18), inset 0 -2px rgba(0, 0, 0, 0.16);
             color: var(--headers);
             /* flat, constant-speed slide — like pushing a block of wood */
             transition: transform 90ms linear;
@@ -64,26 +69,31 @@
 
         @keyframes spawn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* every power of two gets its own pastel */
-        .t2    { background: #FFE3C2; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t4    { background: #FFC9A3; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t8    { background: #F9B8C8; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t16   { background: #E3B8E8; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t32   { background: #C4B8F0; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t64   { background: #A8C8F0; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t128  { background: #A8E8E0; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t256  { background: #B8E8B8; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t512  { background: #F0E6A0; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t1024 { background: #F0C8A0; color: #1C1C26; border-color: rgba(255, 255, 255, 0.14); }
-        .t2048 { background: #FFD36B; color: #1C1C26; border-color: rgba(255, 255, 255, 0.22); }
+        .t2    { background: #FFB04D; color: #21162A; }
+        .t4    { background: #FF7869; color: #21162A; }
+        .t8    { background: #F64DA0; color: #21162A; }
+        .t16   { background: #A822A1; color: #FFF; }
+        .t32   { background: #6339CB; color: #FFF; }
+        .t64   { background: #2455D6; color: #FFF; }
+        .t128  { background: #38BDF7; color: #21162A; }
+        .t256  { background: #20D2AE; color: #21162A; }
+        .t512  { background: #94E950; color: #21162A; }
+        .t1024 { background: #EAF45A; color: #21162A; }
+        .t2048 {
+            background: #FFC42E;
+            color: #21162A;
+            border-color: #FFF1AC;
+            box-shadow: inset 0 2px #FFF1AC, inset 0 -3px #CC800D, 0 0 14px rgba(255, 196, 46, 0.55);
+        }
 
         .restart {
             font-size: 0.68rem;
             font-weight: 600;
             letter-spacing: 0.14em;
-            color: var(--text-muted);
+            color: var(--text);
+            background: #14101E;
             padding: 0.5rem 0.9rem;
-            border: 1px solid var(--border);
+            border: 1px solid #514060;
         }
         .restart:active { color: var(--accent); }
 
@@ -152,14 +162,16 @@
         cellPx = (s - GAP * (N + 1)) / N;
 
         board.querySelectorAll('.cell-bg').forEach(function (e) { e.remove(); });
+        var backgrounds = document.createDocumentFragment();
         for (var r = 0; r < N; r++) {
             for (var c = 0; c < N; c++) {
                 var bg = document.createElement('div');
                 bg.className = 'cell-bg';
                 place(bg, r, c);
-                board.appendChild(bg);
+                backgrounds.appendChild(bg);
             }
         }
+        board.prepend(backgrounds);
         eachTile(function (t) { style(t); place(t.el, t.r, t.c); });
     }
 

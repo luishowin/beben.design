@@ -86,6 +86,7 @@ canvas, .arc-surface { touch-action: none; display: block; }
 
 /* ── Top bar — the cabinet bezel; accent trim = game color ────── */
 .arc-bar {
+    --bar-ink-size: 0.62rem;
     flex: 0 0 auto;
     display: flex;
     align-items: center;
@@ -94,7 +95,10 @@ canvas, .arc-surface { touch-action: none; display: block; }
     padding: calc(0.35rem + env(safe-area-inset-top)) calc(0.5rem + env(safe-area-inset-right)) 0.35rem calc(0.5rem + env(safe-area-inset-left));
     background: var(--bezel);
     color: var(--bezel-text);
-    border-bottom: 2px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
+    font: var(--bar-ink-size)/1 var(--font-pixel);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 /* iOS standalone (Add to Home Screen): the status bar's blur overhangs the
@@ -110,20 +114,33 @@ html.ios-standalone .arc-bar {
     justify-content: center;
     min-width: 42px;
     min-height: 42px;
-    font-size: 1rem;
     color: var(--bezel-text);
     opacity: 0.85;
     transition: opacity var(--dur-fast) ease;
 }
 
+.arc-bar .arc-btn::before {
+    content: "";
+    width: var(--bar-ink-size);
+    height: var(--bar-ink-size);
+}
+
+.arc-bar .arc-pause-btn::before {
+    border-inline: calc(var(--bar-ink-size) * 0.3) solid currentColor;
+}
+
+.arc-bar .arc-gear::before {
+    background: radial-gradient(circle, transparent 24%, currentColor 25%);
+    clip-path: polygon(
+        35% 0, 65% 0, 65% 15%, 85% 15%, 85% 35%, 100% 35%, 100% 65%,
+        85% 65%, 85% 85%, 65% 85%, 65% 100%, 35% 100%, 35% 85%, 15% 85%,
+        15% 65%, 0 65%, 0 35%, 15% 35%, 15% 15%, 35% 15%
+    );
+}
+
 /* back link: plain pixel-font text, same height as the game title,
    a bit fainter so the title still leads */
 .arc-bar .arc-back {
-    font-family: var(--font-pixel);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    line-height: 1.4;
     margin-right: 0.45rem;
     color: var(--bezel-text);
     opacity: 0.62;
@@ -135,22 +152,15 @@ html.ios-standalone .arc-bar {
 
 .arc-title {
     flex: 1;
-    font-family: var(--font-pixel);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .arc-score-slot {
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
     color: var(--accent);
     padding: 0 0.4rem;
-    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 /* ── Stage — the area a game owns below the bar ───────────────── */
@@ -164,6 +174,19 @@ html.ios-standalone .arc-bar {
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
     position: relative;
     overflow: hidden;
+}
+
+html.arc-game-background .arc-playing .arc-stage {
+    --stage-art: url('./art/skatepark-day.webp');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.52)), var(--stage-art);
+    background-position: center;
+    background-size: cover;
+}
+
+@media (prefers-color-scheme: dark) {
+    html.arc-game-background .arc-playing .arc-stage {
+        --stage-art: url('./art/skatepark-night.webp');
+    }
 }
 
 /* ── Overlays (settings / pause / game over) ──────────────────── */
@@ -187,6 +210,11 @@ html.ios-standalone .arc-bar {
     border-radius: 6px;
     box-shadow: 0 0 24px var(--accent-glow);
     padding: 1.5rem;
+}
+
+.arc-settings-panel {
+    max-height: 100%;
+    overflow: auto;
 }
 
 .arc-panel-title {
