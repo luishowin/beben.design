@@ -16,7 +16,7 @@
     <rect x="0" y="58" width="440" height="2" fill="#5a5a5a"/>
     <rect x="0" y="86" width="480" height="2" fill="#5a5a5a"/>
     <rect x="0" y="114" width="360" height="2" fill="#5a5a5a"/>
-    <text x="600" y="20" font-family="IBM Plex Mono, monospace" font-size="20" fill="#FFC710">$250 USD</text>
+    <text x="600" y="20" font-family="IBM Plex Mono, monospace" font-size="20" fill="#FFC710">$210 USD</text>
     <text x="600" y="58" font-family="IBM Plex Mono, monospace" font-size="20" fill="#F7F4F3">20 BUSINESS DAYS</text>
     <text x="600" y="96" font-family="IBM Plex Mono, monospace" font-size="20" fill="#F7F4F3">FIXED PRICE</text>
   </g>

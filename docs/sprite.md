@@ -19,11 +19,11 @@ business-buyer first: clear outcomes, fixed prices, and a named person.
 
 Three services, all on /services/:
 
-- Websites (/services/#websites): from $250 USD. A fast, responsive site,
+- Websites (/services/#websites): from $210 USD. A fast, responsive site,
   designed and built by Luis. Includes help securing the domain, a custom
   Google Workspace email, foundational SEO and foundational branding. Ready in
   20 business days.
-- Brand identity (/services/#brand-identity): from $250 USD. Logo, colours,
+- Brand identity (/services/#brand-identity): from $210 USD. Logo, colours,
   typography, voice, print and clothing applications, and a brand guide, from
   zero or a rework. Ready in 20 business days.
 - Product and UX design (/services/#product-ux): quoted after a free discovery

@@ -1031,7 +1031,7 @@ const SpriteChat = (() => {
     pricing: {
       patterns: [/\b(price|pricing|cost|how much|budget|afford|expensive|cheap|rate)\b/i],
       responses: [
-        { text: "Websites start at $250 USD, brand identity starts at $250, and product and UX design is quoted after a discovery call. Fixed prices, no hourly billing. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">talk it through</span>?", emotion: 'happy' },
+        { text: "Websites start at $210 USD, brand identity starts at $210, and product and UX design is quoted after a discovery call. Fixed prices, no hourly billing. Want to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">talk it through</span>?", emotion: 'happy' },
         { text: "Prices are in USD and fixed. A standard project is 20 business days; a 10-business-day sprint is +$100. Larger scopes get a line-item quote. Best to <span class='nav-link-inline' onclick=\"SpriteChat.navigateTo('contact')\">get in touch</span> for a real number!", emotion: 'happy' },
       ],
     },

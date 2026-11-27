@@ -1,13 +1,13 @@
 # Beben Design
 
-> Beben Design is a one-person, design-led digital product studio in Westlands, Nairobi. Luis Howin Maina researches, designs and builds every project himself. Websites and brand identities start at $250 USD; product and UX design is quoted after a discovery call. Fixed prices, 20 business days as standard, no hourly billing.
+> Beben Design is a one-person, design-led digital product studio in Westlands, Nairobi. Luis Howin Maina researches, designs and builds every project himself. Websites and brand identities start at $210 USD; product and UX design is quoted after a discovery call. Fixed prices, 20 business days as standard, no hourly billing.
 
 I work with businesses and founders who need a clear, fast site and a brand that matches how they run. Every engagement is direct: the person you brief is the person who does the work. There are no account managers and no handoffs. The site publishes its own measurements at https://bebendesign.com/#demo.
 
 ## Services
 
-- [Websites](https://bebendesign.com/services/#websites): From $250 USD. Design and build of a fast, responsive website, domain and Google Workspace email setup, foundational SEO, and foundational branding. 20 business days, or a 10-business-day sprint for +$100.
-- [Brand identity](https://bebendesign.com/services/#brand-identity): From $250 USD. Logo, colours, typography, voice, print and clothing applications, and a brand guide, from zero or a rework. 20 business days.
+- [Websites](https://bebendesign.com/services/#websites): From $210 USD. Design and build of a fast, responsive website, domain and Google Workspace email setup, foundational SEO, and foundational branding. 20 business days, or a 10-business-day sprint for +$100.
+- [Brand identity](https://bebendesign.com/services/#brand-identity): From $210 USD. Logo, colours, typography, voice, print and clothing applications, and a brand guide, from zero or a rework. 20 business days.
 - [Product and UX design](https://bebendesign.com/services/#product-ux): Quoted after a discovery call. Research, wireframes and prototypes, usability testing, UI design and component libraries, accessibility checks, and developer handoff.
 - [How I work](https://bebendesign.com/#process): Four stages, one person: Research, Structure, Visual, Build.
 
