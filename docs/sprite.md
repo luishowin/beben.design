@@ -1,7 +1,7 @@
 # Sprite knowledge base
 
 Sprite's extended memory, and the only source for the facts below. The
-Cloudflare Worker fetches it from https://beben.design/sprite.md and adds it
+Cloudflare Worker fetches it from https://bebendesign.com/sprite.md and adds it
 to the system prompt. Edit, push, and it is live within five minutes. Keep
 entries short: the file is cut silently at the Worker's character cap.
 
@@ -100,14 +100,15 @@ page while the AI pass is held. Kilimo Pal is also held for that pass.
 
 ## The move
 
-- Beben Design is moving from beben.design to bebendesign.com. No date is
-  published yet; the ticker at the top of every page says "soon".
+- Beben Design has moved from beben.design to bebendesign.com. Use
+  https://bebendesign.com as the current website address.
 - Why: the work is expanding into subscription software and a small physical
   range, so the address needs room beyond the word "design". It is a forward
   step, not a rebrand.
 - What does not change: the work, prices, process, the person, and the inbox
   hello.beben.design@gmail.com (a Gmail address, so it does not move).
-- beben.design keeps pointing at the new site for as long as it stays live.
+- The old domain, beben.design, is parked. Do not promise that old links
+  redirect; send visitors to bebendesign.com directly.
 - More detail at /new-home/.
 
 ## The blog
@@ -123,6 +124,9 @@ page while the AI pass is held. Kilimo Pal is also held for that pass.
 
 ## Extras worth knowing
 
+- The main site offers optional Google Analytics, off until the visitor
+  accepts. Analytics preferences in the footer lets them reject or withdraw.
+  The downloadable tools, offline games and client previews stay untracked.
 - The shop at /shop/ is coming soon: digital design assets first, then a small
   physical range. No launch date and no price is published yet. The waitlist
   gets access 48 hours before everyone else.

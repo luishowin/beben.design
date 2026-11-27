@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tools generator for beben.design.
+"""Tools generator for bebendesign.com.
 
 Reads the registry at content/tools.json and the per-tool sources in
 content/tools/<slug>/, renders each live tool into a single self-contained
@@ -45,7 +45,7 @@ SPRITE = DOCS / "sprite.md"
 # Mirrors KNOWLEDGE_MAX_CHARS in cloudflare-worker/sprite-proxy.js.
 SPRITE_MAX_CHARS = 12000
 
-SITE = "https://beben.design"
+SITE = "https://bebendesign.com"
 OG_IMAGE = SITE + "/assets/images/og/ogimage.jpg"
 MAX_STAGGER = 6
 

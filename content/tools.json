@@ -1,6 +1,6 @@
 {
  "_comment": [
-  "Registry for beben.design/labs/. Read by scripts/build_tools.py.",
+  "Registry for bebendesign.com/labs/. Read by scripts/build_tools.py.",
   "",
   "Every entry renders a card on /labs/. Entries with status 'live' and no",
   "'external_url' are also rendered into docs/<slug>/index.html from",

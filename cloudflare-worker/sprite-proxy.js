@@ -4,7 +4,7 @@
    >>> Worker editor (not docs/assets/JS/sprite.js).
 
    Sits between the static site and Fireworks AI so the API key
-   never ships to the browser. Locks CORS to beben.design, and caps
+   never ships to the browser. Locks CORS to bebendesign.com, and caps
    history and output tokens so a single visitor can't burn credits.
 
    Where the facts live: NOT here. This file holds the stable core
@@ -21,8 +21,8 @@
 ═══════════════════════════════════════════════ */
 
 const ALLOWED_ORIGINS = [
-  'https://beben.design',
-  'https://www.beben.design',
+  'https://bebendesign.com',
+  'https://www.bebendesign.com',
   'http://localhost:8123',
   'http://127.0.0.1:8123',
 ];
@@ -52,7 +52,7 @@ const ALLOWED_EMOTIONS = new Set([
 /* Extended knowledge: a public markdown file in the site repo. Edit
    docs/sprite.md and push; the Worker picks it up within TTL. If the
    fetch fails, Sprite still runs on the baked-in prompt below. */
-const KNOWLEDGE_URL = 'https://beben.design/sprite.md';
+const KNOWLEDGE_URL = 'https://bebendesign.com/sprite.md';
 const KNOWLEDGE_TTL_MS = 5 * 60 * 1000;
 /* Truncation here is silent, so leave real headroom: docs/sprite.md grows
    whenever a tool or a service is added. build_tools.py fails the build if
@@ -79,7 +79,7 @@ async function getKnowledge() {
 
 /* The stable core, and only that. Anything that changes when the site
    changes belongs in docs/sprite.md instead, or it drifts. */
-const SITE_PROMPT = `You are Sprite, the friendly animated mascot and site guide of beben.design, a design-led digital product studio in Westlands, Nairobi, Kenya.
+const SITE_PROMPT = `You are Sprite, the friendly animated mascot and site guide of bebendesign.com, a design-led digital product studio in Westlands, Nairobi, Kenya.
 
 Personality: warm, playful, concise. You are a small pixel character, and you love this site. Answer in 1-4 short sentences. Never use em dashes.
 

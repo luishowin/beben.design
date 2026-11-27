@@ -16,6 +16,43 @@
      - Logo is icon-only again, fixed banana-yellow fill.
    ═══════════════════════════════════════════════════════════════ */
 
+/* Optional analytics: equal-weight choices and a non-modal preferences panel. */
+.analytics-consent[hidden] { display: none; }
+.analytics-consent {
+    position: fixed;
+    inset: auto 1rem 1rem;
+    z-index: 10010;
+    max-width: 640px;
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    margin-inline: auto;
+    padding: 1.25rem;
+    border: 1px solid var(--border-strong);
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+    font-family: var(--font-body);
+}
+.analytics-consent h2 { font: 600 1rem var(--font-body); margin: 0 0 0.6rem; }
+.analytics-consent p { font-size: 0.875rem; line-height: 1.6; margin-bottom: 0.75rem; }
+.analytics-consent a { color: inherit; text-decoration: underline; }
+.analytics-consent__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.analytics-consent button, .analytics-settings {
+    font: inherit;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    padding: 0.65rem 0.9rem;
+    min-height: 44px;
+    cursor: pointer;
+}
+.analytics-consent button:hover, .analytics-settings:hover { background: var(--bg-soft); }
+.analytics-consent :focus-visible, .analytics-settings:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+}
+.analytics-settings { font-size: 0.75rem; }
+
 /* ── 1. DESIGN TOKENS ─────────────────────────────────────────── */
 :root[data-theme="light"] {
     /* So native controls (select popups, scrollbars, form widgets) follow the

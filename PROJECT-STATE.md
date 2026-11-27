@@ -1,5 +1,59 @@
 # Site revision, state of play
 
+## Domain migration and consent-based analytics
+
+GitHub Pages now has `bebendesign.com` in both `CNAME` files. The owner has
+configured Cloudflare DNS and verified the new Search Console property.
+Website URLs, metadata, generators, documentation and Sprite sources have
+been migrated to the new domain. The repository name, email address and
+social handles remain unchanged. Earlier entries below describe the old
+site state, including the former custom domain.
+
+GA4 `G-RN3XPCCE2S` is integrated directly in the shared site script, not
+through GTM. No Google analytics code loads before explicit acceptance.
+The footer preference control supports rejection and withdrawal; the choice
+expires after 180 days. Advertising storage/personalisation and Google
+Signals are disabled, and page URLs/referrers omit query strings/fragments.
+The main site's privacy/legal copy and measurement panel now reflect this.
+Downloadable tools, offline games and client previews stay untracked.
+Shared asset references were bumped to `8.4`; the arcade cache/hub version
+was bumped to `v38` for its domain-link changes.
+
+Validation before publishing:
+
+- `node scripts/test_analytics.mjs`: consent, rejection, persistence, expiry,
+  withdrawal, cross-tab changes, host restrictions, URL sanitisation and
+  duplicate prevention pass without network access.
+- `python3 scripts/check_facts.py`: facts agree across 48 files.
+- Blog and tool generators rebuilt successfully.
+- `python3 scripts/build_status.py --check`: current; 1,342 internal links,
+  none broken. The source scan reports one consent-gated analytics integration.
+- Canonical/sitemap/feed checks and mocked Sprite Worker tests passed.
+- Browser inspection confirmed the consent panel appears without a Google
+  script before consent. Live GA4 collection still needs post-publish testing.
+- `git diff --check`: clean.
+
+Publishing this commit on `main` triggers the normal GitHub Pages deployment.
+Unrelated local arcade artwork/styling, manuscripts and scratch scripts are
+not included in this migration/analytics commit.
+
+External deployment/checklist still required:
+
+- Redeploy `cloudflare-worker/sprite-proxy.js` to the existing Cloudflare
+  Worker; git does not deploy it. The new origins and knowledge URL require
+  this code deployment, not just a `sprite.md` update.
+- Update Formspree's domain restrictions and test a contact submission.
+- Submit `https://bebendesign.com/sitemap.xml` in the verified Search Console
+  property.
+- GA4 `G-RN3XPCCE2S` is now in the shared site script behind explicit opt-in,
+  without GTM. Offline tools/games and client previews stay excluded.
+  Review the web stream URL, enhanced measurement and retention settings,
+  then verify consented visits in Realtime after publishing.
+- Configure an HTTPS permanent redirect at the old domain if desired.
+  `beben.design` is parked, which does not itself preserve old links.
+
+---
+
 Six pieces of work are on `main`: the phase 0-1 corrections, brief v2 phases
 1 to 4, the Sprite knowledge rework, the run described below, which closed
 v1 phases 7 and 8 and the v2 phases 5 and 6, an arcade gameplay pass, and a

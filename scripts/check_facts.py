@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fact checker for beben.design.
+"""Fact checker for bebendesign.com.
 
 A handful of facts about the studio are repeated on every page: the
 coordinates, the email address, the neighbourhood. There is no template

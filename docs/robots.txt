@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /dev/
 
-Sitemap: https://beben.design/sitemap.xml
+Sitemap: https://bebendesign.com/sitemap.xml

@@ -10,7 +10,7 @@
    - No vibration API and no beforeinstallprompt on iOS — haptics
      and the install button are Android-only enhancements.
    - Out-of-scope links open an in-app browser sheet (expected for
-     the "← beben.design" escape link on the hub).
+     the "← bebendesign.com" escape link on the hub).
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {

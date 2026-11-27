@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build report generator for the beben.design homepage.
+"""Build report generator for the bebendesign.com homepage.
 
 The homepage carries a terminal panel of figures about the site itself. It
 used to pulse a green "live" dot over four metrics that random-walked in
@@ -26,12 +26,12 @@ What is measured, and how:
                        references, summed off disk
     javascript_deps    <script src> pointing at another origin, across the
                        studio's own pages
-    analytics_scripts  a grep for the known tracker vendors
-    cookies_set        document.cookie anywhere in the shipped source
+    analytics_scripts  source integrations matching known tracker vendors
+    cookie_access_sources  shipped source files referencing document.cookie
 
-The last two are greps for absence, which can only ever prove that nothing
-named in TRACKERS is present. They are here to fail loudly if one is added
-later, not to prove a negative today.
+The last two are static source scans, not runtime measurements. They include
+the consent-gated GA4 integration and its cookie cleanup code, but do not
+count how many cookies Google sets or how many visitors accept analytics.
 
 Client prototypes are excluded from the dependency and tracker counts.
 docs/kemmy-spa-concierge-preview/ loads 31 images from Unsplash; that is a
@@ -81,6 +81,7 @@ WORK = DOCS / "work" / "index.html"
 # substring search over the whole page reports that as three trackers.
 TRACKERS = [
     (r"google-analytics\.com", "Google Analytics"),
+    (r"googletagmanager\.com/gtag/", "Google Analytics"),
     (r"googletagmanager\.com", "Tag Manager"),
     (r"\bgtag\s*\(", "gtag()"),
     (r"\bdataLayer\b", "dataLayer"),
@@ -158,7 +159,7 @@ def check_links():
                 continue
             parsed = urllib.parse.urlparse(raw)
             if parsed.scheme in ("http", "https"):
-                if parsed.netloc not in ("beben.design", "www.beben.design"):
+                if parsed.netloc not in ("bebendesign.com", "www.bebendesign.com"):
                     continue
             elif parsed.netloc:
                 continue
@@ -229,11 +230,15 @@ def code_surface(markup):
 
 def count_analytics():
     hits = []
-    for page in studio_pages():
-        code = code_surface(page.read_text(encoding="utf-8"))
-        for pattern, name in TRACKERS:
+    sources = [(rel(page), code_surface(page.read_text(encoding="utf-8")))
+               for page in studio_pages()]
+    sources += [(rel(path), path.read_text(encoding="utf-8"))
+                for path in (DOCS / "assets" / "JS").glob("*.js")]
+    for source, code in sources:
+        for pattern, vendor in TRACKERS:
             if re.search(pattern, code, re.I):
-                hits.append(f"{rel(page)}: {name}")
+                hits.append(f"{source}: {vendor}")
+                break  # Count source integrations, not matching vendor aliases.
     return len(hits), hits
 
 
@@ -306,7 +311,7 @@ def render(figures):
         metric("css_and_js", f"{kb(weight)}, uncompressed"),
         metric("javascript_deps", deps),
         metric("analytics_scripts", trackers),
-        metric("cookies_set", cookies),
+        metric("cookie_access_sources", cookies),
     ]
     shipped = [
         line(f"{tools} tools that run in the browser. Nothing you paste leaves the tab."),
@@ -321,7 +326,7 @@ def render(figures):
     ]
 
     return "\n".join([
-        f'{INDENT}<div class="tui__h1"># beben.design, measured</div>',
+        f'{INDENT}<div class="tui__h1"># bebendesign.com, measured</div>',
         "",
         f'{INDENT}<div class="tui__h2">## site</div>',
         f'{INDENT}<div class="tui__metrics">',
@@ -361,7 +366,7 @@ def report(figures):
     print(f"  css_and_js         {kb(weight)} from {', '.join(assets)}")
     print(f"  javascript_deps    {deps}" + (f" ({', '.join(hosts)})" if hosts else ""))
     print(f"  analytics_scripts  {trackers}" + (f" ({tracker_hits[0]})" if tracker_hits else ""))
-    print(f"  cookies_set        {cookies}" + (f" ({cookie_hits[0]})" if cookie_hits else ""))
+    print(f"  cookie_access_sources  {cookies}" + (f" ({cookie_hits[0]})" if cookie_hits else ""))
     print(f"  tools {figures['tools']}, games {figures['games']}, "
           f"client projects {figures['client_projects']}, posts {figures['posts']}")
 

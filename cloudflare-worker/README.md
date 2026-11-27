@@ -6,7 +6,7 @@ credits. This tiny Cloudflare Worker (free tier: 100,000 requests/day) holds
 the key as a secret and forwards Sprite's chats to Fireworks.
 
 ```
-visitor -> beben.design (sprite.js) -> your Worker -> Fireworks AI
+visitor -> bebendesign.com (sprite.js) -> your Worker -> Fireworks AI
                                        ^ key lives here only
 ```
 
@@ -38,6 +38,25 @@ visitor -> beben.design (sprite.js) -> your Worker -> Fireworks AI
 
 ## 3. Point Sprite at it
 
+### Updating an existing Worker after the domain move
+
+The website now uses `bebendesign.com`. Open the **existing** Sprite Worker
+in Cloudflare → Workers & Pages → Edit code, replace its code with
+`cloudflare-worker/sprite-proxy.js`, and deploy. Keep its current URL,
+`FIREWORKS_API_KEY` secret and optional `MODEL` variable; no new Worker or API
+key is needed.
+
+The updated code allows `https://bebendesign.com` and
+`https://www.bebendesign.com` (plus the existing local development origins),
+and fetches its knowledge from `https://bebendesign.com/sprite.md`. The
+parked old domain is no longer an allowed origin. Pushing the GitHub repo
+does **not** deploy this Worker change.
+
+After publishing the site, check that the knowledge URL returns markdown,
+then use the test below with your existing Worker URL. An OPTIONS request
+with the new origin should return `Access-Control-Allow-Origin` matching
+that origin; a POST from `https://beben.design` should return 403.
+
 In `sprite.js` (or in a `window.SPRITE_CONFIG` block before it):
 
 ```html
@@ -59,7 +78,7 @@ From a terminal:
 ```
 curl -s -X POST https://sprite-proxy.YOURNAME.workers.dev \
   -H "Content-Type: application/json" \
-  -H "Origin: https://beben.design" \
+  -H "Origin: https://bebendesign.com" \
   -d "{\"messages\":[{\"role\":\"user\",\"content\":\"what services do you offer?\"}],\"page\":{\"path\":\"/\"}}"
 ```
 
@@ -78,7 +97,7 @@ JavaScript is already updated. The site keeps working without it.
 
 ## Teaching Sprite new things
 
-The Worker fetches https://beben.design/sprite.md (the repo file
+The Worker fetches https://bebendesign.com/sprite.md (the repo file
 `docs/sprite.md`) and appends it to the system prompt, cached for 5 minutes.
 To teach Sprite anything not on the website, add a few factual lines to that
 file and push. No Worker redeploy needed. The file is public, so never put
@@ -90,7 +109,7 @@ secrets or private information in it.
   A chat turn is ~500-900 tokens, so about a hundredth of a cent.
   $50 in credits is on the order of hundreds of thousands of turns.
 - The Worker already caps: 12 history messages, 1,000 chars per message,
-  700 reply tokens, CORS locked to beben.design (+ localhost for testing).
+  700 reply tokens, CORS locked to bebendesign.com (+ localhost for testing).
 - Optional hardening: in Cloudflare, Security -> WAF -> rate limiting rule
   on the Worker route (e.g. 20 requests/minute per IP).
 - Watch spend at https://app.fireworks.ai -> Usage. If credits run out,

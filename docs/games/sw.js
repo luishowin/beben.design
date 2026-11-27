@@ -2,7 +2,7 @@
    RULE: bump CACHE on EVERY commit that touches docs/games/** —
    cache-first serves stale files forever otherwise. */
 
-const CACHE = 'beben-arcade-v36';
+const CACHE = 'beben-arcade-v38';
 
 /* Every page, card icon and hero the app can show offline. Both app icons the
    page itself references are here too. The 512px and maskable app icons are

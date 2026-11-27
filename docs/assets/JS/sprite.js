@@ -1038,8 +1038,8 @@ const SpriteChat = (() => {
     about: {
       patterns: [/\b(who are you|what are you|about you|your name|sprite|tell me about)\b/i],
       responses: [
-        { text: "I'm Sprite! A little AI guide built to help you navigate this site. Think of me as the friendly face of beben.design. I know all the pages, services, and even a few secrets.", emotion: 'smiling' },
-        { text: "I'm your pixel-powered guide! Built right here on beben.design. I can help you find things, answer questions, or just hang out.", emotion: 'happy' },
+        { text: "I'm Sprite! A little AI guide built to help you navigate this site. Think of me as the friendly face of bebendesign.com. I know all the pages, services, and even a few secrets.", emotion: 'smiling' },
+        { text: "I'm your pixel-powered guide! Built right here on bebendesign.com. I can help you find things, answer questions, or just hang out.", emotion: 'happy' },
       ],
     },
     process: {

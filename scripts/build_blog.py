@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Blog generator for beben.design.
+"""Blog generator for bebendesign.com.
 
 Reads markdown posts from content/blog/, renders real static HTML into
 docs/blog/ using the templates in scripts/templates/, and refreshes the
@@ -37,7 +37,7 @@ DOCS = ROOT / "docs"
 BLOG_OUT = DOCS / "blog"
 SITEMAP = DOCS / "sitemap.xml"
 
-SITE = "https://beben.design"
+SITE = "https://bebendesign.com"
 FEED_DESCRIPTION = ("Notes from the workshop at Beben Design: design decisions, "
                     "engineering trade-offs, and the tools I ship, written from inside real projects.")
 WORDS_PER_MINUTE = 200

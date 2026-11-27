@@ -1,8 +1,65 @@
-# beben.design
+# bebendesign.com
 
-Source for [beben.design](https://beben.design), the site of Beben Design, a
+Source for [bebendesign.com](https://bebendesign.com), the site of Beben Design, a
 design-led digital product studio in Westlands, Nairobi. Static HTML/CSS/JS,
 served by GitHub Pages from `docs/`, no build step.
+
+## Production domain
+
+The current website is **https://bebendesign.com**. The GitHub repository
+remains `luishowin/beben.design`; email stays `hello.beben.design@gmail.com`,
+and existing social handles are unchanged.
+
+- **Hosting:** GitHub Pages, publishing `main` → `/docs`. Both `CNAME` files
+  contain `bebendesign.com`. Enable **Enforce HTTPS** in repository Settings →
+  Pages once GitHub's certificate is ready.
+- **DNS:** Cloudflare. Apex (`@`) A records point to `185.199.108.153`,
+  `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`; `www` is a
+  CNAME to `luishowin.github.io`. Keep these records **DNS only** for GitHub
+  certificate provisioning.
+- **Search:** the new Search Console property is verified through Cloudflare.
+  Submit `https://bebendesign.com/sitemap.xml` after publishing this migration.
+- **Sprite:** redeploy `cloudflare-worker/sprite-proxy.js` to the existing
+  Worker separately; GitHub pushes do not deploy Worker code. It allows the
+  new apex and `www` origins and fetches `https://bebendesign.com/sprite.md`.
+  See [Worker deployment notes](cloudflare-worker/README.md).
+- **Contact form:** update Formspree's allowed-domain settings to
+  `bebendesign.com` and `www.bebendesign.com` if both are used.
+- **Analytics:** GA4 `G-RN3XPCCE2S` is integrated directly in the shared
+  `docs/assets/JS/index.js`, not through GTM. Basic consent means no Google
+  script or analytics requests before opt-in. Visitors can accept/reject in
+  the panel and withdraw via **Analytics preferences** in the footer.
+  Choices expire after 180 days; withdrawal disables GA, clears its
+  first-party cookies and reloads. Only `bebendesign.com` and
+  `www.bebendesign.com` send analytics. Offline tools, games, redirect stubs
+  and client previews do not load the shared analytics code.
+  The integration strips query strings/fragments from page URLs and referrers,
+  disables advertising storage/personalisation and Google Signals, and sets
+  a 180-day cookie lifetime. Do not also install `GTM-MJX8VVJW` with GA4
+  targeting the same property, or visits may be counted twice.
+  In GA4 Admin, set the existing web stream URL to the new domain, review
+  retention settings and disable unwanted enhanced measurement (especially
+  form interactions, site search and browser-history page changes). Never
+  send contact form values or chat text to Analytics. Verify consented
+  traffic in Realtime after publishing; rejecting visitors will not appear.
+- **Old domain:** `beben.design` is parked at Porkbun. Parking does not redirect
+  visitors. A permanent HTTPS redirect preserving paths and query strings
+  must be configured separately if old links are to keep working.
+
+Canonical URLs, structured data, social metadata, feeds, robots and sitemap
+URLs use the new domain. The blog/tool generators and their templates must
+keep using it too; do not rename the repository or replace email/social
+handles when updating domain references.
+
+### Analytics checks
+
+Run `node scripts/test_analytics.mjs` for the dependency-free, mocked consent
+tests. Run `python3 scripts/build_status.py --check` to verify the published
+measurement panel is current, and `python3 scripts/check_facts.py` to check
+shared facts. The static analytics/cookie-access figures describe source
+integrations, not visitor counts or the number of cookies Google sets.
+Live collection must be checked in GA4 Realtime after deploying and accepting
+analytics on the production domain.
 
 ## Structure
 
@@ -147,7 +204,7 @@ Upgrade ladder, when the team grows into it (design intent, not built yet):
 
 ## Labs
 
-[beben.design/labs](https://beben.design/labs) is the collection: **Free
+[bebendesign.com/labs](https://bebendesign.com/labs) is the collection: **Free
 tools**, **Apps**, and **Experiments**. The promise on the page is exact and
 load-bearing: every free tool is **one HTML file with zero external requests**,
 so a downloaded copy works offline forever. Nothing may load from a CDN, and
@@ -287,7 +344,7 @@ when there is content hidden beyond that edge.
 
 ## The arcade
 
-[beben.design/games](https://beben.design/games) is **ARCADIA by BEBEN DESIGN**,
+[bebendesign.com/games](https://bebendesign.com/games) is **ARCADIA by BEBEN DESIGN**,
 a self-contained installable PWA of 23 tiny offline games. It is intentionally
 standalone: no `index.css`, no nav, no Sprite, no external fonts, and zero
 references outside `/games/` so it runs fully offline once installed. It has
@@ -339,7 +396,7 @@ its own `manifest.webmanifest` and service worker (`docs/games/sw.js`, scope
 
 1. **Bump `CACHE` in `docs/games/sw.js` on every commit** — it is cache-first,
    so a stale cache name serves old files forever. The version label on the
-   hub (`v36`) moves in lockstep as an on-device sanity check.
+   hub (`v38`) moves in lockstep as an on-device sanity check.
 2. **Adding a game touches four places:** its `<slug>/` in the `sw.js`
    PRECACHE list, a 256×256 WebP card icon in `docs/games/icons/games/` plus
    its `<img>` in the hub card, the hub card itself in
@@ -386,7 +443,7 @@ Rules if you touch it:
 public in the page source, so anything on the page can be skipped by posting to
 Formspree directly. Only two settings actually help:
 
-1. **Restrict allowed domains to `beben.design`.** This is the real defence.
+1. **Restrict allowed domains to `bebendesign.com`.** This is the real defence.
 2. **Turn on submission notifications.** The free tier caps at 50 submissions a
    month and fails silently once hit, which loses leads without warning.
 
